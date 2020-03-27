@@ -12,21 +12,21 @@ The [National Data Archive](#Help-Section) (NDA) needs the following [measures](
 
 | Measures               | Assigned To... | Status      |
 | ------------------------- | ------ | ----------- |
-| [Pedigree](#Research-Subject-Pedigree) | Bryan | In Progress |
-| [SCID](#Structured-Clinical-Interview-for-DSM-V---SCID) |Arianna|In Progress |
-| [SID-P](#Structured-Interview-for-DSM-IV-Personality---SID-P) | Arianna | In Progress |
-| [PPVT](#Peabody-Picture-Vocabulary-Test---PPVT) | Bryan | In Progress |
-| [DERS](#Difficulties-in-Emotion-Regulation-Scale---DERS) | Bryan | In Progress |
-| [CBCL](#Child-Behavior-Checklist---CBCL) | Kyle | In Progress |
-| [CCNES](#Coping-with-Children's-Negative-Emotions-Scale---CCNES) | Min | In Progress |
-| [AAQ](#Acceptance-and-Action-Questionnaire---AAQ) | Austin | In Progress |
+| [Pedigree](#Research-Subject-Pedigree) | TBD            | In Progress |
+| [SCID](#Structured-Clinical-Interview-for-DSM-V---SCID) |TBD|In Progress |
+| [SID-P](#Structured-Interview-for-DSM-IV-Personality---SID-P) | TBD | In Progress |
+| [PPVT](#Peabody-Picture-Vocabulary-Test---PPVT) | TBD | In Progress |
+| [DERS](#Difficulties-in-Emotion-Regulation-Scale---DERS) | TBD | In Progress |
+| [CBCL](#Child-Behavior-Checklist---CBCL) | TBD | In Progress |
+| [CCNES](#Coping-with-Children's-Negative-Emotions-Scale---CCNES) | TBD | In Progress |
+| [AAQ](#Acceptance-and-Action-Questionnaire---AAQ) | TBD | In Progress |
 | [WCCL](#Ways-of-Coping-Checklist---WCCL) | TBD | In Progress |
 | [PKBS](#Preschool-and-Kindergarten-Behavior-Scale---PKBS) | TBD | In Progress |
-| [Bear Dragon](#Bear-Dragon)             | Amanda | In Progress |
-| [Affect Perspective Taking](Affect-Perspective-Taking) | Bryan | In Progress |
-| [Dimensional Card Sort](#Dimensional-Card-Sort) | Jake | In Progress |
-| [Emotion Labeling](#Emotion-Labeling) | Deonna | In Progress |
-| [Emotion Strategies](#Emotion-Strategies) | Alexis | In Progress |
+| [Bear Dragon](#Bear-Dragon)             | TBD | In Progress |
+| [Affect Perspective Taking](Affect-Perspective-Taking) | TBD | In Progress |
+| [Dimensional Card Sort](#Dimensional-Card-Sort) | TBD | In Progress |
+| [Emotion Labeling](#Emotion-Labeling) | TBD | In Progress |
+| [Emotion Strategies](#Emotion-Strategies) | TBD | In Progress |
 
 ---
 
@@ -45,7 +45,7 @@ The [National Data Archive](#Help-Section) (NDA) needs the following [measures](
 
 The Pedigree is a collection of identifiable information that needs to be appended to every measure. 
 
-## SCID instructions:
+## Pedigree instructions:
 
 [Back to Table of Contents](#Table-of-Contents)
 
