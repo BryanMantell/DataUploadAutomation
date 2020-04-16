@@ -21,11 +21,11 @@ The current process for doing the data upload is needlessly tedious, time consum
 | [SID-P](#Structured-Interview-for-DSM-IV-Personality---SID-P) | TBD | In Progress |
 | [PPVT](#Peabody-Picture-Vocabulary-Test---PPVT) | TBD | In Progress |
 | [DERS](#Difficulties-in-Emotion-Regulation-Scale---DERS) | TBD | In Progress |
-| [CBCL](#Child-Behavior-Checklist---CBCL) | TBD | In Progress |
-| [CCNES](#Coping-with-Children's-Negative-Emotions-Scale---CCNES) | TBD | In Progress |
-| [AAQ](#Acceptance-and-Action-Questionnaire---AAQ) | TBD | In Progress |
-| [WCCL](#Ways-of-Coping-Checklist---WCCL) | TBD | In Progress |
-| [PKBS](#Preschool-and-Kindergarten-Behavior-Scale---PKBS) | TBD | In Progress |
+| [CBCL](#Child-Behavior-Checklist---CBCL) | Austin | In Progress |
+| [CCNES](#Coping-with-Children's-Negative-Emotions-Scale---CCNES) | Min | In Progress |
+| [AAQ](#Acceptance-and-Action-Questionnaire---AAQ) | Bryan | In Progress |
+| [WCCL](#Ways-of-Coping-Checklist---WCCL) | Kyle | In Progress |
+| [PKBS](#Preschool-and-Kindergarten-Behavior-Scale---PKBS) | Jake | In Progress |
 | [Bear Dragon](#Bear-Dragon)             | TBD | In Progress |
 | [Affect Perspective Taking](Affect-Perspective-Taking) | TBD | In Progress |
 | [Dimensional Card Sort](#Dimensional-Card-Sort) | TBD | In Progress |
