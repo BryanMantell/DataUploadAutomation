@@ -291,67 +291,67 @@ Take the following text strings and turn them into integers using the key below.
 
 Insert the following columns at the end of your MeasureName_Prep sheet:
 
-1. Column **cbcl_ER:** The scoring for cbcl_ER is the **SUM** of these items: 
+1. Column **srm_cbcl_er:** The scoring for srm_cbcl_er is the **SUM** of these items: 
 
    ```R
    cbcl_021, cbcl_046, cbcl_051, cbcl_079, cbcl_082, cbcl_083, cbcl_092, cbcl_097, cbcl_099
    ```
 
-2. Column **cbcl_AD:** The scoring for cbcl_AD is the **SUM** of these items:
+2. Column **srm_cbcl_ad:** The scoring for srm_cbcl_ad is the **SUM** of these items:
 
    ```R
    cbcl_010, cbcl_033, cbcl_037, cbcl_043, cbcl_047, cbcl_068, cbcl_087, cbcl_090
    ```
 
-3. Column **cbcl_SC:** The scoring for cbcl_SC is the **SUM** of these items:
+3. Column **srm_cbcl_sc:** The scoring for srm_cbcl_sc is the **SUM** of these items:
 
    ```R
    cbcl_001, cbcl_007,cbcl_L012, cbcl_019, cbcl_024, cbcl_039, cbcl_045, cbcl_052, cbcl_078, cbcl_086, cbcl_093
    ```
 
-4. Column **cbcl_W:** The scoring for cbcl_W is the **SUM** of these items:
+4. Column **srm_cbcl_w:** The scoring for srm_cbcl_w is the **SUM** of these items:
 
    ```R
    cbcl_002, cbcl_004, cbcl_023, cbcl_062, cbcl_067, cbcl_070, cbcl_071, cbcl_098
    ```
 
-5. Column **cbcl_SP:** The scoring for cbcl_SP is the **SUM** of these items:
+5. Column **srm_cbcl_sp:** The scoring for srm_cbcl_sp is the **SUM** of these items:
 
    ```R
    cbcl_022, cbcl_038, cbcl_048, cbcl_064, cbcl_074, cbcl_084
    ```
 
-6. Column **cbcl_AP:** The scoring for cbcl_AP is the **SUM** of these items:
+6. Column **srm_cbcl_ap:** The scoring for srm_cbcl_ap is the **SUM** of these items:
 
    ```R
    cbcl_005, cbcl_006, cbcl_056, cbcl_059, cbcl_095
    ```
 
-7. Column **cbcl_AB:** The scoring for cbcl_AB is the **SUM** of these items:
+7. Column **srm_cbcl_ab:** The scoring for srm_cbcl_ab is the **SUM** of these items:
 
    ```R
    cbcl_008, cbcl_015, cbcl_016, cbcl_018, cbcl_020, cbcl_027, cbcl_029, cbcl_035, cbcl_040, cbcl_042, cbcl_044, cbcl_053, cbcl_058, cbcl_066, cbcl_069, cbcl_081, cbcl_085, cbcl_088, cbcl_096
    ```
 
-8. Column **cbcl_OP:** The scoring for cbcl_OP is the **SUM** of these items:
+8. Column **srm_cbcl_op:** The scoring for srm_cbcl_op is the **SUM** of these items:
 
    ```R
    cbcl_003, cbcl_009, cbcl_011, cbcl_013, cbcl_014, cbcl_017, cbcl_025, cbcl_026, cbcl_028, cbcl_030, cbcl_031, cbcl_032, cbcl_034, cbcl_036, cbcl_041, cbcl_049, cbcl_050, cbcl_054, cbcl_055, cbcl_057, cbcl_060, cbcl_061, cbcl_063, cbcl_065, cbcl_072, cbcl_073, cbcl_075, cbcl_076, cbcl_077, cbcl_080, cbcl_089, cbcl_091, cbcl_094
    ```
 
-9. Column **cbcl_INT:** The scoring for cbcl_INT is the **SUM** of these items:
+9. Column **srm_cbcl_int:** The scoring for srm_cbcl_int is the **SUM** of these items:
 
    ```R
    cbcl_021, cbcl_046, cbcl_051, cbcl_079, cbcl_082, cbcl_083, cbcl_092, cbcl_097, cbcl_099, cbcl_010, cbcl_033, cbcl_037, cbcl_043, cbcl_047, cbcl_068, cbcl_087, cbcl_090, cbcl_001, cbcl_007, cbcl_012, cbcl_019, cbcl_024, cbcl_039, cbcl_045, cbcl_052, cbcl_078, cbcl_086, cbcl_093, cbcl_002, cbcl_004, cbcl_023, cbcl_062, cbcl_067, cbcl_070, cbcl_071, cbcl_098
    ```
 
-10. Column **cbcl_EXT:** The scoring for cbcl_EXT is the **SUM** of these items:
+10. Column **srm_cbcl_ext:** The scoring for srm_cbcl_ext is the **SUM** of these items:
 
     ```R
     cbcl_005, cbcl_006, cbcl_056, cbcl_059, cbcl_095, cbcl_008, cbcl_015, cbcl_016, cbcl_018, cbcl_020, cbcl_027, cbcl_029, cbcl_035, cbcl_040, cbcl_042, cbcl_044, cbcl_053, cbcl_058, cbcl_066, cbcl_069, cbcl_081, cbcl_085, cbcl_088, cbcl_096
     ```
 
-11. Column **cbcl_total:** The scoring for cbcl_total is the **SUM** of these items:
+11. Column **srm_cbcl_total:** The scoring for srm_cbcl_total is the **SUM** of these items:
 
     ```R
     cbcl_001, cbcl_002, cbcl_003, cbcl_004, cbcl_005, cbcl_006, cbcl_007, cbcl_008, cbcl_009, cbcl_010, cbcl_011, cbcl_012, cbcl_013, cbcl_014, cbcl_015, cbcl_016, cbcl_017, cbcl_018, cbcl_019, cbcl_020, cbcl_021, cbcl_022, cbcl_023, cbcl_024, cbcl_025, cbcl_026, cbcl_027, cbcl_028, cbcl_029, cbcl_030, cbcl_031, cbcl_032, cbcl_033, cbcl_034, cbcl_035, cbcl_036, cbcl_037, cbcl_038, cbcl_039, cbcl_040, cbcl_041, cbcl_042, cbcl_043, cbcl_044, cbcl_045, cbcl_046, cbcl_047, cbcl_048, cbcl_049, cbcl_050, cbcl_051, cbcl_052, cbcl_053, cbcl_054, cbcl_055, cbcl_056, cbcl_057, cbcl_058, cbcl_059, cbcl_060, cbcl_061, cbcl_062, cbcl_063, cbcl_064, cbcl_065, cbcl_066, cbcl_067, cbcl_068, cbcl_069, cbcl_070, cbcl_071, cbcl_072, cbcl_073, cbcl_074, cbcl_075, cbcl_076, cbcl_077, cbcl_078, cbcl_079, cbcl_080, cbcl_081, cbcl_082, cbcl_083, cbcl_084, cbcl_085, cbcl_086, cbcl_087, cbcl_088, cbcl_089, cbcl_090, cbcl_091, cbcl_092, cbcl_093, cbcl_094, cbcl_095, cbcl_096, cbcl_097, cbcl_098, cbcl_099
@@ -473,7 +473,7 @@ Now that your prep sheet is complete and contains all the columns as indicated i
 | Q15.1_98                                | Q264_98                       | srm_cbcl_098    | cbcl_withdr             |
 | Q15.1_99                                | Q264_99                       | srm_cbcl_099        | cbcl112                 |
 | Q15.1_100                                | Q264_100                      | srm_cbcl_100   | cbcl113a                |
-|                                       |                                     |                         |                         |
+| N/A | N/A | srm_cbcl_total | cbcl_total_raw |
 
 [Back to Table of Contents](#Table-of-Contents)
 
@@ -585,25 +585,32 @@ Next, take UO and UPMC time 1 data and add it to the MeasureName_prep data frame
 
 ### 3) Recoding
 
+Take the following text strings and turn them into integers using the key below.
 
+| Text String   | Integer |
+| :------------ | :------ |
+| 0 Never Used     | 0       |
+| 1 Rarely Used    | 1       |
+| 2 Sometimes Used | 2       |
+| 3 Regularly Used     | 3       |
 
 ### 4) Calculated Columns
 
 Insert the following columns at the end of your MeasureName_Prep sheet:
 
-1. Column **wcclSU** which stands for *skills use scale*. The scoring for the skills use scale is the **AVERAGE** of these items: 
+1. Column **srm_wccl_su** which stands for *skills use scale*. The scoring for the skills use scale is the **AVERAGE** of these items: 
 
    ```R
    wccl_01, wccl_02, wccl_04, wccl_06, wccl_09, wccl_10, wccl_11, wccl_13, wccl_16, wccl_18, wccl_19, wccl_21, wccl_22, wccl_23, wccl_26, wccl_27, wccl_29, wccl_31, wccl_33, wccl_34, wccl_35, wccl_36, wccl_38, wccl_39, wccl_40, wccl_42, wccl_43, wccl_44, wccl_47, wccl_49, wccl_50, wccl_51, wccl_53, wccl_54, wccl_56, wccl_57, wccl_58, wccl_59
    ```
 
-2. Column **wcclGSC** which stands for *general dysfunctional coping*. The scoring for the general dysfunctional coping factor is the **AVERAGE** of the following items: 
+2. Column **srm_wccl_gsc** which stands for *general dysfunctional coping*. The scoring for the general dysfunctional coping factor is the **AVERAGE** of the following items: 
 
    ```R
    wccl_03, wccl_05, wccl_08, wccl_12, wccl_14, wccl_17, wccl_20, wccl_25, wccl_32, wccl_37, wccl_41, wccl_45, wccl_46, wccl_52, wccl_55
    ```
 
-3. Column **wcclBO** which stands for *blaming others*. The scoring for the blaming others factor is the **AVERAGE** of the following items: 
+3. Column **srm_wccl_bo** which stands for *blaming others*. The scoring for the blaming others factor is the **AVERAGE** of the following items: 
 
    ```R
    wccl_07, wccl_15, wccl_24, wccl_28, wccl_30, wccl_48
@@ -705,9 +712,32 @@ Read in all the CSVs needed. The files you'll need are located in your measure's
 
 ### 2) Editing and Renaming
 
+Edit and rename the Pedigree so that it only has the information needed for the NDA structure. Name it MeasureName_prep because this will be used to prepare everything before you do the final move to the NDA structure. The measure will need the following from the pedigree:
+
+mom guid, mom famID, interview age, interview date, sex.
+
+Next, take UO and UPMC time 1 data and add it to the MeasureName_prep data frame. Then add a column called "visit"  and append it to the end. Repeat this step for time 2, time 3, and time 4, changing the visit number respectively. 
+
 ### 3) Recoding
 
+Take the following text strings and turn them into integers using the key below.
+
+| Text String   | Integer |
+| :------------ | :------ |
+| Never (0)     | 0       |
+| Rarely (1)    | 1       |
+| Sometimes (2) | 2       |
+| Often (3)     | 3       |
+
 ### 4) Calculated Columns
+
+Insert the following columns at the end of your MeasureName_Prep sheet:
+
+1. Column **srm_pkbs_total** which is the total added score for the PKBS. The scoring for the skills use scale is the **TOTAL** of these items: 
+
+   ```R
+   srm_pkbs_1, srm_pkbs_2, srm_pkbs_3, srm_pkbs_4, srm_pkbs_5, srm_pkbs_6, srm_pkbs_7, srm_pkbs_8, srm_pkbs_9, srm_pkbs_10, srm_pkbs_11, srm_pkbs_12, srm_pkbs_13, srm_pkbs_14, srm_pkbs_15, srm_pkbs_16, srm_pkbs_17, srm_pkbs_18, srm_pkbs_19, srm_pkbs_20, srm_pkbs_21, srm_pkbs_22, srm_pkbs_23, srm_pkbs_24, srm_pkbs_25, srm_pkbs_26, srm_pkbs_27, srm_pkbs_28, srm_pkbs_29, srm_pkbs_30, srm_pkbs_31, srm_pkbs_32, srm_pkbs_33
+   ```
 
 ### 5) Transfer to NDA Structure 
 
@@ -757,6 +787,7 @@ Now that your prep sheet is complete and contains all the columns as indicated i
 | Q16.1_31                      | Q407_31                     | srm_pkbs_31          | Social18            |
 | Q16.1_32                      | Q407_32                     | srm_pkbs_32          | Social26            |
 | Q16.1_33                      | Q407_33                     | srm_pkbs_33          | Social31            |
+| N/A | N/A | srm_pkbs_total | basc_social_raw |
 
 [Back to Table of Contents](#Table-of-Contents)
 
