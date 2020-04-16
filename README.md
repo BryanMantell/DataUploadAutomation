@@ -999,6 +999,10 @@ Now that your prep sheet is complete and contains all the columns as indicated i
 - **Packages:** Packages are tools that you can download to help your code that are not native to the R language. For example, we download a package in R called "dyplr" because that enables the select() function along with many others.
 
    ```r
+   #install package, this only need to be done once.
+   install.packages("dplyr","tidyverse","eeptools")
+   #load package, this need to be done every time you run this script. 
+   #Can be understand as we install light bulb once, and everytime we enter the room, we need turn       on the light
    library(dplyr)
    library(tidyverse)
    library(eeptools)
