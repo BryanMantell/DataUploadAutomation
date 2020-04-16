@@ -108,7 +108,7 @@ Read in all the CSVs needed. The files you'll need are located in your measure's
 
 Edit and rename the Pedigree so that it only has the information needed for the NDA structure. Name it MeasureName_prep because this will be used to prepare everything before you do the final move to the NDA structure. The measure will need the following from the pedigree:
 
-mom guid, mom famID, interview age, interview date, sex.
+mom guid, mom famID, mom interview age, interview date, sex.
 
 Next, we need to take all UO and UPMC data from all time points and add it to the MeasureName_prep data frame. Before merging you'll need to rename the column headers, meaning you'll need to rename the UO and UPMC Qualtrics questions to look like this: "ders001". See the item matching chart for an example of what the questions will looks like for this measure.
 
@@ -997,6 +997,12 @@ Now that your prep sheet is complete and contains all the columns as indicated i
 - **Item Matching Chart:** Each measure contains a chart that matches the columns in the measure's excel sheet to a column in the NDA provided structure. It acts as a road map so you know where each question goes. 
 
 - **Packages:** Packages are tools that you can download to help your code that are not native to the R language. For example, we download a package in R called "dyplr" because that enables the select() function along with many others.
+
+   ```r
+   library(dplyr)
+   library(tidyverse)
+   library(eeptools)
+   ```
 
 - **Example of Importing CSVs into Rstudio:** Below we are creating a data frame variable named Site_MeasureName_TimePoint and are assigning the contents of the 'FILEPATH' to it. This will need to be done to every time point from both sites. Also, the fake pedigree and the NDA structure needs to be imported as well. 
 
