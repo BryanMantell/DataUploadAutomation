@@ -279,7 +279,7 @@ Lastly, append "_child" to the end of every mom_famID.
 
 ### 3) Recoding Text to Numbers and Reverse Scoring:
 
-Take the following text strings and turn them into integers using the key below.
+Take the following text strings and turn them into integers using the key below:
 
 | Text String                | Integer |
 | :------------------------- | :------ |
@@ -368,7 +368,7 @@ Now that your prep sheet is complete and contains all the columns as indicated i
 | ------------------------------------- | ----------------------------------- | ----------------------- | ----------------------- |
 | N/A | N/A | child_guid | subjectkey |
 | Q1.2 | famID | child_FamID | src_subject_id |
-| N/A | N/A | sex | sex |
+| N/A | N/A | child_sex | sex |
 | N/A | N/A | interview_age | interview_age |
 | N/A | N/A | interview_date | interview_date |
 | N/A | N/A | relationship | relationship |
@@ -487,17 +487,78 @@ The CCNES presents hypothetical scenarios in which a child or adolescent gets up
 
 ### 1) Importing:
 
+Install all the [packages](#Help-Section) required for the project. You can find what's needed in the [Help Section](#Help-Section). 
+
+Read in all the CSVs needed. The files you'll need are located in your measure's folder. Check the [Help Section](#Help-Section) for example code.
+
 ### 2) Editing and Renaming:
 
-
-
-The measure will need the following from the pedigree:
+Edit and rename the Pedigree so that it only has the information needed for the NDA structure. Name it MeasureName_prep because this will be used to prepare everything before you do the final move to the NDA structure. The measure will need the following from the pedigree:
 
 mom guid, mom famID, interview age, interview date, sex.
 
-### 3) Recoding:
+### 3) Recoding Text to Numbers and Reverse Scoring:
+
+Take the following text strings and turn them into integers using the key below:
+
+| Text String          | Interger |
+| -------------------- | -------- |
+| 1 - Very Unlikely    | 1        |
+| 2                    | 2        |
+| 3                    | 3        |
+| 4 - Medium Liklihood | 4        |
+| 5                    | 5        |
+| 6                    | 6        |
+| 7 - Very Likely      | 7        |
+
+The following chart holds items that need to be reversed scored. Once you reverse score an Item append an "r" to the end of the item number, for example: *srm_ccnes_01r*
+
+| Item Number  | New Value                         |
+| ------------ | --------------------------------- |
+| srm_ccnes_07 | 1=7, 2=6, 3=5, 4=4. 5=3, 6=2, 7=1 |
+| srm_ccnes_39 | 1=7, 2=6, 3=5, 4=4. 5=3, 6=2, 7=1 |
+| srm_ccnes_45 | 1=7, 2=6, 3=5, 4=4. 5=3, 6=2, 7=1 |
+| srm_ccnes_55 | 1=7, 2=6, 3=5, 4=4. 5=3, 6=2, 7=1 |
 
 ### 4) Calculated Columns
+
+Insert the following columns at the end of your CCNES_Prep sheet:
+
+1. Column **ccnes_DR:** The scoring for ders_awareness is the **MEAN** of these items: 
+
+   ```
+   ccnes_02, ccnes_07r, ccnes_13, ccnes_22, ccnes_29, ccnes_33, ccnes_39r, ccnes_45r, ccnes_50, ccnes_55r, ccnes_62, ccnes_70
+   ```
+
+2. Column **ccnes_PR:** The scoring for ders_clarity is the **MEAN** of these items:
+
+   ```
+   ccnes_01, ccnes_12, ccnes_18, ccnes_19, ccnes_28, ccnes_34, ccnes_41, ccnes_47, ccnes_53, ccnes_56, ccnes_63, ccnes_71
+   ```
+
+3. Column **ccnes_EE**: The scoring for ders_goals is the **MEAN** of these items:
+
+   ```
+   ccnes_05, ccnes_11, ccnes_17, ccnes_20, ccnes_30, ccnes_35, ccnes_42, ccnes_43, ccnes_49, ccnes_57, ccnes_66, ccnes_68
+   ```
+
+4. Column **ccnes_EFR**: The scoring for ders_impulse is the **MEAN** of these items:
+
+   ```
+   ccnes_06, ccnes_08, ccnes_16, ccnes_23, ccnes_25, ccnes_31, ccnes_38, ccnes_48, ccnes_54, ccnes_58, ccnes_65, ccnes_69
+   ```
+
+5. Column **ccnes_PFR**: The scoring for ders_nonacceptance is the **MEAN** of these items:
+
+   ```
+   ccnes_03, ccnes_10, ccnes_15, ccnes_24, ccnes_26, ccnes_36, ccnes_37, ccnes_44, ccnes_52, ccnes_59, ccnes_64, ccnes_67
+   ```
+   
+6. Column **ccnes_MR**: The scoring for ders_nonacceptance is the **MEAN** of these items:
+
+   ```
+   ccnes_04, ccnes_09, ccnes_14, ccnes_21, ccnes_27, ccnes_32, ccnes_40, ccnes_46, ccnes_51, ccnes_60, ccnes_61, ccnes_72
+   ```
 
 ### 5) Transfer to NDA Structure 
 
@@ -505,7 +566,85 @@ Now that your prep sheet is complete and contains all the columns as indicated i
 
 ## CCNES Item Matching Chart:
 
-
+| *UPMC* **CCNES Question Number** | *UO* **CCNES Question Number** | CCNES Prep Sheet: | ***NDA* Data Structure:** |
+| -------------------------------- | ------------------------------ | ----------------- | ------------------------- |
+| N/A                              | N/A                            | Mom_guid          | subjectkey                |
+| Q1.2                             | Q221                           | mother_FamID      | src_subject_id            |
+| N/A                              | N/A                            | mother_sex        | sex                       |
+| N/A                              | N/A                            | interview_age     | interview_age             |
+| N/A                              | N/A                            | interview_date    | interview_date            |
+| Q10.2_1                          | Q140_1                         | srm_ccnes_01      | pabq1a                    |
+| Q10.2_2                          | Q140_2                         | srm_ccnes_02      | pabq1b                    |
+| Q10.2_3                          | Q140_3                         | srm_ccnes_03      | pabq1c                    |
+| Q10.2_4                          | Q140_4                         | srm_ccnes_04      | pabq1d                    |
+| Q10.2_5                          | Q140_5                         | srm_ccnes_05      | pabq1e                    |
+| Q10.2_6                          | Q140_6                         | srm_ccnes_06      | pabq1f                    |
+| Q10.3_1                          | Q141_1                         | srm_ccnes_07r     | pabq2a                    |
+| Q10.3_2                          | Q141_2                         | srm_ccnes_08      | pabq2b                    |
+| Q10.3_3                          | Q141_3                         | srm_ccnes_09      | pabq2c                    |
+| Q10.3_4                          | Q141_4                         | srm_ccnes_10      | pabq2d                    |
+| Q10.3_5                          | Q141_5                         | srm_ccnes_11      | pabq2e                    |
+| Q10.3_6                          | Q141_6                         | srm_ccnes_12      | pabq2f                    |
+| Q10.4_1                          | Q142_1                         | srm_ccnes_13      | pabq3a                    |
+| Q10.4_2                          | Q142_2                         | srm_ccnes_14      | pabq3b                    |
+| Q10.4_3                          | Q142_3                         | srm_ccnes_15      | pbab3c                    |
+| Q10.4_4                          | Q142_4                         | srm_ccnes_16      | pabq3d                    |
+| Q10.4_5                          | Q142_5                         | srm_ccnes_17      | pabq3e                    |
+| Q10.4_6                          | Q142_6                         | srm_ccnes_18      | pabq3f                    |
+| Q10.5_1                          | Q143_1                         | srm_ccnes_19      | pabq4a                    |
+| Q10.5_2                          | Q143_2                         | srm_ccnes_20      | pabq4b                    |
+| Q10.5_3                          | Q143_3                         | srm_ccnes_21      | pabq4c                    |
+| Q10.5_4                          | Q143_4                         | srm_ccnes_22      | pabq4d                    |
+| Q10.5_5                          | Q143_5                         | srm_ccnes_23      | pabq4e                    |
+| Q10.5_6                          | Q143_6                         | srm_ccnes_24      | pabq4f                    |
+| Q10.6_1                          | Q144_1                         | srm_ccnes_25      | pabq5a                    |
+| Q10.6_2                          | Q144_2                         | srm_ccnes_26      | pabq5b                    |
+| Q10.6_3                          | Q144_3                         | srm_ccnes_27      | pabq5c                    |
+| Q10.6_4                          | Q144_4                         | srm_ccnes_28      | pabq5d                    |
+| Q10.6_5                          | Q144_5                         | srm_ccnes_29      | pabq5e                    |
+| Q10.6_6                          | Q144_6                         | srm_ccnes_30      | pabq5f                    |
+| Q10.7_1                          | Q145_1                         | srm_ccnes_31      | pabq6a                    |
+| Q10.7_2                          | Q145_2                         | srm_ccnes_32      | pabq6b                    |
+| Q10.7_3                          | Q145_3                         | srm_ccnes_33      | pabq6c                    |
+| Q10.7_4                          | Q145_4                         | srm_ccnes_34      | pabq6d                    |
+| Q10.7_5                          | Q145_5                         | srm_ccnes_35      | pabq6e                    |
+| Q10.7_6                          | Q145_6                         | srm_ccnes_36      | pabq6f                    |
+| Q10.8_1                          | Q146_1                         | srm_ccnes_37      | pabq7a                    |
+| Q10.8_2                          | Q146_2                         | srm_ccnes_38      | pabq7b                    |
+| Q10.8_3                          | Q146_3                         | srm_ccnes_39r     | pabq7c                    |
+| Q10.8_4                          | Q146_4                         | srm_ccnes_40      | pabq7d                    |
+| Q10.8_5                          | Q146_5                         | srm_ccnes_41      | pabq7e                    |
+| Q10.8_6                          | Q146_6                         | srm_ccnes_42      | pabq7f                    |
+| Q10.9_1                          | Q147_1                         | srm_ccnes_43      | pabq8a                    |
+| Q10.9_2                          | Q147_2                         | srm_ccnes_44      | pabq8b                    |
+| Q10.9_3                          | Q147_3                         | srm_ccnes_45r     | pabq8c                    |
+| Q10.9_4                          | Q147_4                         | srm_ccnes_46      | pabq8d                    |
+| Q10.9_5                          | Q147_5                         | srm_ccnes_47      | pabq8e                    |
+| Q10.9_6                          | Q147_6                         | srm_ccnes_48      | pabq8f                    |
+| Q10.10_1                         | Q148_1                         | srm_ccnes_49      | pabq9a                    |
+| Q10.10_2                         | Q148_2                         | srm_ccnes_50      | pabq9b                    |
+| Q10.10_3                         | Q148_3                         | srm_ccnes_51      | pabq9c                    |
+| Q10.10_4                         | Q148_4                         | srm_ccnes_52      | pabq9d                    |
+| Q10.10_5                         | Q148_5                         | srm_ccnes_53      | pabq9e                    |
+| Q10.10_6                         | Q148_6                         | srm_ccnes_54      | pabq9f                    |
+| Q10.11_1                         | Q149_1                         | srm_ccnes_55r     | pabq10a                   |
+| Q10.11_2                         | Q149_2                         | srm_ccnes_56      | pabq10b                   |
+| Q10.11_3                         | Q149_3                         | srm_ccnes_57      | pabq10c                   |
+| Q10.11_4                         | Q149_4                         | srm_ccnes_58      | pabq10d                   |
+| Q10.11_5                         | Q149_5                         | srm_ccnes_59      | pabq10e                   |
+| Q10.11_6                         | Q149_6                         | srm_ccnes_60      | pabq10f                   |
+| Q10.12_1                         | Q150_1                         | srm_ccnes_61      | pabq11a                   |
+| Q10.12_2                         | Q150_2                         | srm_ccnes_62      | pabq11b                   |
+| Q10.12_3                         | Q150_3                         | srm_ccnes_63      | pabq11c                   |
+| Q10.12_4                         | Q150_4                         | srm_ccnes_64      | pabq11d                   |
+| Q10.12_5                         | Q150_5                         | srm_ccnes_65      | pabq11e                   |
+| Q10.12_6                         | Q150_6                         | srm_ccnes_66      | pabq11f                   |
+| Q10.13_1                         | Q150_1                         | srm_ccnes_67      | pabq12a                   |
+| Q10.13_2                         | Q150_2                         | srm_ccnes_68      | pabq12b                   |
+| Q10.13_3                         | Q150_3                         | srm_ccnes_69      | pabq12c                   |
+| Q10.13_4                         | Q150_4                         | srm_ccnes_70      | pabq12d                   |
+| Q10.13_5                         | Q150_5                         | srm_ccnes_71      | pabq12e                   |
+| Q10.13_6                         | Q150_6                         | srm_ccnes_72      | pabq12f                   |
 
 [Back to Table of Contents](#Table-of-Contents)
 
