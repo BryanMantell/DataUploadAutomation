@@ -501,15 +501,15 @@ mom guid, mom famID, interview age, interview date, sex.
 
 Take the following text strings and turn them into integers using the key below:
 
-| Text String          | Interger |
-| -------------------- | -------- |
-| 1 - Very Unlikely    | 1        |
-| 2                    | 2        |
-| 3                    | 3        |
-| 4 - Medium Liklihood | 4        |
-| 5                    | 5        |
-| 6                    | 6        |
-| 7 - Very Likely      | 7        |
+| Text String          | Integer |
+| -------------------- | ------- |
+| 1 - Very Unlikely    | 1       |
+| 2                    | 2       |
+| 3                    | 3       |
+| 4 - Medium Liklihood | 4       |
+| 5                    | 5       |
+| 6                    | 6       |
+| 7 - Very Likely      | 7       |
 
 The following chart holds items that need to be reversed scored. Once you reverse score an Item append an "r" to the end of the item number, for example: *srm_ccnes_01r*
 
@@ -524,37 +524,37 @@ The following chart holds items that need to be reversed scored. Once you revers
 
 Insert the following columns at the end of your CCNES_Prep sheet:
 
-1. Column **ccnes_DR:** The scoring for ders_awareness is the **MEAN** of these items: 
+1. Column **ccnes_DR:** The scoring for ccnes_DR is the **MEAN** of these items: 
 
    ```
    ccnes_02, ccnes_07r, ccnes_13, ccnes_22, ccnes_29, ccnes_33, ccnes_39r, ccnes_45r, ccnes_50, ccnes_55r, ccnes_62, ccnes_70
    ```
 
-2. Column **ccnes_PR:** The scoring for ders_clarity is the **MEAN** of these items:
+2. Column **ccnes_PR:** The scoring for ccnes_PR is the **MEAN** of these items:
 
    ```
    ccnes_01, ccnes_12, ccnes_18, ccnes_19, ccnes_28, ccnes_34, ccnes_41, ccnes_47, ccnes_53, ccnes_56, ccnes_63, ccnes_71
    ```
 
-3. Column **ccnes_EE**: The scoring for ders_goals is the **MEAN** of these items:
+3. Column **ccnes_EE**: The scoring for ccnes_EE is the **MEAN** of these items:
 
    ```
    ccnes_05, ccnes_11, ccnes_17, ccnes_20, ccnes_30, ccnes_35, ccnes_42, ccnes_43, ccnes_49, ccnes_57, ccnes_66, ccnes_68
    ```
 
-4. Column **ccnes_EFR**: The scoring for ders_impulse is the **MEAN** of these items:
+4. Column **ccnes_EFR**: The scoring for ccnes_EFR is the **MEAN** of these items:
 
    ```
    ccnes_06, ccnes_08, ccnes_16, ccnes_23, ccnes_25, ccnes_31, ccnes_38, ccnes_48, ccnes_54, ccnes_58, ccnes_65, ccnes_69
    ```
 
-5. Column **ccnes_PFR**: The scoring for ders_nonacceptance is the **MEAN** of these items:
+5. Column **ccnes_PFR**: The scoring for ccnes_PFR is the **MEAN** of these items:
 
    ```
    ccnes_03, ccnes_10, ccnes_15, ccnes_24, ccnes_26, ccnes_36, ccnes_37, ccnes_44, ccnes_52, ccnes_59, ccnes_64, ccnes_67
    ```
    
-6. Column **ccnes_MR**: The scoring for ders_nonacceptance is the **MEAN** of these items:
+6. Column **ccnes_MR**: The scoring for ccnes_MR is the **MEAN** of these items:
 
    ```
    ccnes_04, ccnes_09, ccnes_14, ccnes_21, ccnes_27, ccnes_32, ccnes_40, ccnes_46, ccnes_51, ccnes_60, ccnes_61, ccnes_72
@@ -658,17 +658,39 @@ The AAQ-II was developed in order to establish an internally consistent measure 
 
 ### 1) Importing:
 
+Install all the [packages](#Help-Section) required for the project. You can find what's needed in the [Help Section](#Help-Section). 
+
+Read in all the CSVs needed. The files you'll need are located in your measure's folder. Check the [Help Section](#Help-Section) for example code
+
 ### 2) Editing and Renaming:
 
+Edit and rename the Pedigree so that it only has the information needed for the NDA structure. Name it MeasureName_prep because this will be used to prepare everything before you do the final move to the NDA structure. The measure will need the following from the pedigree:
 
+mom guid, mom famID, interview ages, interview dates, sex.
 
-The measure will need the following from the pedigree:
+### 3) Recoding Text to Numbers:
 
-mom guid, mom famID, interview age, interview date, sex.
+Take the following text strings and turn them into integers using the key below:
 
-### 3) Recoding:
+| Text String          | Integer |
+| -------------------- | ------- |
+| 1 Never True         | 1       |
+| 2 Very Rarely True   | 2       |
+| 3 Seldom True        | 3       |
+| 4 Sometimes True     | 4       |
+| 5 Often True         | 5       |
+| 6 Almost Always True | 6       |
+| 7 Always True        | 7       |
 
 ### 4) Calculated Columns
+
+Insert the following columns at the end of your AAQ_Prep sheet:
+
+1. Column **aaq_total:** The scoring for aaq_toal is the **SUM** of these items: 
+
+   ```R
+   srm_aaq_01, srm_aaq_02, srm_aaq_03, srm_aaq_04, srm_aaq_05, srm_aaq_06, srm_aaq_07, srm_aaq_08, srm_aaq_09, srm_aaq_10
+   ```
 
 ### 5) Transfer to NDA Structure 
 
@@ -695,7 +717,7 @@ Now that your prep sheet is complete and contains all the columns as indicated i
 | Q4.1_8                         | Q154_8                       | srm_aaq_08          | aaq24                     |
 | Q4.1_9                         | Q154_9                       | srm_aaq_09          | aaq2_8                    |
 | Q4.1_10                        | Q154_10                      | srm_aaq_10          | aaq2_9                    |
-| N/A                            | N/A                          | srm_aaq_total        | aaq_score                 |
+| N/A                            | N/A                          | aaq_total        | aaq_score                 |
 
 [Back to Table of Contents](#Table-of-Contents)
 
