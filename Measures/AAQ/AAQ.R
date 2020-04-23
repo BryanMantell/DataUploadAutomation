@@ -101,9 +101,30 @@ AAQ_Prep[,7:16] <- sapply(AAQ_Prep[,7:16],as.numeric)
 AAQ_Prep <- add_column(AAQ_Prep, aaq_total = rowSums(AAQ_Prep[, c("srm_aaq_01", "srm_aaq_02","srm_aaq_03","srm_aaq_04", "srm_aaq_05", "srm_aaq_06", 
                                           "srm_aaq_07", "srm_aaq_08", "srm_aaq_09", "srm_aaq_10")]),.after = "srm_aaq_10")
 
-AAQ_Prep$aaq_total <- rowSums(AAQ_Prep[, c("srm_aaq_01", "srm_aaq_02","srm_aaq_03","srm_aaq_04", "srm_aaq_05", "srm_aaq_06", 
-                                       "srm_aaq_07", "srm_aaq_08", "srm_aaq_09", "srm_aaq_10")])
-
 # Reorder the AAQ_Prep sheet 
+
+NDA_AAQ$subjectkey <- pull(AAQ_Prep$FamID_Mother) 
+Test<-pull(NDA_AAQ)
+
+NDA<-AAQ_Prep
+
+
+df$valueBin <- cut(df$value, c(-Inf, 250, 500, 1000, 2000, Inf), 
+                   labels=c('<=250', '250-500', '500-1,000', '1,000-2,000', '>2,000'))
+
+#ders <- "ders"
+#number_of_question <- ncol(DERS_PREP %>% select(starts_with("ders")))
+#number_list <- seq(1:number_of_question)
+#DERS_names <- paste(ders,number_list,sep='')
+
+#create list of new header 
+#ders <- "srm_ders"
+#number_of_survey <- seq(1:36)
+#DERS_names <- paste(ders,number_of_survey,sep='_')
+#create list of old header name 
+#Q137 <- "Q137"
+#old_DERS_name <- paste(Q137, number_of_survey,sep = "_")
+#change column names 
+#setnames(DERS_PREP, old = old_DERS_name, new = DERS_names)
 
 

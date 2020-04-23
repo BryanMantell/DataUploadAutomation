@@ -99,22 +99,25 @@ The DERS is a classroom observation tool that measures environmental and behavio
 
 ### 1) Importing
 
-Install all the [packages](#Help-Section) required for the project. You can find what's needed in the [Help Section](#Help-Section). 
-
-Read in all the CSVs needed. The files you'll need are located in your measure's folder. Check the [Help Section](#Help-Section) for example code.
+- Install all the [packages](#Help-Section) required for the project. You can find what's needed in the [Help Section](#Help-Section). 
+- Read in all the CSVs needed. The files you'll need are located in your measure's folder. Check the [Help Section](#Help-Section) for example code.
 
 
 ### 2) Editing and Renaming
 
-Edit and rename the Pedigree so that it only has the information needed for the NDA structure. Name it MeasureName_prep because this will be used to prepare everything before you do the final move to the NDA structure. The measure will need the following from the pedigree:
+- Edit and rename UO and UPMC data so that it only has the information needed for the NDA structure. Reference the Item matching chat below to see what items you will need to select. See "Example of Selecting and Renaming UO/UPMC Data in a Measure" in the [Help Section](#Help-Section) for example code. 
 
-mom guid, mom famID, mom interview age, interview date, sex.
+- Next, now that all the measures for each time point from both sites have the same amount of columns and the same names for those columns, we will bind them together by time point. This will be combining *UO_T1_DERS* and *UPMC_T1_DERS* into one data frame called *DERS_T1*. This will be repeated for each time point. See "Example of Binding UO and UPMC Data Frames by Time Point" in the [Help Section](#Help-Section) for example code.
 
-Next, we need to take all UO and UPMC data from all time points and add it to the MeasureName_prep data frame. Before merging you'll need to rename the column headers, meaning you'll need to rename the UO and UPMC Qualtrics questions to look like this: "ders001". See the item matching chart for an example of what the questions will looks like for this measure.
+- Now that we have our 4 files separated by time point we want merge the relevant Pedigree information into our data frames. Modify the Pedigree information so that it only contains the relevant data for T1 and then merge by *FamID*. See "Example of Merging Pedigree info with the Data Frames" in the [Help Section](#Help-Section) for example code.
 
-Once that's complete add a column named "visit"  and append it to the end. Populate the visit column with 1s representing that the row is from time point 1. Repeat this step for time 2, time 3, and time 4, changing the visit number respectively. 
+  *<u>Relevant Pedigree information: mom guid, mom famID, T1-T4 Mom ages, T1-T4 interview dates, Mom sex.</u>*
 
-Lastly, append "_mother" to the end of every mom_famID. 
+- At this step we should have 4 files containing UO and UPMC data separated by time point and all the relevant pedigree information should be merged into all 4 files. But because we merged slighted different information into our sheets the columns names currently do not match so we cannot yet merge all of our data frames into one. So, we'll rename the date and age columns in each data frame so that their columns match. See "Example of Renaming the Date and Age Columns so They Match" in the [Help Section](#Help-Section) for example code.
+
+- Before we do our final bind we will add a column to each data frame called timepoint and we'll give the contents of that column which ever time point that data set represents. See "Example of Adding a New Time Point Column and Adding a Value to it" in the [Help Section](#Help-Section) for example code.
+
+- Now we'll bind all 4 data sets into one the same way that we blinded time points together! This will be the DERS_prep data frame.
 
 ### 3) Recoding Text to Numbers and Reverse Scoring:
 
@@ -260,22 +263,25 @@ The Child Behavior Checklist (CBCL) is a checklist parents complete to detect em
 
 ### 1) Importing
 
-Install all the [packages](#Help-Section) required for the project. You can find what's needed in the [Help Section](#Help-Section). 
-
-Read in all the CSVs needed. The files you'll need are located in your measure's folder. Check the [Help Section](#Help-Section) for example code.
+- Install all the [packages](#Help-Section) required for the project. You can find what's needed in the [Help Section](#Help-Section). 
+- Read in all the CSVs needed. The files you'll need are located in your measure's folder. Check the [Help Section](#Help-Section) for example code.
 
 
 ### 2) Editing and Renaming
 
-Edit and rename the Pedigree so that it only has the information needed for the NDA structure. Name it MeasureName_prep because this will be used to prepare everything before you do the final move to the NDA structure. The measure will need the following from the pedigree:
+- Edit and rename UO and UPMC data so that it only has the information needed for the NDA structure. Reference the Item matching chat below to see what items you will need to select. See "Example of Selecting and Renaming UO/UPMC Data in a Measure" in the [Help Section](#Help-Section) for example code. 
 
-child guid, child famID, interview age, interview date, sex.
+- Next, now that all the measures for each time point from both sites have the same amount of columns and the same names for those columns, we will bind them together by time point. This will be combining *UO_T1_AAQ* and *UPMC_T1_AAQ* into one data frame called *AAQ_T1*. This will be repeated for each time point. See "Example of Binding UO and UPMC Data Frames by Time Point" in the [Help Section](#Help-Section) for example code.
 
-Next, we need to take all UO and UPMC data from all time points and add it to the MeasureName_prep data frame. Before merging you'll need to rename the column headers, meaning you'll need to rename the UO and UPMC Qualtrics questions to look like this: "cbcl001". See the item matching chart for an example of what the questions will looks like for this measure.
+- Now that we have our 4 files separated by time point we want merge the relevant Pedigree information into our data frames. Modify the Pedigree information so that it only contains the relevant data for T1 and then merge by *FamID*. See "Example of Merging Pedigree info with the Data Frames" in the [Help Section](#Help-Section) for example code.
 
-Once that's complete add a column named "visit"  and append it to the end. Populate the visit column with 1s representing that the row is from time point 1. Repeat this step for time 2, time 3, and time 4, changing the visit number respectively. 
+  *<u>Relevant Pedigree information: child guid, child famID, T1-T4 child ages, T1-T4 interview dates, child sex.</u>*
 
-Lastly, append "_child" to the end of every mom_famID. 
+- At this step we should have 4 files containing UO and UPMC data separated by time point and all the relevant pedigree information should be merged into all 4 files. But because we merged slighted different information into our sheets the columns names currently do not match so we cannot yet merge all of our data frames into one. So, we'll rename the date and age columns in each data frame so that their columns match. See "Example of Renaming the Date and Age Columns so They Match" in the [Help Section](#Help-Section) for example code.
+
+- Before we do our final bind we will add a column to each data frame called timepoint and we'll give the contents of that column which ever time point that data set represents. See "Example of Adding a New Time Point Column and Adding a Value to it" in the [Help Section](#Help-Section) for example code.
+
+- Now we'll bind all 4 data sets into one the same way that we blinded time points together! This will be the CBCL_prep data frame.
 
 ### 3) Recoding Text to Numbers and Reverse Scoring:
 
@@ -487,15 +493,24 @@ The CCNES presents hypothetical scenarios in which a child or adolescent gets up
 
 ### 1) Importing:
 
-Install all the [packages](#Help-Section) required for the project. You can find what's needed in the [Help Section](#Help-Section). 
-
-Read in all the CSVs needed. The files you'll need are located in your measure's folder. Check the [Help Section](#Help-Section) for example code.
+- Install all the [packages](#Help-Section) required for the project. You can find what's needed in the [Help Section](#Help-Section). 
+- Read in all the CSVs needed. The files you'll need are located in your measure's folder. Check the [Help Section](#Help-Section) for example code.
 
 ### 2) Editing and Renaming:
 
-Edit and rename the Pedigree so that it only has the information needed for the NDA structure. Name it MeasureName_prep because this will be used to prepare everything before you do the final move to the NDA structure. The measure will need the following from the pedigree:
+- Edit and rename UO and UPMC data so that it only has the information needed for the NDA structure. Reference the Item matching chat below to see what items you will need to select. See "Example of Selecting and Renaming UO/UPMC Data in a Measure" in the [Help Section](#Help-Section) for example code. 
 
-mom guid, mom famID, interview age, interview date, sex.
+- Next, now that all the measures for each time point from both sites have the same amount of columns and the same names for those columns, we will bind them together by time point. This will be combining *UO_T1_CCNES* and *UPMC_T1_CCNES* into one data frame called *CCNES_T1*. This will be repeated for each time point. See "Example of Binding UO and UPMC Data Frames by Time Point" in the [Help Section](#Help-Section) for example code.
+
+- Now that we have our 4 files separated by time point we want merge the relevant Pedigree information into our data frames. Modify the Pedigree information so that it only contains the relevant data for T1 and then merge by *FamID*. See "Example of Merging Pedigree info with the Data Frames" in the [Help Section](#Help-Section) for example code.
+
+  *<u>Relevant Pedigree information: mom guid, mom famID, T1-T4 Mom ages, T1-T4 interview dates, Mom sex.</u>*
+
+- At this step we should have 4 files containing UO and UPMC data separated by time point and all the relevant pedigree information should be merged into all 4 files. But because we merged slighted different information into our sheets the columns names currently do not match so we cannot yet merge all of our data frames into one. So, we'll rename the date and age columns in each data frame so that their columns match. See "Example of Renaming the Date and Age Columns so They Match" in the [Help Section](#Help-Section) for example code.
+
+- Before we do our final bind we will add a column to each data frame called timepoint and we'll give the contents of that column which ever time point that data set represents. See "Example of Adding a New Time Point Column and Adding a Value to it" in the [Help Section](#Help-Section) for example code.
+
+- Now we'll bind all 4 data sets into one the same way that we blinded time points together! This will be the CCNES_prep data frame.
 
 ### 3) Recoding Text to Numbers and Reverse Scoring:
 
@@ -658,15 +673,24 @@ The AAQ-II was developed in order to establish an internally consistent measure 
 
 ### 1) Importing:
 
-Install all the [packages](#Help-Section) required for the project. You can find what's needed in the [Help Section](#Help-Section). 
-
-Read in all the CSVs needed. The files you'll need are located in your measure's folder. Check the [Help Section](#Help-Section) for example code
+- Install all the [packages](#Help-Section) required for the project. You can find what's needed in the [Help Section](#Help-Section). 
+- Read in all the CSVs needed. The files you'll need are located in your measure's folder. Check the [Help Section](#Help-Section) for example code.
 
 ### 2) Editing and Renaming:
 
-Edit and rename the Pedigree so that it only has the information needed for the NDA structure. Name it MeasureName_prep because this will be used to prepare everything before you do the final move to the NDA structure. The measure will need the following from the pedigree:
+- Edit and rename UO and UPMC data so that it only has the information needed for the NDA structure. Reference the Item matching chat below to see what items you will need to select. See "Example of Selecting and Renaming UO/UPMC Data in a Measure" in the [Help Section](#Help-Section) for example code. 
 
-mom guid, mom famID, interview ages, interview dates, sex.
+- Next, now that all the measures for each time point from both sites have the same amount of columns and the same names for those columns, we will bind them together by time point. This will be combining *UO_T1_AAQ* and *UPMC_T1_AAQ* into one data frame called *AAQ_T1*. This will be repeated for each time point. See "Example of Binding UO and UPMC Data Frames by Time Point" in the [Help Section](#Help-Section) for example code.
+
+- Now that we have our 4 files separated by time point we want merge the relevant Pedigree information into our data frames. Modify the Pedigree information so that it only contains the relevant data for T1 and then merge by *FamID*. See "Example of Merging Pedigree info with the Data Frames" in the [Help Section](#Help-Section) for example code.
+
+  *<u>Relevant Pedigree information: mom guid, mom famID, T1-T4 Mom ages, T1-T4 interview dates, Mom sex.</u>*
+
+- At this step we should have 4 files containing UO and UPMC data separated by time point and all the relevant pedigree information should be merged into all 4 files. But because we merged slighted different information into our sheets the columns names currently do not match so we cannot yet merge all of our data frames into one. So, we'll rename the date and age columns in each data frame so that their columns match. See "Example of Renaming the Date and Age Columns so They Match" in the [Help Section](#Help-Section) for example code.
+
+- Before we do our final bind we will add a column to each data frame called timepoint and we'll give the contents of that column which ever time point that data set represents. See "Example of Adding a New Time Point Column and Adding a Value to it" in the [Help Section](#Help-Section) for example code.
+
+- Now we'll bind all 4 data sets into one the same way that we blinded time points together! This will be the AAQ_prep data frame.
 
 ### 3) Recoding Text to Numbers:
 
@@ -731,18 +755,25 @@ The Ways of Coping Checklist (WCCL) is a measure of coping based on Lazarus and 
 
 ### 1) Importing
 
-Install all the [packages](#Help-Section) required for the project. You can find what's needed in the [Help Section](#Help-Section). 
-
-Read in all the CSVs needed. The files you'll need are located in your measure's folder. Check the [Help Section](#Help-Section) for example code.
+- Install all the [packages](#Help-Section) required for the project. You can find what's needed in the [Help Section](#Help-Section).
+- Read in all the CSVs needed. The files you'll need are located in your measure's folder. Check the [Help Section](#Help-Section) for example code.
 
 
 ### 2) Editing and Renaming
 
-Edit and rename the Pedigree so that it only has the information needed for the NDA structure. Name it MeasureName_prep because this will be used to prepare everything before you do the final move to the NDA structure. The measure will need the following from the pedigree:
+- Edit and rename UO and UPMC data so that it only has the information needed for the NDA structure. Reference the Item matching chat below to see what items you will need to select. See "Example of Selecting and Renaming UO/UPMC Data in a Measure" in the [Help Section](#Help-Section) for example code. 
 
-mom guid, mom famID, interview age, interview date, sex.
+- Next, now that all the measures for each time point from both sites have the same amount of columns and the same names for those columns, we will bind them together by time point. This will be combining *UO_T1_WCCL* and *UPMC_T1_WCCL* into one data frame called *WCCL_T1*. This will be repeated for each time point. See "Example of Binding UO and UPMC Data Frames by Time Point" in the [Help Section](#Help-Section) for example code.
 
-Next, take UO and UPMC time 1 data and add it to the MeasureName_prep data frame. Then add a column called "visit"  and append it to the end. Repeat this step for time 2, time 3, and time 4, changing the visit number respectively. 
+- Now that we have our 4 files separated by time point we want merge the relevant Pedigree information into our data frames. Modify the Pedigree information so that it only contains the relevant data for T1 and then merge by *FamID*. See "Example of Merging Pedigree info with the Data Frames" in the [Help Section](#Help-Section) for example code.
+
+  *<u>Relevant Pedigree information: mom guid, mom famID, T1-T4 Mom ages, T1-T4 interview dates, Mom sex.</u>*
+
+- At this step we should have 4 files containing UO and UPMC data separated by time point and all the relevant pedigree information should be merged into all 4 files. But because we merged slighted different information into our sheets the columns names currently do not match so we cannot yet merge all of our data frames into one. So, we'll rename the date and age columns in each data frame so that their columns match. See "Example of Renaming the Date and Age Columns so They Match" in the [Help Section](#Help-Section) for example code.
+
+- Before we do our final bind we will add a column to each data frame called timepoint and we'll give the contents of that column which ever time point that data set represents. See "Example of Adding a New Time Point Column and Adding a Value to it" in the [Help Section](#Help-Section) for example code.
+
+- Now we'll bind all 4 data sets into one the same way that we blinded time points together! This will be the WCCL_prep data frame.
 
 ### 3) Recoding
 
@@ -867,17 +898,24 @@ The *Preschool and Kindergarten Behavior Scales*-Second Edition (*PKBS*-2) is a 
 
 ### 1) Importing
 
-Install all the [packages](#Help-Section) required for the project. You can find what's needed in the [Help Section](#Help-Section). 
-
-Read in all the CSVs needed. The files you'll need are located in your measure's folder. Check the [Help Section](#Help-Section) for example code.
+- Install all the [packages](#Help-Section) required for the project. You can find what's needed in the [Help Section](#Help-Section).
+- Read in all the CSVs needed. The files you'll need are located in your measure's folder. Check the [Help Section](#Help-Section) for example code.
 
 ### 2) Editing and Renaming
 
-Edit and rename the Pedigree so that it only has the information needed for the NDA structure. Name it MeasureName_prep because this will be used to prepare everything before you do the final move to the NDA structure. The measure will need the following from the pedigree:
+- Edit and rename UO and UPMC data so that it only has the information needed for the NDA structure. Reference the Item matching chat below to see what items you will need to select. See "Example of Selecting and Renaming UO/UPMC Data in a Measure" in the [Help Section](#Help-Section) for example code. 
 
-mom guid, mom famID, interview age, interview date, sex.
+- Next, now that all the measures for each time point from both sites have the same amount of columns and the same names for those columns, we will bind them together by time point. This will be combining *UO_T1_PKBS* and *UPMC_T1_PKBS* into one data frame called *PKBS_T1*. This will be repeated for each time point. See "Example of Binding UO and UPMC Data Frames by Time Point" in the [Help Section](#Help-Section) for example code.
 
-Next, take UO and UPMC time 1 data and add it to the MeasureName_prep data frame. Then add a column called "visit"  and append it to the end. Repeat this step for time 2, time 3, and time 4, changing the visit number respectively. 
+- Now that we have our 4 files separated by time point we want merge the relevant Pedigree information into our data frames. Modify the Pedigree information so that it only contains the relevant data for T1 and then merge by *FamID*. See "Example of Merging Pedigree info with the Data Frames" in the [Help Section](#Help-Section) for example code.
+
+  *<u>Relevant Pedigree information: mom guid, mom famID, T1-T4 Mom ages, T1-T4 interview dates, Mom sex.</u>*
+
+- At this step we should have 4 files containing UO and UPMC data separated by time point and all the relevant pedigree information should be merged into all 4 files. But because we merged slighted different information into our sheets the columns names currently do not match so we cannot yet merge all of our data frames into one. So, we'll rename the date and age columns in each data frame so that their columns match. See "Example of Renaming the Date and Age Columns so They Match" in the [Help Section](#Help-Section) for example code.
+
+- Before we do our final bind we will add a column to each data frame called timepoint and we'll give the contents of that column which ever time point that data set represents. See "Example of Adding a New Time Point Column and Adding a Value to it" in the [Help Section](#Help-Section) for example code.
+
+- Now we'll bind all 4 data sets into one the same way that we blinded time points together! This will be the PKBS_prep data frame.
 
 ### 3) Recoding
 
@@ -1170,20 +1208,82 @@ Now that your prep sheet is complete and contains all the columns as indicated i
    ```
 
 - **Example of Importing CSVs into Rstudio:** Below we are creating a data frame variable named Site_MeasureName_TimePoint and are assigning the contents of the 'FILEPATH' to it. This will need to be done to every time point from both sites. Also, the fake pedigree and the NDA structure needs to be imported as well. 
+   ```R
+   # Import Pedigree and NDA Structure
+   Pedigree <- read.csv("Reference_Pedigree.csv")
+   NDA_AAQ <- read.csv("acceptance01_template.csv")
+   
+   # Import AAQ Files 
+   UO_T1_AAQ <- read.csv("UO_T1_Qualtrics.csv", stringsAsFactors = FALSE)
+   UPMC_T1_AAQ <- read.csv("UPMC_T1_AAQ.csv", stringsAsFactors = FALSE)
+   UO_T2_AAQ <- read.csv("UO_T2_Qualtrics.csv", stringsAsFactors = FALSE)
+   UPMC_T2_AAQ <- read.csv("UPMC_T2_AAQ.csv", stringsAsFactors = FALSE)
+   UO_T3_AAQ <- read.csv("UO_T3_Qualtrics.csv", stringsAsFactors = FALSE)
+   UPMC_T3_AAQ <- read.csv("UPMC_T3_AAQ.csv", stringsAsFactors = FALSE)
+   UO_T4_AAQ <- read.csv("UO_T4_Qualtrics.csv", stringsAsFactors = FALSE)
+   UPMC_T4_AAQ <- read.csv("UPMC_T4_AAQ.csv", stringsAsFactors = FALSE)
+   ```
+   
+- **Example of Selecting and Renaming UO/UPMC Data in a Measure:** Below we are selecting an existing data frame and are selecting from that existing data frame the name of the columns we want. Anything not selected will not be added. Within the select statement we are also renaming the columns, anything before the equals sign is what the item to the right of the equals signed will be named. 
 
    ```R
-    UO_MeasureName_T1 <- read.csv(file = 'FILEPATH to Measure')
-    UO_MeasureName_T2 <- read.csv(file = 'FILEPATH to Measure')
-    UO_MeasureName_T3 <- read.csv(file = 'FILEPATH to Measure')
-    UO_MeasureName_T4 <- read.csv(file = 'FILEPATH to Measure')
-    UPMC_MeasureName_T1 <- read.csv(file = 'FILEPATH to Measure')
-    UPMC_MeasureName_T2 <- read.csv(file = 'FILEPATH to Measure')
-    UPMC_MeasureName_T3 <- read.csv(file = 'FILEPATH to Measure')
-    UPMC_MeasureName_T4 <- read.csv(file = 'FILEPATH to Measure')
-    Pedigree <- read.csv(file = 'FILEPATH to Fake Pedigree')
-    MeasureName_NDA <- read.csv(file = 'FILEPATH to NDA Structure')
+   # Edit UO AAQ Time 1 to only have needed items and rename the questions
+   UO_T1_AAQ <- select(UO_T1_AAQ, FamID = Q221, srm_aaq_01 = Q154_1, srm_aaq_02 = Q154_2, srm_aaq_03 = Q154_3, srm_aaq_04 = Q154_4, srm_aaq_05 = Q154_5, srm_aaq_06 = Q154_6, srm_aaq_07 = Q154_7, srm_aaq_08 = Q154_8, srm_aaq_09 = Q154_9, srm_aaq_10 = Q154_10)
+   
+   # Edit UPMC AAQ Time 1 to have only the needed items and rename the questions so that they match UO
+   UPMC_T1_AAQ <- select(UPMC_T1_AAQ, FamID = Q1.2, srm_aaq_01 = Q4.1_1, srm_aaq_02 = Q4.1_2, srm_aaq_03 = Q4.1_3, srm_aaq_04 = Q4.1_4, srm_aaq_05 = Q4.1_5, srm_aaq_06 = Q4.1_6, srm_aaq_07 = Q4.1_7, srm_aaq_08 = Q4.1_8, srm_aaq_09 = Q4.1_9, srm_aaq_10 = Q4.1_10)
+   ```
+   
+- **Example of Binding UO and UPMC Data Frames by Time Point:**
+
+   ```R
+   AAQ_T1 <- rbind(UO_T1_AAQ, UPMC_T1_AAQ)
+   AAQ_T2 <- rbind(UO_T2_AAQ, UPMC_T2_AAQ)
+   AAQ_T3 <- rbind(UO_T3_AAQ, UPMC_T3_AAQ)
+   AAQ_T4 <- rbind(UO_T4_AAQ, UPMC_T4_AAQ)
    ```
 
+- **Example of selecting pedigree info for each Time Point:**
+ 	
+   ```R
+   Pedigree_T1 <- select(Pedigree, FamID, FamID_Mother, mom_guid, MomGender, Time1Date, MomAge_T1)
+   Pedigree_T2 <- select(Pedigree, FamID, FamID_Mother, mom_guid, MomGender, Time2Date, MomAge_T2)
+   Pedigree_T3 <- select(Pedigree, FamID, FamID_Mother, mom_guid, MomGender, Time3Date, MomAge_T3)
+	Pedigree_T4 <- select(Pedigree, FamID, FamID_Mother, mom_guid, MomGender, Time4Date, MomAge_T4)
+	```
+- **Example of Merging Pedigree info with the Data Frames:**
+    	
+
+   ```R
+   AAQ_T1 <- merge(Pedigree_T1, AAQ_T1, by = 'FamID')
+   AAQ_T2 <- merge(Pedigree_T2, AAQ_T2, by = 'FamID')
+   AAQ_T3 <- merge(Pedigree_T3, AAQ_T3, by = 'FamID')
+   AAQ_T4 <- merge(Pedigree_T4, AAQ_T4, by = 'FamID')
+   ```
+- **Example of Renaming the Date and Age Columns so They Match:**
+    	
+
+   ```R
+   AAQ_T1 <- AAQ_T1 %>% rename( interview_date = Time1Date, interview_age = MomAge_T1)
+   AAQ_T2 <- AAQ_T2 %>% rename( interview_date = Time2Date, interview_age = MomAge_T2)
+   AAQ_T3 <- AAQ_T3 %>% rename( interview_date = Time3Date, interview_age = MomAge_T3)
+   AAQ_T4 <- AAQ_T4 %>% rename( interview_date = Time4Date, interview_age = MomAge_T4)
+   ```
+- **Example of Adding a New Time Point Column and Adding a Value to it:**
+    	
+
+   ```R
+   AAQ_T1$timepoint <- "Time 1"
+   AAQ_T2$timepoint <- "Time 2"
+   AAQ_T3$timepoint <- "Time 3"
+   AAQ_T4$timepoint <- "Time 4"
+   ```
+- **Example of Clearing your Global Environment of Specific Items:**
+ 	
+   
+   ```R
+   rm(AAQ_T1, AAQ_T2, AAQ_T3, AAQ_T4)
+   ```
 ---
 
 ![](https://media.giphy.com/media/3o7btSQvfKibGpkk9i/giphy.gif)
