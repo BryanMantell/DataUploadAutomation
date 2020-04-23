@@ -479,6 +479,16 @@ Now that your prep sheet is complete and contains all the columns as indicated i
 | Q15.1_98                                | Q264_98                       | srm_cbcl_098    | cbcl_withdr             |
 | Q15.1_99                                | Q264_99                       | srm_cbcl_099        | cbcl112                 |
 | Q15.1_100                                | Q264_100                      | srm_cbcl_100   | cbcl113a                |
+| N/A | N/A | srm_cbcl_er | N/A |
+| N/A | N/A | srm_cbcl_ad | N/A |
+| N/A | N/A | srm_cbcl_sc | N/A |
+| N/A | N/A | srm_cbcl_w | N/A |
+| N/A | N/A | srm_cbcl_sp | N/A |
+| N/A | N/A | srm_cbcl_ap | N/A |
+| N/A | N/A | srm_cbcl_ab | N/A |
+| N/A | N/A | srm_cbcl_op | N/A |
+| N/A | N/A | srm_cbcl_int | N/A |
+| N/A | N/A | srm_cbcl_ext | N/A |
 | N/A | N/A | srm_cbcl_total | cbcl_total_raw |
 
 [Back to Table of Contents](#Table-of-Contents)
@@ -1199,12 +1209,13 @@ Now that your prep sheet is complete and contains all the columns as indicated i
 
    ```r
    #install package, this only need to be done once.
-   install.packages("dplyr","tidyverse","eeptools")
+   install.packages("dplyr","tidyverse","eeptools", "data.table")
    #load package, this need to be done every time you run this script. 
-   #Can be understand as we install light bulb once, and everytime we enter the room, we need turn       on the light
+   #Can be understand as we install light bulb once, and everytime we enter the room, we need turn on the light
    library(dplyr)
    library(tidyverse)
    library(eeptools)
+   library(data.table)
    ```
 
 - **Example of Importing CSVs into Rstudio:** Below we are creating a data frame variable named Site_MeasureName_TimePoint and are assigning the contents of the 'FILEPATH' to it. This will need to be done to every time point from both sites. Also, the fake pedigree and the NDA structure needs to be imported as well. 
@@ -1280,7 +1291,7 @@ Now that your prep sheet is complete and contains all the columns as indicated i
    ```
 - **Example of Clearing your Global Environment of Specific Items:**
  	
-   
+  
    ```R
    rm(AAQ_T1, AAQ_T2, AAQ_T3, AAQ_T4)
    ```

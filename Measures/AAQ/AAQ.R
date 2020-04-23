@@ -4,6 +4,7 @@
 library(dplyr)
 library(tidyverse)
 library(eeptools)
+library(data.table)
 
 # Import Pedigree and NDA Structure
 Pedigree <- read.csv("Reference_Pedigree.csv")
@@ -19,33 +20,40 @@ UPMC_T3_AAQ <- read.csv("UPMC_T3_AAQ.csv", stringsAsFactors = FALSE)
 UO_T4_AAQ <- read.csv("UO_T4_Qualtrics.csv", stringsAsFactors = FALSE)
 UPMC_T4_AAQ <- read.csv("UPMC_T4_AAQ.csv", stringsAsFactors = FALSE)
 
-# Edit UO AAQ Time 1 - 4 to have only the needed items
-UO_T1_AAQ <- select(UO_T1_AAQ, FamID = Q221, srm_aaq_01 = Q154_1, srm_aaq_02 = Q154_2, srm_aaq_03 = Q154_3, 
-                    srm_aaq_04 = Q154_4, srm_aaq_05 = Q154_5, srm_aaq_06 = Q154_6, srm_aaq_07 = Q154_7, 
-                    srm_aaq_08 = Q154_8, srm_aaq_09 = Q154_9, srm_aaq_10 = Q154_10)
-UO_T2_AAQ <- select(UO_T2_AAQ, FamID = Q116, srm_aaq_01 = Q154_1, srm_aaq_02 = Q154_2, srm_aaq_03 = Q154_3, 
-                    srm_aaq_04 = Q154_4, srm_aaq_05 = Q154_5, srm_aaq_06 = Q154_6, srm_aaq_07 = Q154_7, 
-                    srm_aaq_08 = Q154_8, srm_aaq_09 = Q154_9, srm_aaq_10 = Q154_10)
-UO_T3_AAQ <- select(UO_T3_AAQ, FamID = Q174, srm_aaq_01 = Q154_1, srm_aaq_02 = Q154_2, srm_aaq_03 = Q154_3, 
-                    srm_aaq_04 = Q154_4, srm_aaq_05 = Q154_5, srm_aaq_06 = Q154_6, srm_aaq_07 = Q154_7, 
-                    srm_aaq_08 = Q154_8, srm_aaq_09 = Q154_9, srm_aaq_10 = Q154_10)
-UO_T4_AAQ <- select(UO_T4_AAQ, FamID = Q203, srm_aaq_01 = Q154_1, srm_aaq_02 = Q154_2, srm_aaq_03 = Q154_3, 
-                    srm_aaq_04 = Q154_4, srm_aaq_05 = Q154_5, srm_aaq_06 = Q154_6, srm_aaq_07 = Q154_7, 
-                    srm_aaq_08 = Q154_8, srm_aaq_09 = Q154_9, srm_aaq_10 = Q154_10)
+# Create list of new variable names 
+aaq <- "srm_aaq"
+num_items <- seq(1:10)
+new_AAQ_names <- paste(aaq, num_items, sep='_')
 
-# Edit UPMC AAQ Time 1 - 4 to have only the needed items
-UPMC_T1_AAQ <- select(UPMC_T1_AAQ, FamID = Q1.2, srm_aaq_01 = Q4.1_1, srm_aaq_02 = Q4.1_2, srm_aaq_03 = Q4.1_3, 
-                      srm_aaq_04 = Q4.1_4, srm_aaq_05 = Q4.1_5, srm_aaq_06 = Q4.1_6, srm_aaq_07 = Q4.1_7, srm_aaq_08 = Q4.1_8,
-                      srm_aaq_09 = Q4.1_9, srm_aaq_10 = Q4.1_10)
-UPMC_T2_AAQ <- select(UPMC_T2_AAQ, FamID = Q1.2, srm_aaq_01 = Q4.1_1, srm_aaq_02 = Q4.1_2, srm_aaq_03 = Q4.1_3, 
-                      srm_aaq_04 = Q4.1_4, srm_aaq_05 = Q4.1_5, srm_aaq_06 = Q4.1_6, srm_aaq_07 = Q4.1_7, srm_aaq_08 = Q4.1_8,
-                      srm_aaq_09 = Q4.1_9, srm_aaq_10 = Q4.1_10)
-UPMC_T3_AAQ <- select(UPMC_T3_AAQ, FamID = Q1.2, srm_aaq_01 = Q4.1_1, srm_aaq_02 = Q4.1_2, srm_aaq_03 = Q4.1_3, 
-                      srm_aaq_04 = Q4.1_4, srm_aaq_05 = Q4.1_5, srm_aaq_06 = Q4.1_6, srm_aaq_07 = Q4.1_7, srm_aaq_08 = Q4.1_8,
-                      srm_aaq_09 = Q4.1_9, srm_aaq_10 = Q4.1_10)
-UPMC_T4_AAQ <- select(UPMC_T4_AAQ, FamID = Q1.2, srm_aaq_01 = Q4.1_1, srm_aaq_02 = Q4.1_2, srm_aaq_03 = Q4.1_3, 
-                      srm_aaq_04 = Q4.1_4, srm_aaq_05 = Q4.1_5, srm_aaq_06 = Q4.1_6, srm_aaq_07 = Q4.1_7, srm_aaq_08 = Q4.1_8,
-                      srm_aaq_09 = Q4.1_9, srm_aaq_10 = Q4.1_10)
+# Create list of old variable names so we can replace them with the new ones 
+UO_Q154 <- "Q154"
+UPMC_Q4 <- "Q4.1"
+old_UO_AAQ_names <- paste(UO_Q154, num_items, sep = "_")
+old_UPMC_AAQ_names <- paste(UPMC_Q4, num_items, sep = "_")
+
+# Replace UO column names 
+setnames(UO_T1_AAQ, old_UO_AAQ_names, new_AAQ_names)
+setnames(UO_T2_AAQ, old_UO_AAQ_names, new_AAQ_names)
+setnames(UO_T3_AAQ, old_UO_AAQ_names, new_AAQ_names)
+setnames(UO_T4_AAQ, old_UO_AAQ_names, new_AAQ_names)
+
+# Replace UPMC column names
+setnames(UPMC_T1_AAQ, old_UPMC_AAQ_names, new_AAQ_names)
+setnames(UPMC_T2_AAQ, old_UPMC_AAQ_names, new_AAQ_names)
+setnames(UPMC_T3_AAQ, old_UPMC_AAQ_names, new_AAQ_names)
+setnames(UPMC_T4_AAQ, old_UPMC_AAQ_names, new_AAQ_names)
+
+# Edit UO AAQ Time 1 - 4 to have only AAQ quesions and the FamID. 
+UO_T1_AAQ <- select(UO_T1_AAQ, c(FamID = Q221, contains("aaq")))
+UO_T2_AAQ <- select(UO_T2_AAQ, c(FamID = Q116, contains("aaq")))
+UO_T3_AAQ <- select(UO_T3_AAQ, c(FamID = Q174, contains("aaq")))
+UO_T4_AAQ <- select(UO_T4_AAQ, c(FamID = Q203, contains("aaq")))
+  
+# Edit UPMC AAQ Time 1 - 4 to have only AAQ quesions and the FamID.
+UPMC_T1_AAQ <- select(UPMC_T1_AAQ, c(FamID = Q1.2, contains("aaq")))
+UPMC_T2_AAQ <- select(UPMC_T2_AAQ, c(FamID = Q1.2, contains("aaq")))
+UPMC_T3_AAQ <- select(UPMC_T3_AAQ, c(FamID = Q1.2, contains("aaq")))
+UPMC_T4_AAQ <- select(UPMC_T4_AAQ, c(FamID = Q1.2, contains("aaq")))
 
 # Bind UO and UPMC AAQ Data By Time Point
 AAQ_T1 <- rbind(UO_T1_AAQ, UPMC_T1_AAQ)
@@ -103,28 +111,8 @@ AAQ_Prep <- add_column(AAQ_Prep, aaq_total = rowSums(AAQ_Prep[, c("srm_aaq_01", 
 
 # Reorder the AAQ_Prep sheet 
 
-NDA_AAQ$subjectkey <- pull(AAQ_Prep$FamID_Mother) 
-Test<-pull(NDA_AAQ)
-
-NDA<-AAQ_Prep
 
 
-df$valueBin <- cut(df$value, c(-Inf, 250, 500, 1000, 2000, Inf), 
-                   labels=c('<=250', '250-500', '500-1,000', '1,000-2,000', '>2,000'))
 
-#ders <- "ders"
-#number_of_question <- ncol(DERS_PREP %>% select(starts_with("ders")))
-#number_list <- seq(1:number_of_question)
-#DERS_names <- paste(ders,number_list,sep='')
-
-#create list of new header 
-#ders <- "srm_ders"
-#number_of_survey <- seq(1:36)
-#DERS_names <- paste(ders,number_of_survey,sep='_')
-#create list of old header name 
-#Q137 <- "Q137"
-#old_DERS_name <- paste(Q137, number_of_survey,sep = "_")
-#change column names 
-#setnames(DERS_PREP, old = old_DERS_name, new = DERS_names)
 
 
