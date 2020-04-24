@@ -16,21 +16,21 @@ The current process for doing the data upload is needlessly tedious, time consum
 
 | Measures               | Assigned To... | Status      |
 | ------------------------- | ------ | ----------- |
-| [Pedigree](#Research-Subject-Pedigree) | TBD            | In Progress |
+| [Pedigree](#Research-Subject-Pedigree) | Bryan       | In Progress |
 | [SCID](#Structured-Clinical-Interview-for-DSM-V---SCID) |TBD|In Progress |
 | [SID-P](#Structured-Interview-for-DSM-IV-Personality---SID-P) | TBD | In Progress |
 | [PPVT](#Peabody-Picture-Vocabulary-Test---PPVT) | TBD | In Progress |
-| [DERS](#Difficulties-in-Emotion-Regulation-Scale---DERS) | TBD | In Progress |
+| [DERS](#Difficulties-in-Emotion-Regulation-Scale---DERS) | Bryan | In Progress |
 | [CBCL](#Child-Behavior-Checklist---CBCL) | Austin | In Progress |
 | [CCNES](#Coping-with-Children's-Negative-Emotions-Scale---CCNES) | Min | In Progress |
 | [AAQ](#Acceptance-and-Action-Questionnaire---AAQ) | Bryan | In Progress |
 | [WCCL](#Ways-of-Coping-Checklist---WCCL) | Kyle | In Progress |
 | [PKBS](#Preschool-and-Kindergarten-Behavior-Scale---PKBS) | Jake | In Progress |
-| [Bear Dragon](#Bear-Dragon)             | TBD | In Progress |
-| [Affect Perspective Taking](Affect-Perspective-Taking) | TBD | In Progress |
-| [Dimensional Card Sort](#Dimensional-Card-Sort) | TBD | In Progress |
-| [Emotion Labeling](#Emotion-Labeling) | TBD | In Progress |
-| [Emotion Strategies](#Emotion-Strategies) | TBD | In Progress |
+| [Bear Dragon](#Bear-Dragon)             | Jake | In Progress |
+| [Affect Perspective Taking](Affect-Perspective-Taking) | Bryan | In Progress |
+| [Dimensional Card Sort](#Dimensional-Card-Sort) | Min | In Progress |
+| [Emotion Labeling](#Emotion-Labeling) | Kyle | In Progress |
+| [Emotion Strategies](#Emotion-Strategies) | Austin | In Progress |
 
 ---
 
@@ -1238,11 +1238,40 @@ Now that your prep sheet is complete and contains all the columns as indicated i
 - **Example of Selecting and Renaming UO/UPMC Data in a Measure:** Below we are selecting an existing data frame and are selecting from that existing data frame the name of the columns we want. Anything not selected will not be added. Within the select statement we are also renaming the columns, anything before the equals sign is what the item to the right of the equals signed will be named. 
 
    ```R
-   # Edit UO AAQ Time 1 to only have needed items and rename the questions
-   UO_T1_AAQ <- select(UO_T1_AAQ, FamID = Q221, srm_aaq_01 = Q154_1, srm_aaq_02 = Q154_2, srm_aaq_03 = Q154_3, srm_aaq_04 = Q154_4, srm_aaq_05 = Q154_5, srm_aaq_06 = Q154_6, srm_aaq_07 = Q154_7, srm_aaq_08 = Q154_8, srm_aaq_09 = Q154_9, srm_aaq_10 = Q154_10)
+   # Create list of new variable names 
+   aaq <- "srm_aaq"
+   num_items <- seq(1:10)
+   new_AAQ_names <- paste(aaq, num_items, sep='_')
    
-   # Edit UPMC AAQ Time 1 to have only the needed items and rename the questions so that they match UO
-   UPMC_T1_AAQ <- select(UPMC_T1_AAQ, FamID = Q1.2, srm_aaq_01 = Q4.1_1, srm_aaq_02 = Q4.1_2, srm_aaq_03 = Q4.1_3, srm_aaq_04 = Q4.1_4, srm_aaq_05 = Q4.1_5, srm_aaq_06 = Q4.1_6, srm_aaq_07 = Q4.1_7, srm_aaq_08 = Q4.1_8, srm_aaq_09 = Q4.1_9, srm_aaq_10 = Q4.1_10)
+   # Create list of old variable names so we can replace them with the new ones 
+   UO_Q154 <- "Q154"
+   UPMC_Q4 <- "Q4.1"
+   old_UO_AAQ_names <- paste(UO_Q154, num_items, sep = "_")
+   old_UPMC_AAQ_names <- paste(UPMC_Q4, num_items, sep = "_")
+   
+   # Replace UO column names 
+   setnames(UO_T1_AAQ, old_UO_AAQ_names, new_AAQ_names)
+   setnames(UO_T2_AAQ, old_UO_AAQ_names, new_AAQ_names)
+   setnames(UO_T3_AAQ, old_UO_AAQ_names, new_AAQ_names)
+   setnames(UO_T4_AAQ, old_UO_AAQ_names, new_AAQ_names)
+   
+   # Replace UPMC column names
+   setnames(UPMC_T1_AAQ, old_UPMC_AAQ_names, new_AAQ_names)
+   setnames(UPMC_T2_AAQ, old_UPMC_AAQ_names, new_AAQ_names)
+   setnames(UPMC_T3_AAQ, old_UPMC_AAQ_names, new_AAQ_names)
+   setnames(UPMC_T4_AAQ, old_UPMC_AAQ_names, new_AAQ_names)
+   
+   # Edit UO AAQ Time 1 - 4 to have only AAQ quesions and the FamID. 
+   UO_T1_AAQ <- select(UO_T1_AAQ, c(FamID = Q221, contains("aaq")))
+   UO_T2_AAQ <- select(UO_T2_AAQ, c(FamID = Q116, contains("aaq")))
+   UO_T3_AAQ <- select(UO_T3_AAQ, c(FamID = Q174, contains("aaq")))
+   UO_T4_AAQ <- select(UO_T4_AAQ, c(FamID = Q203, contains("aaq")))
+     
+   # Edit UPMC AAQ Time 1 - 4 to have only AAQ quesions and the FamID.
+   UPMC_T1_AAQ <- select(UPMC_T1_AAQ, c(FamID = Q1.2, contains("aaq")))
+   UPMC_T2_AAQ <- select(UPMC_T2_AAQ, c(FamID = Q1.2, contains("aaq")))
+   UPMC_T3_AAQ <- select(UPMC_T3_AAQ, c(FamID = Q1.2, contains("aaq")))
+   UPMC_T4_AAQ <- select(UPMC_T4_AAQ, c(FamID = Q1.2, contains("aaq")))
    ```
    
 - **Example of Binding UO and UPMC Data Frames by Time Point:**
