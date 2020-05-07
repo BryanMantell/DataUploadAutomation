@@ -27,7 +27,7 @@ UPMC_CCNES_T3 <- read.csv("UPMC_T3_CCNES.csv")
 UPMC_CCNES_T4 <- read.csv("UPMC_T4_CCNES.csv")
 
 #NDA Structure
-NDA_CCNES <- read.csv("pabq01_template.csv", skip=1)
+NDA_CCNES <- read.csv("pabq01_template.csv", skip=1, stringsAsFactors = TRUE)
 
 
 # Prep --------------------------------------------------------------------
@@ -63,6 +63,7 @@ new_CCNES_names[c(7,39,45,55)]<-paste(new_CCNES_names[c(7,39,45,55)],"r", sep = 
 # Create an empty list
 odd_UO_CCNES_names <-c()
 # for each item in UO paste number 1 to 6
+# sprintf used to formate str
 for (i in sprintf("Q%03d",140:151)){
   name <- paste(i, 1:6, sep = "_")
   odd_UO_CCNES_names <- c(odd_UO_CCNES_names, name)
@@ -75,7 +76,7 @@ for (i in sprintf("Q10.%d",2:13)) {
   odd_UPMC_CCNES_names <- c(odd_UPMC_CCNES_names, Name)
 }
 
-# Create second list of UPMC bariable names 
+# Create second list of UPMC variable names 
 odd_UPMC_CCNES_names2 <-c()
 for (i in sprintf("Q8.%d",2:13)) {
   Name <- paste (i, 1:6, sep = "_")
@@ -139,6 +140,8 @@ CCNES_PREP <- CCNES_PREP %>%
                         '6' = 2,
                         '7' = 1,.default = NaN)))
 
+
+
 # Calculated Columns
 CCNES_PREP$ccnes_DR <- rowMeans(CCNES_PREP[,c("srm_ccnes_02", "srm_ccnes_07r", "srm_ccnes_13", 
                                               "srm_ccnes_22", "srm_ccnes_29", "srm_ccnes_33", 
@@ -168,5 +171,33 @@ CCNES_PREP$ccnes_MR <- rowMeans(CCNES_PREP[,c("srm_ccnes_04", "srm_ccnes_09", "s
                                               "srm_ccnes_21", "srm_ccnes_27", "srm_ccnes_32", 
                                               "srm_ccnes_40", "srm_ccnes_46", "srm_ccnes_51", 
                                               "srm_ccnes_60", "srm_ccnes_61", "srm_ccnes_72")], na.rm = TRUE)
+
+
+
+
+
+#still working on .. 
 # NDA column names
-NDA_Names <- names(NDA_CCNES)
+pabq<-paste("pabq",1:12, sep = "")
+
+NDA_Names <-c()
+for (i in pabq) {
+  Name <- paste (i, letters[seq(1:6)], sep = "")
+  NDA_Names <- c(NDA_Names, Name)
+}
+
+NDA_Names_Org<-names(NDA_CCNES)
+# Rename to NDA name
+setnames(CCNES_PREP, new_CCNES_names, NDA_Names)
+
+NDA_CCNES<-NDA_CCNES%>%
+  mutate_at(NDA_Names,NDA_CCNES<-CCNES_PREP)
+
+NDA_CCNES <- 
+  rbind(CCNES_PREP,NDA_CCNES)
+nes<-right_join(CCNES_PREP,NDA_CCNES,by=NULL,copy=FALSE, suffix=c("x","y"))
+
+a <- c(1,2,3,4,NaN)
+b <- c(1,2,3,4)
+sum(a)
+mean(a)
