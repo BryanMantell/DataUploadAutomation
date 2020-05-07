@@ -1,0 +1,33 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1588214026270.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "26A430DA",
+    "lastKnownWriteTime" : 7598543875853023333,
+    "last_content_update" : 1588214026270,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "C906AE64",
+        "caption" : "UO_T1_AAQ",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=UO_T1_AAQ&cache_key=C906AE64",
+        "displayedObservations" : "7",
+        "environment" : "",
+        "expression" : "UO_T1_AAQ",
+        "object" : "UO_T1_AAQ",
+        "preview" : "0",
+        "totalObservations" : "7",
+        "variables" : "613"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}
