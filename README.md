@@ -123,74 +123,74 @@ The DERS is a classroom observation tool that measures environmental and behavio
 
 Take the following text strings and turn them into integers using the key below.
 
-| Text String         | Integer |
-| :------------------ | :------ |
-| almost never        | 1       |
-| sometimes           | 2       |
-| about half the time | 3       |
-| most of the time    | 4       |
-| almost always       | 5       |
+| Text String                   | Integer |
+| :---------------------------- | :------ |
+| Almost Never (0-10%)          | 1       |
+| Sometimes (11%-35%)           | 2       |
+| About half the time (36%-65%) | 3       |
+| Most of the time (66-90%)     | 4       |
+| Almost Always (91-100%)       | 5       |
 
 Take the following question items and reverse score them as the chart indicates.
 
 | Question Number |        New Value        |
 | :-------------: | :---------------------: |
-|     ders001     | 1=5, 2=4, 3=3, 4=2. 5=1 |
-|     ders002     | 1=5, 2=4, 3=3, 4=2. 5=1 |
-|     ders006     | 1=5, 2=4, 3=3, 4=2. 5=1 |
-|     ders007     | 1=5, 2=4, 3=3, 4=2. 5=1 |
-|     ders008     | 1=5, 2=4, 3=3, 4=2. 5=1 |
-|     ders010     | 1=5, 2=4, 3=3, 4=2. 5=1 |
-|     ders017     | 1=5, 2=4, 3=3, 4=2. 5=1 |
-|     ders020     | 1=5, 2=4, 3=3, 4=2. 5=1 |
-|     ders022     | 1=5, 2=4, 3=3, 4=2. 5=1 |
-|     ders024     | 1=5, 2=4, 3=3, 4=2. 5=1 |
-|     ders034     | 1=5, 2=4, 3=3, 4=2. 5=1 |
+|   srm_ders_01   | 1=5, 2=4, 3=3, 4=2. 5=1 |
+|   srm_ders_02   | 1=5, 2=4, 3=3, 4=2. 5=1 |
+|   srm_ders_06   | 1=5, 2=4, 3=3, 4=2. 5=1 |
+|   srm_ders_07   | 1=5, 2=4, 3=3, 4=2. 5=1 |
+|   srm_ders_08   | 1=5, 2=4, 3=3, 4=2. 5=1 |
+|   srm_ders_10   | 1=5, 2=4, 3=3, 4=2. 5=1 |
+|   srm_ders_17   | 1=5, 2=4, 3=3, 4=2. 5=1 |
+|   srm_ders_20   | 1=5, 2=4, 3=3, 4=2. 5=1 |
+|   srm_ders_22   | 1=5, 2=4, 3=3, 4=2. 5=1 |
+|   srm_ders_24   | 1=5, 2=4, 3=3, 4=2. 5=1 |
+|   srm_ders_34   | 1=5, 2=4, 3=3, 4=2. 5=1 |
 
 ### 4) Create calculated Columns
 
-Insert the following columns at the end of your MeasureName_Prep sheet:
+Insert the following columns at the end of your DERS_Prep sheet:
 
 1. Column **ders_awareness:** The scoring for ders_awareness is the **SUM** of these items: 
 
    ```
-   ders_02, ders_06, ders_08, ders_10, ders_17, ders_34 
+   srm_ders_02r, srm_ders_06r, srm_ders_08r, srm_ders_10r, srm_ders_17r, srm_ders_34r 
    ```
 
 2. Column **ders_clarity:** The scoring for ders_clarity is the **SUM** of these items:
 
    ```
-   ders_01, ders_04, ders_05, ders_07, ders_09
+   srm_ders_01r, srm_ders_04, srm_ders_05, srm_ders_07r, srm_ders_09
    ```
 
 3. Column **ders_goals**: The scoring for ders_goals is the **SUM** of these items:
 
    ```
-   ders_13, ders_18, ders_20, ders_26, ders_33
+   srm_ders_13, srm_ders_18, srm_ders_20r, srm_ders_26, srm_ders_33
    ```
 
 4. Column **ders_impulse**: The scoring for ders_impulse is the **SUM** of these items:
 
    ```
-   ders_03, ders_14, ders_19, ders_24, ders_27, ders_32
+   srm_ders_03, srm_ders_14, srm_ders_19, srm_ders_24r, srm_ders_27, srm_ders_32
    ```
 
 5. Column **ders_nonacceptance**: The scoring for ders_nonacceptance is the **SUM** of these items:
 
    ```
-   ders_11, ders_12, ders_21, ders_23, ders_25, ders_29
+   srm_ders_11, srm_ders_12, srm_ders_21, srm_ders_23, srm_ders_25, srm_ders_29
    ```
 
 6. Column **ders_strategies**: The scoring for ders_strategies is the **SUM** of these items:
 
    ```
-   ders_15, ders_16, ders_22, ders_28, ders_30, ders_31, ders_35, ders_36
+   srm_ders_15, srm_ders_16, srm_ders_22r, srm_ders_28, srm_ders_30, srm_ders_31, srm_ders_35, srm_ders_36
    ```
 
 7. Column **ders_total:** The scoring for ders_total is the **SUM** of these items:
 
    ```
-   ders_01, ders_02, ders_03, ders_04, ders_05, ders_06, ders_07, ders_08, ders_09, ders_10, ders_11, ders_12, ders_13, ders_14, ders_15, ders_16, ders_17, ders_18, ders_19, ders_20, ders_21, ders_22, ders_23, ders_24, ders_25, ders_26, ders_27, ders_28, ders_29, ders_30, ders_31, ders_32, ders_33, ders_34, ders_35, ders_36  
+   srm_ders_01r, srm_ders_02r, srm_ders_03, srm_ders_04, srm_ders_05, srm_ders_06r, srm_ders_07r, srm_ders_08r, srm_ders_09, srm_ders_10r, srm_ders_11, srm_ders_12, srm_ders_13, srm_ders_14, srm_ders_15, srm_ders_16, srm_ders_17r, srm_ders_18, srm_ders_19, srm_ders_20r, srm_ders_21, srm_ders_22r, srm_ders_23, srm_ders_24r, srm_ders_25, srm_ders_26, srm_ders_27, srm_ders_28, srm_ders_29, srm_ders_30, srm_ders_31, srm_ders_32, srm_ders_33, srm_ders_34r, srm_ders_35, srm_ders_36  
    ```
 
 ### 5) Add to the NDA Structure 
@@ -207,30 +207,30 @@ Now that your prep sheet is complete and contain all the columns as indicated in
 | N/A                                   | N/A                                 | interview_date     | interview_date            |
 | N/A                                   | N/A                                 | sex                | sex                       |
 | N/A                                   | N/A                                 | timepoint          | visit                     |
-| Q6.1_1                                | Q137_1                              | srm_ders_01            | ders1                     |
-| Q6.1_2                                | Q137_2                              | srm_ders_02            | ders2                     |
-| Q6.1_3                                | Q137_3                              | srm_ders_03            | ders3                     |
-| Q6.1_4                                | Q137_4                              | srm_ders_04            | ders4                     |
-| Q6.1_5                                | Q137_5                              | srm_ders_05            | ders5                     |
-| Q6.1_6                                | Q137_6                              | srm_ders_06            | ders6                     |
-| Q6.1_7                                | Q137_7                              | srm_ders_07            | ders7                     |
-| Q6.1_8                                | Q137_8                              | srm_ders_08            | ders8                     |
-| Q6.1_9                                | Q137_9                              | srm_ders_09            | ders9                     |
-| Q6.1_10                               | Q137_10                             | srm_ders_10            | ders10                    |
+| Q6.1_1                                | Q137_1                              | srm_ders_01r          | ders1                     |
+| Q6.1_2                                | Q137_2                              | srm_ders_02r          | ders2                     |
+| Q6.1_3                                | Q137_3                              | srm_ders_03           | ders3                     |
+| Q6.1_4                                | Q137_4                              | srm_ders_04           | ders4                     |
+| Q6.1_5                                | Q137_5                              | srm_ders_05           | ders5                     |
+| Q6.1_6                                | Q137_6                              | srm_ders_06r          | ders6                     |
+| Q6.1_7                                | Q137_7                              | srm_ders_07r          | ders7                     |
+| Q6.1_8                                | Q137_8                              | srm_ders_08r          | ders8                     |
+| Q6.1_9                                | Q137_9                              | srm_ders_09           | ders9                     |
+| Q6.1_10                               | Q137_10                             | srm_ders_10r           | ders10                    |
 | Q6.1_11                               | Q137_11                             | srm_ders_11            | ders11                    |
 | Q6.1_12                               | Q137_12                             | srm_ders_12            | ders12                    |
 | Q6.1_13                               | Q137_13                             | srm_ders_13            | ders13                    |
 | Q6.1_14                               | Q137_14                             | srm_ders_14            | ders14                    |
 | Q6.1_15                               | Q137_15                             | srm_ders_15            | ders15                    |
 | Q6.1_16                               | Q137_16                             | srm_ders_16            | ders16                    |
-| Q6.1_17                               | Q137_17                             | srm_ders_17            | ders17                    |
+| Q6.1_17                               | Q137_17                             | srm_ders_17r           | ders17                    |
 | Q6.1_18                               | Q137_18                             | srm_ders_18            | ders18                    |
 | Q6.1_19                               | Q137_19                             | srm_ders_19            | ders19                    |
-| Q6.1_20                               | Q137_20                             | srm_ders_20            | ders20                    |
+| Q6.1_20                               | Q137_20                             | srm_ders_20r           | ders20                    |
 | Q6.1_21                               | Q137_21                             | srm_ders_21            | ders21                    |
-| Q6.1_22                               | Q137_22                             | srm_ders_22            | ders22                    |
+| Q6.1_22                               | Q137_22                             | srm_ders_22r           | ders22                    |
 | Q6.1_23                               | Q137_23                             | srm_ders_23            | ders23                    |
-| Q6.1_24                               | Q137_24                             | srm_ders_24            | ders24                    |
+| Q6.1_24                               | Q137_24                             | srm_ders_24r           | ders24                    |
 | Q6.1_25                               | Q137_25                             | srm_ders_25            | ders25                    |
 | Q6.1_26                               | Q137_26                             | srm_ders_26            | ders26                    |
 | Q6.1_27                               | Q137_27                             | srm_ders_27            | ders27                    |
@@ -240,16 +240,16 @@ Now that your prep sheet is complete and contain all the columns as indicated in
 | Q6.1_31                               | Q137_31                             | srm_ders_31            | ders31                    |
 | Q6.1_32                               | Q137_32                             | srm_ders_32            | ders32                    |
 | Q6.1_33                               | Q137_33                             | srm_ders_33            | ders33                    |
-| Q6.1_34                               | Q137_34                             | srm_ders_34            | ders34                    |
+| Q6.1_34                               | Q137_34                             | srm_ders_34r           | ders34                    |
 | Q6.1_35                               | Q137_35                             | srm_ders_35            | ders35                    |
 | Q6.1_36                               | Q137_36                             | srm_ders_36            | ders36                    |
-| N/A                                   | N/A                                 | srm_ders_awareness     | ders_awareness            |
-| N/A                                   | N/A                                 | srm_ders_clarity       | ders_clarity              |
-| N/A                                   | N/A                                 | srm_ders_goals         | ders_goals                |
-| N/A                                   | N/A                                 | srm_ders_impulse       | ders_impulse              |
-| N/A                                   | N/A                                 | srm_ders_nonacceptance | ders_nonacceptance        |
-| N/A                                   | N/A                                 | srm_ders_strategies    | ders_strategies           |
-| N/A                                   | N/A                                 | srm_ders_total         | ders_total                |
+| N/A                                   | N/A                                 | ders_awareness     | ders_awareness            |
+| N/A                                   | N/A                                 | ders_clarity       | ders_clarity              |
+| N/A                                   | N/A                                 | ders_goals         | ders_goals                |
+| N/A                                   | N/A                                 | ders_impulse       | ders_impulse              |
+| N/A                                   | N/A                                 | ders_nonacceptance | ders_nonacceptance        |
+| N/A                                   | N/A                                 | ders_strategies    | ders_strategies           |
+| N/A                                   | N/A                                 | ders_total         | ders_total                |
 
 [Back to Table of Contents](#Table-of-Contents)
 
@@ -295,72 +295,72 @@ Take the following text strings and turn them into integers using the key below:
 
 ### 4) Create calculated Columns
 
-Insert the following columns at the end of your MeasureName_Prep sheet:
+Insert the following columns at the end of your CBCL_Prep sheet:
 
-1. Column **srm_cbcl_er:** The scoring for srm_cbcl_er is the **SUM** of these items: 
-
-   ```R
-   cbcl_021, cbcl_046, cbcl_051, cbcl_079, cbcl_082, cbcl_083, cbcl_092, cbcl_097, cbcl_099
-   ```
-
-2. Column **srm_cbcl_ad:** The scoring for srm_cbcl_ad is the **SUM** of these items:
+1. Column **cbcl_er:** The scoring for cbcl_er is the **SUM** of these items: 
 
    ```R
-   cbcl_010, cbcl_033, cbcl_037, cbcl_043, cbcl_047, cbcl_068, cbcl_087, cbcl_090
+   srm_cbcl_021, srm_cbcl_046, srm_cbcl_051, srm_cbcl_079, srm_cbcl_082, srm_cbcl_083, srm_cbcl_092, srm_cbcl_097, srm_cbcl_099
    ```
 
-3. Column **srm_cbcl_sc:** The scoring for srm_cbcl_sc is the **SUM** of these items:
+2. Column **cbcl_ad:** The scoring for cbcl_ad is the **SUM** of these items:
 
    ```R
-   cbcl_001, cbcl_007,cbcl_L012, cbcl_019, cbcl_024, cbcl_039, cbcl_045, cbcl_052, cbcl_078, cbcl_086, cbcl_093
+   srm_cbcl_010, srm_cbcl_033, srm_cbcl_037, srm_cbcl_043, srm_cbcl_047, srm_cbcl_068, srm_cbcl_087, srm_cbcl_090
    ```
 
-4. Column **srm_cbcl_w:** The scoring for srm_cbcl_w is the **SUM** of these items:
+3. Column **cbcl_sc:** The scoring for cbcl_sc is the **SUM** of these items:
 
    ```R
-   cbcl_002, cbcl_004, cbcl_023, cbcl_062, cbcl_067, cbcl_070, cbcl_071, cbcl_098
+   srm_cbcl_001, srm_cbcl_007, srm_cbcl_012, srm_cbcl_019, srm_cbcl_024, srm_cbcl_039, srm_cbcl_045, srm_cbcl_052, srm_cbcl_078, srm_cbcl_086, srm_cbcl_093
    ```
 
-5. Column **srm_cbcl_sp:** The scoring for srm_cbcl_sp is the **SUM** of these items:
+4. Column **cbcl_w:** The scoring for cbcl_w is the **SUM** of these items:
 
    ```R
-   cbcl_022, cbcl_038, cbcl_048, cbcl_064, cbcl_074, cbcl_084
+   srm_cbcl_002, srm_cbcl_004, srm_cbcl_023, srm_cbcl_062, srm_cbcl_067, srm_cbcl_070, srm_cbcl_071, srm_cbcl_098
    ```
 
-6. Column **srm_cbcl_ap:** The scoring for srm_cbcl_ap is the **SUM** of these items:
+5. Column **cbcl_sp:** The scoring for cbcl_sp is the **SUM** of these items:
 
    ```R
-   cbcl_005, cbcl_006, cbcl_056, cbcl_059, cbcl_095
+   srm_cbcl_022, srm_cbcl_038, srm_cbcl_048, srm_cbcl_064, srm_cbcl_074, srm_cbcl_084
    ```
 
-7. Column **srm_cbcl_ab:** The scoring for srm_cbcl_ab is the **SUM** of these items:
+6. Column **cbcl_ap:** The scoring for cbcl_ap is the **SUM** of these items:
 
    ```R
-   cbcl_008, cbcl_015, cbcl_016, cbcl_018, cbcl_020, cbcl_027, cbcl_029, cbcl_035, cbcl_040, cbcl_042, cbcl_044, cbcl_053, cbcl_058, cbcl_066, cbcl_069, cbcl_081, cbcl_085, cbcl_088, cbcl_096
+   srm_cbcl_05, srm_cbcl_06, srm_cbcl_056, srm_cbcl_059, srm_cbcl_095
    ```
 
-8. Column **srm_cbcl_op:** The scoring for srm_cbcl_op is the **SUM** of these items:
+7. Column **cbcl_ab:** The scoring for cbcl_ab is the **SUM** of these items:
 
    ```R
-   cbcl_003, cbcl_009, cbcl_011, cbcl_013, cbcl_014, cbcl_017, cbcl_025, cbcl_026, cbcl_028, cbcl_030, cbcl_031, cbcl_032, cbcl_034, cbcl_036, cbcl_041, cbcl_049, cbcl_050, cbcl_054, cbcl_055, cbcl_057, cbcl_060, cbcl_061, cbcl_063, cbcl_065, cbcl_072, cbcl_073, cbcl_075, cbcl_076, cbcl_077, cbcl_080, cbcl_089, cbcl_091, cbcl_094
+   srm_cbcl_08, srm_cbcl_015, srm_cbcl_016, srm_cbcl_018, srm_cbcl_020, srm_cbcl_027, srm_cbcl_029, srm_cbcl_035, srm_cbcl_040, srm_cbcl_042, srm_cbcl_044, srm_cbcl_053, srm_cbcl_058, srm_cbcl_066, srm_cbcl_069, srm_cbcl_081, srm_cbcl_085, srm_cbcl_088, srm_cbcl_096
    ```
 
-9. Column **srm_cbcl_int:** The scoring for srm_cbcl_int is the **SUM** of these items:
+8. Column **cbcl_op:** The scoring for cbcl_op is the **SUM** of these items:
 
    ```R
-   cbcl_021, cbcl_046, cbcl_051, cbcl_079, cbcl_082, cbcl_083, cbcl_092, cbcl_097, cbcl_099, cbcl_010, cbcl_033, cbcl_037, cbcl_043, cbcl_047, cbcl_068, cbcl_087, cbcl_090, cbcl_001, cbcl_007, cbcl_012, cbcl_019, cbcl_024, cbcl_039, cbcl_045, cbcl_052, cbcl_078, cbcl_086, cbcl_093, cbcl_002, cbcl_004, cbcl_023, cbcl_062, cbcl_067, cbcl_070, cbcl_071, cbcl_098
+   srm_cbcl_003, srm_cbcl_009, srm_cbcl_011, srm_cbcl_013, srm_cbcl_014, srm_cbcl_017, srm_cbcl_025, srm_cbcl_026, srm_cbcl_028, srm_cbcl_030, srm_cbcl_031, srm_cbcl_032, srm_cbcl_034, srm_cbcl_036, srm_cbcl_041, srm_cbcl_049, srm_cbcl_050, srm_cbcl_054, srm_cbcl_055, srm_cbcl_057, srm_cbcl_060, srm_cbcl_061, srm_cbcl_063, srm_cbcl_065, srm_cbcl_072, srm_cbcl_073, srm_cbcl_075, srm_cbcl_076, srm_cbcl_077, srm_cbcl_080, srm_cbcl_089, srm_cbcl_091, srm_cbcl_094
    ```
 
-10. Column **srm_cbcl_ext:** The scoring for srm_cbcl_ext is the **SUM** of these items:
+9. Column **cbcl_int:** The scoring for cbcl_int is the **SUM** of these items:
+
+   ```R
+   srm_cbcl_021, srm_cbcl_046, srm_cbcl_051, srm_cbcl_079, srm_cbcl_082, srm_cbcl_083, srm_cbcl_092, srm_cbcl_097, srm_cbcl_099, srm_cbcl_010, srm_cbcl_033, srm_cbcl_037, srm_cbcl_043, srm_cbcl_047, srm_cbcl_068, srm_cbcl_087, srm_cbcl_090, srm_cbcl_001, srm_cbcl_007, srm_cbcl_012, srm_cbcl_019, srm_cbcl_024, srm_cbcl_039, srm_cbcl_045, srm_cbcl_052, srm_cbcl_078, srm_cbcl_086, srm_cbcl_093, srm_cbcl_002, srm_cbcl_004, srm_cbcl_023, cbcl_062, cbcl_067, srm_cbcl_070, srm_cbcl_071, srm_cbcl_098
+   ```
+
+10. Column **cbcl_ext:** The scoring for cbcl_ext is the **SUM** of these items:
 
     ```R
-    cbcl_005, cbcl_006, cbcl_056, cbcl_059, cbcl_095, cbcl_008, cbcl_015, cbcl_016, cbcl_018, cbcl_020, cbcl_027, cbcl_029, cbcl_035, cbcl_040, cbcl_042, cbcl_044, cbcl_053, cbcl_058, cbcl_066, cbcl_069, cbcl_081, cbcl_085, cbcl_088, cbcl_096
+    srm_cbcl_005, srm_cbcl_006, srm_cbcl_056, srm_cbcl_059, srm_cbcl_095, srm_cbcl_008, srm_cbcl_015, srm_cbcl_016, srm_cbcl_018, srm_cbcl_020, srm_cbcl_027, srm_cbcl_029, srm_cbcl_035, srm_cbcl_040, srm_cbcl_042, srm_cbcl_044, srm_cbcl_053, srm_cbcl_058, srm_cbcl_066, srm_cbcl_069, srm_cbcl_081, srm_cbcl_085, srm_cbcl_088, srm_cbcl_096
     ```
 
-11. Column **srm_cbcl_total:** The scoring for srm_cbcl_total is the **SUM** of these items:
+11. Column **cbcl_total:** The scoring for cbcl_total is the **SUM** of these items:
 
     ```R
-    cbcl_001, cbcl_002, cbcl_003, cbcl_004, cbcl_005, cbcl_006, cbcl_007, cbcl_008, cbcl_009, cbcl_010, cbcl_011, cbcl_012, cbcl_013, cbcl_014, cbcl_015, cbcl_016, cbcl_017, cbcl_018, cbcl_019, cbcl_020, cbcl_021, cbcl_022, cbcl_023, cbcl_024, cbcl_025, cbcl_026, cbcl_027, cbcl_028, cbcl_029, cbcl_030, cbcl_031, cbcl_032, cbcl_033, cbcl_034, cbcl_035, cbcl_036, cbcl_037, cbcl_038, cbcl_039, cbcl_040, cbcl_041, cbcl_042, cbcl_043, cbcl_044, cbcl_045, cbcl_046, cbcl_047, cbcl_048, cbcl_049, cbcl_050, cbcl_051, cbcl_052, cbcl_053, cbcl_054, cbcl_055, cbcl_056, cbcl_057, cbcl_058, cbcl_059, cbcl_060, cbcl_061, cbcl_062, cbcl_063, cbcl_064, cbcl_065, cbcl_066, cbcl_067, cbcl_068, cbcl_069, cbcl_070, cbcl_071, cbcl_072, cbcl_073, cbcl_074, cbcl_075, cbcl_076, cbcl_077, cbcl_078, cbcl_079, cbcl_080, cbcl_081, cbcl_082, cbcl_083, cbcl_084, cbcl_085, cbcl_086, cbcl_087, cbcl_088, cbcl_089, cbcl_090, cbcl_091, cbcl_092, cbcl_093, cbcl_094, cbcl_095, cbcl_096, cbcl_097, cbcl_098, cbcl_099
+    srm_cbcl_001, srm_cbcl_002, srm_cbcl_003, srm_cbcl_004, srm_cbcl_005, srm_cbcl_006, srm_cbcl_007, srm_cbcl_008, srm_cbcl_009, srm_cbcl_010, srm_cbcl_011, srm_cbcl_012, srm_cbcl_013, srm_cbcl_014, srm_cbcl_015, srm_cbcl_016, srm_cbcl_017, srm_cbcl_018, srm_cbcl_019, srm_cbcl_020, srm_cbcl_021, srm_cbcl_022, srm_cbcl_023, srm_cbcl_024, srm_cbcl_025, srm_cbcl_026, srm_cbcl_027, srm_cbcl_028, srm_cbcl_029, srm_cbcl_030, srm_cbcl_031, srm_cbcl_032, srm_cbcl_033, srm_cbcl_034, srm_cbcl_035, srm_cbcl_036, srm_cbcl_037, srm_cbcl_038, srm_cbcl_039, srm_cbcl_040, srm_cbcl_041, srm_cbcl_042, srm_cbcl_043, srm_cbcl_044, srm_cbcl_045, srm_cbcl_046, srm_cbcl_047, srm_cbcl_048, srm_cbcl_049, srm_cbcl_050, srm_cbcl_051, srm_cbcl_052, srm_cbcl_053, srm_cbcl_054, srm_cbcl_055, srm_cbcl_056, srm_cbcl_057, srm_cbcl_058, srm_cbcl_059, srm_cbcl_060, srm_cbcl_061, srm_cbcl_062, srm_cbcl_063, srm_cbcl_064, srm_cbcl_065, srm_cbcl_066, srm_cbcl_067, srm_cbcl_068, srm_cbcl_069, srm_cbcl_070, srm_cbcl_071, srm_cbcl_072, srm_cbcl_073, srm_cbcl_074, srm_cbcl_075, srm_cbcl_076, srm_cbcl_077, srm_cbcl_078, srm_cbcl_079, srm_cbcl_080, srm_cbcl_081, srm_cbcl_082, srm_cbcl_083, srm_cbcl_084, srm_cbcl_085, srm_cbcl_086, srm_cbcl_087, srm_cbcl_088, srm_cbcl_089, srm_cbcl_090, srm_cbcl_091, srm_cbcl_092, srm_cbcl_093, srm_cbcl_094, srm_cbcl_095, srm_cbcl_096, srm_cbcl_097, srm_cbcl_098, srm_cbcl_099
     ```
 
 
@@ -379,117 +379,117 @@ Now that your prep sheet is complete and contains all the columns as indicated i
 | N/A | N/A | interview_date | interview_date |
 | N/A | N/A | relationship | relationship |
 | N/A | N/A | timepoint | visit |
-| Q15.1_1                                | Q264_1                            | srm_cbcl_001         | cbcl56a                 |
-| Q15.1_2                                | Q264_2                             | srm_cbcl_002           | cbcl1                   |
-| Q15.1_3                                | Q264_3                             | srm_cbcl_003         | cbcl_nt                 |
-| Q15.1_4                                | Q264_4                             | srm_cbcl_004        | cbcl_eye                |
-| Q15.1_5                                | Q264_5                             | srm_cbcl_005           | cbcl8                   |
-| Q15.1_6                                | Q264_6                             | srm_cbcl_006          | cbcl10                  |
-| Q15.1_7                                | Q264_7                             | srm_cbcl_007        | cbcl_out                |
-| Q15.1_8                                | Q264_8                            | srm_cbcl_008       | cbcl_wait               |
-| Q15.1_9                                | Q264_9                             | srm_cbcl_009       | cbcl_chew               |
-| Q15.1_10                                | Q264_10                            | srm_cbcl_010         | cbcl11                  |
-| Q15.1_11                                | Q264_11                            | srm_cbcl_011      | cbcl_help               |
-| Q15.1_12                                | Q264_12                            | srm_cbcl_012         | cbcl49                  |
-| Q15.1_13                                | Q264_13                            | srm_cbcl_013       | cbcl14                  |
-| Q15.1_14                                | Q264_14                            | srm_cbcl_014         | cbcl15                  |
-| Q15.1_15                                | Q264_15                            | srm_cbcl_015   | cbcl_defiant            |
-| Q15.1_16                                | Q264_16                            | srm_cbcl_016       | cbcl_dem                |
-| Q15.1_17                                | Q264_17                            | srm_cbcl_017         | cbcl20                  |
-| Q15.1_18                                | Q264_18                            | srm_cbcl_018         | cbcl21                  |
-| Q15.1_19                                | Q264_19                            | srm_cbcl_019      | cbcl_diar               |
-| Q15.1_20                                | Q264_20                            | srm_cbcl_020     | cbcl_disob              |
-| Q15.1_21                                | Q264_21                            | srm_cbcl_021      | cbcl_dist               |
+| Q15.1_1                                | Q264_1                            | srm_cbcl_001       | cbcl56a                 |
+| Q15.1_2                                | Q264_2                             | srm_cbcl_002         | cbcl1                   |
+| Q15.1_3                                | Q264_3                             | srm_cbcl_003       | cbcl_nt                 |
+| Q15.1_4                                | Q264_4                             | srm_cbcl_004      | cbcl_eye                |
+| Q15.1_5                                | Q264_5                             | srm_cbcl_005         | cbcl8                   |
+| Q15.1_6                                | Q264_6                             | srm_cbcl_006       | cbcl10                  |
+| Q15.1_7                                | Q264_7                             | srm_cbcl_007      | cbcl_out                |
+| Q15.1_8                                | Q264_8                            | srm_cbcl_008     | cbcl_wait               |
+| Q15.1_9                                | Q264_9                             | srm_cbcl_009     | cbcl_chew               |
+| Q15.1_10                                | Q264_10                            | srm_cbcl_010        | cbcl11                  |
+| Q15.1_11                                | Q264_11                            | srm_cbcl_011    | cbcl_help               |
+| Q15.1_12                                | Q264_12                            | srm_cbcl_012        | cbcl49                  |
+| Q15.1_13                                | Q264_13                            | srm_cbcl_013      | cbcl14                  |
+| Q15.1_14                                | Q264_14                            | srm_cbcl_014        | cbcl15                  |
+| Q15.1_15                                | Q264_15                            | srm_cbcl_015  | cbcl_defiant            |
+| Q15.1_16                                | Q264_16                            | srm_cbcl_016      | cbcl_dem                |
+| Q15.1_17                                | Q264_17                            | srm_cbcl_017        | cbcl20                  |
+| Q15.1_18                                | Q264_18                            | srm_cbcl_018        | cbcl21                  |
+| Q15.1_19                                | Q264_19                            | srm_cbcl_019     | cbcl_diar               |
+| Q15.1_20                                | Q264_20                            | srm_cbcl_020    | cbcl_disob              |
+| Q15.1_21                                | Q264_21                            | srm_cbcl_021     | cbcl_dist               |
 | Q15.1_22                                | Q264_22                            | srm_cbcl_022 | cbcl_alonsleep          |
-| Q15.1_23                                | Q264_23                            | srm_cbcl_023    | cbcl_answer             |
-| Q15.1_24                                | Q264_24                            | srm_cbcl_024         | cbcl24                  |
-| Q15.1_25                                | Q264_25                            | srm_cbcl_025         | cbcl25                  |
-| Q15.1_26                                | Q264_26                            | srm_cbcl_026       | cbcl_fun                |
-| Q15.1_27                                | Q264_27                            | srm_cbcl_027         | cbcl26                  |
-| Q15.1_28                                | Q264_28                            | srm_cbcl_028      | cbcl_home               |
-| Q15.1_29                                | Q264_29                            | srm_cbcl_029     | cbcl_frust              |
-| Q15.1_30                                | Q264_30                            | srm_cbcl_030         | cbcl27                  |
-| Q15.1_31                                | Q264_31                            | srm_cbcl_031       | cbcl_eat                |
-| Q15.1_32                                | Q264_32                            | srm_cbcl_032         | cbcl29                  |
-| Q15.1_33                                | Q264_33                            | srm_cbcl_033      | cbcl_feel               |
-| Q15.1_34                                | Q264_34                            | srm_cbcl_034         | cbcl36                  |
-| Q15.1_35                                | Q264_35                            | srm_cbcl_035         | cbcl37                  |
-| Q15.1_36                                | Q264_36                            | srm_cbcl_036     | cbcl_every              |
-| Q15.1_37                                | Q264_37                            | srm_cbcl_037    | cbcl_upset              |
+| Q15.1_23                                | Q264_23                            | srm_cbcl_023   | cbcl_answer             |
+| Q15.1_24                                | Q264_24                            | srm_cbcl_024        | cbcl24                  |
+| Q15.1_25                                | Q264_25                            | srm_cbcl_025        | cbcl25                  |
+| Q15.1_26                                | Q264_26                            | srm_cbcl_026      | cbcl_fun                |
+| Q15.1_27                                | Q264_27                            | srm_cbcl_027        | cbcl26                  |
+| Q15.1_28                                | Q264_28                            | srm_cbcl_028     | cbcl_home               |
+| Q15.1_29                                | Q264_29                            | srm_cbcl_029    | cbcl_frust              |
+| Q15.1_30                                | Q264_30                            | srm_cbcl_030        | cbcl27                  |
+| Q15.1_31                                | Q264_31                            | srm_cbcl_031      | cbcl_eat                |
+| Q15.1_32                                | Q264_32                            | srm_cbcl_032        | cbcl29                  |
+| Q15.1_33                                | Q264_33                            | srm_cbcl_033     | cbcl_feel               |
+| Q15.1_34                                | Q264_34                            | srm_cbcl_034        | cbcl36                  |
+| Q15.1_35                                | Q264_35                            | srm_cbcl_035        | cbcl37                  |
+| Q15.1_36                                | Q264_36                            | srm_cbcl_036    | cbcl_every              |
+| Q15.1_37                                | Q264_37                            | srm_cbcl_037   | cbcl_upset              |
 | Q15.1_38                                | Q264_38                            | srm_cbcl_038 | cbcl_troubsleep         |
-| Q15.1_39                                | Q264_39                            | srm_cbcl_039        | cbcl56b                 |
-| Q15.1_40                                | Q264_40                            | srm_cbcl_040       | cbcl_hit                |
-| Q15.1_41                                | Q264_41                            | srm_cbcl_042    | cbcl_breath             |
-| Q15.1_42                                | Q264_42                            | srm_cbcl_042    | cbcl_hurt               |
-| Q15.1_43                               | Q264_43                            | srm_cbcl_043     | cbcl_unhap              |
-| Q15.1_44                                | Q264_44                            | srm_cbcl_044     | cbcl_angry              |
-| Q15.1_45                                | Q264_45                            | srm_cbcl_045        | cbcl56c                 |
-| Q15.1_46                                | Q264_46                            | srm_cbcl_046         | cbcl46                  |
-| Q15.1_47                                | Q264_47                            | srm_cbcl_047         | cbcl45                  |
-| Q15.1_48                               | Q264_48                           | srm_cbcl_048         | cbcl47                  |
-| Q15.1_49                                | Q264_49                            | srm_cbcl_049         | cbcl53                  |
-| Q15.1_50                                | Q264_50                            | srm_cbcl_050         | cbcl54                  |
-| Q15.1_51                                | Q264_51                            | srm_cbcl_051     | cbcl_panic              |
-| Q15.1_52                                | Q264_52                            | srm_cbcl_052       | cbcl_bow                |
-| Q15.1_53                                | Q264_53                            | srm_cbcl_053         | cbcl57                  |
-| Q15.1_54                                | Q264_54                            | srm_cbcl_054         | cbcl58                  |
-| Q15.1_55                                | Q264_55                            | srm_cbcl_055         | cbcl60                  |
-| Q15.1_56                                | Q264_56                            | srm_cbcl_056         | cbcl62                  |
-| Q15.1_57                                | Q264_57                            | srm_cbcl_057        | cbcl56d                 |
-| Q15.1_58                                | Q264_58                            | srm_cbcl_058    | cbcl_punish             |
-| Q15.1_59                                | Q264_59                            | srm_cbcl_059     | cbcl_shift              |
-| Q15.1_60                                | Q264_60                            | srm_cbcl_060        | cbcl56e                 |
-| Q15.1_61                                | Q264_61                            | srm_cbcl_061   | cbcl_reat               |
-| Q15.1_62                                | Q264_62                            | srm_cbcl_062     | cbcl_play               |
-| Q15.1_63                                | Q264_63                            | srm_cbcl_063     | cbcl_rock               |
-| Q15.1_64                                | Q264_64                            | srm_cbcl_064       | cbcl_bed                |
-| Q15.1_65                                | Q264_65                            | srm_cbcl_065   | cbcl_toil               |
-| Q15.1_66                                | Q264_66                            | srm_cbcl_066         | cbcl68                  |
-| Q15.1_67                                | Q264_67                            | srm_cbcl_067       | cbcl_aff                |
-| Q15.1_68                                | Q264_68                            | srm_cbcl_068         | cbcl71                  |
-| Q15.1_69                                | Q264_69                            | srm_cbcl_069   | cbcl_selfish            |
-| Q15.1_70                                | Q264_70                            | srm_cbcl_070  | cbcl_littleaf           |
-| Q15.1_71                                | Q264_71                            | srm_cbcl_071    | cbcl_inter              |
-| Q15.1_72                                | Q264_72                            | srm_cbcl_072      | cbcl_fear               |
-| Q15.1_73                                | Q264_73                            | srm_cbcl_073         | cbcl75                  |
-| Q15.1_74                                | Q264_74                            | srm_cbcl_074         | cbcl76                  |
-| Q15.1_75                                | Q264_75                            | srm_cbcl_075     | cbcl_smear              |
-| Q15.1_76                                | Q264_76                            | srm_cbcl_076         | cbcl79                  |
-| Q15.1_77                                | Q264_77                            | srm_cbcl_077    | cbcl_stares             |
-| Q15.1_78                                | Q264_78                            | srm_cbcl_078        | cbcl56f                 |
-| Q15.1_79                                | Q264_79                            | srm_cbcl_079       | cbcl_sad                |
-| Q15.1_80                                | Q264_80                            | srm_cbcl_080         | cbcl84                  |
-| Q15.1_81                                | Q264_81                            | srm_cbcl_081          | cbcl86                  |
-| Q15.1_82                                | Q264_82                            | srm_cbcl_082         | cbcl87                  |
-| Q15.1_83                                | Q264_83                            | srm_cbcl_083         | cbcl88                  |
-| Q15.1_84                                | Q264_84                            | srm_cbcl_084      | cbcl_crie               |
-| Q15.1_85                                | Q264_85                            | srm_cbcl_085       | cbcl95                  |
-| Q15.1_86                                | Q264_86                            | srm_cbcl_086     | cbcl_clean              |
-| Q15.1_87                                | Q264_87                           | srm_cbcl_087         | cbcl50                  |
-| Q15.1_88                                | Q264_88                            | srm_cbcl_088    | cbcl_uncoop             |
-| Q15.1_89                                | Q264_89                       | srm_cbcl_089        | cbcl102                 |
-| Q15.1_90                                | Q264_90                       | srm_cbcl_090        | cbcl103                 |
-| Q15.1_91                                | Q264_91                       | srm_cbcl_091        | cbcl104                 |
-| Q15.1_92                                | Q264_92                       | srm_cbcl_092    | cbcl_people             |
-| Q15.1_93                                | Q264_93                       | srm_cbcl_093        | cbcl56g                 |
-| Q15.1_94                                | Q264_94                       | srm_cbcl_094      | cbcl_wake               |
-| Q15.1_95                                | Q264_95                       | srm_cbcl_095      | cbcl_wand               |
-| Q15.1_96                                | Q264_96                       | srm_cbcl_096         | cbcl19                  |
-| Q15.1_97                                | Q264_97                       | srm_cbcl_097        | cbcl109                 |
-| Q15.1_98                                | Q264_98                       | srm_cbcl_098    | cbcl_withdr             |
-| Q15.1_99                                | Q264_99                       | srm_cbcl_099        | cbcl112                 |
+| Q15.1_39                                | Q264_39                            | srm_cbcl_039       | cbcl56b                 |
+| Q15.1_40                                | Q264_40                            | srm_cbcl_040      | cbcl_hit                |
+| Q15.1_41                                | Q264_41                            | srm_cbcl_041  | cbcl_breath             |
+| Q15.1_42                                | Q264_42                            | srm_cbcl_042   | cbcl_hurt               |
+| Q15.1_43                               | Q264_43                            | srm_cbcl_043    | cbcl_unhap              |
+| Q15.1_44                                | Q264_44                            | srm_cbcl_044    | cbcl_angry              |
+| Q15.1_45                                | Q264_45                            | srm_cbcl_045       | cbcl56c                 |
+| Q15.1_46                                | Q264_46                            | srm_cbcl_046        | cbcl46                  |
+| Q15.1_47                                | Q264_47                            | srm_cbcl_047        | cbcl45                  |
+| Q15.1_48                               | Q264_48                           | srm_cbcl_048        | cbcl47                  |
+| Q15.1_49                                | Q264_49                            | srm_cbcl_049        | cbcl53                  |
+| Q15.1_50                                | Q264_50                            | srm_cbcl_050        | cbcl54                  |
+| Q15.1_51                                | Q264_51                            | srm_cbcl_051    | cbcl_panic              |
+| Q15.1_52                                | Q264_52                            | srm_cbcl_052      | cbcl_bow                |
+| Q15.1_53                                | Q264_53                            | srm_cbcl_053        | cbcl57                  |
+| Q15.1_54                                | Q264_54                            | srm_cbcl_054        | cbcl58                  |
+| Q15.1_55                                | Q264_55                            | srm_cbcl_055        | cbcl60                  |
+| Q15.1_56                                | Q264_56                            | srm_cbcl_056        | cbcl62                  |
+| Q15.1_57                                | Q264_57                            | srm_cbcl_057       | cbcl56d                 |
+| Q15.1_58                                | Q264_58                            | srm_cbcl_058   | cbcl_punish             |
+| Q15.1_59                                | Q264_59                            | srm_cbcl_059    | cbcl_shift              |
+| Q15.1_60                                | Q264_60                            | srm_cbcl_060       | cbcl56e                 |
+| Q15.1_61                                | Q264_61                            | srm_cbcl_061  | cbcl_reat               |
+| Q15.1_62                                | Q264_62                            | srm_cbcl_062    | cbcl_play               |
+| Q15.1_63                                | Q264_63                            | srm_cbcl_063    | cbcl_rock               |
+| Q15.1_64                                | Q264_64                            | srm_cbcl_064      | cbcl_bed                |
+| Q15.1_65                                | Q264_65                            | srm_cbcl_065  | cbcl_toil               |
+| Q15.1_66                                | Q264_66                            | srm_cbcl_066        | cbcl68                  |
+| Q15.1_67                                | Q264_67                            | srm_cbcl_067      | cbcl_aff                |
+| Q15.1_68                                | Q264_68                            | srm_cbcl_068        | cbcl71                  |
+| Q15.1_69                                | Q264_69                            | srm_cbcl_069  | cbcl_selfish            |
+| Q15.1_70                                | Q264_70                            | srm_cbcl_070 | cbcl_littleaf           |
+| Q15.1_71                                | Q264_71                            | srm_cbcl_071   | cbcl_inter              |
+| Q15.1_72                                | Q264_72                            | srm_cbcl_072     | cbcl_fear               |
+| Q15.1_73                                | Q264_73                            | srm_cbcl_073        | cbcl75                  |
+| Q15.1_74                                | Q264_74                            | srm_cbcl_074        | cbcl76                  |
+| Q15.1_75                                | Q264_75                            | srm_cbcl_075    | cbcl_smear              |
+| Q15.1_76                                | Q264_76                            | srm_cbcl_076        | cbcl79                  |
+| Q15.1_77                                | Q264_77                            | srm_cbcl_077   | cbcl_stares             |
+| Q15.1_78                                | Q264_78                            | srm_cbcl_078       | cbcl56f                 |
+| Q15.1_79                                | Q264_79                            | srm_cbcl_079      | cbcl_sad                |
+| Q15.1_80                                | Q264_80                            | srm_cbcl_080        | cbcl84                  |
+| Q15.1_81                                | Q264_81                            | srm_cbcl_081         | cbcl86                  |
+| Q15.1_82                                | Q264_82                            | srm_cbcl_082        | cbcl87                  |
+| Q15.1_83                                | Q264_83                            | srm_cbcl_083        | cbcl88                  |
+| Q15.1_84                                | Q264_84                            | srm_cbcl_084     | cbcl_crie               |
+| Q15.1_85                                | Q264_85                            | srm_cbcl_085      | cbcl95                  |
+| Q15.1_86                                | Q264_86                            | srm_cbcl_086    | cbcl_clean              |
+| Q15.1_87                                | Q264_87                           | srm_cbcl_087        | cbcl50                  |
+| Q15.1_88                                | Q264_88                            | srm_cbcl_088   | cbcl_uncoop             |
+| Q15.1_89                                | Q264_89                       | srm_cbcl_089       | cbcl102                 |
+| Q15.1_90                                | Q264_90                       | srm_cbcl_090       | cbcl103                 |
+| Q15.1_91                                | Q264_91                       | srm_cbcl_091       | cbcl104                 |
+| Q15.1_92                                | Q264_92                       | srm_cbcl_092   | cbcl_people             |
+| Q15.1_93                                | Q264_93                       | srm_cbcl_093       | cbcl56g                 |
+| Q15.1_94                                | Q264_94                       | srm_cbcl_094     | cbcl_wake               |
+| Q15.1_95                                | Q264_95                       | srm_cbcl_095     | cbcl_wand               |
+| Q15.1_96                                | Q264_96                       | srm_cbcl_096        | cbcl19                  |
+| Q15.1_97                                | Q264_97                       | srm_cbcl_097       | cbcl109                 |
+| Q15.1_98                                | Q264_98                       | srm_cbcl_098   | cbcl_withdr             |
+| Q15.1_99                                | Q264_99                       | srm_cbcl_099       | cbcl112                 |
 | Q15.1_100                                | Q264_100                      | srm_cbcl_100   | cbcl113a                |
-| N/A | N/A | srm_cbcl_er | N/A |
-| N/A | N/A | srm_cbcl_ad | N/A |
-| N/A | N/A | srm_cbcl_sc | N/A |
-| N/A | N/A | srm_cbcl_w | N/A |
-| N/A | N/A | srm_cbcl_sp | N/A |
-| N/A | N/A | srm_cbcl_ap | N/A |
-| N/A | N/A | srm_cbcl_ab | N/A |
-| N/A | N/A | srm_cbcl_op | N/A |
-| N/A | N/A | srm_cbcl_int | N/A |
-| N/A | N/A | srm_cbcl_ext | N/A |
-| N/A | N/A | srm_cbcl_total | cbcl_total_raw |
+| N/A | N/A | cbcl_er | N/A |
+| N/A | N/A | cbcl_ad | N/A |
+| N/A | N/A | cbcl_sc | N/A |
+| N/A | N/A | cbcl_w | N/A |
+| N/A | N/A | cbcl_sp | N/A |
+| N/A | N/A | cbcl_ap | N/A |
+| N/A | N/A | cbcl_ab | N/A |
+| N/A | N/A | cbcl_op | N/A |
+| N/A | N/A | cbcl_int | N/A |
+| N/A | N/A | cbcl_ext | N/A |
+| N/A | N/A | cbcl_total | cbcl_total_raw |
 
 [Back to Table of Contents](#Table-of-Contents)
 
@@ -536,7 +536,7 @@ Take the following text strings and turn them into integers using the key below:
 | 6                    | 6       |
 | 7 - Very Likely      | 7       |
 
-The following chart holds items that need to be reversed scored. Once you reverse score an Item append an "r" to the end of the item number, for example: *srm_ccnes_01r*
+The following chart holds items that need to be reversed scored. Once you reverse score an Item append an "r" to the end of the item number, for example: *srm_ccnes_1r*
 
 | Item Number  | New Value                         |
 | ------------ | --------------------------------- |
@@ -552,37 +552,37 @@ Insert the following columns at the end of your CCNES_Prep sheet:
 1. Column **ccnes_DR:** The scoring for ccnes_DR is the **MEAN** of these items: 
 
    ```
-   ccnes_02, ccnes_07r, ccnes_13, ccnes_22, ccnes_29, ccnes_33, ccnes_39r, ccnes_45r, ccnes_50, ccnes_55r, ccnes_62, ccnes_70
+   srm_ccnes_02, srm_ccnes_07r, srm_ccnes_13, srm_ccnes_22, srm_ccnes_29, srm_ccnes_33, srm_ccnes_39r, srm_ccnes_45r, srm_ccnes_50, srm_ccnes_55r, srm_ccnes_62, srm_ccnes_70
    ```
 
 2. Column **ccnes_PR:** The scoring for ccnes_PR is the **MEAN** of these items:
 
    ```
-   ccnes_01, ccnes_12, ccnes_18, ccnes_19, ccnes_28, ccnes_34, ccnes_41, ccnes_47, ccnes_53, ccnes_56, ccnes_63, ccnes_71
+   srm_ccnes_01, srm_ccnes_12, srm_ccnes_18, srm_ccnes_19, srm_ccnes_28, srm_ccnes_34, srm_ccnes_41, srm_ccnes_47, srm_ccnes_53, srm_ccnes_56, srm_ccnes_63, srm_ccnes_71
    ```
 
 3. Column **ccnes_EE**: The scoring for ccnes_EE is the **MEAN** of these items:
 
    ```
-   ccnes_05, ccnes_11, ccnes_17, ccnes_20, ccnes_30, ccnes_35, ccnes_42, ccnes_43, ccnes_49, ccnes_57, ccnes_66, ccnes_68
+   srm_ccnes_05, srm_ccnes_11, srm_ccnes_17, srm_ccnes_20, srm_ccnes_30, srm_ccnes_35, srm_ccnes_42, srm_ccnes_43, srm_ccnes_49, srm_ccnes_57, srm_ccnes_66, srm_ccnes_68
    ```
 
 4. Column **ccnes_EFR**: The scoring for ccnes_EFR is the **MEAN** of these items:
 
    ```
-   ccnes_06, ccnes_08, ccnes_16, ccnes_23, ccnes_25, ccnes_31, ccnes_38, ccnes_48, ccnes_54, ccnes_58, ccnes_65, ccnes_69
+   srm_ccnes_06, srm_ccnes_08, srm_ccnes_16, srm_ccnes_23, srm_ccnes_25, srm_ccnes_31, srm_ccnes_38, srm_ccnes_48, srm_ccnes_54, srm_ccnes_58, srm_ccnes_65, srm_ccnes_69
    ```
 
 5. Column **ccnes_PFR**: The scoring for ccnes_PFR is the **MEAN** of these items:
 
    ```
-   ccnes_03, ccnes_10, ccnes_15, ccnes_24, ccnes_26, ccnes_36, ccnes_37, ccnes_44, ccnes_52, ccnes_59, ccnes_64, ccnes_67
+   srm_ccnes_03, srm_ccnes_10, srm_ccnes_15, srm_ccnes_24, srm_ccnes_26, srm_ccnes_36, srm_ccnes_37, srm_ccnes_44, srm_ccnes_52, srm_ccnes_59, srm_ccnes_64, srm_ccnes_67
    ```
    
 6. Column **ccnes_MR**: The scoring for ccnes_MR is the **MEAN** of these items:
 
-   ```
-   ccnes_04, ccnes_09, ccnes_14, ccnes_21, ccnes_27, ccnes_32, ccnes_40, ccnes_46, ccnes_51, ccnes_60, ccnes_61, ccnes_72
+   ```R
+   srm_ccnes_04, srm_ccnes_09, srm_ccnes_14, srm_ccnes_21, srm_ccnes_27, srm_ccnes_32, srm_ccnes_40, srm_ccnes_46, srm_ccnes_51, srm_ccnes_60, srm_ccnes_61, srm_ccnes_72
    ```
 
 ### 5) Transfer to NDA Structure 
@@ -741,15 +741,15 @@ Now that your prep sheet is complete and contains all the columns as indicated i
 | N/A                            | N/A                          | sex             | sex                       |
 | N/A                            | N/A                          | version         | version_form              |
 | N/A                            | N/A                          | timepiont       | visit                     |
-| Q4.1_1                         | Q154_1                       | srm_aaq_01          | aaq2_1                    |
-| Q4.1_2                         | Q154_2                       | srm_aaq_02          | aaq_1_16                  |
-| Q4.1_3                         | Q154_3                       | srm_aaq_03          | aaq2_3                    |
-| Q4.1_4                         | Q154_4                       | srm_aaq_04          | aaq2_4                    |
-| Q4.1_5                         | Q154_5                       | srm_aaq_05          | aaq2_5                    |
-| Q4.1_6                         | Q154_6                       | srm_aaq_06          | aaq32                     |
-| Q4.1_7                         | Q154_7                       | srm_aaq_07          | aaq2_6                    |
-| Q4.1_8                         | Q154_8                       | srm_aaq_08          | aaq24                     |
-| Q4.1_9                         | Q154_9                       | srm_aaq_09          | aaq2_8                    |
+| Q4.1_1                         | Q154_1                       | srm_aaq_01         | aaq2_1                    |
+| Q4.1_2                         | Q154_2                       | srm_aaq_02         | aaq_1_16                  |
+| Q4.1_3                         | Q154_3                       | srm_aaq_03         | aaq2_3                    |
+| Q4.1_4                         | Q154_4                       | srm_aaq_04         | aaq2_4                    |
+| Q4.1_5                         | Q154_5                       | srm_aaq_05         | aaq2_5                    |
+| Q4.1_6                         | Q154_6                       | srm_aaq_06         | aaq32                     |
+| Q4.1_7                         | Q154_7                       | srm_aaq_07         | aaq2_6                    |
+| Q4.1_8                         | Q154_8                       | srm_aaq_08         | aaq24                     |
+| Q4.1_9                         | Q154_9                       | srm_aaq_09         | aaq2_8                    |
 | Q4.1_10                        | Q154_10                      | srm_aaq_10          | aaq2_9                    |
 | N/A                            | N/A                          | aaq_total        | aaq_score                 |
 
@@ -798,24 +798,24 @@ Take the following text strings and turn them into integers using the key below.
 
 ### 4) Calculated Columns
 
-Insert the following columns at the end of your MeasureName_Prep sheet:
+Insert the following columns at the end of your WCCL_Prep sheet:
 
-1. Column **srm_wccl_su** which stands for *skills use scale*. The scoring for the skills use scale is the **AVERAGE** of these items: 
+1. Column **wccl_su** which stands for *skills use scale*. The scoring for the skills use scale is the **AVERAGE** of these items: 
 
    ```R
-   wccl_01, wccl_02, wccl_04, wccl_06, wccl_09, wccl_10, wccl_11, wccl_13, wccl_16, wccl_18, wccl_19, wccl_21, wccl_22, wccl_23, wccl_26, wccl_27, wccl_29, wccl_31, wccl_33, wccl_34, wccl_35, wccl_36, wccl_38, wccl_39, wccl_40, wccl_42, wccl_43, wccl_44, wccl_47, wccl_49, wccl_50, wccl_51, wccl_53, wccl_54, wccl_56, wccl_57, wccl_58, wccl_59
+   srm_wccl_01, srm_wccl_02, srm_wccl_04, srm_wccl_06, srm_wccl_09, srm_wccl_10, srm_wccl_11, srm_wccl_13, srm_wccl_16, srm_wccl_18, srm_wccl_19, srm_wccl_21, srm_wccl_22, srm_wccl_23, srm_wccl_26, srm_wccl_27, srm_wccl_29, srm_wccl_31, srm_wccl_33, srm_wccl_34, srm_wccl_35, srm_wccl_36, srm_wccl_38, srm_wccl_39, srm_wccl_40, srm_wccl_42, srm_wccl_43, srm_wccl_44, srm_wccl_47, srm_wccl_49, srm_wccl_50, srm_wccl_51, srm_wccl_53, srm_wccl_54, srm_wccl_56, srm_wccl_57, srm_wccl_58, srm_wccl_59
    ```
 
-2. Column **srm_wccl_gsc** which stands for *general dysfunctional coping*. The scoring for the general dysfunctional coping factor is the **AVERAGE** of the following items: 
+2. Column **wccl_gsc** which stands for *general dysfunctional coping*. The scoring for the general dysfunctional coping factor is the **AVERAGE** of the following items: 
 
    ```R
-   wccl_03, wccl_05, wccl_08, wccl_12, wccl_14, wccl_17, wccl_20, wccl_25, wccl_32, wccl_37, wccl_41, wccl_45, wccl_46, wccl_52, wccl_55
+   srm_wccl_03, srm_wccl_05, srm_wccl_08, srm_wccl_12, srm_wccl_14, srm_wccl_17, srm_wccl_20, srm_wccl_25, srm_wccl_32, srm_wccl_37, srm_wccl_41, srm_wccl_45, srm_wccl_46, srm_wccl_52, srm_wccl_55
    ```
 
-3. Column **srm_wccl_bo** which stands for *blaming others*. The scoring for the blaming others factor is the **AVERAGE** of the following items: 
+3. Column **wccl_bo** which stands for *blaming others*. The scoring for the blaming others factor is the **AVERAGE** of the following items: 
 
    ```R
-   wccl_07, wccl_15, wccl_24, wccl_28, wccl_30, wccl_48
+   srm_wccl_07, srm_wccl_15, srm_wccl_24, srm_wccl_28, srm_wccl_30, srm_wccl_48
    ```
 
 ### 5) Transfer to NDA Structure 
@@ -833,15 +833,15 @@ Now that your prep sheet is complete and contains all the columns as indicated i
 | N/A                             | N/A                           | sex              | sex                  |
 | N/A                             | N/A                           | version          | version_form         |
 | N/A                             | N/A                           | timepoint        | visit                |
-| Q5.1_1                          | Q155_1                        | srm_wccl_01          | dbt_wccl1            |
-| Q5.1_2                          | Q155_2                        | srm_wccl_02          | dbt_wccl2            |
-| Q5.1_3                          | Q155_3                        | srm_wccl_03          | dbt_wccl3            |
-| Q5.1_4                          | Q155_4                        | srm_wccl_04          | dbt_wccl4            |
-| Q5.1_5                          | Q155_5                        | srm_wccl_05          | dbt_wccl5            |
-| Q5.1_6                          | Q155_6                        | srm_wccl_06          | dbt_wccl6            |
-| Q5.1_7                          | Q155_7                        | srm_wccl_07          | dbt_wccl7            |
-| Q5.1_8                          | Q155_8                        | srm_wccl_08          | dbt_wccl8            |
-| Q5.1_9                          | Q155_9                        | srm_wccl_09          | dbt_wccl9            |
+| Q5.1_1                          | Q155_1                        | srm_wccl_01         | dbt_wccl1            |
+| Q5.1_2                          | Q155_2                        | srm_wccl_02         | dbt_wccl2            |
+| Q5.1_3                          | Q155_3                        | srm_wccl_03         | dbt_wccl3            |
+| Q5.1_4                          | Q155_4                        | srm_wccl_04         | dbt_wccl4            |
+| Q5.1_5                          | Q155_5                        | srm_wccl_05         | dbt_wccl5            |
+| Q5.1_6                          | Q155_6                        | srm_wccl_06         | dbt_wccl6            |
+| Q5.1_7                          | Q155_7                        | srm_wccl_07         | dbt_wccl7            |
+| Q5.1_8                          | Q155_8                        | srm_wccl_08         | dbt_wccl8            |
+| Q5.1_9                          | Q155_9                        | srm_wccl_09         | dbt_wccl9            |
 | Q5.1_10                         | Q155_10                       | srm_wccl_10          | dbt_wccl10           |
 | Q5.1_11                         | Q155_11                       | srm_wccl_11          | dbt_wccl11           |
 | Q5.1_12                         | Q155_12                       | srm_wccl_12          | dbt_wccl12           |
@@ -892,9 +892,9 @@ Now that your prep sheet is complete and contains all the columns as indicated i
 | Q5.1_57                         | Q155_57                       | srm_wccl_57          | dbt_wccl57           |
 | Q5.1_58                         | Q155_58                       | srm_wccl_58          | dbt_wccl58           |
 | Q5.1_59                         | Q155_59                       | srm_wccl_59          | dbt_wccl59           |
-| N/A                             | N/A                           | srm_wccl_su        | dbt_wccl_su          |
-| N/A                             | N/A                           | srm_wccl_gdc      | dbt_wccl_gdc         |
-| N/A                             | N/A                           | srm_wccl_bo        | dbt_wccl_bo          |
+| N/A                             | N/A                           | wccl_su       | dbt_wccl_su          |
+| N/A                             | N/A                           | wccl_gdc      | dbt_wccl_gdc         |
+| N/A                             | N/A                           | wccl_bo        | dbt_wccl_bo          |
 
 [Back to Table of Contents](#Table-of-Contents)
 
@@ -940,12 +940,12 @@ Take the following text strings and turn them into integers using the key below.
 
 ### 4) Calculated Columns
 
-Insert the following columns at the end of your MeasureName_Prep sheet:
+Insert the following columns at the end of your PKBS_Prep sheet:
 
-1. Column **srm_pkbs_total** which is the total added score for the PKBS. The scoring for the skills use scale is the **TOTAL** of these items: 
+1. Column **pkbs_total** which is the total added score for the PKBS. The scoring for the skills use scale is the **SUM** of these items: 
 
    ```R
-   srm_pkbs_1, srm_pkbs_2, srm_pkbs_3, srm_pkbs_4, srm_pkbs_5, srm_pkbs_6, srm_pkbs_7, srm_pkbs_8, srm_pkbs_9, srm_pkbs_10, srm_pkbs_11, srm_pkbs_12, srm_pkbs_13, srm_pkbs_14, srm_pkbs_15, srm_pkbs_16, srm_pkbs_17, srm_pkbs_18, srm_pkbs_19, srm_pkbs_20, srm_pkbs_21, srm_pkbs_22, srm_pkbs_23, srm_pkbs_24, srm_pkbs_25, srm_pkbs_26, srm_pkbs_27, srm_pkbs_28, srm_pkbs_29, srm_pkbs_30, srm_pkbs_31, srm_pkbs_32, srm_pkbs_33
+   srm_pkbs_01, srm_pkbs_02, srm_pkbs_03, srm_pkbs_04, srm_pkbs_05, srm_pkbs_06, srm_pkbs_07, srm_pkbs_08, srm_pkbs_09, srm_pkbs_10, srm_pkbs_11, srm_pkbs_12, srm_pkbs_13, srm_pkbs_14, srm_pkbs_15, srm_pkbs_16, srm_pkbs_17, srm_pkbs_18, srm_pkbs_19, srm_pkbs_20, srm_pkbs_21, srm_pkbs_22, srm_pkbs_23, srm_pkbs_24, srm_pkbs_25, srm_pkbs_26, srm_pkbs_27, srm_pkbs_28, srm_pkbs_29, srm_pkbs_30, srm_pkbs_31, srm_pkbs_32, srm_pkbs_33
    ```
 
 ### 5) Transfer to NDA Structure 
@@ -963,15 +963,15 @@ Now that your prep sheet is complete and contains all the columns as indicated i
 | N/A                           | N/A                         | mom_sex              | sex                 |
 | N/A                           | N/A                         | version          | version_form        |
 | N/A                           | N/A                         | timepoint    | visit               |
-| Q16.1_1                       | Q407_1                      | srm_pkbs_01          | Social2             |
-| Q16.1_2                       | Q407_2                      | srm_pkbs_02          | Social7             |
-| Q16.1_3                       | Q407_3                      | srm_pkbs_03          | Social10            |
-| Q16.1_4                       | Q407_4                      | srm_pkbs_04          | Social12            |
-| Q16.1_5                       | Q407_5                      | srm_pkbs_05          | Social16            |
-| Q16.1_6                       | Q407_6                      | srm_pkbs_06          | Social22            |
-| Q16.1_7                       | Q407_7                      | srm_pkbs_07          | Social23            |
-| Q16.1_8                       | Q407_8                      | srm_pkbs_08          | Social25            |
-| Q16.1_9                       | Q407_9                      | srm_pkbs_09          | Social28            |
+| Q16.1_1                       | Q407_1                      | srm_pkbs_01         | Social2             |
+| Q16.1_2                       | Q407_2                      | srm_pkbs_02         | Social7             |
+| Q16.1_3                       | Q407_3                      | srm_pkbs_03         | Social10            |
+| Q16.1_4                       | Q407_4                      | srm_pkbs_04         | Social12            |
+| Q16.1_5                       | Q407_5                      | srm_pkbs_05         | Social16            |
+| Q16.1_6                       | Q407_6                      | srm_pkbs_06         | Social22            |
+| Q16.1_7                       | Q407_7                      | srm_pkbs_07         | Social23            |
+| Q16.1_8                       | Q407_8                      | srm_pkbs_08         | Social25            |
+| Q16.1_9                       | Q407_9                      | srm_pkbs_09         | Social28            |
 | Q16.1_10                      | Q407_10                     | srm_pkbs_10          | Social29            |
 | Q16.1_11                      | Q407_11                     | srm_pkbs_11          | Social30            |
 | Q16.1_12                      | Q407_12                     | srm_pkbs_12          | Social32            |
@@ -996,7 +996,7 @@ Now that your prep sheet is complete and contains all the columns as indicated i
 | Q16.1_31                      | Q407_31                     | srm_pkbs_31          | Social18            |
 | Q16.1_32                      | Q407_32                     | srm_pkbs_32          | Social26            |
 | Q16.1_33                      | Q407_33                     | srm_pkbs_33          | Social31            |
-| N/A | N/A | srm_pkbs_total | basc_social_raw |
+| N/A | N/A | pkbs_total | basc_social_raw |
 
 [Back to Table of Contents](#Table-of-Contents)
 

@@ -8,7 +8,9 @@ library(data.table)
 
 # Import Pedigree and NDA Structure
 Pedigree <- read.csv("Reference_Pedigree.csv")
-NDA_AAQ <- read.csv("acceptance01_template.csv")
+NDA_AAQ <- read.csv("acceptance01_template.csv", skip = 1)
+
+write.csv(NDA_AAQ, "acceptance01_template.csv")
 
 # Import AAQ Files 
 UO_T1_AAQ <- read.csv("UO_T1_Qualtrics.csv", stringsAsFactors = FALSE)
