@@ -1,0 +1,175 @@
+# Measure: cbcl | Author: Austin | Lasted Edited: 5/5/2020 By: Austin
+
+# Import Packages Needed
+library(dplyr)
+library(tidyverse)
+library(eeptools)
+library(data.table)
+
+# Import Pedigree and NDA Structure
+Pedigree <- read.csv("Reference_Pedigree.csv")
+NDA_CBCL <- read.csv("cbcl1_501_template.csv", skip = 1)
+
+# Import cbcl Files
+UO_T1_cbcl <- read.csv(file = 'UO_T1_Qualtrics.csv', stringsAsFactors = FALSE)
+UO_T2_cbcl <- read.csv(file = 'UO_T2_Qualtrics.csv', stringsAsFactors = FALSE)
+UO_T3_cbcl <- read.csv(file = 'UO_T3_Qualtrics.csv', stringsAsFactors = FALSE)
+UO_T4_cbcl <- read.csv(file = 'UO_T4_Qualtrics.csv', stringsAsFactors = FALSE)
+UPMC_T1_cbcl <- read.csv(file = 'UPMC_T1_cbcl.csv', stringsAsFactors = FALSE)
+UPMC_T2_cbcl <- read.csv(file = 'UPMC_T2_cbcl.csv', stringsAsFactors = FALSE)
+UPMC_T3_cbcl <- read.csv(file = 'UPMC_T3_cbcl.csv', stringsAsFactors = FALSE)
+UPMC_T4_cbcl <- read.csv(file = 'UPMC_T4_cbcl.csv', stringsAsFactors = FALSE)
+
+# Create list of new variable names 
+new_cbcl_names <- sprintf("srm_cbcl_%03d", seq(1:100))
+
+# Create list of old variable names so we can replace them with the new ones
+# Since the question names change by timepoint we'll have to make unique lists by timepoint. 
+old_UO_cbcl_names_T1 <- sprintf("Q264_%01d", seq(1:100))
+old_UPMC_cbcl_names_T1_T4 <- sprintf("Q15.1_%01d", seq(1:100))
+
+#Same as above for different timepoints
+old_UO_cbcl_names_T2 <- sprintf("Q368_%01d", seq(1:100))
+old_UPMC_cbcl_names_T2_T3 <- sprintf("Q12.1_%01d", seq(1:100))
+
+#Same as above but UO has a different question number to select for each timepoint
+old_UO_cbcl_names_T3 <- sprintf("Q534_%01d", seq(1:100))
+
+#Same as above for UO timepoint 4
+old_UO_cbcl_names_T4 <- sprintf("Q828_%01d", seq(1:100))
+
+
+# Replace UO column names (there may be errors from the CBCL TEXT question responses) 
+setnames(UO_T1_cbcl, old_UO_cbcl_names_T1, new_cbcl_names)
+setnames(UO_T2_cbcl, old_UO_cbcl_names_T2, new_cbcl_names)
+setnames(UO_T3_cbcl, old_UO_cbcl_names_T3, new_cbcl_names)
+setnames(UO_T4_cbcl, old_UO_cbcl_names_T4, new_cbcl_names)
+
+# Replace UPMC column names (there may be errors from the CBCL TEXT question responses)
+setnames(UPMC_T1_cbcl, old_UPMC_cbcl_names_T1_T4, new_cbcl_names)
+setnames(UPMC_T2_cbcl, old_UPMC_cbcl_names_T2_T3, new_cbcl_names)
+setnames(UPMC_T3_cbcl, old_UPMC_cbcl_names_T2_T3, new_cbcl_names)
+setnames(UPMC_T4_cbcl, old_UPMC_cbcl_names_T1_T4, new_cbcl_names)
+
+# Edit UO cbcl Time 1 - 4 to have only cbcl quesions and the FamID. 
+UO_T1_cbcl <- select(UO_T1_cbcl, c(FamID = Q221, contains("cbcl")))
+UO_T2_cbcl <- select(UO_T2_cbcl, c(FamID = Q116, contains("cbcl")))
+UO_T3_cbcl <- select(UO_T3_cbcl, c(FamID = Q174, contains("cbcl")))
+UO_T4_cbcl <- select(UO_T4_cbcl, c(FamID = Q203, contains("cbcl")))
+
+# Edit UPMC cbcl Time 1 - 4 to have only cbcl quesions and the FamID.
+UPMC_T1_cbcl <- select(UPMC_T1_cbcl, c(FamID = Q1.2, contains("cbcl")))
+UPMC_T2_cbcl <- select(UPMC_T2_cbcl, c(FamID = Q1.2, contains("cbcl")))
+UPMC_T3_cbcl <- select(UPMC_T3_cbcl, c(FamID = Q1.2, contains("cbcl")))
+UPMC_T4_cbcl <- select(UPMC_T4_cbcl, c(FamID = Q1.2, contains("cbcl")))
+
+# Bind UO and UPMC cbcl Data By Time Point 
+cbcl_T1 <- rbind(UO_T1_cbcl, UPMC_T1_cbcl)
+cbcl_T2 <- rbind(UO_T2_cbcl, UPMC_T2_cbcl)
+cbcl_T3 <- rbind(UO_T3_cbcl, UPMC_T3_cbcl)
+cbcl_T4 <- rbind(UO_T4_cbcl, UPMC_T4_cbcl)
+
+# Clean Global Enviorment 
+rm(UO_T1_cbcl, UO_T2_cbcl, UO_T3_cbcl, UO_T4_cbcl, UPMC_T1_cbcl, UPMC_T2_cbcl, UPMC_T3_cbcl, UPMC_T4_cbcl, 
+   old_UO_cbcl_names_T1, old_UO_cbcl_names_T2, old_UO_cbcl_names_T3, old_UO_cbcl_names_T4, old_UPMC_cbcl_names_T1_T4, old_UPMC_cbcl_names_T2_T3)
+
+# Create the Predigree data for each Time Point
+Pedigree_T1 <- select(Pedigree, FamID, FamID_Mother, mom_guid, MomGender, Time1Date, MomAge_T1)
+Pedigree_T2 <- select(Pedigree, FamID, FamID_Mother, mom_guid, MomGender, Time2Date, MomAge_T2)
+Pedigree_T3 <- select(Pedigree, FamID, FamID_Mother, mom_guid, MomGender, Time3Date, MomAge_T3)
+Pedigree_T4 <- select(Pedigree, FamID, FamID_Mother, mom_guid, MomGender, Time4Date, MomAge_T4)
+
+# Merge Pedigree data to cbcl Time Points
+cbcl_T1 <- merge(Pedigree_T1, cbcl_T1, by = 'FamID')
+cbcl_T2 <- merge(Pedigree_T2, cbcl_T2, by = 'FamID')
+cbcl_T3 <- merge(Pedigree_T3, cbcl_T3, by = 'FamID')
+cbcl_T4 <- merge(Pedigree_T4, cbcl_T4, by = 'FamID')
+
+# Clean Global Enviorment 
+rm(Pedigree, Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4)
+
+# Create Time Point coloumn in each cbcl Sheet and populate the cell with time point
+cbcl_T1$timepoint <- "Time 1"
+cbcl_T2$timepoint <- "Time 2"
+cbcl_T3$timepoint <- "Time 3"
+cbcl_T4$timepoint <- "Time 4"
+
+# Rename each of the cbcl Date and Age coloumns so they match
+cbcl_T1 <- cbcl_T1 %>% rename( interview_date = Time1Date, interview_age = MomAge_T1)
+cbcl_T2 <- cbcl_T2 %>% rename( interview_date = Time2Date, interview_age = MomAge_T2)
+cbcl_T3 <- cbcl_T3 %>% rename( interview_date = Time3Date, interview_age = MomAge_T3)
+cbcl_T4 <- cbcl_T4 %>% rename( interview_date = Time4Date, interview_age = MomAge_T4)
+
+# Bind all cbcl Time Points togeather creating the cbcl_Prep sheet
+cbcl_Prep <- rbind(cbcl_T1, cbcl_T2, cbcl_T3, cbcl_T4)
+
+# Clean Global Enviorment 
+rm(cbcl_T1, cbcl_T2, cbcl_T3, cbcl_T4)
+
+#TODO: Prefer not to answer now as NA? Check if NaN exists in right places
+cbcl_Prep <- cbcl_Prep %>% 
+  mutate_at(new_cbcl_names,
+            funs(recode(., "Not True (as far as you know)" = 0, 
+                        "Somewhat or Sometimes True" = 1,
+                        "Very True or Often True" = 2,.default = NaN)))
+
+
+# Created calcualted columns
+cbcl_Prep <- add_column(cbcl_Prep, cbcl_er = rowSums(cbcl_Prep[, c("srm_cbcl_021", "srm_cbcl_046", "srm_cbcl_051", "srm_cbcl_079", "srm_cbcl_082", "srm_cbcl_083", "srm_cbcl_092", 
+                                                                   "srm_cbcl_097", "srm_cbcl_099")]),.after = "srm_cbcl_100")
+
+cbcl_Prep <- add_column(cbcl_Prep, cbcl_ad = rowSums(cbcl_Prep[, c("srm_cbcl_010", "srm_cbcl_033", "srm_cbcl_037", "srm_cbcl_043", "srm_cbcl_047", "srm_cbcl_068", "srm_cbcl_087", 
+                                                                   "srm_cbcl_090")]),.after = "cbcl_er")
+
+cbcl_Prep <- add_column(cbcl_Prep, cbcl_sc = rowSums(cbcl_Prep[, c("srm_cbcl_001", "srm_cbcl_007", "srm_cbcl_012", "srm_cbcl_019", "srm_cbcl_024", "srm_cbcl_039", "srm_cbcl_045", 
+                                                                   "srm_cbcl_052", "srm_cbcl_078", "srm_cbcl_086", "srm_cbcl_093")]),.after = "cbcl_ad")
+
+cbcl_Prep <- add_column(cbcl_Prep, cbcl_w = rowSums(cbcl_Prep[, c("srm_cbcl_002", "srm_cbcl_004", "srm_cbcl_023", "srm_cbcl_062", "srm_cbcl_067", "srm_cbcl_070", "srm_cbcl_071", 
+                                                                  "srm_cbcl_098")]),.after = "cbcl_sc")
+
+cbcl_Prep <- add_column(cbcl_Prep, cbcl_sp = rowSums(cbcl_Prep[, c("srm_cbcl_022", "srm_cbcl_038", "srm_cbcl_048", "srm_cbcl_064", "srm_cbcl_074",
+                                                                   "srm_cbcl_084")]),.after = "cbcl_w")
+
+cbcl_Prep <- add_column(cbcl_Prep, cbcl_ap = rowSums(cbcl_Prep[, c("srm_cbcl_005", "srm_cbcl_006", "srm_cbcl_056", "srm_cbcl_059",
+                                                                   "srm_cbcl_095")]),.after = "cbcl_sp")
+
+cbcl_Prep <- add_column(cbcl_Prep, cbcl_ab = rowSums(cbcl_Prep[, c("srm_cbcl_008", "srm_cbcl_015", "srm_cbcl_016", "srm_cbcl_018", "srm_cbcl_020", "srm_cbcl_027", "srm_cbcl_029", 
+                                                                   "srm_cbcl_035", "srm_cbcl_040", "srm_cbcl_042", "srm_cbcl_044", "srm_cbcl_053", "srm_cbcl_058", "srm_cbcl_066", 
+                                                                   "srm_cbcl_069", "srm_cbcl_081", "srm_cbcl_085", "srm_cbcl_088", "srm_cbcl_096")]),.after = "cbcl_ap")
+
+cbcl_Prep <- add_column(cbcl_Prep, cbcl_op = rowSums(cbcl_Prep[, c("srm_cbcl_003", "srm_cbcl_009", "srm_cbcl_011", "srm_cbcl_013", "srm_cbcl_014", "srm_cbcl_017", "srm_cbcl_025", 
+                                                                   "srm_cbcl_026", "srm_cbcl_028", "srm_cbcl_030", "srm_cbcl_031", "srm_cbcl_032", "srm_cbcl_034", "srm_cbcl_036", 
+                                                                   "srm_cbcl_041", "srm_cbcl_049", "srm_cbcl_050", "srm_cbcl_054", "srm_cbcl_055", "srm_cbcl_057", "srm_cbcl_060",
+                                                                   "srm_cbcl_061", "srm_cbcl_063", "srm_cbcl_065", "srm_cbcl_072", "srm_cbcl_073", "srm_cbcl_075", "srm_cbcl_076",
+                                                                   "srm_cbcl_077", "srm_cbcl_080", "srm_cbcl_089", "srm_cbcl_091", "srm_cbcl_094")]),.after = "cbcl_ab")
+
+cbcl_Prep <- add_column(cbcl_Prep, cbcl_int = rowSums(cbcl_Prep[, c("srm_cbcl_021", "srm_cbcl_046", "srm_cbcl_051", "srm_cbcl_079", "srm_cbcl_082", "srm_cbcl_083", "srm_cbcl_092", 
+                                                                    "srm_cbcl_097", "srm_cbcl_099", "srm_cbcl_010", "srm_cbcl_033", "srm_cbcl_037", "srm_cbcl_043", "srm_cbcl_047", 
+                                                                    "srm_cbcl_068", "srm_cbcl_087", "srm_cbcl_090", "srm_cbcl_001", "srm_cbcl_007", "srm_cbcl_012", "srm_cbcl_019",
+                                                                    "srm_cbcl_024", "srm_cbcl_039", "srm_cbcl_045", "srm_cbcl_052", "srm_cbcl_078", "srm_cbcl_086", "srm_cbcl_093", 
+                                                                    "srm_cbcl_002", "srm_cbcl_004", "srm_cbcl_023", "srm_cbcl_062", "srm_cbcl_067", "srm_cbcl_070", "srm_cbcl_071",
+                                                                    "srm_cbcl_098")]),.after = "cbcl_op")
+
+cbcl_Prep <- add_column(cbcl_Prep, cbcl_ext = rowSums(cbcl_Prep[, c("srm_cbcl_005", "srm_cbcl_006", "srm_cbcl_056", "srm_cbcl_059", "srm_cbcl_095", "srm_cbcl_008", "srm_cbcl_015",
+                                                                    "srm_cbcl_016", "srm_cbcl_018", "srm_cbcl_020", "srm_cbcl_027", "srm_cbcl_029", "srm_cbcl_035", "srm_cbcl_040",
+                                                                    "srm_cbcl_042", "srm_cbcl_044", "srm_cbcl_053", "srm_cbcl_058", "srm_cbcl_066", "srm_cbcl_069", "srm_cbcl_081",
+                                                                    "srm_cbcl_085", "srm_cbcl_088", "srm_cbcl_096")]),.after = "cbcl_int")
+
+cbcl_Prep <- add_column(cbcl_Prep, cbcl_total = rowSums(cbcl_Prep[, c("srm_cbcl_001", "srm_cbcl_002", "srm_cbcl_003", "srm_cbcl_004", "srm_cbcl_005", "srm_cbcl_006", "srm_cbcl_007",
+                                                                      "srm_cbcl_008", "srm_cbcl_009", "srm_cbcl_010", "srm_cbcl_011", "srm_cbcl_012", "srm_cbcl_013", "srm_cbcl_014",
+                                                                      "srm_cbcl_015", "srm_cbcl_016", "srm_cbcl_017", "srm_cbcl_018", "srm_cbcl_019", "srm_cbcl_020", "srm_cbcl_021",
+                                                                      "srm_cbcl_022", "srm_cbcl_023", "srm_cbcl_024", "srm_cbcl_025", "srm_cbcl_026", "srm_cbcl_027", "srm_cbcl_028",
+                                                                      "srm_cbcl_029", "srm_cbcl_030", "srm_cbcl_031", "srm_cbcl_032", "srm_cbcl_033", "srm_cbcl_034", "srm_cbcl_035",
+                                                                      "srm_cbcl_036", "srm_cbcl_037", "srm_cbcl_038", "srm_cbcl_039", "srm_cbcl_040", "srm_cbcl_041", "srm_cbcl_042",
+                                                                      "srm_cbcl_043", "srm_cbcl_044", "srm_cbcl_045", "srm_cbcl_046", "srm_cbcl_047", "srm_cbcl_048", "srm_cbcl_049",
+                                                                      "srm_cbcl_050", "srm_cbcl_051", "srm_cbcl_052", "srm_cbcl_053", "srm_cbcl_054", "srm_cbcl_055", "srm_cbcl_056",
+                                                                      "srm_cbcl_057", "srm_cbcl_058", "srm_cbcl_059", "srm_cbcl_060", "srm_cbcl_061", "srm_cbcl_062", "srm_cbcl_063",
+                                                                      "srm_cbcl_064", "srm_cbcl_065", "srm_cbcl_066", "srm_cbcl_067", "srm_cbcl_068", "srm_cbcl_069", "srm_cbcl_070",
+                                                                      "srm_cbcl_071", "srm_cbcl_072", "srm_cbcl_073", "srm_cbcl_074", "srm_cbcl_075", "srm_cbcl_076", "srm_cbcl_077",
+                                                                      "srm_cbcl_078", "srm_cbcl_079", "srm_cbcl_080", "srm_cbcl_081", "srm_cbcl_082", "srm_cbcl_083", "srm_cbcl_084",
+                                                                      "srm_cbcl_085", "srm_cbcl_086", "srm_cbcl_087", "srm_cbcl_088", "srm_cbcl_089", "srm_cbcl_090", "srm_cbcl_091",
+                                                                      "srm_cbcl_092", "srm_cbcl_093", "srm_cbcl_094", "srm_cbcl_095", "srm_cbcl_096", "srm_cbcl_097", "srm_cbcl_098",
+                                                                      "srm_cbcl_099")]),.after = "cbcl_ext")
+
+
+# Whatever comes next

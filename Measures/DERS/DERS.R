@@ -97,12 +97,14 @@ DERS_Prep <- rbind(ders_T1, ders_T2, ders_T3, ders_T4)
 # Clean Global Enviorment 
 rm(ders_T1, ders_T2, ders_T3, ders_T4)
 
-# Recode the strings of text to numbers
-DERS_Prep[DERS_Prep == "Almost Never (0-10%)"] <- 1 
-DERS_Prep[DERS_Prep == "Sometimes (11%-35%)"] <- 2
-DERS_Prep[DERS_Prep == "About half the time (36%-65%)"] <- 3 
-DERS_Prep[DERS_Prep == "Most of the time (66-90%)"] <- 4
-DERS_Prep[DERS_Prep == "Almost Always (91-100%)"] <- 5 
+#TODO: Prefer not to answer now as NA?
+DERS_Prep <- DERS_Prep %>% 
+  mutate_at(new_ders_names,
+            funs(recode(., "Almost Never (0-10%)" = 1, 
+                        "Sometimes (11%-35%)" = 2,
+                        "About half the time (36%-65%)" = 3,
+                        "Most of the time (66-90%)" = 4,
+                        "Almost Always (91-100%)" = 5,.default = NaN)))
 
 # Rename the reverse scored columns 
 DERS_Prep <- rename(DERS_Prep, srm_ders_1r = srm_ders_1, srm_ders_2r = srm_ders_2, srm_ders_6r = srm_ders_6, 
@@ -118,9 +120,6 @@ DERS_Prep <- DERS_Prep %>%
                         '3' = 3,
                         '4' = 2,
                         '5' = 1,.default = NaN)))
-
-# Change number to numeric values and Create Calculated Column 
-DERS_Prep[,7:42] <- sapply(DERS_Prep[,7:42],as.numeric)
 
 # Craeted calcualted columns
 DERS_Prep <- add_column(DERS_Prep, ders_awareness = rowSums(DERS_Prep[, c("srm_ders_2r", "srm_ders_6r", "srm_ders_8r", "srm_ders_10r", 
