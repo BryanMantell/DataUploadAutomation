@@ -1,5 +1,6 @@
 ---
   title:"Automating the Data Upload - CCNES"
+  Author:"Min Zhang" 
 ---
   
 
@@ -8,6 +9,8 @@
 rm(list=ls())
 library(dplyr)
 library(data.table)
+
+
 
 # set the working directory 
 setwd("~/Documents/Min/Coding/DataUploadAutomation/Measures/CCNES")
@@ -26,10 +29,20 @@ UPMC_CCNES_T2 <- read.csv("UPMC_T2_CCNES.csv")
 UPMC_CCNES_T3 <- read.csv("UPMC_T3_CCNES.csv")
 UPMC_CCNES_T4 <- read.csv("UPMC_T4_CCNES.csv")
 
+# Remove first two lines
+UO_CCNES_T1 = UO_CCNES_T1[-c(1,2),]
+UO_CCNES_T2 = UO_CCNES_T2[-c(1,2),]
+UO_CCNES_T3 = UO_CCNES_T3[-c(1,2),]
+UO_CCNES_T4 = UO_CCNES_T4[-c(1,2),]
+
+UPMC_CCNES_T1 = UPMC_CCNES_T1[-c(1,2),]
+UPMC_CCNES_T2 = UPMC_CCNES_T2[-c(1,2),]
+UPMC_CCNES_T3 = UPMC_CCNES_T3[-c(1,2),]
+UPMC_CCNES_T4 = UPMC_CCNES_T4[-c(1,2),]
+
 #NDA Structure
-NDA_CCNES <- read.csv("pabq01_template.csv", skip=1, stringsAsFactors = TRUE)
-
-
+NDA_CCNES <- read.csv("pabq01_template.csv", skip=1)
+NDA_CCNES_first_Line <- read.csv("pabq01_template.csv", header = F)[-2,]
 
 # Prep Sheet --------------------------------------------------------------------
 # Create list of old variable names so we can replace them with the new ones 
@@ -76,7 +89,7 @@ setnames(UPMC_CCNES_T3, odd_UPMC_CCNES_names2, new_CCNES_names)
 setnames(UPMC_CCNES_T4, odd_UPMC_CCNES_names, new_CCNES_names)
 
 # Edit UO CCNES Time 1 - 4 to have only CCNES quesions and the FamID.
-UO_CCNES_T1 <- select(UO_CCNES_T1, c(FamID = Q221, Timepoint = Q146, contains("ccnes")))    
+UO_CCNES_T1 <- select(UO_CCNES_T1, c(FamID = Q221, Timepoint = Q146, contains("ccnes")))  
 UO_CCNES_T2 <- select(UO_CCNES_T2, c(FamID = Q116, Timepoint = Q117, contains("ccnes")))
 UO_CCNES_T3 <- select(UO_CCNES_T3, c(FamID = Q174, Timepoint = Q176, contains("ccnes")))
 UO_CCNES_T4 <- select(UO_CCNES_T4, c(FamID = Q203, Timepoint = Q206, contains("ccnes")))
@@ -99,17 +112,17 @@ Pedigree_T2 <- select(Pedigree, FamID, FamID_Mother, mom_guid, MomGender, interv
 Pedigree_T3 <- select(Pedigree, FamID, FamID_Mother, mom_guid, MomGender, interview_date = Time3Date, interview_age = MomAge_T3)
 Pedigree_T4 <- select(Pedigree, FamID, FamID_Mother, mom_guid, MomGender, interview_date = Time4Date, interview_age = MomAge_T4)
 
-# Merge Predigree and CCNES_PREP
-CCNES_T1 <- merge(Pedigree_T1, CCNES_PREP, by = "FamID")
-CCNES_T2 <- merge(Pedigree_T2, CCNES_PREP, by = "FamID")
-CCNES_T3 <- merge(Pedigree_T3, CCNES_PREP, by = "FamID")
-CCNES_T4 <- merge(Pedigree_T4, CCNES_PREP, by = "FamID")
+# Merge Predigree and UO/UPMC files 
+CCNES_T1 <- rbind(merge(Pedigree_T1, UO_CCNES_T1, by = "FamID"),merge(Pedigree_T1, UPMC_CCNES_T1, by = "FamID"))
+CCNES_T2 <- rbind(merge(Pedigree_T1, UO_CCNES_T2, by = "FamID"),merge(Pedigree_T1, UPMC_CCNES_T2, by = "FamID"))
+CCNES_T3 <- rbind(merge(Pedigree_T1, UO_CCNES_T3, by = "FamID"),merge(Pedigree_T1, UPMC_CCNES_T3, by = "FamID"))
+CCNES_T4 <- rbind(merge(Pedigree_T1, UO_CCNES_T4, by = "FamID"),merge(Pedigree_T1, UPMC_CCNES_T4, by = "FamID"))
 
-# Bind UO and UPMC data
-CCNES_PREP <- rbind(UO_CCNES_T1,UO_CCNES_T2,UO_CCNES_T3,UO_CCNES_T4)
+# Bind 4 time points
+CCNES_PREP <- rbind(CCNES_T1,CCNES_T2,CCNES_T3,CCNES_T4)
 
 # Clean Flobal Enviorment
-rm(UO_CCNES_T1, UO_CCNES_T2, UO_CCNES_T3, UO_CCNES_T4, UPMC_CCNES_T1, UPMC_CCNES_T2, UPMC_CCNES_T3, UPMC_CCNES_T4)
+rm(UO_CCNES_T1, UO_CCNES_T2, UO_CCNES_T3, UO_CCNES_T4, UPMC_CCNES_T1, UPMC_CCNES_T2, UPMC_CCNES_T3, UPMC_CCNES_T4,Pedigree_T1,Pedigree_T2,Pedigree_T3,Pedigree_T4)
 
 
 # Recode the strings of text to numbers -----------------------------------------------------------------------------
@@ -189,5 +202,15 @@ setnames(CCNES_PREP, new_CCNES_names, NDA_Names)
 # Combine NDA and prep sheet
 NDA_CCNES <- bind_rows(NDA_CCNES,CCNES_PREP)
 
+
+test <- concat(NDA_CCNES_first_Line,NDA_CCNES)
+
+
+# Add first line of NDA back
+test <- smartbind(NDA_CCNES_first_Line,NDA_CCNES)
+
 # save NDA  still work one this ... 
-write.csv (NDA_CCNES, file='pabq01.csv', row.names = F)
+write.csv2(NDA_CCNES, file='pabq01.csv',row.names = F, col.names = F)
+write.csv2(NDA_CCNES_first_Line, file='1.csv', row.names = F)
+test<- read.csv("pabq01_template.csv", skip=1)
+names(NDA_CCNES)==names(test)
