@@ -1,6 +1,0 @@
-mom_guid,child_guid,mom_id,mom_gender,child_gender,intake_date,t1_date,t2_date,t3_date,t4_date,mom_age_intake,mom_age_t1,mom_age_t2,mom_age_t3,mom_age_t4,child_age_intake,child_age_t1,child_age_t2,child_age_t3,child_age_t4
-MomGUID001,ChildGUID001,34,F,F,43101,43191,43281,43371,43461,476,480,485,475,479,45,49,54,58,62
-MomGUID002,ChildGUID002,324,F,M,43102,43192,~,~,~,480,484,~,~,~,43,47,~,~,~
-MomGUID003,ChildGUID003,234,F,M,43103,43193,~,~,~,392,396,~,~,~,50,54,~,~,~
-MomGUID004,ChildGUID004,23,F,M,43104,43194,43284,~,~,401,404,390,~,~,40,43,28,~,~
-MomGUID005,ChildGUID005,4,F,F,43105,43195,~,43375,43465,411,416,~,411,415,47,52,~,60,64
