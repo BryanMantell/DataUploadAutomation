@@ -11,7 +11,7 @@ library(dplyr)
 library(data.table)
 
 # set the working directory 
-setwd("~/Documents/Min/Coding/DataUploadAutomation/Measures/CCNES")
+setwd("C:/Users/bryan/Documents/GitHub/DataUploadAutomation/Measures/CCNES")
 
 # Import File -------------------------------------------------------------
 
@@ -148,11 +148,14 @@ rm(UO_CCNES_T1, UO_CCNES_T2, UO_CCNES_T3, UO_CCNES_T4, UPMC_CCNES_T1, UPMC_CCNES
 CCNES_PREP <- CCNES_PREP %>% 
   mutate_at(new_CCNES_names,
             funs(recode(., "1 - Very Unlikely" = 1, 
+                        '1' = 1,
                         '2' = 2,
                         '3' = 3,
                         '4 - Medium Liklihood' = 4,
+                        '4' = 4,
                         '5' = 5,
                         '6' = 6,
+                        '7' = 7,
                         '7 - Very Likely' = 7,.default = NaN)))
 
 # Reversed Scored
@@ -198,33 +201,25 @@ CCNES_PREP$ccnes_MR <- rowMeans(CCNES_PREP[,c("srm_ccnes_04", "srm_ccnes_09", "s
                                               "srm_ccnes_40", "srm_ccnes_46", "srm_ccnes_51", 
                                               "srm_ccnes_60", "srm_ccnes_61", "srm_ccnes_72")], na.rm = TRUE)
 
-
-
-
-
 # NDA Sheet ----------------------------------------------------------------------------
 # Create NDA prep sheet
 NDA_CCNES_Prep <- select(CCNES_PREP, c(subjectkey = mom_guid, src_subject_id = mother_FamID, sex = mother_sex ,interview_age, interview_date, starts_with("srm")))
                          
-# Rename to NDA name
+# Rename NDA_CCNES_Prep variables to NDA variables
 setnames(NDA_CCNES_Prep, new_CCNES_names, NDA_Names)
 
 # Combine NDA and prep sheet
 NDA_CCNES <- bind_rows(NDA_CCNES,NDA_CCNES_Prep)
 
-
-
-# number of column
-n <- ncol(NDA_CCNES)
 # make a empty row
-first_line <- matrix("", nrow = 1, ncol = n)
+first_line <- matrix("", nrow = 1, ncol = ncol(NDA_CCNES))
 # assign the firt cell as pabq
 first_line[,1] <- "pabq"
 # assign the second cell as pabq
 first_line[,2] <- "1"
 
 # save first line of NDA
-write.table(first_line, file = "pabq.csv", sep = ",", append = TRUE, quote = FALSE, col.names = FALSE, row.names = FALSE)
+write.table(first_line, file = "pabq.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
 
 # append rest of data in NDA
-write.table(NDA_CCNES, file = 'pabq.csv', sep = ",", append = TRUE, quote = FALSE, row.names = FALSE)
+write.table(NDA_CCNES, file = 'pabq.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
