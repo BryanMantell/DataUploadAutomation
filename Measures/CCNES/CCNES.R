@@ -1,16 +1,14 @@
 ---
   title:"Automating the Data Upload - CCNES"
-  Author:"Min Zhang" 
+  author:"Min Zhang" 
 ---
   
 
 # Load Library -----------------------------------------------------------------
 #empty Global Environment
-rm(list=ls())
+rm(list = ls())
 library(dplyr)
 library(data.table)
-
-
 
 # set the working directory 
 setwd("~/Documents/Min/Coding/DataUploadAutomation/Measures/CCNES")
@@ -41,41 +39,62 @@ UPMC_CCNES_T3 = UPMC_CCNES_T3[-c(1,2),]
 UPMC_CCNES_T4 = UPMC_CCNES_T4[-c(1,2),]
 
 #NDA Structure
-NDA_CCNES <- read.csv("pabq01_template.csv", skip=1)
-NDA_CCNES_first_Line <- read.csv("pabq01_template.csv", header = F)[-2,]
+NDA_CCNES <- read.csv("pabq01_template.csv", skip = 1)
 
-# Prep Sheet --------------------------------------------------------------------
-# Create list of old variable names so we can replace them with the new ones 
+
+# Column Names Variable  --------------------------------------------------------------------
+
+# ==============================================================================
+# Orignial Variable Name
+# ==============================================================================
 
 # Create an empty list
-odd_UO_CCNES_names <-c()
+odd_UO_CCNES_names <- c()
 # for each item in UO paste number 1 to 6
 # sprintf used to formate str
-for (i in sprintf("Q%03d",140:151)){
+for (i in sprintf("Q%03d",140:151)) {
   name <- paste(i, 1:6, sep = "_")
   odd_UO_CCNES_names <- c(odd_UO_CCNES_names, name)
 }
 
 # Create list of UPMC variable names 
-odd_UPMC_CCNES_names <-c()
+odd_UPMC_CCNES_names <- c()
 for (i in sprintf("Q10.%d",2:13)) {
-  Name <- paste (i, 1:6, sep = "_")
+  Name <- paste(i, 1:6, sep = "_")
   odd_UPMC_CCNES_names <- c(odd_UPMC_CCNES_names, Name)
 }
 
 # Create second list of UPMC variable names 
-odd_UPMC_CCNES_names2 <-c()
+odd_UPMC_CCNES_names2 <- c()
 for (i in sprintf("Q8.%d",2:13)) {
-  Name <- paste (i, 1:6, sep = "_")
+  Name <- paste(i, 1:6, sep = "_")
   odd_UPMC_CCNES_names2 <- c(odd_UPMC_CCNES_names2, Name)
 }
+
+# ==============================================================================
+# Prep Sheet Variable Names
+# ==============================================================================
 
 # Create list of new variable names 
 new_CCNES_names <- sprintf("srm_ccnes_%02d",1:72)
 # Adding r at end of variable which needed to be reversed
-new_CCNES_names[c(7,39,45,55)]<-paste(new_CCNES_names[c(7,39,45,55)],"r", sep = "")
+new_CCNES_names[c(7,39,45,55)] <- paste(new_CCNES_names[c(7,39,45,55)],"r", sep = "")
 
+# ==============================================================================
+# NDA Sheet Variable Names
+# ==============================================================================
+pabq <- paste("pabq",1:12, sep = "")
 
+NDA_Names <- c()
+for (i in pabq) {
+  Name <- paste(i, letters[seq(1:6)], sep = "")
+  NDA_Names <- c(NDA_Names, Name)
+}
+
+# Original NDA structure's column names
+NDA_Names_Org <- names(NDA_CCNES)
+
+# Prep Sheet --------------------------------------------------------------------------------------
 # Replace UO column names 
 setnames(UO_CCNES_T1, odd_UO_CCNES_names, new_CCNES_names)
 setnames(UO_CCNES_T2, odd_UO_CCNES_names, new_CCNES_names)
@@ -107,22 +126,22 @@ UPMC_CCNES_T3$Timepoint <- 3
 UPMC_CCNES_T4$Timepoint <- 4
 
 # Select revelent pedigree information 
-Pedigree_T1 <- select(Pedigree, FamID, FamID_Mother, mom_guid, MomGender, interview_date = Time1Date, interview_age = MomAge_T1)
-Pedigree_T2 <- select(Pedigree, FamID, FamID_Mother, mom_guid, MomGender, interview_date = Time2Date, interview_age = MomAge_T2)
-Pedigree_T3 <- select(Pedigree, FamID, FamID_Mother, mom_guid, MomGender, interview_date = Time3Date, interview_age = MomAge_T3)
-Pedigree_T4 <- select(Pedigree, FamID, FamID_Mother, mom_guid, MomGender, interview_date = Time4Date, interview_age = MomAge_T4)
+Pedigree_T1 <- select(Pedigree, FamID, mother_FamID = FamID_Mother, mom_guid, mother_sex = MomGender, interview_date = Time1Date, interview_age = MomAge_T1)
+Pedigree_T2 <- select(Pedigree, FamID, mother_FamID = FamID_Mother, mom_guid, mother_sex = MomGender, interview_date = Time2Date, interview_age = MomAge_T2)
+Pedigree_T3 <- select(Pedigree, FamID, mother_FamID = FamID_Mother, mom_guid, mother_sex = MomGender, interview_date = Time3Date, interview_age = MomAge_T3)
+Pedigree_T4 <- select(Pedigree, FamID, mother_FamID = FamID_Mother, mom_guid, mother_sex = MomGender, interview_date = Time4Date, interview_age = MomAge_T4)
 
 # Merge Predigree and UO/UPMC files 
 CCNES_T1 <- rbind(merge(Pedigree_T1, UO_CCNES_T1, by = "FamID"),merge(Pedigree_T1, UPMC_CCNES_T1, by = "FamID"))
-CCNES_T2 <- rbind(merge(Pedigree_T1, UO_CCNES_T2, by = "FamID"),merge(Pedigree_T1, UPMC_CCNES_T2, by = "FamID"))
-CCNES_T3 <- rbind(merge(Pedigree_T1, UO_CCNES_T3, by = "FamID"),merge(Pedigree_T1, UPMC_CCNES_T3, by = "FamID"))
-CCNES_T4 <- rbind(merge(Pedigree_T1, UO_CCNES_T4, by = "FamID"),merge(Pedigree_T1, UPMC_CCNES_T4, by = "FamID"))
+CCNES_T2 <- rbind(merge(Pedigree_T2, UO_CCNES_T2, by = "FamID"),merge(Pedigree_T2, UPMC_CCNES_T2, by = "FamID"))
+CCNES_T3 <- rbind(merge(Pedigree_T3, UO_CCNES_T3, by = "FamID"),merge(Pedigree_T3, UPMC_CCNES_T3, by = "FamID"))
+CCNES_T4 <- rbind(merge(Pedigree_T4, UO_CCNES_T4, by = "FamID"),merge(Pedigree_T4, UPMC_CCNES_T4, by = "FamID"))
 
 # Bind 4 time points
 CCNES_PREP <- rbind(CCNES_T1,CCNES_T2,CCNES_T3,CCNES_T4)
 
 # Clean Flobal Enviorment
-rm(UO_CCNES_T1, UO_CCNES_T2, UO_CCNES_T3, UO_CCNES_T4, UPMC_CCNES_T1, UPMC_CCNES_T2, UPMC_CCNES_T3, UPMC_CCNES_T4,Pedigree_T1,Pedigree_T2,Pedigree_T3,Pedigree_T4)
+rm(UO_CCNES_T1, UO_CCNES_T2, UO_CCNES_T3, UO_CCNES_T4, UPMC_CCNES_T1, UPMC_CCNES_T2, UPMC_CCNES_T3, UPMC_CCNES_T4,Pedigree_T1,Pedigree_T2,Pedigree_T3,Pedigree_T4,CCNES_T1,CCNES_T2,CCNES_T3,CCNES_T4)
 
 
 # Recode the strings of text to numbers -----------------------------------------------------------------------------
@@ -134,7 +153,7 @@ CCNES_PREP <- CCNES_PREP %>%
                         '4 - Medium Liklihood' = 4,
                         '5' = 5,
                         '6' = 6,
-                        '7 - Very Likely'= 7,.default = NaN)))
+                        '7 - Very Likely' = 7,.default = NaN)))
 
 # Reversed Scored
 CCNES_PREP <- CCNES_PREP %>% 
@@ -147,7 +166,7 @@ CCNES_PREP <- CCNES_PREP %>%
                         '6' = 2,
                         '7' = 1,.default = NaN)))
 
-
+#CCNES_PREP[,srm_ccnes_07r] = 8 - CCNES_PREP[,srm_ccnes_07r]
 
 # Calculated Columns
 CCNES_PREP$ccnes_DR <- rowMeans(CCNES_PREP[,c("srm_ccnes_02", "srm_ccnes_07r", "srm_ccnes_13", 
@@ -183,34 +202,29 @@ CCNES_PREP$ccnes_MR <- rowMeans(CCNES_PREP[,c("srm_ccnes_04", "srm_ccnes_09", "s
 
 
 
-# Combine NDA and prep sheet ----------------------------------------------------------------------------
-# NDA column names
-pabq<-paste("pabq",1:12, sep = "")
-
-NDA_Names <-c()
-for (i in pabq) {
-  Name <- paste (i, letters[seq(1:6)], sep = "")
-  NDA_Names <- c(NDA_Names, Name)
-}
-
-# Original NDA structure's column names
-NDA_Names_Org<-names(NDA_CCNES)
-
+# NDA Sheet ----------------------------------------------------------------------------
+# Create NDA prep sheet
+NDA_CCNES_Prep <- select(CCNES_PREP, c(subjectkey = mom_guid, src_subject_id = mother_FamID, sex = mother_sex ,interview_age, interview_date, starts_with("srm")))
+                         
 # Rename to NDA name
-setnames(CCNES_PREP, new_CCNES_names, NDA_Names)
+setnames(NDA_CCNES_Prep, new_CCNES_names, NDA_Names)
 
 # Combine NDA and prep sheet
-NDA_CCNES <- bind_rows(NDA_CCNES,CCNES_PREP)
+NDA_CCNES <- bind_rows(NDA_CCNES,NDA_CCNES_Prep)
 
 
-test <- concat(NDA_CCNES_first_Line,NDA_CCNES)
 
+# number of column
+n <- ncol(NDA_CCNES)
+# make a empty row
+first_line <- matrix("", nrow = 1, ncol = n)
+# assign the firt cell as pabq
+first_line[,1] <- "pabq"
+# assign the second cell as pabq
+first_line[,2] <- "1"
 
-# Add first line of NDA back
-test <- smartbind(NDA_CCNES_first_Line,NDA_CCNES)
+# save first line of NDA
+write.table(first_line, file = "pabq.csv", sep = ",", append = TRUE, quote = FALSE, col.names = FALSE, row.names = FALSE)
 
-# save NDA  still work one this ... 
-write.csv2(NDA_CCNES, file='pabq01.csv',row.names = F, col.names = F)
-write.csv2(NDA_CCNES_first_Line, file='1.csv', row.names = F)
-test<- read.csv("pabq01_template.csv", skip=1)
-names(NDA_CCNES)==names(test)
+# append rest of data in NDA
+write.table(NDA_CCNES, file = 'pabq.csv', sep = ",", append = TRUE, quote = FALSE, row.names = FALSE)
