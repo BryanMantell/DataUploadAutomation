@@ -11,7 +11,10 @@ library(dplyr)
 library(data.table)
 
 # set the working directory 
-setwd("C:/Users/bryan/Documents/GitHub/DataUploadAutomation/Measures/CCNES")
+# for Bryan
+# setwd("C:/Users/bryan/Documents/GitHub/DataUploadAutomation/Measures/CCNES")
+
+setwd("~/Documents/Min/Coding/DataUploadAutomation/Measures/CCNES")
 
 # Import File -------------------------------------------------------------
 
@@ -44,55 +47,39 @@ NDA_CCNES <- read.csv("pabq01_template.csv", skip = 1)
 
 # Column Names Variable  --------------------------------------------------------------------
 
-# ==============================================================================
-# Orignial Variable Name
-# ==============================================================================
-
-# Create an empty list
-odd_UO_CCNES_names <- c()
+# OLD UO CCNES Column Names
 # for each item in UO paste number 1 to 6
 # sprintf used to formate str
+odd_UO_CCNES_names <- c()
 for (i in sprintf("Q%03d",140:151)) {
   name <- paste(i, 1:6, sep = "_")
   odd_UO_CCNES_names <- c(odd_UO_CCNES_names, name)
 }
 
-# Create list of UPMC variable names 
+# OLD UPMC CCNES Column Names
 odd_UPMC_CCNES_names <- c()
 for (i in sprintf("Q10.%d",2:13)) {
   Name <- paste(i, 1:6, sep = "_")
   odd_UPMC_CCNES_names <- c(odd_UPMC_CCNES_names, Name)
 }
-
-# Create second list of UPMC variable names 
 odd_UPMC_CCNES_names2 <- c()
 for (i in sprintf("Q8.%d",2:13)) {
   Name <- paste(i, 1:6, sep = "_")
   odd_UPMC_CCNES_names2 <- c(odd_UPMC_CCNES_names2, Name)
 }
 
-# ==============================================================================
-# Prep Sheet Variable Names
-# ==============================================================================
 
-# Create list of new variable names 
+# CCNES prep Column Names
 new_CCNES_names <- sprintf("srm_ccnes_%02d",1:72)
-# Adding r at end of variable which needed to be reversed
-new_CCNES_names[c(7,39,45,55)] <- paste(new_CCNES_names[c(7,39,45,55)],"r", sep = "")
 
-# ==============================================================================
-# NDA Sheet Variable Names
-# ==============================================================================
+
+# NDA structure Column Names
 pabq <- paste("pabq",1:12, sep = "")
-
 NDA_Names <- c()
 for (i in pabq) {
   Name <- paste(i, letters[seq(1:6)], sep = "")
   NDA_Names <- c(NDA_Names, Name)
 }
-
-# Original NDA structure's column names
-NDA_Names_Org <- names(NDA_CCNES)
 
 # Prep Sheet --------------------------------------------------------------------------------------
 # Replace UO column names 
@@ -140,6 +127,9 @@ CCNES_T4 <- rbind(merge(Pedigree_T4, UO_CCNES_T4, by = "FamID"),merge(Pedigree_T
 # Bind 4 time points
 CCNES_PREP <- rbind(CCNES_T1,CCNES_T2,CCNES_T3,CCNES_T4)
 
+# Change gemder to F instead of False
+CCNES_PREP$mother_sex <- "F"
+
 # Clean Flobal Enviorment
 rm(UO_CCNES_T1, UO_CCNES_T2, UO_CCNES_T3, UO_CCNES_T4, UPMC_CCNES_T1, UPMC_CCNES_T2, UPMC_CCNES_T3, UPMC_CCNES_T4,Pedigree_T1,Pedigree_T2,Pedigree_T3,Pedigree_T4,CCNES_T1,CCNES_T2,CCNES_T3,CCNES_T4)
 
@@ -157,6 +147,10 @@ CCNES_PREP <- CCNES_PREP %>%
                         '6' = 6,
                         '7' = 7,
                         '7 - Very Likely' = 7,.default = NaN)))
+
+
+# Adding r at end of variable which needed to be reversed
+new_CCNES_names[c(7,39,45,55)] <- paste(new_CCNES_names[c(7,39,45,55)],"r", sep = "")
 
 # Reversed Scored
 CCNES_PREP <- CCNES_PREP %>% 
@@ -202,24 +196,31 @@ CCNES_PREP$ccnes_MR <- rowMeans(CCNES_PREP[,c("srm_ccnes_04", "srm_ccnes_09", "s
                                               "srm_ccnes_60", "srm_ccnes_61", "srm_ccnes_72")], na.rm = TRUE)
 
 # NDA Sheet ----------------------------------------------------------------------------
-# Create NDA prep sheet
+# Create NDA prep sheet, select all the needed columns from prep sheet
 NDA_CCNES_Prep <- select(CCNES_PREP, c(subjectkey = mom_guid, src_subject_id = mother_FamID, sex = mother_sex ,interview_age, interview_date, starts_with("srm")))
                          
-# Rename NDA_CCNES_Prep variables to NDA variables
+# Combine NDA and prep sheet
+# Make sure put original NDA structure at first, because the order of the new sheet will be the order of the first item in bind_rows function
 setnames(NDA_CCNES_Prep, new_CCNES_names, NDA_Names)
 
-# Combine NDA and prep sheet
+# Recreate first line in orignial NDA file
+# Make a empty row, with same number of column in NDA_CCNES, as first line of NDA sheet
+# ncol(NDA_CCNES)  is number of columns in NDA_CCNES
 NDA_CCNES <- bind_rows(NDA_CCNES,NDA_CCNES_Prep)
 
-# make a empty row
+# Recreate first line in orignial NDA file
+# Make a empty row, with same number of column in NDA_CCNES, as first line of NDA sheet
+# ncol(NDA_CCNES)  is number of columns in NDA_CCNES
 first_line <- matrix("", nrow = 1, ncol = ncol(NDA_CCNES))
-# assign the firt cell as pabq
+# assign the firt cell in first_line as pabq which is the first cell in orignial NDA structure
 first_line[,1] <- "pabq"
-# assign the second cell as pabq
+# assign the second cell in first_lineas pabq
 first_line[,2] <- "1"
 
-# save first line of NDA
+
+# Create a new file in folder called pabq.csv, and put first line into this file
+# pabq.csb file will be saved into same folder as current r script
 write.table(first_line, file = "pabq.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
 
-# append rest of data in NDA
+# Append data in NDA_CCNES into pabq.cav file 
 write.table(NDA_CCNES, file = 'pabq.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
