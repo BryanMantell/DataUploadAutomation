@@ -19,7 +19,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r read in data, include=FALSE}
 rm(list = ls())
-source("~/Documents/Min/Coding/DataUploadAutomation/Measures/CCNES/CCNES.R")
+fsep <- .Platform$file.sep;
+source("CCNES.R")
+
 # For Bryan
 # source("C:/Users/bryan/Documents/GitHub/DataUploadAutomation/Measures/CCNES/CCNES.R")
 
