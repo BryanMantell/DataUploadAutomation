@@ -53,7 +53,7 @@ Progress_Mean <- Progress %>%
 # Select only UO Mean
 UO <- Progress_Mean[Progress_Mean$site == "UO",]
 # Select only UPMC Mean 
-UPMC <- Progress_Mean[Progress_Mean$site == "UO",]
+UPMC <- Progress_Mean[Progress_Mean$site == "UPMC",]
 
 # Colculate Both site Mean 
 Both_site_Mean <- Progress_Mean %>%
@@ -64,12 +64,12 @@ Both_site_Mean <- Progress_Mean %>%
 
 # Change GroupMean Column names according to site
 colnames(UO)[colnames(UO) == "GroupMean"] = "UO_CCNES"
-colnames(UPMC)[colnames(UPMC) == "GroupMean"] = "UO_CCNES"
+colnames(UPMC)[colnames(UPMC) == "GroupMean"] = "UPMC_CCNES"
 
 #test <- t(UO)
 
 # Combine UO,UPMC and both_site data 
-t <- data.frame(  UO[,"UO_CCNES"],UPMC[,"UO_CCNES"],Both_site_Mean[,c("BothSiteMean","n")])
+t <- data.frame(  UO[,"UO_CCNES"],UPMC[,"UPMC_CCNES"],Both_site_Mean[,c("BothSiteMean","n")])
 
 # Convert t, make original column as row
 t <- t(t)
