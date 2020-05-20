@@ -1,19 +1,15 @@
-
-
 # Load Library -----------------------------------------------------------------
 #empty Global Environment
 rm(list = ls())
 library(dplyr)
 library(data.table)
 
-# set the working directory 
+# Set the working directory 
 # for Bryan
 # setwd("C:/Users/bryan/Documents/GitHub/DataUploadAutomation/Measures/CCNES")
-
 setwd("~/Documents/Min/Coding/DataUploadAutomation/Measures/CCNES")
 
 # Import File -------------------------------------------------------------
-
 Pedigree <- read.csv("Reference_Pedigree.csv")
 
 UO_CCNES_T1 <- read.csv("UO_T1_Qualtrics.csv")
@@ -26,20 +22,8 @@ UPMC_CCNES_T2 <- read.csv("UPMC_T2_CCNES.csv")
 UPMC_CCNES_T3 <- read.csv("UPMC_T3_CCNES.csv")
 UPMC_CCNES_T4 <- read.csv("UPMC_T4_CCNES.csv")
 
-# Remove first two lines
-UO_CCNES_T1 = UO_CCNES_T1[-c(1,2),]
-UO_CCNES_T2 = UO_CCNES_T2[-c(1,2),]
-UO_CCNES_T3 = UO_CCNES_T3[-c(1,2),]
-UO_CCNES_T4 = UO_CCNES_T4[-c(1,2),]
-
-UPMC_CCNES_T1 = UPMC_CCNES_T1[-c(1,2),]
-UPMC_CCNES_T2 = UPMC_CCNES_T2[-c(1,2),]
-UPMC_CCNES_T3 = UPMC_CCNES_T3[-c(1,2),]
-UPMC_CCNES_T4 = UPMC_CCNES_T4[-c(1,2),]
-
 #NDA Structure
 NDA_CCNES <- read.csv("pabq01_template.csv", skip = 1)
-
 
 # Column Names Variable  --------------------------------------------------------------------
 
@@ -53,22 +37,21 @@ for (i in sprintf("Q%03d",140:151)) {
   odd_UO_CCNES_names <- c(odd_UO_CCNES_names, name)
 }
 
-# OLD UPMC CCNES Column Names
+# OLD UPMC CCNES Column Names for T1 & T4
 odd_UPMC_CCNES_names <- c()
 for (i in sprintf("Q10.%d",2:13)) {
   Name <- paste(i, 1:6, sep = "_")
   odd_UPMC_CCNES_names <- c(odd_UPMC_CCNES_names, Name)
 }
+# OLD UPMC CCNES Column Names for T2 & T3
 odd_UPMC_CCNES_names2 <- c()
 for (i in sprintf("Q8.%d",2:13)) {
   Name <- paste(i, 1:6, sep = "_")
   odd_UPMC_CCNES_names2 <- c(odd_UPMC_CCNES_names2, Name)
 }
 
-
 # CCNES prep Column Names
 new_CCNES_names <- sprintf("srm_ccnes_%02d",1:72)
-
 
 # NDA structure Column Names
 pabq <- paste("pabq",1:12, sep = "")
@@ -109,17 +92,17 @@ UPMC_CCNES_T2$Timepoint <- 2
 UPMC_CCNES_T3$Timepoint <- 3
 UPMC_CCNES_T4$Timepoint <- 4
 
-# Select revelent pedigree information. Select GroupAssignment for treatment mean calculation
+# Select revelent pedigree information, rename as needed. (Include GroupAssignment for treatment progross calculation.)
 Pedigree_T1 <- select(Pedigree, FamID, mother_FamID = FamID_Mother, mom_guid, mother_sex = MomGender, interview_date = Time1Date, interview_age = MomAge_T1, GroupAssignment)
 Pedigree_T2 <- select(Pedigree, FamID, mother_FamID = FamID_Mother, mom_guid, mother_sex = MomGender, interview_date = Time2Date, interview_age = MomAge_T2, GroupAssignment)
 Pedigree_T3 <- select(Pedigree, FamID, mother_FamID = FamID_Mother, mom_guid, mother_sex = MomGender, interview_date = Time3Date, interview_age = MomAge_T3, GroupAssignment)
 Pedigree_T4 <- select(Pedigree, FamID, mother_FamID = FamID_Mother, mom_guid, mother_sex = MomGender, interview_date = Time4Date, interview_age = MomAge_T4, GroupAssignment)
 
 # Merge Predigree and UO/UPMC files 
-CCNES_T1 <- rbind(merge(Pedigree_T1, UO_CCNES_T1, by = "FamID"),merge(Pedigree_T1, UPMC_CCNES_T1, by = "FamID"))
-CCNES_T2 <- rbind(merge(Pedigree_T2, UO_CCNES_T2, by = "FamID"),merge(Pedigree_T2, UPMC_CCNES_T2, by = "FamID"))
-CCNES_T3 <- rbind(merge(Pedigree_T3, UO_CCNES_T3, by = "FamID"),merge(Pedigree_T3, UPMC_CCNES_T3, by = "FamID"))
-CCNES_T4 <- rbind(merge(Pedigree_T4, UO_CCNES_T4, by = "FamID"),merge(Pedigree_T4, UPMC_CCNES_T4, by = "FamID"))
+CCNES_T1 <- rbind(merge(Pedigree_T1, UO_CCNES_T1, by = "FamID"), merge(Pedigree_T1, UPMC_CCNES_T1, by = "FamID"))
+CCNES_T2 <- rbind(merge(Pedigree_T2, UO_CCNES_T2, by = "FamID"), merge(Pedigree_T2, UPMC_CCNES_T2, by = "FamID"))
+CCNES_T3 <- rbind(merge(Pedigree_T3, UO_CCNES_T3, by = "FamID"), merge(Pedigree_T3, UPMC_CCNES_T3, by = "FamID"))
+CCNES_T4 <- rbind(merge(Pedigree_T4, UO_CCNES_T4, by = "FamID"), merge(Pedigree_T4, UPMC_CCNES_T4, by = "FamID"))
 
 # Bind 4 time points
 CCNES_PREP <- rbind(CCNES_T1,CCNES_T2,CCNES_T3,CCNES_T4)
@@ -151,7 +134,6 @@ Reverse_CCNES_names <- new_CCNES_names
 Reverse_CCNES_names[c(7,39,45,55)] <- paste(new_CCNES_names[c(7,39,45,55)],"r", sep = "")
 setnames(CCNES_PREP, new_CCNES_names, Reverse_CCNES_names)
 
-
 # Reversed Scored
 CCNES_PREP <- CCNES_PREP %>% 
   mutate_at(c("srm_ccnes_07r", "srm_ccnes_39r", "srm_ccnes_45r", "srm_ccnes_55r"),
@@ -162,6 +144,17 @@ CCNES_PREP <- CCNES_PREP %>%
                         '5' = 3,
                         '6' = 2,
                         '7' = 1,.default = NaN)))
+
+# # reverse score alternative
+# Reverse_CCNES_names <- new_CCNES_names
+# revers_CCNES_cols <- c("srm_ccnes_07", "srm_ccnes_39", "srm_ccnes_45", "srm_ccnes_55")
+# revers_CCNES_cols <- paste(revers_CCNES_cols, "r", sep = "")
+# Reverse_CCNES_names[c(7,39,45,55)] <- revers_CCNES_cols
+# setnames(CCNES_PREP, new_CCNES_names, Reverse_CCNES_names)
+# CCNES_PREP[,revers_CCNES_cols] = 8 - CCNES_PREP[,revers_CCNES_cols]
+
+
+# Calculation  ------------------------------------------------------------
 
 # Calculated Columns
 CCNES_PREP$ccnes_DR <- rowMeans(CCNES_PREP[,c("srm_ccnes_02", "srm_ccnes_07r", "srm_ccnes_13", 
