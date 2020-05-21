@@ -1,0 +1,97 @@
+---
+title: "CCNES_Table_Mean"
+author: "Min Zhang"
+date: "5/16/2020"
+output:
+  html_document:
+    df_print: paged
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+#install.packages("kableExtra")
+library(knitr)
+library(kableExtra)
+knitr::opts_chunk$set(echo = TRUE)
+#Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```
+
+
+```{r read in data, include=FALSE}
+rm(list = ls())
+fsep <- .Platform$file.sep;
+source("CCNES.R")
+
+# For Bryan
+# source("C:/Users/bryan/Documents/GitHub/DataUploadAutomation/Measures/CCNES/CCNES.R")
+
+#sentific notation, round up to 3 digits
+options(digits = 3)
+```
+
+
+
+```{r treatment mean, echo=FALSE}
+# Treatment Progress sheet
+# Select needed column
+Progress <- select(CCNES_PREP, c(FamID, GroupAssignment, Timepoint, starts_with("srm")))
+
+# Calculate row mean for each individual  
+Progress$Row_Mean <- rowMeans(select(CCNES_PREP,c(starts_with("srm"))), na.rm = T)
+
+# Change FamId as character and assign to ID variable 
+ID <- c(as.character(Progress$FamID))
+
+# Add Site column to Progress, if ID start with 9 then site is UO, else is UPMC
+Progress$site <- ifelse(startsWith(ID, "9"),"UO","UPMC")
+
+# Group by GroupAssissignment and Timepoint, and calculate the Group Mean
+Progress_Mean <- Progress %>%
+  group_by(GroupAssignment,Timepoint,site) %>%
+  summarise(GroupMean = mean(Row_Mean,na.rm = T),count = n())
+
+# Select only UO Mean
+UO <- Progress_Mean[Progress_Mean$site == "UO",]
+# Select only UPMC Mean 
+UPMC <- Progress_Mean[Progress_Mean$site == "UPMC",]
+
+# Colculate Both site Mean 
+Both_site_Mean <- Progress_Mean %>%
+  group_by(GroupAssignment, Timepoint) %>%
+  summarise(BothSiteMean = mean(GroupMean,na.rm = T),n = sum(count))
+#Progress_Mean <- Progress_Mean[order(GroupAssignment),] 
+
+
+# Change GroupMean Column names according to site
+colnames(UO)[colnames(UO) == "GroupMean"] = "UO_CCNES"
+colnames(UPMC)[colnames(UPMC) == "GroupMean"] = "UPMC_CCNES"
+
+#test <- t(UO)
+
+# Combine UO,UPMC and both_site data 
+t <- data.frame(  UO[,"UO_CCNES"],UPMC[,"UPMC_CCNES"],Both_site_Mean[,c("BothSiteMean","n")])
+
+# Convert t, make original column as row
+t <- t(t)
+
+# Make t as a data.frame
+t <- data.frame(t)
+
+# Add Timepoint column 
+Timepoint_names <- c("T1","T2", "T3", "T4","T1","T2", "T3", "T4","T1","T2", "T3", "T4")
+
+# Rename column name 
+setnames(t, names(t), Timepoint_names)
+
+```
+
+```{r table}
+# Add a header 
+kable(t) %>%
+  kable_styling(bootstrap_options = "striped", full_width = F) %>%
+  add_header_above(c(" " = 1, "DBT Group means" = 4, "FSU means" = 4, "Controls means" = 4))
+  
+
+```
+***Used CCNES Validation subscale only, information on Invalidation can be found in the data se
+
