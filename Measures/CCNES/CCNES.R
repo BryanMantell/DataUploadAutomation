@@ -157,10 +157,13 @@ CCNES_PREP <- CCNES_PREP %>%
 # Calculation  ------------------------------------------------------------
 
 # Calculated Columns
-CCNES_PREP$ccnes_DR <- rowMeans(CCNES_PREP[,c("srm_ccnes_02", "srm_ccnes_07r", "srm_ccnes_13", 
+CCNES_PREP$ccnes_DR_raw <- rowMeans(CCNES_PREP[,c("srm_ccnes_02", "srm_ccnes_07r", "srm_ccnes_13", 
                                               "srm_ccnes_22", "srm_ccnes_29", "srm_ccnes_33", 
                                               "srm_ccnes_39r", "srm_ccnes_45r", "srm_ccnes_50", 
                                               "srm_ccnes_55r", "srm_ccnes_62", "srm_ccnes_70")], na.rm = TRUE)
+# countNA <- rowSums(!is.na(CCNES_PREP))
+# rowSums(is.na(dat))
+# ccnes_DR_cor <- 
 
 CCNES_PREP$ccnes_PR <- rowMeans(CCNES_PREP[,c("srm_ccnes_01", "srm_ccnes_12", "srm_ccnes_18", 
                                               "srm_ccnes_19", "srm_ccnes_28", "srm_ccnes_34", 
