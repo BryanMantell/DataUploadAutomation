@@ -183,6 +183,7 @@ CCNES_PREP <- CCNES_PREP %>%
 ```
 
 ```{r Colculation, include=FALSE}
+# Creating list of item need to be colculated -------------------------------------------------------------------------
 # list of item which needed when colculating DR
 DR <- colnames(select(CCNES_PREP, c("srm_ccnes_02", "srm_ccnes_07r", "srm_ccnes_13", 
                                               "srm_ccnes_22", "srm_ccnes_29", "srm_ccnes_33", 
@@ -214,6 +215,7 @@ MR <- colnames(select(CCNES_PREP, c("srm_ccnes_04", "srm_ccnes_09", "srm_ccnes_1
                                               "srm_ccnes_21", "srm_ccnes_27", "srm_ccnes_32", 
                                               "srm_ccnes_40", "srm_ccnes_46", "srm_ccnes_51", 
                                               "srm_ccnes_60", "srm_ccnes_61", "srm_ccnes_72")))
+# Calculated raw mean --------------------------------------------------------------------------------------------------
 # Calculated Columns
 CCNES_PREP$ccnes_DR_raw <- rowMeans(CCNES_PREP[,DR], na.rm = TRUE)
 CCNES_PREP$ccnes_PR_raw <- rowMeans(CCNES_PREP[,PR], na.rm = TRUE)
@@ -221,9 +223,9 @@ CCNES_PREP$ccnes_EE_raw <- rowMeans(CCNES_PREP[,EE], na.rm = TRUE)
 CCNES_PREP$ccnes_EFR_raw <- rowMeans(CCNES_PREP[,EFR], na.rm = TRUE)
 CCNES_PREP$ccnes_PFR_raw <- rowMeans(CCNES_PREP[,PFR], na.rm = TRUE)
 CCNES_PREP$ccnes_MR_raw <- rowMeans(CCNES_PREP[,MR], na.rm = TRUE)
-
+# Mean with 67% rule --------------------------------------------------------------------------------------------------
 # Check NA percentage
-CCNES_PREP$NACheck <- rowSums(is.na(dplyr::select(CCNES_PREP, starts_with("srm"))))/ncol(dplyr::select(CCNES_PREP, starts_with("srm")))
+CCNES_PREP$NACheck <- rowSums(is.na(select(CCNES_PREP, starts_with("srm"))))/ncol(dplyr::select(CCNES_PREP, starts_with("srm")))
 
 # New mean with 67% rule
 CCNES_PREP$ccnes_DR_cor <- ifelse(CCNES_PREP$NACheck < 0.67, rowMeans(CCNES_PREP[,DR], na.rm = TRUE), "NA")
@@ -235,6 +237,7 @@ CCNES_PREP$ccnes_MR_cor <- ifelse(CCNES_PREP$NACheck < 0.67, rowMeans(CCNES_PREP
 
 
 # Imputation -------------------------------------------------------------------------
+#set(which(is.na(CCNES_PREP), 0))
 ```
 
 ```{r NDA Sheet, include=FALSE}
