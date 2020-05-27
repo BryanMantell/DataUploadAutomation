@@ -1,14 +1,17 @@
 #Install Package, this only need to be done once.
-install.packages("dplyr","tidyverse","eeptools")
+install.packages("dplyr","tidyverse","data.table")
 
 #Load packages, this need to be done every time you run this script. 
 library(dplyr)
 library(tidyverse)
 library(data.table)
 
+#Set Working Directory
+setwd("~/Documents/GitHub/DataUploadAutomation/Measures/PKBS/DataUploadAutomation/Measures/PKBS/")
+
 #Import Pedigree and NDA Structure
 Pedigree <- read.csv("Reference_Pedigree.csv")
-NDA_PKBS <- read.csv("pkbs01_template.csv")
+NDA_PKBS <- read.csv("pkbs01_template.csv", skip = 1)
 
 #Import PKBS files from both sites and every timepoint
 UO_T1_PKBS <- read.csv("UO_T1_Qualtrics.csv", stringsAsFactors = FALSE)
@@ -75,9 +78,9 @@ rm(UO_T1_PKBS, UO_T2_PKBS, UO_T3_PKBS, UO_T4_PKBS, UPMC_T1_PKBS, UPMC_T2_PKBS, U
 
 #Create the Pedigree table for each timepoint
 Pedigree_T1 <- select(Pedigree, FamID, FamID_Mother, mom_guid, MomGender, Time1Date, MomAge_T1)
-Pedigree_T2 <- select(Pedigree, FamID, FamID_Mother, mom_guid, MomGender, Time1Date, MomAge_T2)
-Pedigree_T3 <- select(Pedigree, FamID, FamID_Mother, mom_guid, MomGender, Time1Date, MomAge_T3)
-Pedigree_T4 <- select(Pedigree, FamID, FamID_Mother, mom_guid, MomGender, Time1Date, MomAge_T4)
+Pedigree_T2 <- select(Pedigree, FamID, FamID_Mother, mom_guid, MomGender, Time2Date, MomAge_T2)
+Pedigree_T3 <- select(Pedigree, FamID, FamID_Mother, mom_guid, MomGender, Time3Date, MomAge_T3)
+Pedigree_T4 <- select(Pedigree, FamID, FamID_Mother, mom_guid, MomGender, Time4Date, MomAge_T4)
 
 #Merge Pedigree data to PKBS timepoints
 PKBS_T1 <- merge(Pedigree_T1, PKBS_T1, by = "FamID")
@@ -96,9 +99,9 @@ PKBS_T4$Timepoint <- "Time 4"
 
 #Rename each of the Date and Age columns so that they match
 PKBS_T1 <- PKBS_T1 %>% rename( interview_date = Time1Date, interview_age = MomAge_T1)
-PKBS_T2 <- PKBS_T2 %>% rename( interview_date = Time1Date, interview_age = MomAge_T2)
-PKBS_T3 <- PKBS_T3 %>% rename( interview_date = Time1Date, interview_age = MomAge_T3)
-PKBS_T4 <- PKBS_T4 %>% rename( interview_date = Time1Date, interview_age = MomAge_T4)
+PKBS_T2 <- PKBS_T2 %>% rename( interview_date = Time2Date, interview_age = MomAge_T2)
+PKBS_T3 <- PKBS_T3 %>% rename( interview_date = Time3Date, interview_age = MomAge_T3)
+PKBS_T4 <- PKBS_T4 %>% rename( interview_date = Time4Date, interview_age = MomAge_T4)
 
 #Merge all timepoints together to create the PKBS prep sheet
 PKBS_Prep <- rbind(PKBS_T1, PKBS_T2, PKBS_T3, PKBS_T4)
@@ -112,3 +115,13 @@ PKBS_Prep[PKBS_Prep == "Sometimes (2)"] <- 2; PKBS_Prep[PKBS_Prep == "Often (3)"
 
 # Change number to numeric values and Create Calculated Column 
 PKBS_Prep[,7:39] <- sapply(PKBS_Prep[,7:39],as.numeric)
+
+PKBS_Prep  <- add_column(PKBS_Prep, pkbs_total = rowSums(PKBS_Prep[, c("srm_pkbs_1", "srm_pkbs_2","srm_pkbs_3","srm_pkbs_4", "srm_pkbs_5", "srm_pkbs_6",
+                                                                       "srm_pkbs_7", "srm_pkbs_8", "srm_pkbs_9", "srm_pkbs_10", "srm_pkbs_11", "srm_pkbs_12", "srm_pkbs_13",
+                                                                       "srm_pkbs_14", "srm_pkbs_15", "srm_pkbs_16", "srm_pkbs_17", "srm_pkbs_18", "srm_pkbs_19", "srm_pkbs_20",
+                                                                       "srm_pkbs_21", "srm_pkbs_22", "srm_pkbs_23", "srm_pkbs_24", "srm_pkbs_25", "srm_pkbs_26", "srm_pkbs_27",
+                                                                       "srm_pkbs_28", "srm_pkbs_29", "srm_pkbs_30", "srm_pkbs_31", "srm_pkbs_32", "srm_pkbs_33")]),.after = "srm_pkbs_33")
+
+#Merge PKBS Prep Sheet into NDA structure
+NDA_PKBS <- bind_rows(NDA_PKBS, PKBS_Prep)
+
