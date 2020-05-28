@@ -1,0 +1,33 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1590689233822.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "4DDE20AE",
+    "lastKnownWriteTime" : 2506161640176,
+    "last_content_update" : 1590689233822,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "AD8E1C24",
+        "caption" : "Pedigree",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=Pedigree&cache_key=AD8E1C24",
+        "displayedObservations" : "10",
+        "environment" : "",
+        "expression" : "Pedigree",
+        "object" : "Pedigree",
+        "preview" : "0",
+        "totalObservations" : "10",
+        "variables" : "29"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 8,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}
