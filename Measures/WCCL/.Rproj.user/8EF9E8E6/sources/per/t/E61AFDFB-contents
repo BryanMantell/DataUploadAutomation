@@ -1,6 +1,6 @@
 #Importing Pedigree/NDA Structure
 Pedigree <- read.csv("Reference_Pedigree.csv")
-NDA_WCCL <- read.csv("dbt_wccl01_template.csv")
+NDA_WCCL <- read.csv("dbt_wccl01_template.csv", skip = 1)
 
 # Import WCCL Files 
 UO_T1_WCCL <- read.csv("UO_T1_Qualtrics.csv", stringsAsFactors = FALSE)
@@ -18,11 +18,11 @@ num_items <- seq(1:59)
 new_WCCL_names <- paste(wccl, num_items, sep = "_")
 UO_Q155 <- "Q155"
 old_UO_WCCL_names <- paste(UO_Q155, num_items, sep = "_")
-setnames(UO_T1_Qualtrics, old_UO_WCCL_names, new_WCCL_names)
+setnames(UO_T1_WCCL, old_UO_WCCL_names, new_WCCL_names)
 
-setnames(UO_T2_Qualtrics, old_UO_WCCL_names, new_WCCL_names)
-setnames(UO_T3_Qualtrics, old_UO_WCCL_names, new_WCCL_names)
-setnames(UO_T4_Qualtrics, old_UO_WCCL_names, new_WCCL_names)
+setnames(UO_T2_WCCL, old_UO_WCCL_names, new_WCCL_names)
+setnames(UO_T3_WCCL, old_UO_WCCL_names, new_WCCL_names)
+setnames(UO_T4_WCCL, old_UO_WCCL_names, new_WCCL_names)
 
 UPMC_Q5 <- "Q5.1"
 old_UPMC_WCCL_names <- paste(UPMC_Q5, num_items, sep = "_")
@@ -32,20 +32,16 @@ setnames(UPMC_T3_WCCL, old_UPMC_WCCL_names, new_WCCL_names)
 setnames(UPMC_T4_WCCL, old_UPMC_WCCL_names, new_WCCL_names)
 
 #edit UO WCCL time 1-4 to have only WCCL questions and fam ID 
-UO_T1_WCCL <- select(UO_T1_Qualtrics, c(FamID=Q221, contains(wccl)))
-UO_T2_WCCL <- select(UO_T2_Qualtrics, c(FamID=Q116, contains(wccl)))
-UO_T3_WCCL <- select(UO_T3_Qualtrics, c(FamID=Q174, contains(wccl)))
-UO_T4_WCCL <- select(UO_T4_Qualtrics, c(FamID=Q203, contains(wccl)))
+UO_T1_WCCL <- select(UO_T1_WCCL, c(FamID=Q221, contains(wccl)))
+UO_T2_WCCL <- select(UO_T2_WCCL, c(FamID=Q116, contains(wccl)))
+UO_T3_WCCL <- select(UO_T3_WCCL, c(FamID=Q174, contains(wccl)))
+UO_T4_WCCL <- select(UO_T4_WCCL, c(FamID=Q203, contains(wccl)))
 
 #Edit UPMC T1-4 so only WCCL and FamID are left
 UPMC_T1_WCCL <- select(UPMC_T1_WCCL, c(FamID=Q1.2, contains(wccl)))
 UPMC_T2_WCCL <- select(UPMC_T2_WCCL, c(FamID=Q1.2, contains(wccl)))
 UPMC_T3_WCCL <- select(UPMC_T3_WCCL, c(FamID=Q1.2, contains(wccl)))
 UPMC_T4_WCCL <- select(UPMC_T4_WCCL, c(FamID=Q1.2, contains(wccl)))
-
-#tidy workspace
-rm(UO_T1_Qualtrics)
-rm(UO_T2_Qualtrics, UO_T3_Qualtrics, UO_T4_Qualtrics)
 
 #Binding UPMC And UO by time point
 WCCL_T1 <- rbind(UO_T1_WCCL, UPMC_T1_WCCL)
@@ -81,11 +77,37 @@ WCCL_T4 <- WCCL_T4 %>% rename( interview_date = Time4Date, interview_age = MomAg
 WCCL_PREP <- rbind(WCCL_T1, WCCL_T2, WCCL_T3, WCCL_T4)
 
 #Recode Text to Integers
-WCCL_PREP[WCCL_PREP == "0 Never Used"] <- 0; WCCL_PREP[WCCL_PREP == "1 Rarely Used"] <- 1; WCCL_PREP[WCCL_PREP == "2 Sometimes Used"] <- 2; WCCL_PREP[WCCL_PREP == "3 Regularly Used"] <- 3
+WCCL_PREP <- WCCL_PREP %>% mutate_at(new_WCCL_names,funs(recode(., '0 Never Used' = 0, '1 Rarely Used' = 1, '2 Sometimes Used' = 2, '3 Regularly Used' = 3,.default = NaN)))
 
 #Change Numbers to Numeric values
 WCCL_PREP[,1:59] <- sapply(WCCL_PREP[,1:59],as.numeric)
 
 #Create Calculated Columns 
-WCCL_Prep <- add_column(WCCL_Prep, wccl_su = rowMeans(WCCL_PREP[, c(“srm_wccl_01”, “srm_wccl_02”, “srm_wccl_04”, “srm_wccl_06”, “srm_wccl_09”, “srm_wccl_10”, “srm_wccl_11”, “srm_wccl_13”, “srm_wccl_16”, “srm_wccl_18”, “srm_wccl_19”, “srm_wccl_21”, “srm_wccl_22”, “srm_wccl_23”, “srm_wccl_26”, “srm_wccl_27”, “srm_wccl_29”, “srm_wccl_31”, “srm_wccl_33”, “srm_wccl_34”, “srm_wccl_35”, “srm_wccl_36”, “srm_wccl_38”, “srm_wccl_39”, “srm_wccl_40”, “srm_wccl_42”, “srm_wccl_43”, “srm_wccl_44”, “srm_wccl_47”, “srm_wccl_49”, “srm_wccl_50”, “srm_wccl_51”, “srm_wccl_53”, “srm_wccl_54”, “srm_wccl_56”, “srm_wccl_57”, “srm_wccl_58”, “srm_wccl_59”)]),.after = "srm_wccl_59")
+WCCL_PREP$wccl_SU <- rowMeans(WCCL_PREP[,c("srm_wccl_1", "srm_wccl_2", "srm_wccl_4", "srm_wccl_6", "srm_wccl_9", "srm_wccl_10", "srm_wccl_11", "srm_wccl_13", "srm_wccl_16", "srm_wccl_18", "srm_wccl_19", "srm_wccl_21", "srm_wccl_22", "srm_wccl_23", "srm_wccl_26", "srm_wccl_27", "srm_wccl_29", "srm_wccl_31", "srm_wccl_33", "srm_wccl_34", "srm_wccl_35", "srm_wccl_36", "srm_wccl_38", "srm_wccl_39", "srm_wccl_40", "srm_wccl_42", "srm_wccl_43", "srm_wccl_44", "srm_wccl_47", "srm_wccl_49", "srm_wccl_50", "srm_wccl_51", "srm_wccl_53", "srm_wccl_54", "srm_wccl_56", "srm_wccl_57", "srm_wccl_58", "srm_wccl_59")], na.rm = TRUE)
 
+WCCL_PREP$wccl_GSC <- rowMeans(WCCL_PREP[,c("srm_wccl_3", "srm_wccl_5", "srm_wccl_8", "srm_wccl_12", "srm_wccl_14", "srm_wccl_17", "srm_wccl_20", "srm_wccl_25", "srm_wccl_32", "srm_wccl_37", "srm_wccl_41", "srm_wccl_45", "srm_wccl_46", "srm_wccl_52", "srm_wccl_55")], na.rm = TRUE)
+
+WCCL_PREP$wccl_BO <- rowMeans(WCCL_PREP[,c("srm_wccl_7", "srm_wccl_15", "srm_wccl_24", "srm_wccl_28", "srm_wccl_30", "srm_wccl_48")], na.rm = TRUE)
+
+# Create NDA structure column names
+dbt_wccl <- paste("dbt_wccl", 1:59, sep = "")
+NDA_names <- c(dbt_wccl)
+
+#create NDA Prep structure 
+NDA_WCCL_Prep <- select(WCCL_PREP, c(subjectkey = mom_guid, src_subject_id = FamID_Mother, interview_date, interview_age, sex = MomGender , visit = timepoint, starts_with("srm")))
+
+setnames(NDA_WCCL_Prep, new_WCCL_names, NDA_Names)
+
+#bind NDA_WCCL_Prep and NDA structure  
+NDA_WCCL <- bind_rows(NDA_WCCL, NDA_WCCL_Prep)
+
+#recreate first row of NDA structure
+first_line <- matrix("", nrow = 1, ncol = ncol(NDA_WCCL))
+
+NDA_WCCL <- bind_rows(NDA_WCCL, NDA_WCCL_Prep)
+first_line <- matrix("", nrow = 1, ncol = ncol(NDA_WCCL))
+
+first_line[,1] <- "dbt_wccl"
+first_line[,2] <- "1"
+write.table(first_line, file = "dbt_wccl", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
+write.table(first_line, file = "dbt_wccl.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
