@@ -1059,13 +1059,19 @@ Now that your prep sheet is complete and contains all the columns as indicated i
 
 ### 1) Importing
 
+Install all the [packages](#Help-Section) required for the project. You can find what's needed in the [Help Section](#Help-Section). 
+
+Read in all the CSVs needed. The files you'll need are located in your measure's folder. Check the [Help Section](#Help-Section) for example code.
+
 ### 2) Editing and Renaming
 
-### 3) Recoding
+Edit and rename the Pedigree so that it only has the information needed for the NDA structure. Name it MeasureName_prep because this will be used to prepare everything before you do the final move to the NDA structure. The measure will need the following from the pedigree:
 
-### 4) Calculated Columns
+child guid, child famID, interview age, interview date, sex.
 
-### 5) Transfer to NDA Structure 
+Next, we need to take all Redcap data and add it to the MeasureName_prep data frame.
+
+### 3) Transfer to NDA Structure 
 
 Now that your prep sheet is complete and contains all the columns as indicated in the Item matching chart, move the columns into the NDA structure.
 
@@ -1106,13 +1112,19 @@ Now that your prep sheet is complete and contains all the columns as indicated i
 
 ### 1) Importing
 
+Install all the [packages](#Help-Section) required for the project. You can find what's needed in the [Help Section](#Help-Section). 
+
+Read in all the CSVs needed. The files you'll need are located in your measure's folder. Check the [Help Section](#Help-Section) for example code.
+
 ### 2) Editing and Renaming
 
-### 3) Recoding
+Edit and rename the Pedigree so that it only has the information needed for the NDA structure. Name it MeasureName_prep because this will be used to prepare everything before you do the final move to the NDA structure. The measure will need the following from the pedigree:
 
-### 4) Calculated Columns
+child guid, child famID, interview age, interview date, sex.
 
-### 5) Transfer to NDA Structure 
+Next, we need to take all Redcap data and add it to the MeasureName_prep data frame.
+
+### 3) Transfer to NDA Structure 
 
 Now that your prep sheet is complete and contains all the columns as indicated in the Item matching chart, move the columns into the NDA structure.
 
@@ -1130,13 +1142,19 @@ Now that your prep sheet is complete and contains all the columns as indicated i
 
 ### 1) Importing
 
+Install all the [packages](#Help-Section) required for the project. You can find what's needed in the [Help Section](#Help-Section). 
+
+Read in all the CSVs needed. The files you'll need are located in your measure's folder. Check the [Help Section](#Help-Section) for example code.
+
 ### 2) Editing and Renaming
 
-### 3) Recoding
+Edit and rename the Pedigree so that it only has the information needed for the NDA structure. Name it MeasureName_prep because this will be used to prepare everything before you do the final move to the NDA structure. The measure will need the following from the pedigree:
 
-### 4) Calculated Columns
+child guid, child famID, interview age, interview date, sex.
 
-### 5) Transfer to NDA Structure 
+Next, we need to take all Redcap data and add it to the MeasureName_prep data frame.
+
+### 3) Transfer to NDA Structure 
 
 Now that your prep sheet is complete and contains all the columns as indicated in the Item matching chart, move the columns into the NDA structure.
 
@@ -1154,13 +1172,19 @@ Now that your prep sheet is complete and contains all the columns as indicated i
 
 ### 1) Importing
 
+Install all the [packages](#Help-Section) required for the project. You can find what's needed in the [Help Section](#Help-Section). 
+
+Read in all the CSVs needed. The files you'll need are located in your measure's folder. Check the [Help Section](#Help-Section) for example code.
+
 ### 2) Editing and Renaming
 
-### 3) Recoding
+Edit and rename the Pedigree so that it only has the information needed for the NDA structure. Name it MeasureName_prep because this will be used to prepare everything before you do the final move to the NDA structure. The measure will need the following from the pedigree:
 
-### 4) Calculated Columns
+child guid, child famID, interview age, interview date, sex.
 
-### 5) Transfer to NDA Structure 
+Next, we need to take all Redcap data and add it to the MeasureName_prep data frame.
+
+### 3) Transfer to NDA Structure 
 
 Now that your prep sheet is complete and contains all the columns as indicated in the Item matching chart, move the columns into the NDA structure.
 
