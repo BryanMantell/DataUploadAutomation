@@ -1,0 +1,33 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1591204191548.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "7B48CBAC",
+    "lastKnownWriteTime" : 7742357693285933091,
+    "last_content_update" : 1591204191548,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "CE56083B",
+        "caption" : "Emotion_Labeling_Prep",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=Emotion_Labeling_Prep&cache_key=CE56083B",
+        "displayedObservations" : "10",
+        "environment" : "",
+        "expression" : "Emotion_Labeling_Prep",
+        "object" : "Emotion_Labeling_Prep",
+        "preview" : "0",
+        "totalObservations" : "10",
+        "variables" : "5"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}

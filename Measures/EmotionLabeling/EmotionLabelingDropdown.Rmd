@@ -1,0 +1,32 @@
+---
+title: "Emotion_Labeling"
+author: "Kyle Murray"
+date: "6/3/2020"
+output: html_document
+
+```{r Setup}
+#Clear Environment Setup
+rm(list = ls())
+#Enable Packages
+library(dplyr)
+library(tidyverse)
+library(eeptools)
+library(data.table)
+```
+```{r Import}
+Emotion_Labeling_REDCAP <- read.csv("Redcap_Data.csv")
+Emotion_Labeling_Prep <- read.csv("Reference_Pedigree.csv")
+Emotion_Labeling_NDA <- read.csv("elt01_template.csv", skip=1)
+```
+```{r Select Required Pedigree Info}
+#Add Required Pedigree Info to Prep Sheet
+Emotion_Labeling_Prep <- select(Emotion_Labeling_Prep, child_guid, child_famID = FamID_Child, interview_age = ChildAge_Intake, interview_date = IntakeDate, sex = ChildGender)
+```
+
+```{r Rename Columns}
+
+
+```
+
+
+
