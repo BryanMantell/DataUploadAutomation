@@ -1,0 +1,211 @@
+---
+title: "AutomatingtheDataUpload - DimensionalCardSort"
+author: "Min Zhang"
+date: "6/1/2020"
+output: html_document
+---
+
+```{r setup}
+# Empty Global Environment
+rm(list = ls())
+#install.packages("flextable")
+library(dplyr)
+library(data.table)
+library(knitr)
+library(kableExtra)
+
+#Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+knitr::opts_chunk$set(echo = TRUE, include = FALSE)
+
+
+fsep <- .Platform$file.sep;
+
+# Set the working directory ---------
+# for Bryan
+# setwd("C:/Users/bryan/Documents/GitHub/DataUploadAutomation/Measures/DimensionalCardSort")
+setwd("~/Documents/Min/Coding/DataUploadAutomation/Measures/DimensionalCardSort")
+
+#sentific notation, round up to 3 digits
+options(digits = 3)
+
+```
+
+```{r Import}
+Pedigree <- read.csv("Reference_Pedigree.csv")
+Redcap_Data <- read.csv("Redcap_Data.csv")
+NDA_DCCS <- read.csv("dccs01_template.csv", skip=1)
+```
+
+```{r Rename Columns}
+# Redcap column name: oc_dcs_1:36
+old_DCS_names <- sprintf("oc_dcs_%02d", 1:36)
+
+# DCCS NDA Columns Name
+NDA_DCS_names <- sprintf("dcs%02d", 1:36)
+```
+
+```{r Prep Sheet}
+# Assign timepoint base on redcap_event_name
+Redcap_Data$timepoint = sapply(strsplit(as.character(Redcap_Data$redcap_event_name), split = '_', fixed = T), function(x) (x[2])) 
+
+# Select needed columns and rename in Redcap_Data
+Redcap_Data <- select(Redcap_Data, c(fam_id,  timepoint, starts_with("oc_dcs_")))
+
+# Select revelent pedigree information, rename as needed. (Include GroupAssignment for treatment progross calculation.)
+Pedigree_T1 <- data.frame(select(Pedigree, child_guid, child_famID = FamID_Child, interview_date = Time1Date, interview_age = MomAge_T1, child_sex = ChildGender, GroupAssignment), timepoint = 1 )
+Pedigree_T2 <- data.frame(select(Pedigree, child_guid, child_famID = FamID_Child, interview_date = Time2Date, interview_age = MomAge_T2, child_sex = ChildGender, GroupAssignment), timepoint = 2 )
+Pedigree_T3 <- data.frame(select(Pedigree, child_guid, child_famID = FamID_Child, interview_date = Time3Date, interview_age = MomAge_T3, child_sex = ChildGender, GroupAssignment), timepoint = 3 )
+Pedigree_T4 <- data.frame(select(Pedigree, child_guid, child_famID = FamID_Child, interview_date = Time4Date, interview_age = MomAge_T4, child_sex = ChildGender, GroupAssignment), timepoint = 4 )
+
+Pedigree_Prep <- rbind(Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4)
+
+# Merge Predigree and redcap files
+DCS_PREP <- merge(Pedigree_T1, Redcap_Data)
+
+# Clean Environment
+rm(Pedigree, Pedigree_Prep, Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4, Redcap_Data)
+```
+
+```{r Re-code and Reverse Score}
+
+```
+
+```{r Colculated Columns}
+
+```
+
+```{r NDA Sheet}
+# Create NDA prep sheet, select all the needed columns from prep sheet
+NDA_DCCS_Prep <- select(DCS_PREP, c(subjectkey = child_guid, src_subject_id = child_famID, interview_date, interview_age, sex = child_sex, visit = timepoint, starts_with("oc_dcs_") ))
+
+# Replace columns name 
+setnames(NDA_DCCS_Prep, old_DCS_names, NDA_DCS_names)
+
+# Recreate first line in orignial NDA file
+NDA_DCCS <- bind_rows(NDA_DCCS, NDA_DCCS_Prep)
+first_line <- matrix("", nrow = 1, ncol = ncol(NDA_DCCS))
+first_line[,1] <- "dccs"
+# assign the second cell in first_lineas dccs
+first_line[,2] <- "1"
+
+
+
+# NDA output ---------
+# Create a new file in folder called dccs.csv, and put first line into this file
+# dccs.csv file will be saved into same folder as current r script
+write.table(first_line, file = "dccs01.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
+
+# Append data in NDA_DCCS into dccs.cav file 
+write.table(NDA_DCCS, file = 'dccs01.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
+```
+
+
+```{r Table,  echo=FALSE}
+
+```
+
+
+```{r messing up}
+Redcap_Data$timepoint %>% ifelse(startsWith(event,"time_1"), 1, 
+                       ifelse(startsWith(event,"time_2"), 2,
+                              ifelse(startsWith(event,"time_3"), 3, 
+                                     ifelse(startsWith(event,"time_4"), 4, NA))))
+
+with(Redcap_Data, ifelse(startsWith(event,"time_1"), 1, 
+                         ifelse(startsWith(event,"time_2"), 2, 
+                                ifelse(startsWith(event,"time_3"), 3, 
+                                       ifelse(startsWith(event,"time_4"), 4, NaN)))))
+
+
+prep <- Redcap_Data %>%
+  group_by(Timepoint) %>% 
+  
+
+  group_by()
+  
+  
+  
+  
+  
+  
+  
+for (x in event) {
+  if (startsWith(x, "time_1")) {
+    Redcap_Data$timepoint = 1;
+    Redcap_Data$interview_Date = Pedigree$Time1Date;
+    Redcap_Data$interview_Age = Pedigree$MomAge_T1
+    }else if (startsWith(x, "time_2")) {
+    Redcap_Data$timepoint = 2;
+    Redcap_Data$interview_Date = Pedigree$Time2Date;
+    Redcap_Data$interview_Age = Pedigree$MomAge_T2
+    }else if (startsWith(x, "time_3")) {
+    Redcap_Data$timepoint = 3;
+    Redcap_Data$interview_Date = Pedigree$Time3Date;
+    Redcap_Data$interview_Age = Pedigree$MomAge_T3
+    }else if (startsWith(x, "time_4")) {
+    Redcap_Data$timepoint = 4;
+    Redcap_Data$interview_Date = Pedigree$Time4Date;
+    Redcap_Data$interview_Age = Pedigree$MomAge_T4
+  
+}}
+mmm<-c(1:10)
+for(i in mmm){
+  if (i > 2) {
+    print("a")
+  }else if (i == 2){
+    print("b")
+  }else if(i<2){
+    print("c")
+  }
+}
+
+
+for (x in  c(as.character(Redcap_Data$redcap_event_name))) {
+  if (startsWith(x, "time_1")) {
+    print(1)
+    }else if (startsWith(x, "time_2")) {
+    print(2)
+    }else if (startsWith(x, "time_3")) {
+    print(3)
+    }else if (startsWith(x, "time_4")) {
+    print(4)
+}}
+
+
+for (x in  c(as.character(Redcap_Data$redcap_event_name))) {
+  if (startsWith(x, "time_1")) {
+     Redcap_Data$timepoint <- 1;
+    print(x)
+    }else if (startsWith(x, "time_2")) {
+     Redcap_Data$timepoint = 2;
+     print(x)
+    }else if (startsWith(x, "time_3")) {
+     Redcap_Data$timepoint = 3;
+      print(x)
+    }else if (startsWith(x, "time_4")) {
+     Redcap_Data$timepoint = 4;
+      print(x)
+}}
+
+
+
+if (startsWith(event, "time_1")){
+    Redcap_Data$timepoint = 1
+  }
+
+if(x > y) {
+  print("x is greater")
+}
+df1 = data.frame(famId = c(sample(1:10, 10,replace = F)),
+                  timepoint = c(sample(1:4, 10,replace = T)),
+                 score1 = c(sample(10:60, 10,replace = T)))
+ df2 = data.frame(famId = c(sample(1:10, 10,replace = F)),
+                  timepoint = c(sample(1:4, 10,replace = T)),
+                 score2 = c(sample(10:60, 10,replace = T)))
+ 
+
+merge(df1, df2, by = "famID")
+strsplit(as.character(before$type),'_and_') 
+```
+
+
