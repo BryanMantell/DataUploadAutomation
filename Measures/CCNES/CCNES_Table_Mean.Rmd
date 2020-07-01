@@ -7,7 +7,7 @@ output:
     df_print: paged
 ---
 
-```{r setup, include=FALSE}
+```{r setup}
 # Empty Global Environment
 rm(list = ls())
 #install.packages("flextable")
@@ -17,24 +17,24 @@ library(knitr)
 library(kableExtra)
 
 
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, include = FALSE)
 #Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
-```
 
-
-```{r working directory, include=FALSE}
 fsep <- .Platform$file.sep;
-# Set the working directory 
+
+# Set the working directory ---------
 # for Bryan
 # setwd("C:/Users/bryan/Documents/GitHub/DataUploadAutomation/Measures/CCNES")
 setwd("~/Documents/Min/Coding/DataUploadAutomation/Measures/CCNES")
 
 #sentific notation, round up to 3 digits
 options(digits = 3)
+
 ```
 
 
-```{r Import File, include=FALSE}
+```{r Import}
+# Import File ------------
 Pedigree <- read.csv("Reference_Pedigree.csv")
 
 UO_CCNES_T1 <- read.csv("UO_T1_Qualtrics.csv")
@@ -49,9 +49,10 @@ UPMC_CCNES_T4 <- read.csv("UPMC_T4_CCNES.csv")
 
 #NDA Structure
 NDA_CCNES <- read.csv("pabq01_template.csv", skip = 1)
+
 ```
 
-```{r Column Names Variable, include=FALSE}
+```{r Rename Columns}
 ## OLD UO CCNES Column Names -------------------------------------------------------------
 # for each item in UO paste number 1 to 6
 # sprintf used to formate str
@@ -88,7 +89,7 @@ for (i in pabq) {
 }
 ```
 
-```{r Prep Sheet, include=FALSE}
+```{r Prep Sheet}
 # Replace UO column names
 setnames(UO_CCNES_T1, odd_UO_CCNES_names, new_CCNES_names)
 setnames(UO_CCNES_T2, odd_UO_CCNES_names, new_CCNES_names)
@@ -108,31 +109,23 @@ UO_CCNES_T3 <- select(UO_CCNES_T3, c(FamID = Q174, Timepoint = Q176, contains("c
 UO_CCNES_T4 <- select(UO_CCNES_T4, c(FamID = Q203, Timepoint = Q206, contains("ccnes")))
 
 # Edit UPMC CCNES Time 1 - 4 to have only CCNES quesions and FamID. Rename as needed
-UPMC_CCNES_T1 <- select(UPMC_CCNES_T1, c(FamID = Q1.2, contains("ccnes")))
-UPMC_CCNES_T2 <- select(UPMC_CCNES_T2, c(FamID = Q1.2, contains("ccnes")))  
-UPMC_CCNES_T3 <- select(UPMC_CCNES_T3, c(FamID = Q1.2, contains("ccnes")))  
-UPMC_CCNES_T4 <- select(UPMC_CCNES_T4, c(FamID = Q1.2, contains("ccnes")))
-
-# Create Time Point coloumn in each UPMC Sheet
-UPMC_CCNES_T1$Timepoint <- 1
-UPMC_CCNES_T2$Timepoint <- 2
-UPMC_CCNES_T3$Timepoint <- 3
-UPMC_CCNES_T4$Timepoint <- 4
-
-# Select revelent pedigree information, rename as needed. (Include GroupAssignment for treatment progross calculation.)
-Pedigree_T1 <- select(Pedigree, FamID, mother_FamID = FamID_Mother, mom_guid, mother_sex = MomGender, interview_date = Time1Date, interview_age = MomAge_T1, GroupAssignment)
-Pedigree_T2 <- select(Pedigree, FamID, mother_FamID = FamID_Mother, mom_guid, mother_sex = MomGender, interview_date = Time2Date, interview_age = MomAge_T2, GroupAssignment)
-Pedigree_T3 <- select(Pedigree, FamID, mother_FamID = FamID_Mother, mom_guid, mother_sex = MomGender, interview_date = Time3Date, interview_age = MomAge_T3, GroupAssignment)
-Pedigree_T4 <- select(Pedigree, FamID, mother_FamID = FamID_Mother, mom_guid, mother_sex = MomGender, interview_date = Time4Date, interview_age = MomAge_T4, GroupAssignment)
-
-# Merge Predigree and UO/UPMC files 
-CCNES_T1 <- rbind(merge(Pedigree_T1, UO_CCNES_T1, by = "FamID"), merge(Pedigree_T1, UPMC_CCNES_T1, by = "FamID"))
-CCNES_T2 <- rbind(merge(Pedigree_T2, UO_CCNES_T2, by = "FamID"), merge(Pedigree_T2, UPMC_CCNES_T2, by = "FamID"))
-CCNES_T3 <- rbind(merge(Pedigree_T3, UO_CCNES_T3, by = "FamID"), merge(Pedigree_T3, UPMC_CCNES_T3, by = "FamID"))
-CCNES_T4 <- rbind(merge(Pedigree_T4, UO_CCNES_T4, by = "FamID"), merge(Pedigree_T4, UPMC_CCNES_T4, by = "FamID"))
+UPMC_CCNES_T1 <- data.frame(c(select(UPMC_CCNES_T1, c(FamID = Q1.2, contains("ccnes"))), Timepoint = "1"))
+UPMC_CCNES_T2 <- data.frame(c(select(UPMC_CCNES_T2, c(FamID = Q1.2, contains("ccnes"))), Timepoint = "2"))  
+UPMC_CCNES_T3 <- data.frame(c(select(UPMC_CCNES_T3, c(FamID = Q1.2, contains("ccnes"))), Timepoint = "3"))  
+UPMC_CCNES_T4 <- data.frame(c(select(UPMC_CCNES_T4, c(FamID = Q1.2, contains("ccnes"))), Timepoint = "4"))
 
 # Bind 4 time points
-CCNES_PREP <- rbind(CCNES_T1,CCNES_T2,CCNES_T3,CCNES_T4)
+CCNES_Qualtrics <- bind_rows(UO_CCNES_T1,UO_CCNES_T2,UO_CCNES_T3,UO_CCNES_T4, UPMC_CCNES_T1, UPMC_CCNES_T2, UPMC_CCNES_T3, UPMC_CCNES_T4)
+
+# Select revelent pedigree information, rename as needed. (Include GroupAssignment for treatment progross calculation.)
+Pedigree_T1 <- data.frame(c(select(Pedigree, FamID, mother_FamID = FamID_Mother, mom_guid, mother_sex = MomGender, interview_date = Time1Date, interview_age = MomAge_T1, GroupAssignment), Timepoint = "1"))
+Pedigree_T2 <- data.frame(c(select(Pedigree, FamID, mother_FamID = FamID_Mother, mom_guid, mother_sex = MomGender, interview_date = Time2Date, interview_age = MomAge_T2, GroupAssignment), Timepoint = "2"))
+Pedigree_T3 <- data.frame(c(select(Pedigree, FamID, mother_FamID = FamID_Mother, mom_guid, mother_sex = MomGender, interview_date = Time3Date, interview_age = MomAge_T3, GroupAssignment), Timepoint = "3"))
+Pedigree_T4 <- data.frame(c(select(Pedigree, FamID, mother_FamID = FamID_Mother, mom_guid, mother_sex = MomGender, interview_date = Time4Date, interview_age = MomAge_T4, GroupAssignment), Timepoint = "4"))
+
+Pedigree_Prep <- bind_rows(Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4)
+
+CCNES_PREP <- merge(CCNES_Qualtrics, Pedigree_Prep)
 
 # Change gemder to F instead of False
 CCNES_PREP$mother_sex <- "F"
@@ -141,7 +134,7 @@ CCNES_PREP$mother_sex <- "F"
 rm(UO_CCNES_T1, UO_CCNES_T2, UO_CCNES_T3, UO_CCNES_T4, UPMC_CCNES_T1, UPMC_CCNES_T2, UPMC_CCNES_T3, UPMC_CCNES_T4,Pedigree,Pedigree_T1,Pedigree_T2,Pedigree_T3,Pedigree_T4,CCNES_T1,CCNES_T2,CCNES_T3,CCNES_T4)
 ```
 
-```{r Recode, include=FALSE}
+```{r Re-code and Reverse Score}
 # Recode the strings of text to numbers 
 CCNES_PREP <- CCNES_PREP %>% 
   mutate_at(new_CCNES_names,
@@ -182,8 +175,8 @@ CCNES_PREP <- CCNES_PREP %>%
 # CCNES_PREP[,revers_CCNES_cols] = 8 - CCNES_PREP[,revers_CCNES_cols]
 ```
 
-```{r Colculation, include=FALSE}
-# Creating list of item need to be colculated -------------------------------------------------------------------------
+```{r Colculated Columns}
+# Creating list of item need to be colculated --------------------------------------------------
 # list of item which needed when colculating DR
 DR <- colnames(select(CCNES_PREP, c("srm_ccnes_02", "srm_ccnes_07r", "srm_ccnes_13", 
                                               "srm_ccnes_22", "srm_ccnes_29", "srm_ccnes_33", 
@@ -240,7 +233,7 @@ CCNES_PREP$ccnes_MR_cor <- ifelse(CCNES_PREP$NACheck < 0.67, rowMeans(CCNES_PREP
 #set(which(is.na(CCNES_PREP), 0))
 ```
 
-```{r NDA Sheet, include=FALSE}
+```{r NDA Sheet}
 # Create NDA prep sheet, select all the needed columns from prep sheet
 NDA_CCNES_Prep <- select(CCNES_PREP, c(subjectkey = mom_guid, src_subject_id = mother_FamID, sex = mother_sex ,interview_age, interview_date, starts_with("srm")))
                          
@@ -261,18 +254,19 @@ first_line <- matrix("", nrow = 1, ncol = ncol(NDA_CCNES))
 first_line[,1] <- "pabq"
 # assign the second cell in first_lineas pabq
 first_line[,2] <- "1"
-```
 
-```{r NDA sheet output, include=FALSE}
+
+# NDA output ---------
 # Create a new file in folder called pabq.csv, and put first line into this file
-# pabq.csb file will be saved into same folder as current r script
+# pabq.csv file will be saved into same folder as current r script
 write.table(first_line, file = "pabq.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
 
 # Append data in NDA_CCNES into pabq.cav file 
 write.table(NDA_CCNES, file = 'pabq.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
 ```
 
-```{r treatment mean, include=FALSE}
+
+```{r Table,  echo=FALSE}
 # Treatment Progress sheet
 # Select needed column
 Progress <- select(CCNES_PREP, c(FamID, GroupAssignment, Timepoint, starts_with("srm")))
@@ -324,16 +318,12 @@ Timepoint_names <- c("T1","T2", "T3", "T4","T1","T2", "T3", "T4","T1","T2", "T3"
 # Rename column name 
 setnames(Mean_Table, names(Mean_Table), Timepoint_names)
 
-```
-
-
-
-```{r table, echo=FALSE}
+# Table output ----------
 # Add a header 
 kable(Mean_Table) %>%
   kable_styling(bootstrap_options = "striped", full_width = F) %>%
   add_header_above(c(" " = 1, "DBT Group means" = 4, "FSU means" = 4, "Controls means" = 4))
-  
 ```
+
 ***Used CCNES Validation subscale only, information on Invalidation can be found in the data set
 
