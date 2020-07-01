@@ -1,10 +1,18 @@
 # Measure: cbcl | Author: Austin | Lasted Edited: 5/5/2020 By: Austin
 
+#empty Global Environment
+rm(list = ls())
+
 # Import Packages Needed
 library(dplyr)
 library(tidyverse)
 library(eeptools)
 library(data.table)
+
+# Set the working directory 
+# for Bryan
+# setwd("C:/Users/bryan/Documents/GitHub/DataUploadAutomation/Measures/CBCL")
+setwd("D:/Austin/College (D-Drive)/DataUploadAutomation/Measures/CBCL")
 
 # Import Pedigree and NDA Structure
 Pedigree <- read.csv("Reference_Pedigree.csv")
@@ -74,10 +82,11 @@ rm(UO_T1_cbcl, UO_T2_cbcl, UO_T3_cbcl, UO_T4_cbcl, UPMC_T1_cbcl, UPMC_T2_cbcl, U
    old_UO_cbcl_names_T1, old_UO_cbcl_names_T2, old_UO_cbcl_names_T3, old_UO_cbcl_names_T4, old_UPMC_cbcl_names_T1_T4, old_UPMC_cbcl_names_T2_T3)
 
 # Create the Predigree data for each Time Point
-Pedigree_T1 <- select(Pedigree, FamID, FamID_Mother, mom_guid, MomGender, Time1Date, MomAge_T1)
-Pedigree_T2 <- select(Pedigree, FamID, FamID_Mother, mom_guid, MomGender, Time2Date, MomAge_T2)
-Pedigree_T3 <- select(Pedigree, FamID, FamID_Mother, mom_guid, MomGender, Time3Date, MomAge_T3)
-Pedigree_T4 <- select(Pedigree, FamID, FamID_Mother, mom_guid, MomGender, Time4Date, MomAge_T4)
+# Where is "relationship?"
+Pedigree_T1 <- select(Pedigree, FamID, child_guid, child_FamID = FamID_Child, child_sex = ChildGender, interview_age = ChildAge_T1, interview_date = Time1Date, GroupAssignment, relationship)
+Pedigree_T2 <- select(Pedigree, FamID, child_guid, child_FamID = FamID_Child, child_sex = ChildGender, interview_age = ChildAge_T2, interview_date = Time2Date, GroupAssignment)
+Pedigree_T3 <- select(Pedigree, FamID, child_guid, child_FamID = FamID_Child, child_sex = ChildGender, interview_age = ChildAge_T3, interview_date = Time3Date, GroupAssignment)
+Pedigree_T4 <- select(Pedigree, FamID, child_guid, child_FamID = FamID_Child, child_sex = ChildGender, interview_age = ChildAge_T4, interview_date = Time4Date, GroupAssignment)
 
 # Merge Pedigree data to cbcl Time Points
 cbcl_T1 <- merge(Pedigree_T1, cbcl_T1, by = 'FamID')
@@ -95,18 +104,21 @@ cbcl_T3$timepoint <- "Time 3"
 cbcl_T4$timepoint <- "Time 4"
 
 # Rename each of the cbcl Date and Age coloumns so they match
-cbcl_T1 <- cbcl_T1 %>% rename( interview_date = Time1Date, interview_age = MomAge_T1)
-cbcl_T2 <- cbcl_T2 %>% rename( interview_date = Time2Date, interview_age = MomAge_T2)
-cbcl_T3 <- cbcl_T3 %>% rename( interview_date = Time3Date, interview_age = MomAge_T3)
-cbcl_T4 <- cbcl_T4 %>% rename( interview_date = Time4Date, interview_age = MomAge_T4)
+#cbcl_T1 <- cbcl_T1 %>% rename( interview_date = Time1Date, interview_age = MomAge_T1)
+#cbcl_T2 <- cbcl_T2 %>% rename( interview_date = Time2Date, interview_age = MomAge_T2)
+#cbcl_T3 <- cbcl_T3 %>% rename( interview_date = Time3Date, interview_age = MomAge_T3)
+#cbcl_T4 <- cbcl_T4 %>% rename( interview_date = Time4Date, interview_age = MomAge_T4)
 
 # Bind all cbcl Time Points togeather creating the cbcl_Prep sheet
 cbcl_Prep <- rbind(cbcl_T1, cbcl_T2, cbcl_T3, cbcl_T4)
 
+# Change gender to F instead of False
+#cbcl_Prep$mother_sex <- "F"
+
 # Clean Global Enviorment 
 rm(cbcl_T1, cbcl_T2, cbcl_T3, cbcl_T4)
 
-#TODO: Prefer not to answer now as NA? Check if NaN exists in right places
+# Recode responses into numbers
 cbcl_Prep <- cbcl_Prep %>% 
   mutate_at(new_cbcl_names,
             funs(recode(., "Not True (as far as you know)" = 0, 
@@ -114,7 +126,7 @@ cbcl_Prep <- cbcl_Prep %>%
                         "Very True or Often True" = 2,.default = NaN)))
 
 
-# Created calcualted columns
+# Created calculated columns
 cbcl_Prep <- add_column(cbcl_Prep, cbcl_er = rowSums(cbcl_Prep[, c("srm_cbcl_021", "srm_cbcl_046", "srm_cbcl_051", "srm_cbcl_079", "srm_cbcl_082", "srm_cbcl_083", "srm_cbcl_092", 
                                                                    "srm_cbcl_097", "srm_cbcl_099")]),.after = "srm_cbcl_100")
 
@@ -171,5 +183,45 @@ cbcl_Prep <- add_column(cbcl_Prep, cbcl_total = rowSums(cbcl_Prep[, c("srm_cbcl_
                                                                       "srm_cbcl_092", "srm_cbcl_093", "srm_cbcl_094", "srm_cbcl_095", "srm_cbcl_096", "srm_cbcl_097", "srm_cbcl_098",
                                                                       "srm_cbcl_099")]),.after = "cbcl_ext")
 
+# Experiment to condense the code. cbcl total all starts with srm_cbcl_0 but I can't seem to make it work.
+# cbcl_Prep <- add_column(cbcl_Prep, cbcl_total_experiment = rowSums(cbcl_Prep, starts_with("srm_cbcl_0")),.after = "cbcl_ext")
 
-# Whatever comes next
+                        
+# NDA Sheet ----------------------------------------------------------------------------
+# Create NDA prep sheet, select all the needed columns from prep sheet
+NDA_cbcl_Prep <- select(cbcl_Prep, c(subjectkey = child_guid, src_subject_id = child_FamID, sex = child_sex ,interview_age, interview_date, starts_with("srm")))
+
+# NDA structure Column Names (work in progress)
+NDA_cbcl_Names <- paste(c("cbcl56a", "cbcl1", "cbcl_nt", "cbcl_eye", "cbcl8", "cbcl10", "cbcl_out", "cbcl_wait", "cbcl_chew", "cbcl11", "cbcl_help", "cbcl49", "cbcl14", "cbcl15", "cbcl_defiant", "cbcl_dem", "cbcl20", 
+                         "cbcl21", "cbcl_diar", "cbcl_disob", "cbcl_dist", "cbcl_alonsleep", "cbcl_answer", "cbcl24", "cbcl25", "cbcl_fun", "cbcl26", "cbcl_home", "cbcl_frust", "cbcl27", "cbcl_eat", "cbcl29", "cbcl_feel", "cbcl36", 
+                         "cbcl37", "cbcl_every", "cbcl_upset", "cbcl_troubsleep", "cbcl56b", "cbcl_hit", "cbcl_breath", "cbcl_hurt", "cbcl_unhap", "cbcl_angry", "cbcl56c", "cbcl46", "cbcl45", "cbcl47", "cbcl53", "cbcl54", "cbcl_panic",
+                         "cbcl_bow", "cbcl57", "cbcl58", "cbcl60", "cbcl62", "cbcl56d", "cbcl_punish", "cbcl_shift", "cbcl56e", "cbcl_reat", "cbcl_play", "cbcl_rock", "cbcl_bed", "cbcl_toil", "cbcl68", "cbcl_aff", "cbcl71", "cbcl_selfish",
+                         "cbcl_littleaf", "cbcl_inter", "cbcl_fear", "cbcl75", "cbcl76", "cbcl_smear", "cbcl79", "cbcl_stares", "cbcl56f", "cbcl_sad", "cbcl84", "cbcl86", "cbcl87", "cbcl88", "cbcl_crie", "cbcl95", "cbcl_clean", "cbcl50",
+                         "cbcl_uncoop", "cbcl102", "cbcl103", "cbcl104", "cbcl_people", "cbcl56g", "cbcl_wake", "cbcl_wand", "cbcl19", "cbcl109", "cbcl_withdr", "cbcl112", "cbcl113a"))
+
+# Combine NDA and prep sheet
+# Make sure put original NDA structure at first, because the order of the new sheet will be the order of the first item in bind_rows function
+setnames(NDA_cbcl_Prep, new_cbcl_names, NDA_cbcl_Names)
+
+# Recreate first line in orignial NDA file
+# Make a empty row, with same number of column in NDA_CCBL, as first line of NDA sheet
+# ncol(NDA_CCNES)  is number of columns in NDA_CBCL
+NDA_CBCL <- bind_rows(NDA_CBCL,NDA_cbcl_Prep)
+
+# Recreate first line in orignial NDA file
+# Make a empty row, with same number of column in NDA_CBCL, as first line of NDA sheet
+# ncol(NDA_CBCL)  is number of columns in NDA_CBCL
+first_line <- matrix("", nrow = 1, ncol = ncol(NDA_CBCL))
+# assign the first cell in first_line as cbcl1_5 which is the first cell in orignial NDA structure
+first_line[,1] <- "cbcl1_5"
+# assign the second cell in first_line as "1"
+first_line[,2] <- "1"
+
+# Create a new file in folder called cbcl1_5.csv, and put first line into this file
+# cbcl1_5.csv file will be saved into same folder as current r script
+write.table(first_line, file = "cbcl1_5.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
+
+# Append data in NDA_CCNES into cbcl1_5.csv file 
+write.table(NDA_CBCL, file = 'cbcl1_5.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
+
+#TODO: Solve relationship issue
