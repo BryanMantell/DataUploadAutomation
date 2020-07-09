@@ -1,19 +1,37 @@
-# Measure: cbcl | Author: Austin | Lasted Edited: 5/5/2020 By: Austin
+---
+title: "CBCL_Table_Mean"
+author: "Austin Fisenko"
+date: "7/9/2020"
+output: html_document
+---
 
+```{r setup}
 #empty Global Environment
 rm(list = ls())
-
 # Import Packages Needed
 library(dplyr)
 library(tidyverse)
 library(eeptools)
 library(data.table)
+library(knitr)
+library(kableExtra)
 
-# Set the working directory 
+knitr::opts_chunk$set(echo = TRUE, include = FALSE)
+#Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+fsep <- .Platform$file.sep;
+
+# Set the working directory -----
 # for Bryan
 # setwd("C:/Users/bryan/Documents/GitHub/DataUploadAutomation/Measures/CBCL")
 setwd("D:/Austin/College (D-Drive)/DataUploadAutomation/Measures/CBCL")
 
+#sentific notation, round up to 3 digits
+options(digits = 3)
+
+```
+
+```{r import}
 # Import Pedigree and NDA Structure
 Pedigree <- read.csv("Reference_Pedigree.csv")
 NDA_CBCL <- read.csv("cbcl1_501_template.csv", skip = 1)
@@ -28,6 +46,9 @@ UPMC_T2_cbcl <- read.csv(file = 'UPMC_T2_cbcl.csv', stringsAsFactors = FALSE)
 UPMC_T3_cbcl <- read.csv(file = 'UPMC_T3_cbcl.csv', stringsAsFactors = FALSE)
 UPMC_T4_cbcl <- read.csv(file = 'UPMC_T4_cbcl.csv', stringsAsFactors = FALSE)
 
+```
+
+```{r rename columns}
 # Create list of new variable names 
 new_cbcl_names <- sprintf("srm_cbcl_%03d", seq(1:100))
 
@@ -59,6 +80,9 @@ setnames(UPMC_T2_cbcl, old_UPMC_cbcl_names_T2_T3, new_cbcl_names)
 setnames(UPMC_T3_cbcl, old_UPMC_cbcl_names_T2_T3, new_cbcl_names)
 setnames(UPMC_T4_cbcl, old_UPMC_cbcl_names_T1_T4, new_cbcl_names)
 
+```
+
+```{r prep sheet}
 # Edit UO cbcl Time 1 - 4 to have only cbcl quesions and the FamID. 
 UO_T1_cbcl <- select(UO_T1_cbcl, c(FamID = Q221, contains("cbcl")))
 UO_T2_cbcl <- select(UO_T2_cbcl, c(FamID = Q116, contains("cbcl")))
@@ -82,8 +106,8 @@ rm(UO_T1_cbcl, UO_T2_cbcl, UO_T3_cbcl, UO_T4_cbcl, UPMC_T1_cbcl, UPMC_T2_cbcl, U
    old_UO_cbcl_names_T1, old_UO_cbcl_names_T2, old_UO_cbcl_names_T3, old_UO_cbcl_names_T4, old_UPMC_cbcl_names_T1_T4, old_UPMC_cbcl_names_T2_T3)
 
 # Create the Predigree data for each Time Point
-# Where is "relationship?"
-Pedigree_T1 <- select(Pedigree, FamID, child_guid, child_FamID = FamID_Child, child_sex = ChildGender, interview_age = ChildAge_T1, interview_date = Time1Date, GroupAssignment, relationship)
+# Resolve issue with relationship column
+Pedigree_T1 <- select(Pedigree, FamID, child_guid, child_FamID = FamID_Child, child_sex = ChildGender, interview_age = ChildAge_T1, interview_date = Time1Date, GroupAssignment)
 Pedigree_T2 <- select(Pedigree, FamID, child_guid, child_FamID = FamID_Child, child_sex = ChildGender, interview_age = ChildAge_T2, interview_date = Time2Date, GroupAssignment)
 Pedigree_T3 <- select(Pedigree, FamID, child_guid, child_FamID = FamID_Child, child_sex = ChildGender, interview_age = ChildAge_T3, interview_date = Time3Date, GroupAssignment)
 Pedigree_T4 <- select(Pedigree, FamID, child_guid, child_FamID = FamID_Child, child_sex = ChildGender, interview_age = ChildAge_T4, interview_date = Time4Date, GroupAssignment)
@@ -112,12 +136,12 @@ cbcl_T4$timepoint <- "Time 4"
 # Bind all cbcl Time Points togeather creating the cbcl_Prep sheet
 cbcl_Prep <- rbind(cbcl_T1, cbcl_T2, cbcl_T3, cbcl_T4)
 
-# Change gender to F instead of False
-#cbcl_Prep$mother_sex <- "F"
-
 # Clean Global Enviorment 
 rm(cbcl_T1, cbcl_T2, cbcl_T3, cbcl_T4)
 
+```
+
+```{r recode}
 # Recode responses into numbers
 cbcl_Prep <- cbcl_Prep %>% 
   mutate_at(new_cbcl_names,
@@ -125,7 +149,9 @@ cbcl_Prep <- cbcl_Prep %>%
                         "Somewhat or Sometimes True" = 1,
                         "Very True or Often True" = 2,.default = NaN)))
 
+```
 
+```{r calculated columns}
 # Created calculated columns
 cbcl_Prep <- add_column(cbcl_Prep, cbcl_er = rowSums(cbcl_Prep[, c("srm_cbcl_021", "srm_cbcl_046", "srm_cbcl_051", "srm_cbcl_079", "srm_cbcl_082", "srm_cbcl_083", "srm_cbcl_092", 
                                                                    "srm_cbcl_097", "srm_cbcl_099")]),.after = "srm_cbcl_100")
@@ -186,7 +212,9 @@ cbcl_Prep <- add_column(cbcl_Prep, cbcl_total = rowSums(cbcl_Prep[, c("srm_cbcl_
 # Experiment to condense the code. cbcl total all starts with srm_cbcl_0 but I can't seem to make it work.
 # cbcl_Prep <- add_column(cbcl_Prep, cbcl_total_experiment = rowSums(cbcl_Prep, starts_with("srm_cbcl_0")),.after = "cbcl_ext")
 
-                        
+```
+
+```{r NDA Sheet}
 # NDA Sheet ----------------------------------------------------------------------------
 # Create NDA prep sheet, select all the needed columns from prep sheet
 NDA_cbcl_Prep <- select(cbcl_Prep, c(subjectkey = child_guid, src_subject_id = child_FamID, sex = child_sex ,interview_age, interview_date, starts_with("srm")))
@@ -223,3 +251,66 @@ write.table(first_line, file = "cbcl1_5.csv", sep = ",", append = FALSE, quote =
 
 # Append data in NDA_CCNES into cbcl1_5.csv file 
 write.table(NDA_CBCL, file = 'cbcl1_5.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
+
+```
+
+```{r table, echo=FALSE}
+# Treatment Progress sheet
+# Select needed column
+Progress <- select(cbcl_Prep, c(FamID, GroupAssignment, timepoint, starts_with("srm")))
+
+# Calculate row mean for each individual  
+Progress$Row_Mean <- rowMeans(select(cbcl_Prep,c(starts_with("srm"))), na.rm = T)
+
+# Change FamId as character and assign to ID variable 
+ID <- c(as.character(Progress$FamID))
+
+# Add Site column to Progress, if ID start with 9 then site is UO, else is UPMC
+Progress$site <- ifelse(startsWith(ID, "9"),"UO","UPMC")
+
+# Group by GroupAssissignment and Timepoint, and calculate the Group Mean
+Progress_Mean <- Progress %>%
+  group_by(GroupAssignment,timepoint,site) %>%
+  summarise(GroupMean = mean(Row_Mean,na.rm = T),count = n())
+
+# Select only UO Mean
+UO <- Progress_Mean[Progress_Mean$site == "UO",]
+# Select only UPMC Mean 
+UPMC <- Progress_Mean[Progress_Mean$site == "UPMC",]
+
+# Calculate Both site Mean 
+Both_site_Mean <- Progress_Mean %>%
+  group_by(GroupAssignment, timepoint) %>%
+  summarise(BothSiteMean = mean(GroupMean,na.rm = T),n = sum(count))
+#Progress_Mean <- Progress_Mean[order(GroupAssignment),] 
+
+
+# Change GroupMean Column names according to site
+colnames(UO)[colnames(UO) == "GroupMean"] = "UO_CBCL"
+colnames(UPMC)[colnames(UPMC) == "GroupMean"] = "UPMC_CBCL"
+
+
+
+# Combine UO,UPMC and both_site data 
+Mean_Table <- data.frame(UO[,c("UO_CBCL","GroupAssignment")],UPMC[,"UPMC_CBCL"],Both_site_Mean[,c("BothSiteMean","n")])
+
+# Convert Mean_Table, make original column as row
+Mean_Table <- t(Mean_Table)
+
+# Make Mean_Table as a data.frame
+Mean_Table <- data.frame(Mean_Table)
+
+# Add Timepoint column 
+Timepoint_names <- c("T1","T2", "T3", "T4","T1","T2", "T3", "T4","T1","T2", "T3", "T4")
+
+# Rename column name 
+setnames(Mean_Table, names(Mean_Table), Timepoint_names)
+
+# Table output ----------
+# Add a header 
+kable(Mean_Table) %>%
+  kable_styling(bootstrap_options = "striped", full_width = F) %>%
+  add_header_above(c(" " = 1, "DBT Group means" = 4, "FSU means" = 4, "Controls means" = 4))
+```
+
+
