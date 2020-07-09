@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1593632914904.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2900275758",
+    "id" : "3B688733",
+    "lastKnownWriteTime" : 1590681352,
+    "last_content_update" : 1590681352,
+    "path" : "~/GitHub/DataUploadAutomation/Measures/CCNES/CCNES.R",
+    "project_path" : null,
+    "properties" : {
+        "cursorPosition" : "219,0",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

@@ -160,8 +160,8 @@ first_line <- matrix("", nrow = 1, ncol = ncol(NDA_WCCL))
 
 first_line[,1] <- "dbt_wccl"
 first_line[,2] <- "1"
+write.table(first_line, file = "dbt_wccl", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
 write.table(first_line, file = "dbt_wccl.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
-write.table(NDA_WCCL, file = "dbt_wccl.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
 ```
 ```{r Table}
 
