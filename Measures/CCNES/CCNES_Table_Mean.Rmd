@@ -306,6 +306,9 @@ colnames(UPMC)[colnames(UPMC) == "GroupMean"] = "UPMC_CCNES"
 # Combine UO,UPMC and both_site data 
 Mean_Table <- data.frame(UO[,c("UO_CCNES","GroupAssignment")],UPMC[,"UPMC_CCNES"],Both_site_Mean[,c("BothSiteMean","n")])
 
+# Remove GroupAssignment column 
+Mean_Table <- select(Mean_Table, -c(GroupAssignment))
+
 # Convert Mean_Table, make original column as row
 Mean_Table <- t(Mean_Table)
 
