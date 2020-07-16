@@ -33,7 +33,7 @@ options(digits = 3)
 ```{r Import}
 Pedigree <- read.csv("Reference_Pedigree.csv")
 Redcap_Data <- read.csv("Redcap_Data.csv")
-NDA_DCCS <- read.csv("dccs01_template.csv", skip = 1)
+NDA_DCCS <- read.csv("dccs01_template.csv", skip=1)
 ```
 
 ```{r Rename Columns}
@@ -87,6 +87,8 @@ first_line <- matrix("", nrow = 1, ncol = ncol(NDA_DCCS))
 first_line[,1] <- "dccs"
 # assign the second cell in first_lineas dccs
 first_line[,2] <- "1"
+
+
 
 # NDA output ---------
 # Create a new file in folder called dccs.csv, and put first line into this file
