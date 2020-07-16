@@ -25,9 +25,9 @@ The current process for doing the data upload is needlessly tedious, time consum
 | [CCNES](#Coping-with-Children's-Negative-Emotions-Scale---CCNES) | Min | In Progress |
 | [AAQ](#Acceptance-and-Action-Questionnaire---AAQ) | Bryan | In Progress |
 | [WCCL](#Ways-of-Coping-Checklist---WCCL) | Kyle | In Progress |
-| [PKBS](#Preschool-and-Kindergarten-Behavior-Scale---PKBS) | Jake | In Progress |
+| [PKBS](#Preschool-and-Kindergarten-Behavior-Scales---PKBS) | Jake | In Progress |
 | [Bear Dragon](#Bear-Dragon)             | Jake | In Progress |
-| [Affect Perspective Taking](Affect-Perspective-Taking) | Bryan | In Progress |
+| [Affect Perspective Taking](#Affect-Perspective-Taking) | Bryan | In Progress |
 | [Dimensional Card Sort](#Dimensional-Card-Sort) | Min | In Progress |
 | [Emotion Labeling](#Emotion-Labeling) | Kyle | In Progress |
 | [Emotion Strategies](#Emotion-Strategies) | Austin | In Progress |
