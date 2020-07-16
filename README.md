@@ -20,7 +20,7 @@ The current process for doing the data upload is needlessly tedious, time consum
 | [SCID](#Structured-Clinical-Interview-for-DSM-V---SCID) |TBD|In Progress |
 | [SID-P](#Structured-Interview-for-DSM-IV-Personality---SID-P) | TBD | In Progress |
 | [PPVT](#Peabody-Picture-Vocabulary-Test---PPVT) | TBD | In Progress |
-| [DERS](#Difficulties-in-Emotion-Regulation-Scale---DERS) | Bryan | In Progress |
+| [DERS](#Difficulties-in-Emotion-Regulation-Scale---DERS) | Min | In Progress |
 | [CBCL](#Child-Behavior-Checklist---CBCL) | Austin | In Progress |
 | [CCNES](#Coping-with-Children's-Negative-Emotions-Scale---CCNES) | Min | In Progress |
 | [AAQ](#Acceptance-and-Action-Questionnaire---AAQ) | Bryan | In Progress |
@@ -1045,9 +1045,9 @@ Now that your prep sheet is complete and contains all the columns as indicated i
 | oc_bd_08         | oc_bd_08                 | beardragon8         |
 | oc_bd_09         | oc_bd_09                 | beardragon9         |
 | oc_bd_10         | oc_bd_10                 | beardragon10        |
-| bear_score       | total_bear       | bear_score          |
-| dragon_score     | total_dragon     | dragon_score        |
-| beardragon_total | total_beardragon      | beardragon_total    |
+| NA          | oc_bear_total | NA        |
+| NA   | oc_dragon_total | NA      |
+| NA | oc_beardragon_total | NA  |
 
 [Back to Table of Contents](#Table-of-Contents)
 
@@ -1204,28 +1204,28 @@ Now that your prep sheet is complete and contains all the columns as indicated i
 
 ## Emotion Labeling Item Matching Chart:
 
-| REDCap Data              | Emotion Labeling Prep Sheet | ***NDA* Structure** |
-| ------------------------ | --------------------------- | ------------------- |
-| NA                       | child_guid                  | subjectkey          |
-| NA                       | child_famID                 | src_subject_id      |
-| NA                       | interview_date              | interview_date      |
-| NA                       | interview_age               | interview_age       |
-| NA                       | child_sex                   | sex                 |
-| eltpart1_exp1            | oc_elt_exp_1                | eltpart1_exp1       |
-| eltpart1_exp2            | oc_elt_exp_2                | eltpart1_exp2       |
-| eltpart1_exp3            | oc_elt_exp_3                | eltpart1_exp3       |
-| eltpart1_exp4            | oc_elt_exp_4                | eltpart1_exp4       |
-| eltpart1_exp5            | oc_elt_exp_5                | eltpart1_exp5       |
-| eltpart1_exp6            | oc_elt_exp_6                | eltpart1_exp6       |
-| eltpart1_exp7            | oc_elt_exp_7                | eltpart1_exp7       |
-| eltpart1_exp8            | oc_elt_exp_8                | eltpart1_exp8       |
-| eltpart2_rec1            | oc_elt_rec_1                | eltpart2_rec1       |
-| eltpart2_rec2            | oc_elt_rec_2                | eltpart2_rec2       |
-| eltpart2_rec3            | oc_elt_rec_3                | eltpart2_rec3       |
-| eltpart2_rec4            | oc_elt_rec_4                | eltpart2_rec4       |
-| experimenter_point_total | oc_elt_exp_total            | NA                  |
-| child_point_total        | oc_elt_rec_total            | NA                  |
-| redcap_event_name        | timepoint                   | visit               |
+| REDCap Data       | Emotion Labeling Prep Sheet | ***NDA* Structure** |
+| ----------------- | --------------------------- | ------------------- |
+| NA                | child_guid                  | subjectkey          |
+| NA                | child_famID                 | src_subject_id      |
+| NA                | interview_date              | interview_date      |
+| NA                | interview_age               | interview_age       |
+| NA                | child_sex                   | sex                 |
+| eltpart1_exp1     | oc_elt_exp_1                | eltpart1_exp1       |
+| eltpart1_exp2     | oc_elt_exp_2                | eltpart1_exp2       |
+| eltpart1_exp3     | oc_elt_exp_3                | eltpart1_exp3       |
+| eltpart1_exp4     | oc_elt_exp_4                | eltpart1_exp4       |
+| eltpart1_exp5     | oc_elt_exp_5                | eltpart1_exp5       |
+| eltpart1_exp6     | oc_elt_exp_6                | eltpart1_exp6       |
+| eltpart1_exp7     | oc_elt_exp_7                | eltpart1_exp7       |
+| eltpart1_exp8     | oc_elt_exp_8                | eltpart1_exp8       |
+| eltpart2_rec1     | oc_elt_rec_1                | eltpart2_rec1       |
+| eltpart2_rec2     | oc_elt_rec_2                | eltpart2_rec2       |
+| eltpart2_rec3     | oc_elt_rec_3                | eltpart2_rec3       |
+| eltpart2_rec4     | oc_elt_rec_4                | eltpart2_rec4       |
+| NA                | oc_elt_exp_total            | NA                  |
+| NA                | oc_elt_rec_total            | NA                  |
+| redcap_event_name | timepoint                   | visit               |
 
 [Back to Table of Contents](#Table-of-Contents)
 
@@ -1265,8 +1265,8 @@ Now that your prep sheet is complete and contains all the columns as indicated i
 | oc_es_hapstrat    | oc_es_hapstrat                | es_1                |
 | oc_es_hgen        | oc_es_hapstrat_total          | NA                  |
 | oc_es_h1          | oc_es_hap_1                   | es_2                |
-| oc_es_h1          | oc_es_hap_2                   | es_3                |
-| oc_es_h1          | oc_es_hap_3                   | es_4                |
+| oc_es_h2          | oc_es_hap_2                   | es_3                |
+| oc_es_h3          | oc_es_hap_3                   | es_4                |
 | NA                | oc_es_hap_total               | NA                  |
 | oc_es_angstrat    | oc_es_angstrat                | es_5                |
 | oc_es_agen        | oc_es_angstrat_total          | NA                  |
