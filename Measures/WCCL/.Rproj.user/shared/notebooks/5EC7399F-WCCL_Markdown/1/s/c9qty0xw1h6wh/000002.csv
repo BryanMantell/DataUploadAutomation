@@ -17,5 +17,5 @@
 "0",""
 "0","first_line[,1] <- ""dbt_wccl"""
 "0","first_line[,2] <- ""1"""
-"0","write.table(first_line, file = ""dbt_wccl"", sep = "","", append = FALSE, quote = FALSE, na = """", col.names = FALSE, row.names = FALSE)"
 "0","write.table(first_line, file = ""dbt_wccl.csv"", sep = "","", append = FALSE, quote = FALSE, na = """", col.names = FALSE, row.names = FALSE)"
+"0","write.table(NDA_WCCL, file = ""dbt_wccl.csv"", sep = "","", append = FALSE, quote = FALSE, na = """", col.names = FALSE, row.names = FALSE)"
