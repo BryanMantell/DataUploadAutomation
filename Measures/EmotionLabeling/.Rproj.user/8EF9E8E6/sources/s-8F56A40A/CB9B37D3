@@ -1,26 +1,22 @@
 {
     "collab_server" : "",
     "contents" : "",
-    "created" : 1593632089474.000,
+    "created" : 1595528983125.000,
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
     "hash" : "2405906512",
-    "id" : "641AA523",
-    "lastKnownWriteTime" : 1594927930,
-    "last_content_update" : 1594927931011,
+    "id" : "CB9B37D3",
+    "lastKnownWriteTime" : 1594928273,
+    "last_content_update" : 1594928273,
     "path" : "~/GitHub/DataUploadAutomation/Measures/WCCL/WCCL_Markdown.Rmd",
-    "project_path" : "WCCL_Markdown.Rmd",
+    "project_path" : null,
     "properties" : {
-        "cursorPosition" : "223,53",
-        "last_setup_crc32" : "DB2722CEc9094171",
-        "scrollLine" : "217",
-        "tempName" : "Untitled1"
     },
     "read_only" : false,
     "read_only_alternatives" : [
     ],
-    "relative_order" : 2,
+    "relative_order" : 5,
     "source_on_save" : false,
     "source_window" : "",
     "type" : "r_markdown"
