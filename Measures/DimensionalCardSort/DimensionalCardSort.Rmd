@@ -49,18 +49,19 @@ NDA_DCS_names <- sprintf("dcs%02d", 1:36)
 Redcap_Data$timepoint = sapply(strsplit(as.character(Redcap_Data$redcap_event_name), split = '_', fixed = T), function(x) (x[2])) 
 
 # Select needed columns and rename in Redcap_Data
-Redcap_Data <- select(Redcap_Data, c(fam_id,  timepoint, starts_with("oc_dcs_")))
+Redcap_Data <- select(Redcap_Data, c(Fam_ID = fam_id,  timepoint, starts_with("oc_dcs_")))
 
 # Select revelent pedigree information, rename as needed. (Include GroupAssignment for treatment progross calculation.)
-Pedigree_T1 <- data.frame(select(Pedigree, child_guid, child_famID = FamID_Child, interview_date = Time1Date, interview_age = MomAge_T1, child_sex = ChildGender, GroupAssignment), timepoint = 1 )
-Pedigree_T2 <- data.frame(select(Pedigree, child_guid, child_famID = FamID_Child, interview_date = Time2Date, interview_age = MomAge_T2, child_sex = ChildGender, GroupAssignment), timepoint = 2 )
-Pedigree_T3 <- data.frame(select(Pedigree, child_guid, child_famID = FamID_Child, interview_date = Time3Date, interview_age = MomAge_T3, child_sex = ChildGender, GroupAssignment), timepoint = 3 )
-Pedigree_T4 <- data.frame(select(Pedigree, child_guid, child_famID = FamID_Child, interview_date = Time4Date, interview_age = MomAge_T4, child_sex = ChildGender, GroupAssignment), timepoint = 4 )
+Pedigree_T1 <- data.frame(select(Pedigree, Fam_ID =  FamID, child_guid, child_famID = FamID_Child, interview_date = Time1Date, interview_age = MomAge_T1, child_sex = ChildGender, GroupAssignment), timepoint = 1 )
+Pedigree_T2 <- data.frame(select(Pedigree, Fam_ID =  FamID, child_guid, child_famID = FamID_Child, interview_date = Time2Date, interview_age = MomAge_T2, child_sex = ChildGender, GroupAssignment), timepoint = 2 )
+Pedigree_T3 <- data.frame(select(Pedigree, Fam_ID =  FamID, child_guid, child_famID = FamID_Child, interview_date = Time3Date, interview_age = MomAge_T3, child_sex = ChildGender, GroupAssignment), timepoint = 3 )
+Pedigree_T4 <- data.frame(select(Pedigree, Fam_ID =  FamID, child_guid, child_famID = FamID_Child, interview_date = Time4Date, interview_age = MomAge_T4, child_sex = ChildGender, GroupAssignment), timepoint = 4 )
 
 Pedigree_Prep <- rbind(Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4)
 
+
 # Merge Predigree and redcap files
-DCS_PREP <- merge(Pedigree_T1, Redcap_Data)
+DCS_PREP <- merge(Pedigree_Prep, Redcap_Data,by = c("timepoint","Fam_ID"))
 
 # Clean Environment
 rm(Pedigree, Pedigree_Prep, Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4, Redcap_Data)
