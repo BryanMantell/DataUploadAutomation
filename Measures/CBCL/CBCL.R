@@ -223,5 +223,3 @@ write.table(first_line, file = "cbcl1_5.csv", sep = ",", append = FALSE, quote =
 
 # Append data in NDA_CCNES into cbcl1_5.csv file 
 write.table(NDA_CBCL, file = 'cbcl1_5.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
-
-#TODO: Solve relationship issue

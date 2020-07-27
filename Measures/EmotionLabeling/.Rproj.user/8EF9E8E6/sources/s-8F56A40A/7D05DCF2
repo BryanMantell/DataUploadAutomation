@@ -1,0 +1,33 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1591205783962.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "7D05DCF2",
+    "lastKnownWriteTime" : 3759715561729371490,
+    "last_content_update" : 1591205783962,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "CFF71A24",
+        "caption" : "Emotion_Labeling_REDCAP",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=Emotion_Labeling_REDCAP&cache_key=CFF71A24",
+        "displayedObservations" : "30",
+        "environment" : "",
+        "expression" : "Emotion_Labeling_REDCAP",
+        "object" : "Emotion_Labeling_REDCAP",
+        "preview" : "0",
+        "totalObservations" : "30",
+        "variables" : "165"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}
