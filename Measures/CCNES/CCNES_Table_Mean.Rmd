@@ -3,6 +3,7 @@ title: "CCNES"
 author: "Min Zhang"
 date: "5/16/2020"
 output:
+  pdf_document: default
   html_document:
     df_print: paged
 ---
@@ -47,12 +48,22 @@ UPMC_CCNES_T2 <- read.csv("UPMC_T2_CCNES.csv")
 UPMC_CCNES_T3 <- read.csv("UPMC_T3_CCNES.csv")
 UPMC_CCNES_T4 <- read.csv("UPMC_T4_CCNES.csv")
 
+# remove first two line of dataframe
+UO_CCNES_T1 = UO_CCNES_T1[-c(1,2),]
+UO_CCNES_T2 = UO_CCNES_T2[-c(1,2),]
+UO_CCNES_T3 = UO_CCNES_T3[-c(1,2),]
+UO_CCNES_T4 = UO_CCNES_T4[-c(1,2),]
+
+UPMC_CCNES_T1 = UPMC_CCNES_T1[-c(1,2),]
+UPMC_CCNES_T2 = UPMC_CCNES_T2[-c(1,2),]
+UPMC_CCNES_T3 = UPMC_CCNES_T3[-c(1,2),]
+UPMC_CCNES_T4 = UPMC_CCNES_T4[-c(1,2),]
 #NDA Structure
 NDA_CCNES <- read.csv("pabq01_template.csv", skip = 1)
 
 ```
 
-```{r Rename Columns}
+```{r Rename Columns, message = F}
 ## OLD UO CCNES Column Names -------------------------------------------------------------
 # for each item in UO paste number 1 to 6
 # sprintf used to formate str
@@ -102,8 +113,8 @@ setnames(UPMC_CCNES_T2, odd_UPMC_CCNES_names2, new_CCNES_names)
 setnames(UPMC_CCNES_T3, odd_UPMC_CCNES_names2, new_CCNES_names)
 setnames(UPMC_CCNES_T4, odd_UPMC_CCNES_names, new_CCNES_names)
 
-# Edit UO CCNES Time 1 - 4 to have only CCNES quesions, FamID and Timepoint. Rename as needed
-UO_CCNES_T1 <- select(UO_CCNES_T1, c(FamID = Q221, Timepoint = Q146, contains("ccnes")))  
+# Edit UO CCNES Time 1 - 4 to have only CCNES quesions, FamID and Timepoint. Rename as needed, remove first two lines 
+UO_CCNES_T1 <- select(UO_CCNES_T1, c(FamID = Q221, Timepoint = Q146, contains("ccnes")))
 UO_CCNES_T2 <- select(UO_CCNES_T2, c(FamID = Q116, Timepoint = Q117, contains("ccnes")))
 UO_CCNES_T3 <- select(UO_CCNES_T3, c(FamID = Q174, Timepoint = Q176, contains("ccnes")))
 UO_CCNES_T4 <- select(UO_CCNES_T4, c(FamID = Q203, Timepoint = Q206, contains("ccnes")))
@@ -113,6 +124,8 @@ UPMC_CCNES_T1 <- data.frame(c(select(UPMC_CCNES_T1, c(FamID = Q1.2, contains("cc
 UPMC_CCNES_T2 <- data.frame(c(select(UPMC_CCNES_T2, c(FamID = Q1.2, contains("ccnes"))), Timepoint = "2"))  
 UPMC_CCNES_T3 <- data.frame(c(select(UPMC_CCNES_T3, c(FamID = Q1.2, contains("ccnes"))), Timepoint = "3"))  
 UPMC_CCNES_T4 <- data.frame(c(select(UPMC_CCNES_T4, c(FamID = Q1.2, contains("ccnes"))), Timepoint = "4"))
+
+
 
 # Bind 4 time points
 CCNES_Qualtrics <- bind_rows(UO_CCNES_T1,UO_CCNES_T2,UO_CCNES_T3,UO_CCNES_T4, UPMC_CCNES_T1, UPMC_CCNES_T2, UPMC_CCNES_T3, UPMC_CCNES_T4)
@@ -125,7 +138,7 @@ Pedigree_T4 <- data.frame(c(select(Pedigree, FamID, mother_FamID = FamID_Mother,
 
 Pedigree_Prep <- bind_rows(Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4)
 
-CCNES_PREP <- merge(CCNES_Qualtrics, Pedigree_Prep)
+CCNES_PREP <- merge(CCNES_Qualtrics, Pedigree_Prep, all = TRUE)
 
 # Change gemder to F instead of False
 CCNES_PREP$mother_sex <- "F"
@@ -306,6 +319,12 @@ colnames(UPMC)[colnames(UPMC) == "GroupMean"] = "UPMC_CCNES"
 # Combine UO,UPMC and both_site data 
 Mean_Table <- data.frame(UO[,c("UO_CCNES","GroupAssignment")],UPMC[,"UPMC_CCNES"],Both_site_Mean[,c("BothSiteMean","n")])
 
+<<<<<<< HEAD
+# Remove GroupAssignment column 
+# Mean_Table <- select(Mean_Table, -c(GroupAssignment))
+
+=======
+>>>>>>> e4089be3492ff0a1de59bb3140c7380b50375044
 # Convert Mean_Table, make original column as row
 Mean_Table <- t(Mean_Table)
 
@@ -322,7 +341,7 @@ setnames(Mean_Table, names(Mean_Table), Timepoint_names)
 # Add a header 
 kable(Mean_Table) %>%
   kable_styling(bootstrap_options = "striped", full_width = F) %>%
-  add_header_above(c(" " = 1, "DBT Group means" = 4, "FSU means" = 4, "Controls means" = 4))
+  add_header_above(c(" " = 1, "DBT Group means" = 4, "Controls means" = 4, "FSU means" = 4))
 ```
 
 ***Used CCNES Validation subscale only, information on Invalidation can be found in the data set
