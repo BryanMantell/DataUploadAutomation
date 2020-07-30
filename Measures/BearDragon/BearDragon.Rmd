@@ -1,0 +1,53 @@
+---
+title: "BearDragon"
+author: "START Lab"
+date: "7/16/2020"
+output: html_document
+---
+
+```{r Setup, include=FALSE}
+knitr::opts_chunk$set(message = FALSE)
+# Empty Global Enivronment
+rm(list = ls())
+```
+
+## Import
+Import Qualtrics Excel files into R
+```{r}
+#Install Package, this only need to be done once.
+install.packages(c("dplyr","tidyverse","data.table","knitr"))
+install.packages('plyr', repos = "http://cran.us.r-project.org")
+
+#Load packages, this need to be done every time you run this script. 
+library(dplyr)
+library(tidyverse)
+library(data.table)
+library(knitr)
+
+#Set Working Directory
+setwd("~/Documents/GitHub/DataUploadAutomation/Measures/PKBS/DataUploadAutomation/Measures/BearDragon/")
+
+#Import Pedigree and NDA Structure
+Pedigree <- read.csv("Reference_Pedigree.csv")
+NDA_BearDragon <- read.csv("beardragon01_template.csv")
+
+#Import Bear Dragon REDCap Data
+BearDragon_Data <- read.csv("Redcap_Data.csv", stringsAsFactors = FALSE)
+```
+
+## Rename Columns
+Rename questions numbers to self-report measure scale items. Then, take each scale measure from both sites and combine them by timepoint.
+```{r}
+
+```
+
+
+
+
+
+
+
+
+
+
+

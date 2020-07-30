@@ -122,6 +122,28 @@ PKBS_Prep  <- add_column(PKBS_Prep, pkbs_total = rowSums(PKBS_Prep[, c("srm_pkbs
                                                                        "srm_pkbs_21", "srm_pkbs_22", "srm_pkbs_23", "srm_pkbs_24", "srm_pkbs_25", "srm_pkbs_26", "srm_pkbs_27",
                                                                        "srm_pkbs_28", "srm_pkbs_29", "srm_pkbs_30", "srm_pkbs_31", "srm_pkbs_32", "srm_pkbs_33")]),.after = "srm_pkbs_33")
 
-#Merge PKBS Prep Sheet into NDA structure
-NDA_PKBS <- bind_rows(NDA_PKBS, PKBS_Prep)
+#Create list of column names for PKBS prep and NDA structure
+NDA_PKBS_Prep <- select(PKBS_Prep, c(visit = "Timepoint", subjectkey = "mom_guid", src_subject_id = "FamID_Mother", sex = "MomGender", interview_age, interview_date, starts_with("srm"), pkbs_total))
 
+
+NDA_names <- c("Social2", "Social7", "Social10", "Social12", "Social16", "Social22", "Social23", "Social25", 
+               "Social28", "Social29", "Social30", "Social32", "Social5", "Social14", "Social15", "Social17", 
+               "Social19", "Social20", "Social21", "Social24", "Social27", "Social33", "Social34", "Social1", 
+               "Social3", "Social6", "Social8", "P_soc_23_ft", "Social11", "Social13", "Social18", "Social26", 
+               "Social31")
+
+setnames(NDA_PKBS_Prep, new_PKBS_names, NDA_names, skip_absent = FALSE)
+colnames(NDA_PKBS_Prep)[39] <- "basc_social_raw"
+
+
+#Merge PKBS Prep Sheet into NDA structure
+NDA_PKBS <- bind_rows(NDA_PKBS_Prep, NDA_PKBS)
+
+#Recreate the first line of the NDA
+first_line <- matrix("", nrow = 1, ncol = ncol(NDA_PKBS))
+first_line[,1] <- "pkbs"
+first_line[,2] <- "1"
+
+#Output the table
+write.table(first_line, file = "pkbs.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
+write.table(NDA_PKBS, file = 'pkbs.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
