@@ -20,14 +20,14 @@ The current process for doing the data upload is needlessly tedious, time consum
 | [SCID](#Structured-Clinical-Interview-for-DSM-V---SCID) |TBD|In Progress |
 | [SID-P](#Structured-Interview-for-DSM-IV-Personality---SID-P) | TBD | In Progress |
 | [PPVT](#Peabody-Picture-Vocabulary-Test---PPVT) | TBD | In Progress |
-| [DERS](#Difficulties-in-Emotion-Regulation-Scale---DERS) | Bryan | In Progress |
+| [DERS](#Difficulties-in-Emotion-Regulation-Scale---DERS) | Min | In Progress |
 | [CBCL](#Child-Behavior-Checklist---CBCL) | Austin | In Progress |
 | [CCNES](#Coping-with-Children's-Negative-Emotions-Scale---CCNES) | Min | In Progress |
 | [AAQ](#Acceptance-and-Action-Questionnaire---AAQ) | Bryan | In Progress |
 | [WCCL](#Ways-of-Coping-Checklist---WCCL) | Kyle | In Progress |
-| [PKBS](#Preschool-and-Kindergarten-Behavior-Scale---PKBS) | Jake | In Progress |
+| [PKBS](#Preschool-and-Kindergarten-Behavior-Scales---PKBS) | Jake | In Progress |
 | [Bear Dragon](#Bear-Dragon)             | Jake | In Progress |
-| [Affect Perspective Taking](Affect-Perspective-Taking) | Bryan | In Progress |
+| [Affect Perspective Taking](#Affect-Perspective-Taking) | Bryan | In Progress |
 | [Dimensional Card Sort](#Dimensional-Card-Sort) | Min | In Progress |
 | [Emotion Labeling](#Emotion-Labeling) | Kyle | In Progress |
 | [Emotion Strategies](#Emotion-Strategies) | Austin | In Progress |
@@ -1045,9 +1045,9 @@ Now that your prep sheet is complete and contains all the columns as indicated i
 | oc_bd_08         | oc_bd_08                 | beardragon8         |
 | oc_bd_09         | oc_bd_09                 | beardragon9         |
 | oc_bd_10         | oc_bd_10                 | beardragon10        |
-| bear_score       | total_bear       | bear_score          |
-| dragon_score     | total_dragon     | dragon_score        |
-| beardragon_total | total_beardragon      | beardragon_total    |
+| NA          | oc_bear_total | NA        |
+| NA   | oc_dragon_total | NA      |
+| NA | oc_beardragon_total | NA  |
 
 [Back to Table of Contents](#Table-of-Contents)
 
@@ -1059,19 +1059,25 @@ Now that your prep sheet is complete and contains all the columns as indicated i
 
 ### 1) Importing
 
+Install all the [packages](#Help-Section) required for the project. You can find what's needed in the [Help Section](#Help-Section). 
+
+Read in all the CSVs needed. The files you'll need are located in your measure's folder. Check the [Help Section](#Help-Section) for example code.
+
 ### 2) Editing and Renaming
 
-### 3) Recoding
+Edit and rename the Pedigree so that it only has the information needed for the NDA structure. Name it MeasureName_prep because this will be used to prepare everything before you do the final move to the NDA structure. The measure will need the following from the pedigree:
 
-### 4) Calculated Columns
+child guid, child famID, interview age, interview date, sex.
 
-### 5) Transfer to NDA Structure 
+Next, we need to take all Redcap data and add it to the MeasureName_prep data frame.
+
+### 3) Transfer to NDA Structure 
 
 Now that your prep sheet is complete and contains all the columns as indicated in the Item matching chart, move the columns into the NDA structure.
 
 ## Affect Perspective Taking Item Matching Chart:
 
-| RedCap Data | Affect Perspective Taking Sheet | ***NDA* Structure** |
+| REDcap Data | Affect Perspective Taking Prep Sheet | ***NDA* Structure** |
 | ----------- | ---------------------- | ------------------- |
 | N/A         | child_guid             | subjectkey          |
 | N/A         | child_famID            | src_subject_id      |
@@ -1106,19 +1112,69 @@ Now that your prep sheet is complete and contains all the columns as indicated i
 
 ### 1) Importing
 
+Install all the [packages](#Help-Section) required for the project. You can find what's needed in the [Help Section](#Help-Section). 
+
+Read in all the CSVs needed. The files you'll need are located in your measure's folder. Check the [Help Section](#Help-Section) for example code.
+
 ### 2) Editing and Renaming
 
-### 3) Recoding
+Edit and rename the Pedigree so that it only has the information needed for the NDA structure. Name it MeasureName_prep because this will be used to prepare everything before you do the final move to the NDA structure. The measure will need the following from the pedigree:
 
-### 4) Calculated Columns
+child guid, child famID, interview age, interview date, sex.
 
-### 5) Transfer to NDA Structure 
+Next, we need to take all Redcap data and add it to the MeasureName_prep data frame.
+
+### 3) Transfer to NDA Structure 
 
 Now that your prep sheet is complete and contains all the columns as indicated in the Item matching chart, move the columns into the NDA structure.
 
 ## Dimensional Card Sort Item Matching Chart:
 
-
+| REDcap Data       | Dimensional Card Sort Prep Sheet | ***NDA* Structure** |
+| ----------------- | -------------------------------- | ------------------- |
+| NA                | child_guid                       | subjectkey          |
+| NA                | child_famID                      | src_subject_id      |
+| NA                | interview_date                   | interview_date      |
+| NA                | interview_age                    | interview_age       |
+| NA                | child_sex                        | gender              |
+| oc_dcs_01         | oc_dcs_01                        |                     |
+| oc_dcs_02         | oc_dcs_02                        |                     |
+| oc_dcs_03         | oc_dcs_03                        |                     |
+| oc_dcs_04         | oc_dcs_04                        |                     |
+| oc_dcs_05         | oc_dcs_05                        |                     |
+| oc_dcs_06         | oc_dcs_06                        |                     |
+| oc_dcs_07         | oc_dcs_07                        |                     |
+| oc_dcs_08         | oc_dcs_08                        |                     |
+| oc_dcs_09         | oc_dcs_09                        |                     |
+| oc_dcs_10         | oc_dcs_10                        |                     |
+| oc_dcs_11         | oc_dcs_11                        |                     |
+| oc_dcs_12         | oc_dcs_12                        |                     |
+| oc_dcs_13         | oc_dcs_13                        |                     |
+| oc_dcs_14         | oc_dcs_14                        |                     |
+| oc_dcs_15         | oc_dcs_15                        |                     |
+| oc_dcs_16         | oc_dcs_16                        |                     |
+| oc_dcs_17         | oc_dcs_17                        |                     |
+| oc_dcs_18         | oc_dcs_18                        |                     |
+| oc_dcs_19         | oc_dcs_19                        |                     |
+| oc_dcs_20         | oc_dcs_20                        |                     |
+| oc_dcs_21         | oc_dcs_21                        |                     |
+| oc_dcs_22         | oc_dcs_22                        |                     |
+| oc_dcs_23         | oc_dcs_23                        |                     |
+| oc_dcs_24         | oc_dcs_24                        |                     |
+| oc_dcs_25         | oc_dcs_25                        |                     |
+| oc_dcs_26         | oc_dcs_26                        |                     |
+| oc_dcs_27         | oc_dcs_27                        |                     |
+| oc_dcs_28         | oc_dcs_28                        |                     |
+| oc_dcs_29         | oc_dcs_29                        |                     |
+| oc_dcs_30         | oc_dcs_30                        |                     |
+| oc_dcs_31         | oc_dcs_31                        |                     |
+| oc_dcs_32         | oc_dcs_32                        |                     |
+| oc_dcs_33         | oc_dcs_33                        |                     |
+| oc_dcs_34         | oc_dcs_34                        |                     |
+| oc_dcs_35         | oc_dcs_35                        |                     |
+| oc_dcs_36         | oc_dcs_36                        |                     |
+| NA                | oc_dcs_total                     |                     |
+| redcap_event_name | timepoint                        | visit               |
 
 [Back to Table of Contents](#Table-of-Contents)
 
@@ -1130,19 +1186,46 @@ Now that your prep sheet is complete and contains all the columns as indicated i
 
 ### 1) Importing
 
+Install all the [packages](#Help-Section) required for the project. You can find what's needed in the [Help Section](#Help-Section). 
+
+Read in all the CSVs needed. The files you'll need are located in your measure's folder. Check the [Help Section](#Help-Section) for example code.
+
 ### 2) Editing and Renaming
 
-### 3) Recoding
+Edit and rename the Pedigree so that it only has the information needed for the NDA structure. Name it MeasureName_prep because this will be used to prepare everything before you do the final move to the NDA structure. The measure will need the following from the pedigree:
 
-### 4) Calculated Columns
+child guid, child famID, interview age, interview date, sex.
 
-### 5) Transfer to NDA Structure 
+Next, we need to take all Redcap data and add it to the MeasureName_prep data frame.
+
+### 3) Transfer to NDA Structure 
 
 Now that your prep sheet is complete and contains all the columns as indicated in the Item matching chart, move the columns into the NDA structure.
 
 ## Emotion Labeling Item Matching Chart:
 
-
+| REDCap Data       | Emotion Labeling Prep Sheet | ***NDA* Structure** |
+| ----------------- | --------------------------- | ------------------- |
+| NA                | child_guid                  | subjectkey          |
+| NA                | child_famID                 | src_subject_id      |
+| NA                | interview_date              | interview_date      |
+| NA                | interview_age               | interview_age       |
+| NA                | child_sex                   | sex                 |
+| eltpart1_exp1     | oc_elt_exp_1                | eltpart1_exp1       |
+| eltpart1_exp2     | oc_elt_exp_2                | eltpart1_exp2       |
+| eltpart1_exp3     | oc_elt_exp_3                | eltpart1_exp3       |
+| eltpart1_exp4     | oc_elt_exp_4                | eltpart1_exp4       |
+| eltpart1_exp5     | oc_elt_exp_5                | eltpart1_exp5       |
+| eltpart1_exp6     | oc_elt_exp_6                | eltpart1_exp6       |
+| eltpart1_exp7     | oc_elt_exp_7                | eltpart1_exp7       |
+| eltpart1_exp8     | oc_elt_exp_8                | eltpart1_exp8       |
+| eltpart2_rec1     | oc_elt_rec_1                | eltpart2_rec1       |
+| eltpart2_rec2     | oc_elt_rec_2                | eltpart2_rec2       |
+| eltpart2_rec3     | oc_elt_rec_3                | eltpart2_rec3       |
+| eltpart2_rec4     | oc_elt_rec_4                | eltpart2_rec4       |
+| NA                | oc_elt_exp_total            | NA                  |
+| NA                | oc_elt_rec_total            | NA                  |
+| redcap_event_name | timepoint                   | visit               |
 
 [Back to Table of Contents](#Table-of-Contents)
 
@@ -1154,19 +1237,51 @@ Now that your prep sheet is complete and contains all the columns as indicated i
 
 ### 1) Importing
 
+Install all the [packages](#Help-Section) required for the project. You can find what's needed in the [Help Section](#Help-Section). 
+
+Read in all the CSVs needed. The files you'll need are located in your measure's folder. Check the [Help Section](#Help-Section) for example code.
+
 ### 2) Editing and Renaming
 
-### 3) Recoding
+Edit and rename the Pedigree so that it only has the information needed for the NDA structure. Name it MeasureName_prep because this will be used to prepare everything before you do the final move to the NDA structure. The measure will need the following from the pedigree:
 
-### 4) Calculated Columns
+child guid, child famID, interview age, interview date, sex.
 
-### 5) Transfer to NDA Structure 
+Next, we need to take all Redcap data and add it to the MeasureName_prep data frame.
+
+### 3) Transfer to NDA Structure 
 
 Now that your prep sheet is complete and contains all the columns as indicated in the Item matching chart, move the columns into the NDA structure.
 
 ## Emotion Strategies Item Matching Chart:
 
-
+| REDcap Data       | Emotion Strategies Prep Sheet | ***NDA* Structure** |
+| ----------------- | ----------------------------- | ------------------- |
+| NA                | child_guid                    | subjectkey          |
+| NA                | child_famID                   | src_subject_id      |
+| NA                | interview_date                | interview_date      |
+| NA                | interview_age                 | interview_age       |
+| NA                | child_sex                     | sex                 |
+| oc_es_hapstrat    | oc_es_hapstrat                | es_1                |
+| oc_es_hgen        | oc_es_hapstrat_total          | NA                  |
+| oc_es_h1          | oc_es_hap_1                   | es_2                |
+| oc_es_h2          | oc_es_hap_2                   | es_3                |
+| oc_es_h3          | oc_es_hap_3                   | es_4                |
+| NA                | oc_es_hap_total               | NA                  |
+| oc_es_angstrat    | oc_es_angstrat                | es_5                |
+| oc_es_agen        | oc_es_angstrat_total          | NA                  |
+| oc_es_a1          | oc_es_ang_1                   | es_6                |
+| oc_es_a2          | oc_es_ang_2                   | es_7                |
+| oc_es_a3          | oc_es_ang_3                   | es_8                |
+| NA                | oc_es_ang_total               | NA                  |
+| oc_es_sadstrat    | oc_es_sadstrat                | es_9                |
+| oc_es_sgen        | oc_es_sadstrat_total          | NA                  |
+| oc_es_s1          | oc_es_sad_1                   | es_10               |
+| oc_es_s2          | oc_es_sad_2                   | es_11               |
+| oc_es_s3          | oc_es_sad_3                   | es_12               |
+| NA                | oc_es_sad_total               | NA                  |
+| NA                | oc_es_total                   | NA                  |
+| redcap_event_name | timepoint                     | visit               |
 
 [Back to Table of Contents](#Table-of-Contents)
 

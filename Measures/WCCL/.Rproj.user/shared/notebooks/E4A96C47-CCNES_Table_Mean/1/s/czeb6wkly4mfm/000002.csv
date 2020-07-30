@@ -1,0 +1,8 @@
+"0","fsep <- .Platform$file.sep;"
+"0","# Set the working directory "
+"0","# for Bryan"
+"0","# setwd(""C:/Users/bryan/Documents/GitHub/DataUploadAutomation/Measures/CCNES"")"
+"0","setwd(""~/Documents/Min/Coding/DataUploadAutomation/Measures/CCNES"")"
+"2","Error in setwd(""~/Documents/Min/Coding/DataUploadAutomation/Measures/CCNES"") : 
+  cannot change working directory
+"

@@ -1,0 +1,26 @@
+"0","# Empty Global Environment"
+"0","rm(list = ls())"
+"0","#install.packages(""flextable"")"
+"0","library(dplyr)"
+"0","library(data.table)"
+"0","library(knitr)"
+"2","package ‘knitr’ was built under R version 3.6.3"
+"0","library(kableExtra)"
+"2","package ‘kableExtra’ was built under R version 3.6.3"
+"2","Registered S3 methods overwritten by 'htmltools':
+  method               from         
+  print.html           tools:rstudio
+  print.shiny.tag      tools:rstudio
+  print.shiny.tag.list tools:rstudio
+"
+"2","
+Attaching package: ‘kableExtra’
+
+"
+"2","The following object is masked from ‘package:dplyr’:
+
+    group_rows
+
+"
+"0","knitr::opts_chunk$set(echo = TRUE)"
+"0","#Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot."
