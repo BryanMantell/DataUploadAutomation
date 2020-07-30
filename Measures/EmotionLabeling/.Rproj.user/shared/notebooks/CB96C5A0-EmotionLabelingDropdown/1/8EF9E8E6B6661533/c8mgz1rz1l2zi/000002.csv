@@ -1,0 +1,3 @@
+"0","Emotion_Labeling_REDCAP <- read.csv(""Redcap_Data.csv"")"
+"0","Pedigree <- read.csv(""Reference_Pedigree.csv"")"
+"0","Emotion_Labeling_NDA <- read.csv(""elt01_template.csv"", skip=1)"
