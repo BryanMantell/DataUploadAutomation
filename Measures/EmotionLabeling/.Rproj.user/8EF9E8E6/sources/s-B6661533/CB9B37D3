@@ -5,13 +5,15 @@
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "2405906512",
+    "hash" : "0",
     "id" : "CB9B37D3",
-    "lastKnownWriteTime" : 1594928273,
-    "last_content_update" : 1594928273,
+    "lastKnownWriteTime" : 1595539309,
+    "last_content_update" : 1595539309,
     "path" : "~/GitHub/DataUploadAutomation/Measures/WCCL/WCCL_Markdown.Rmd",
     "project_path" : null,
     "properties" : {
+        "cursorPosition" : "125,63",
+        "scrollLine" : "120"
     },
     "read_only" : false,
     "read_only_alternatives" : [
