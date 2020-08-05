@@ -90,7 +90,7 @@ for (i in pabq) {
 }
 ```
 
-```{r Prep Sheet}
+```{r Prep Sheet, warring = F }
 # Replace UO column names
 setnames(UO_CCNES_T1, odd_UO_CCNES_names, new_CCNES_names)
 setnames(UO_CCNES_T2, odd_UO_CCNES_names, new_CCNES_names)
@@ -246,7 +246,7 @@ setnames(NDA_CCNES_Prep, Reverse_CCNES_names, NDA_Names)
 
 # Recreate first line in orignial NDA file
 # Make a empty row, with same number of column in NDA_CCNES, as first line of NDA sheet
-NDA_CCNES[1,]<- NA
+NDA_CCNES[1,] <- NA
 # ncol(NDA_CCNES)  is number of columns in NDA_CCNES
 NDA_CCNES <- bind_rows(NDA_CCNES,NDA_CCNES_Prep)
 
@@ -336,7 +336,7 @@ setnames(Mean_Table, names(Mean_Table), Timepoint_names)
 # Add a header 
 kable(Mean_Table) %>%
   kable_styling(bootstrap_options = "striped", full_width = F) %>%
-  add_header_above(c(" " = 1, "Controls means" = 4, "FSU means" = 4, "DBT Group means" = 4))%>%
+  add_header_above(c(" " = 1, "Controls means" = 4, "FSU means" = 4, "DBT Group means" = 4)) %>%
   add_header_above(c("CCNES Mean Table" = 13))
 ```
 
