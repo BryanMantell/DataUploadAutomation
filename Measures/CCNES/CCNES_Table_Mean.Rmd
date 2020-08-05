@@ -48,16 +48,6 @@ UPMC_CCNES_T2 <- read.csv("UPMC_T2_CCNES.csv")
 UPMC_CCNES_T3 <- read.csv("UPMC_T3_CCNES.csv")
 UPMC_CCNES_T4 <- read.csv("UPMC_T4_CCNES.csv")
 
-# remove first two line of dataframe
-UO_CCNES_T1 = UO_CCNES_T1[-c(1,2),]
-UO_CCNES_T2 = UO_CCNES_T2[-c(1,2),]
-UO_CCNES_T3 = UO_CCNES_T3[-c(1,2),]
-UO_CCNES_T4 = UO_CCNES_T4[-c(1,2),]
-
-UPMC_CCNES_T1 = UPMC_CCNES_T1[-c(1,2),]
-UPMC_CCNES_T2 = UPMC_CCNES_T2[-c(1,2),]
-UPMC_CCNES_T3 = UPMC_CCNES_T3[-c(1,2),]
-UPMC_CCNES_T4 = UPMC_CCNES_T4[-c(1,2),]
 #NDA Structure
 NDA_CCNES <- read.csv("pabq01_template.csv", skip = 1)
 
@@ -138,7 +128,7 @@ Pedigree_T4 <- data.frame(c(select(Pedigree, FamID, mother_FamID = FamID_Mother,
 
 Pedigree_Prep <- bind_rows(Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4)
 
-CCNES_PREP <- merge(CCNES_Qualtrics, Pedigree_Prep, all = TRUE)
+CCNES_PREP <- merge(CCNES_Qualtrics, Pedigree_Prep)
 
 # Change gemder to F instead of False
 CCNES_PREP$mother_sex <- "F"
@@ -177,7 +167,7 @@ CCNES_PREP <- CCNES_PREP %>%
                         '4' = 4,
                         '5' = 3,
                         '6' = 2,
-                        '7' = 1,.default = NaN)))
+                        '7' = 1, defaut = NaN)))
 
 # # reverse score alternative
 # Reverse_CCNES_names <- new_CCNES_names
@@ -256,6 +246,7 @@ setnames(NDA_CCNES_Prep, Reverse_CCNES_names, NDA_Names)
 
 # Recreate first line in orignial NDA file
 # Make a empty row, with same number of column in NDA_CCNES, as first line of NDA sheet
+NDA_CCNES[1,]<- NA
 # ncol(NDA_CCNES)  is number of columns in NDA_CCNES
 NDA_CCNES <- bind_rows(NDA_CCNES,NDA_CCNES_Prep)
 
@@ -296,7 +287,7 @@ Progress$site <- ifelse(startsWith(ID, "9"),"UO","UPMC")
 # Group by GroupAssissignment and Timepoint, and calculate the Group Mean
 Progress_Mean <- Progress %>%
   group_by(GroupAssignment,Timepoint,site) %>%
-  summarise(GroupMean = mean(Row_Mean,na.rm = T),count = n())
+  summarise(GroupMean = mean(Row_Mean,na.rm = T), n = n())
 
 # Select only UO Mean
 UO <- Progress_Mean[Progress_Mean$site == "UO",]
@@ -304,9 +295,9 @@ UO <- Progress_Mean[Progress_Mean$site == "UO",]
 UPMC <- Progress_Mean[Progress_Mean$site == "UPMC",]
 
 # Colculate Both site Mean 
-Both_site_Mean <- Progress_Mean %>%
+Both_site_Mean <- Progress %>%
   group_by(GroupAssignment, Timepoint) %>%
-  summarise(BothSiteMean = mean(GroupMean,na.rm = T),n = sum(count))
+  summarise(BothSiteMean = mean(Row_Mean,na.rm = T), n = n())
 #Progress_Mean <- Progress_Mean[order(GroupAssignment),] 
 
 
@@ -315,21 +306,24 @@ colnames(UO)[colnames(UO) == "GroupMean"] = "UO_CCNES"
 colnames(UPMC)[colnames(UPMC) == "GroupMean"] = "UPMC_CCNES"
 
 
-
 # Combine UO,UPMC and both_site data 
 Mean_Table <- data.frame(UO[,c("UO_CCNES","GroupAssignment")],UPMC[,"UPMC_CCNES"],Both_site_Mean[,c("BothSiteMean","n")])
 
-<<<<<<< HEAD
+
 # Remove GroupAssignment column 
 # Mean_Table <- select(Mean_Table, -c(GroupAssignment))
 
-=======
->>>>>>> e4089be3492ff0a1de59bb3140c7380b50375044
 # Convert Mean_Table, make original column as row
 Mean_Table <- t(Mean_Table)
 
 # Make Mean_Table as a data.frame
 Mean_Table <- data.frame(Mean_Table)
+
+# Reorder Mean_Table
+Mean_Table <- Mean_Table[c(5,6,7,8,9,10,11,12,1,2,3,4)]
+
+#add support /non support 
+add_column()
 
 # Add Timepoint column 
 Timepoint_names <- c("T1","T2", "T3", "T4","T1","T2", "T3", "T4","T1","T2", "T3", "T4")
@@ -337,11 +331,13 @@ Timepoint_names <- c("T1","T2", "T3", "T4","T1","T2", "T3", "T4","T1","T2", "T3"
 # Rename column name 
 setnames(Mean_Table, names(Mean_Table), Timepoint_names)
 
+
 # Table output ----------
 # Add a header 
 kable(Mean_Table) %>%
   kable_styling(bootstrap_options = "striped", full_width = F) %>%
-  add_header_above(c(" " = 1, "DBT Group means" = 4, "Controls means" = 4, "FSU means" = 4))
+  add_header_above(c(" " = 1, "Controls means" = 4, "FSU means" = 4, "DBT Group means" = 4))%>%
+  add_header_above(c("CCNES Mean Table" = 13))
 ```
 
 ***Used CCNES Validation subscale only, information on Invalidation can be found in the data set
