@@ -95,7 +95,7 @@ PKBS_T3 <- rbind(UO_T3_PKBS, UPMC_T3_PKBS)
 PKBS_T4 <- rbind(UO_T4_PKBS, UPMC_T4_PKBS)
 
 #Clean up environment
-rm(UO_T1_PKBS, UO_T2_PKBS, UO_T3_PKBS, UO_T4_PKBS, UPMC_T1_PKBS, UPMC_T2_PKBS, UPMC_T3_PKBS, UPMC_T4_PKBS)
+# rm(UO_T1_PKBS, UO_T2_PKBS, UO_T3_PKBS, UO_T4_PKBS, UPMC_T1_PKBS, UPMC_T2_PKBS, UPMC_T3_PKBS, UPMC_T4_PKBS)
 ```
 
 ## Prep Sheet
@@ -136,7 +136,7 @@ PKBS_Prep$MomGender <- "F"
 
 
 #Clean up environment
-rm(PKBS_T1, PKBS_T2, PKBS_T3, PKBS_T4)
+# rm(PKBS_T1, PKBS_T2, PKBS_T3, PKBS_T4)
 ```
 
 ## Re-code and Reverse Score
@@ -194,7 +194,7 @@ library(magrittr)
 library(kableExtra)
 
 #Select necessary columns for means table
-Progress <- select((PKBS_Prep), c(FamID, GroupAssignment, Timepoint, starts_with("srm")))
+Progress <- select((PKBS_Prep), c(FamID, GroupAssignment, Timepoint, starts_with("srm"), pkbs_total))
 
 #Calculate row mean for each individual
 Progress$Row_Mean <- rowMeans(select(PKBS_Prep, c(starts_with("srm"))), na.rm = T)
@@ -208,7 +208,7 @@ Progress$site <- ifelse(startsWith(ID, "9"), "UO", "UPMC")
 #Group by GroupAssignment and Timepoint, and calcultae Group Mean
 Progress_Mean <- Progress %>%
   group_by(GroupAssignment, Timepoint, site) %>%
-  summarise(GroupMean = mean(Row_Mean, na.rm = T), count = n())
+  summarise(GroupMean = mean(pkbs_total, na.rm = T), count = n())
 
 #Select only UO Mean
 UO <- Progress_Mean[Progress_Mean$site == "UO",]
@@ -216,9 +216,9 @@ UO <- Progress_Mean[Progress_Mean$site == "UO",]
 UPMC <- Progress_Mean[Progress_Mean$site == "UPMC",]
 
 #Calculate mean from both sites
-Both_site_Mean <- Progress_Mean %>%
+Both_site_Mean <- Progress %>%
   group_by(GroupAssignment, Timepoint) %>%
-  summarise(BothSiteMean = mean(GroupMean, na.rm = T), n = sum(count))
+  summarise(BothSiteMean = mean(pkbs_total, na.rm = T), n = sum(count = n()))
 #Progress_Mean <- Progress_Mean[order(GroupAssignment),] 
 
 #Change GroupMean column names according to site
@@ -245,7 +245,9 @@ install.packages(knitr)
 
 kable(Mean_Table) %>%
   kable_styling(bootstrap_options = "striped", full_width = F) %>%
-  add_header_above(c(" " = 1, "DBT Group means" = 4, "Controls means" = 4, "FSU means" = 4))
+  add_header_above(c(" " = 1, "Controls means" = 4, "FSU means" = 4, "DBT means" = 4)) %>%
+  add_header_above(c("PKBS Table Means" = 13))
+
 
 
 ```
