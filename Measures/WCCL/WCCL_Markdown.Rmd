@@ -107,7 +107,7 @@ rm(UO_T1_WCCL, UO_T2_WCCL, UO_T3_WCCL, UO_T4_WCCL, UPMC_T1_WCCL, UPMC_T2_WCCL, U
 WCCL_PREP <- WCCL_PREP %>% mutate_at(new_WCCL_names,funs(recode(., '0 Never Used' = 0, '1 Rarely Used' = 1, '2 Sometimes Used' = 2, '3 Regularly Used' = 3,.default = NaN)))
 
 #Change Numbers to Numeric values
-WCCL_PREP[,1:59] <- sapply(WCCL_PREP[,1:59],as.numeric)
+WCCL_PREP[,8:59] <- sapply(WCCL_PREP[,8:59],as.numeric)
 
 #Change gender to F instead of false
 WCCL_PREP$mother_sex <- "F"
@@ -160,8 +160,8 @@ first_line <- matrix("", nrow = 1, ncol = ncol(NDA_WCCL))
 
 first_line[,1] <- "dbt_wccl"
 first_line[,2] <- "1"
-write.table(first_line, file = "dbt_wccl.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
-write.table(NDA_WCCL, file = "dbt_wccl.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
+write.table(first_line, file = "dbt_wccl.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = TRUE, row.names = FALSE)
+write.table(NDA_WCCL, file = "dbt_wccl.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = TRUE, row.names = FALSE)
 ```
 ```{r Table}
 
@@ -202,6 +202,8 @@ colnames(UPMC)[colnames(UPMC) == "GroupMean"] = "UPMC_WCCL"
 # Combine UO,UPMC and both_site data 
 Mean_Table <- data.frame(UO[,c("UO_WCCL","GroupAssignment")],UPMC[,"UPMC_WCCL"],Both_site_Mean[,c("BothSiteMean","n")])
 
+#Mean_Table <- select(Mean_Table, -c(GroupAssignment))
+
 # Convert Mean_Table, make original column as row
 Mean_Table <- t(Mean_Table)
 
@@ -214,14 +216,13 @@ Timepoint_names <- c("T1","T2", "T3", "T4","T1","T2", "T3", "T4","T1","T2", "T3"
 # Rename column name 
 setnames(Mean_Table, names(Mean_Table), Timepoint_names)
 
+
 ```
 ```{r Table}
 # Add a header 
 kable(Mean_Table) %>%
   kable_styling(bootstrap_options = "striped", full_width = F) %>%
-  add_header_above(c(" " = 1, "DBT Group means" = 4, "FSU means" = 4, "Controls means" = 4))
-
-Mean_Table <- select(Mean_Table, -c(GroupAssignment))
+  add_header_above(c(" " = 1, "DBT Group means" = 4, "Controls means" = 4, "FSU means" = 4)) %>% add_header_above(c("WCCL Table Means" = 13))
 ```
 
 

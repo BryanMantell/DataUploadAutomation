@@ -1,6 +1,0 @@
-"0","# Combine UO,UPMC and both_site data 
-Mean_Table <- data.frame(UO[,c(""UO_WCCL"",""GroupAssignment"")],UPMC[,""UPMC_WCCL""],Both_site_Mean[,c(""BothSiteMean"",""n"")])
-"
-"2","Error in data.frame(UO[, c(""UO_WCCL"", ""GroupAssignment"")], UPMC[, ""UPMC_WCCL""],  : 
-  arguments imply differing number of rows: 11, 12
-"

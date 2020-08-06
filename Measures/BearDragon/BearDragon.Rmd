@@ -1,0 +1,92 @@
+---
+title: "BearDragon"
+author: "START Lab"
+date: "7/16/2020"
+output: html_document
+---
+
+```{r Setup, include=FALSE}
+knitr::opts_chunk$set(message = FALSE)
+# Empty Global Enivronment
+rm(list = ls())
+```
+
+## Import
+Import Qualtrics Excel files into R
+```{r}
+#Install Package, this only need to be done once.
+install.packages(c("dplyr","tidyverse","data.table","knitr"))
+install.packages('plyr', repos = "http://cran.us.r-project.org")
+
+#Load packages, this need to be done every time you run this script. 
+library(dplyr)
+library(tidyverse)
+library(data.table)
+library(knitr)
+
+#Set Working Directory
+setwd("~/Documents/GitHub/DataUploadAutomation/Measures/PKBS/DataUploadAutomation/Measures/BearDragon/")
+
+#Import Pedigree and NDA Structure
+Pedigree <- read.csv("Reference_Pedigree.csv")
+NDA_BearDragon <- read.csv("beardragon01_template.csv")
+
+#Import Bear Dragon REDCap Data
+BearDragon_Data <- read.csv("Redcap_Data.csv", stringsAsFactors = FALSE)
+```
+
+## Rename columns
+Rename questions numbers to self-report measure scale items. Then, take each scale measure from both sites and combine them by timepoint.
+```{r}
+RedCap_Data <- select(BearDragon_Data, fam_id, redcap_event_name, oc_bd_01, oc_bd_02, oc_bd_03, oc_bd_04,
+                      oc_bd_05, oc_bd_06, oc_bd_07, oc_bd_08, oc_bd_09, oc_bd_10)
+
+RedCap_Data$redcap_event_name[which(RedCap_Data$redcap_event_name == "time_1_arm_1")] = 1
+RedCap_Data$redcap_event_name[which(RedCap_Data$redcap_event_name == "time_1_arm_2")] = 1
+RedCap_Data$redcap_event_name[which(RedCap_Data$redcap_event_name == "time_2_arm_1")] = 2
+RedCap_Data$redcap_event_name[which(RedCap_Data$redcap_event_name == "time_2_arm_2")] = 2
+RedCap_Data$redcap_event_name[which(RedCap_Data$redcap_event_name == "time_3_arm_1")] = 3
+RedCap_Data$redcap_event_name[which(RedCap_Data$redcap_event_name == "time_3_arm_2")] = 3
+RedCap_Data$redcap_event_name[which(RedCap_Data$redcap_event_name == "time_4_arm_1")] = 4
+RedCap_Data$redcap_event_name[which(RedCap_Data$redcap_event_name == "time_4_arm_2")] = 4
+
+names(RedCap_Data)[names(RedCap_Data) == "redcap_event_name"] <- "timepoint"
+names(RedCap_Data)[names(RedCap_Data) == "fam_id"] <- "Fam_ID"
+
+Pedigree_T1 <- select(Pedigree, FamID, child_guid, FamID_Child, Time1Date, ChildAge_T1, ChildGender, GroupAssignment)
+Pedigree_T2 <- select(Pedigree, FamID, child_guid, FamID_Child, Time2Date, ChildAge_T2, ChildGender, GroupAssignment)
+Pedigree_T3 <- select(Pedigree, FamID, child_guid, FamID_Child, Time3Date, ChildAge_T3, ChildGender, GroupAssignment)
+Pedigree_T4 <- select(Pedigree, FamID, child_guid, FamID_Child, Time4Date, ChildAge_T4, ChildGender, GroupAssignment)
+
+names(Pedigree_T1)[names(Pedigree_T1) == "ChildAge_T1"] <- "interview_age"
+names(Pedigree_T1)[names(Pedigree_T1) == "Time1Date"] <- "interview_date"
+names(Pedigree_T2)[names(Pedigree_T2) == "ChildAge_T2"] <- "interview_age"
+names(Pedigree_T2)[names(Pedigree_T2) == "Time2Date"] <- "interview_date"
+names(Pedigree_T3)[names(Pedigree_T3) == "ChildAge_T3"] <- "interview_age"
+names(Pedigree_T3)[names(Pedigree_T3) == "Time3Date"] <- "interview_date"
+names(Pedigree_T4)[names(Pedigree_T4) == "ChildAge_T4"] <- "interview_age"
+names(Pedigree_T4)[names(Pedigree_T4) == "Time4Date"] <- "interview_date"
+
+
+Pedigree_T1$timepoint=1
+Pedigree_T2$timepoint=2
+Pedigree_T3$timepoint=3
+Pedigree_T4$timepoint=4
+
+Pedigree_Prep <- rbind(Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4)
+names(Pedigree_Prep)[names(Pedigree_Prep) == "FamID"] <- "Fam_ID"
+
+BearDragon_Prep <- merge(Pedigree_Prep, RedCap_Data, by = c("timepoint", "Fam_ID"), all = TRUE)
+
+```
+
+
+
+
+
+
+
+
+
+
+
