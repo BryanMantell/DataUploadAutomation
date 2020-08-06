@@ -222,7 +222,7 @@ setnames(Mean_Table, names(Mean_Table), Timepoint_names)
 # Add a header 
 kable(Mean_Table) %>%
   kable_styling(bootstrap_options = "striped", full_width = F) %>%
-  add_header_above(c(" " = 1, "DBT Group means" = 4, "Controls means" = 4, "FSU means" = 4))
+  add_header_above(c(" " = 1, "DBT Group means" = 4, "Controls means" = 4, "FSU means" = 4)) %>% add_header_above(c("WCCL Table Means" = 13))
 ```
 
 
