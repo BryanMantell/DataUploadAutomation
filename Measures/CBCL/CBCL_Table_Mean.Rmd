@@ -315,7 +315,7 @@ colnames(UPMC)[colnames(UPMC) == "ExtMean"] = "UPMC_ExtMean"
 
 
 # Combine UO,UPMC and both_site data 
-Mean_Table <- data.frame(UO[,c("UO_TotalMean","UO_IntMean", "UO_ExtMean")],UPMC[,c("UPMC_TotalMean", "UPMC_IntMean", "UPMC_ExtMean")],Both_Site_Mean[,c("Both Site Int Mean", "Both Site Int Mean", "Both Site Ext Mean","n", "GroupAssignment")])
+Mean_Table <- data.frame(UO[,c("UO_TotalMean","UO_IntMean", "UO_ExtMean")],UPMC[,c("UPMC_TotalMean", "UPMC_IntMean", "UPMC_ExtMean")],Both_Site_Mean[,c("Both Site Total Mean", "Both Site Int Mean", "Both Site Ext Mean","n", "GroupAssignment")])
 
 
 # Convert Mean_Table, make original column as row
