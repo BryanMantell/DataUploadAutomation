@@ -292,15 +292,15 @@ UPMC <- Progress_Mean[Progress_Mean$site == "UPMC",]
 # Calculate Both site Mean 
 Progress_Total_Mean_Both <- Progress %>%
   group_by(GroupAssignment, timepoint) %>%
-  summarise("Both Site Total Mean" = mean(cbcl_total,na.rm = T),n = n())
+  summarise("Both_Site_Total_Mean" = mean(cbcl_total,na.rm = T),n = n())
 
 Progress_Int_Mean_Both <- Progress %>%
   group_by(GroupAssignment, timepoint) %>%
-  summarise("Both Site Int Mean" = mean(cbcl_int,na.rm = T),n = n())
+  summarise("Both_Site_Int_Mean" = mean(cbcl_int,na.rm = T),n = n())
 
 Progress_Ext_Mean_Both <- Progress %>%
   group_by(GroupAssignment, timepoint) %>%
-  summarise("Both Site Ext Mean" = mean(cbcl_ext,na.rm = T),n = n())
+  summarise("Both_Site_Ext_Mean" = mean(cbcl_ext,na.rm = T),n = n())
 
 Both_Site_Mean <- merge(Progress_Int_Mean_Both, Progress_Ext_Mean_Both)
 Both_Site_Mean <- merge(Both_Site_Mean, Progress_Total_Mean_Both)
@@ -315,7 +315,7 @@ colnames(UPMC)[colnames(UPMC) == "ExtMean"] = "UPMC_ExtMean"
 
 
 # Combine UO,UPMC and both_site data 
-Mean_Table <- data.frame(UO[,c("UO_TotalMean","UO_IntMean", "UO_ExtMean")],UPMC[,c("UPMC_TotalMean", "UPMC_IntMean", "UPMC_ExtMean")],Both_Site_Mean[,c("Both Site Total Mean", "Both Site Int Mean", "Both Site Ext Mean","n", "GroupAssignment")])
+Mean_Table <- data.frame(UO[,c("UO_TotalMean","UO_IntMean", "UO_ExtMean")],UPMC[,c("UPMC_TotalMean", "UPMC_IntMean", "UPMC_ExtMean")],Both_Site_Mean[,c("Both_Site_Total_Mean", "Both_Site_Int_Mean", "Both_Site_Ext_Mean","n", "GroupAssignment")])
 
 
 # Convert Mean_Table, make original column as row
@@ -338,7 +338,9 @@ setnames(Mean_Table, names(Mean_Table), Timepoint_names)
 kable(Mean_Table) %>%
   kable_styling(bootstrap_options = "striped", full_width = T) %>%
   add_header_above(c(" " = 1, "Controls Group means" = 4, "FSU Group means" = 4, "DBT Group means" = 4)) %>%
-  add_header_above(c("CBCL Mean Table" = 13))
+  add_header_above(c("CBCL Mean Table" = 13)) %>%
+  column_spec(c(1,5,9), border_right = T, include_thead = T) %>%
+  column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
 ```
 
 
