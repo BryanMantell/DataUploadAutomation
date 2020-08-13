@@ -2,13 +2,9 @@
 title: "CCNES"
 author: "Min Zhang"
 date: "5/16/2020"
-output:
-  pdf_document: default
-  html_document:
-    df_print: paged
 ---
 
-```{r setup}
+```{r setup, include = F}
 # Empty Global Environment
 rm(list = ls())
 #install.packages("flextable")
@@ -18,7 +14,7 @@ library(knitr)
 library(kableExtra)
 
 
-knitr::opts_chunk$set(echo = TRUE, include = FALSE)
+knitr::opts_chunk$set(echo = F, warning = FALSE)
 #Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 
 fsep <- .Platform$file.sep;
@@ -34,7 +30,7 @@ options(digits = 3)
 ```
 
 
-```{r Import}
+```{r Import, echo=FALSE}
 # Import File ------------
 Pedigree <- read.csv("Reference_Pedigree.csv")
 
@@ -53,7 +49,7 @@ NDA_CCNES <- read.csv("pabq01_template.csv", skip = 1)
 
 ```
 
-```{r Rename Columns, message = F}
+```{r Rename Columns, echo=FALSE}
 ## OLD UO CCNES Column Names -------------------------------------------------------------
 # for each item in UO paste number 1 to 6
 # sprintf used to formate str
@@ -90,7 +86,7 @@ for (i in pabq) {
 }
 ```
 
-```{r Prep Sheet, warring = F }
+```{r Prep Sheet, echo=FALSE}
 # Replace UO column names
 setnames(UO_CCNES_T1, odd_UO_CCNES_names, new_CCNES_names)
 setnames(UO_CCNES_T2, odd_UO_CCNES_names, new_CCNES_names)
@@ -137,7 +133,7 @@ CCNES_PREP$mother_sex <- "F"
 rm(UO_CCNES_T1, UO_CCNES_T2, UO_CCNES_T3, UO_CCNES_T4, UPMC_CCNES_T1, UPMC_CCNES_T2, UPMC_CCNES_T3, UPMC_CCNES_T4,Pedigree,Pedigree_T1,Pedigree_T2,Pedigree_T3,Pedigree_T4,CCNES_T1,CCNES_T2,CCNES_T3,CCNES_T4)
 ```
 
-```{r Re-code and Reverse Score}
+```{r Re-code and Reverse Score,  echo=FALSE}
 # Recode the strings of text to numbers 
 CCNES_PREP <- CCNES_PREP %>% 
   mutate_at(new_CCNES_names,
@@ -178,7 +174,7 @@ CCNES_PREP <- CCNES_PREP %>%
 # CCNES_PREP[,revers_CCNES_cols] = 8 - CCNES_PREP[,revers_CCNES_cols]
 ```
 
-```{r Colculated Columns}
+```{r Colculated Columns,  echo=FALSE}
 # Creating list of item need to be colculated --------------------------------------------------
 # list of item which needed when colculating DR
 DR <- colnames(select(CCNES_PREP, c("srm_ccnes_02", "srm_ccnes_07r", "srm_ccnes_13", 
@@ -236,7 +232,7 @@ CCNES_PREP$ccnes_MR_cor <- ifelse(CCNES_PREP$NACheck < 0.67, rowMeans(CCNES_PREP
 #set(which(is.na(CCNES_PREP), 0))
 ```
 
-```{r NDA Sheet}
+```{r NDA Sheet,  echo=FALSE}
 # Create NDA prep sheet, select all the needed columns from prep sheet
 NDA_CCNES_Prep <- select(CCNES_PREP, c(subjectkey = mom_guid, src_subject_id = mother_FamID, sex = mother_sex ,interview_age, interview_date, starts_with("srm")))
                          
@@ -270,7 +266,7 @@ write.table(NDA_CCNES, file = 'pabq.csv', sep = ",", append = TRUE, na = "", quo
 ```
 
 
-```{r Table,  echo=FALSE}
+```{r Table, include = T}
 # Treatment Progress sheet
 # Select needed column
 Progress <- select(CCNES_PREP, c(FamID, GroupAssignment, Timepoint, starts_with("srm")))
@@ -305,25 +301,25 @@ UPMC <- Progress_Mean[Progress_Mean$site == "UPMC",]
 # Colculate Both site Mean 
 Progress_Supported_Mean_both <- Progress %>%
   group_by(GroupAssignment,Timepoint) %>%
-  summarise("Both Site Supported Mean" = mean(Supported_Mean,na.rm = T), n = n())
+  summarise("BothSite_CCNES_SupportedMean" = mean(Supported_Mean,na.rm = T), n = n())
 
 Progress_unsupported_Mean_both <- Progress %>%
   group_by(GroupAssignment,Timepoint) %>%
-  summarise("Both Site Unsupproted Mean" = mean(Unsupproted_Mean,na.rm = T), n = n())
+  summarise("BothSite_CCNES_UnsupprotedMean" = mean(Unsupproted_Mean,na.rm = T), n = n())
 
 Both_site_Mean <- merge(Progress_Supported_Mean_both, Progress_unsupported_Mean_both)
 #Progress_Mean <- Progress_Mean[order(GroupAssignment),] 
 
 
 # Change GroupMean Column names according to site
-colnames(UO)[colnames(UO) == "SupportedMean"] = "UO_SupportedMean"
-colnames(UO)[colnames(UO) == "UnsupprotedMean"] = "UO_UnsupprotedMean"
-colnames(UPMC)[colnames(UPMC) == "SupportedMean"] = "UPMC_SupportedMean"
-colnames(UPMC)[colnames(UPMC) == "UnsupprotedMean"] = "UPMC_UnsupprotedMean"
+colnames(UO)[colnames(UO) == "SupportedMean"] = "UO_CCNES_SupportedMean"
+colnames(UO)[colnames(UO) == "UnsupprotedMean"] = "UO_CCNES_UnsupprotedMean"
+colnames(UPMC)[colnames(UPMC) == "SupportedMean"] = "UPMC_CCNES_SupportedMean"
+colnames(UPMC)[colnames(UPMC) == "UnsupprotedMean"] = "UPMC_CCNES_UnsupprotedMean"
 
 
 # Combine UO,UPMC and both_site data 
-Mean_Table <- data.frame(UO[,c("UO_SupportedMean","UO_UnsupprotedMean")],UPMC[,c("UPMC_SupportedMean","UPMC_UnsupprotedMean")],Both_site_Mean[,c("Both Site Supported Mean","Both Site Unsupproted Mean","n","GroupAssignment")])
+Mean_Table <- data.frame(UO[,c("UO_CCNES_SupportedMean","UO_CCNES_UnsupprotedMean")],UPMC[,c("UPMC_CCNES_SupportedMean","UPMC_CCNES_UnsupprotedMean")],Both_site_Mean[,c("BothSite_CCNES_SupportedMean","BothSite_CCNES_UnsupprotedMean","n","GroupAssignment")])
 
 
 # Remove GroupAssignment column 
@@ -351,9 +347,12 @@ setnames(Mean_Table, names(Mean_Table), Timepoint_names)
 # Table output ----------
 # Add a header 
 kable(Mean_Table) %>%
-  kable_styling(bootstrap_options = "striped", full_width = T) %>%
+  kable_styling(bootstrap_options = c("striped")) %>%
   add_header_above(c(" " = 1, "Controls Group means" = 4, "FSU Group means" = 4, "DBT Group means" = 4)) %>%
-  add_header_above(c("CCNES Mean Table" = 13))
+  
+  add_header_above(c("CCNES Mean Table" = 13)) %>%
+  column_spec(c(1,5,9), border_right = T, include_thead = T) %>%
+  column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
 ```
 
 ***Used CCNES Validation subscale only, information on Invalidation can be found in the data set
