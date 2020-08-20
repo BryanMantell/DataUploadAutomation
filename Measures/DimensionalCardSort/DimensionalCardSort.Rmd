@@ -82,7 +82,7 @@ DCS_PREP <- DCS_PREP %>%
 ```
 
 ```{r Colculated Columns}
-
+# TODO: apply 67% rule 
 ```
 
 ```{r NDA Sheet}
