@@ -88,6 +88,10 @@ BearDragon_Prep <- add_column(BearDragon_Prep, oc_bear_total = rowSums(BearDrago
 
 BearDragon_Prep <- add_column(BearDragon_Prep, oc_dragon_total = rowSums(BearDragon_Prep[, c("oc_bd_02", "oc_bd_04", "oc_bd_06", "oc_bd_08", "oc_bd_10")]))
 
+BearDragon_Prep$NACheck <- rowSums(is.na(select(BearDragon_Prep, starts_with("oc_bd_"))))/ncol(dplyr::select(BearDragon_Prep, starts_with("oc_bd_")))
+
+BearDragon_Prep$beardragon_total_cor <- ifelse(BearDragon_Prep$NACheck < 0.67, rowMeans(BearDragon_Prep[,oc_beardragon_total], na.rm = TRUE), "NA")
+
 ```
 
 ## NDA Structure
