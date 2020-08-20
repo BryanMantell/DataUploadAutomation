@@ -80,7 +80,100 @@ BearDragon_Prep <- merge(Pedigree_Prep, RedCap_Data, by = c("timepoint", "Fam_ID
 
 ```
 
+## Calculated Columns
+```{r}
+BearDragon_Prep <- add_column(BearDragon_Prep, oc_beardragon_total = rowSums(BearDragon_Prep[, c("oc_bd_01", "oc_bd_02", "oc_bd_03", "oc_bd_04", "oc_bd_05", "oc_bd_06", "oc_bd_07", "oc_bd_08", "oc_bd_09", "oc_bd_10")]))
 
+BearDragon_Prep <- add_column(BearDragon_Prep, oc_bear_total = rowSums(BearDragon_Prep[, c("oc_bd_01", "oc_bd_03", "oc_bd_05", "oc_bd_07", "oc_bd_09")]))
+
+BearDragon_Prep <- add_column(BearDragon_Prep, oc_dragon_total = rowSums(BearDragon_Prep[, c("oc_bd_02", "oc_bd_04", "oc_bd_06", "oc_bd_08", "oc_bd_10")]))
+
+BearDragon_Prep$NACheck <- rowSums(is.na(select(BearDragon_Prep, starts_with("oc_bd_"))))/ncol(dplyr::select(BearDragon_Prep, starts_with("oc_bd_")))
+
+BearDragon_Prep$beardragon_total_cor <- ifelse(BearDragon_Prep$NACheck < 0.67, rowMeans(BearDragon_Prep[,oc_beardragon_total], na.rm = TRUE), "NA")
+
+```
+
+## NDA Structure
+```{r}
+NDA_BearDragon_Prep <- select(BearDragon_Prep, c(subjectkey = child_guid, src_subject_id = FamID_Child, interview_date, interview_age, sex = ChildGender, visit = timepoint, starts_with("oc_bd")))
+
+nda_names <- c(paste("beardragon", 1:10, sep = ""))
+prep_names <- c(paste("oc_bd_", 01:10, sep = "0"))
+setnames(NDA_BearDragon_Prep, prep_names, nda_names, skip_absent = TRUE)
+
+NDA_BearDragon[1,] <- NA
+NDA_BearDragon <- bind_rows(NDA_BearDragon, NDA_BearDragon_Prep)
+
+first_line <- matrix("", nrow = 1, ncol = ncol(NDA_BearDragon))
+first_line[,1] <- "beardragon"
+first_line[,2] <- "1"
+```
+
+## Table
+```{r}
+library(knitr)
+library(magrittr)
+library(kableExtra)
+
+Progress <- select((BearDragon_Prep), c(Fam_ID, GroupAssignment, timepoint, starts_with("oc")))
+Progress$Row_Mean <- rowMeans(select(BearDragon_Prep, starts_with("oc_bd_")), na.rm = T)
+
+ID <- c(as.character(Progress$Fam_ID))
+
+Progress$site <- ifelse(startsWith(ID, "9"), "UO", "UPMC")
+
+Progress_Mean <- Progress %>%
+  group_by(GroupAssignment, timepoint, site) %>%
+  summarise(GroupMean = mean(oc_beardragon_total, na.rm = T), count = n())
+
+UO <- Progress_Mean[Progress_Mean$site == "UO",]
+UPMC <- Progress_Mean[Progress_Mean$site == "UPMC",]
+
+Both_site_Mean <- Progress %>%
+  group_by(GroupAssignment, timepoint) %>%
+  summarise(BothSiteMean = mean(oc_beardragon_total, na.rm = T), n = sum(count = n()))
+
+Bear_Mean <- Progress %>%
+  group_by(GroupAssignment, timepoint, site) %>%
+  summarise(BearMean = mean(oc_bear_total, na.rm = T), count = n())
+
+Dragon_Mean <- Progress %>%
+  group_by(GroupAssignment, timepoint, site) %>%
+  summarise(DragonMean = mean(oc_dragon_total, na.rm = T), count = n())
+
+UO <- merge(UO, Bear_Mean)
+UO <- merge(UO, Dragon_Mean)
+UPMC <- merge(UPMC, Bear_Mean)
+UPMC <- merge(UPMC, Dragon_Mean)
+
+colnames(UO)[colnames(UO) == "GroupMean"] = "UO_BearDragon"
+colnames(UPMC)[colnames(UPMC) == "GroupMean"] = "UPMC_BearDragon"
+colnames(UO)[colnames(UO) == "BearMean"] = "UO_Bear"
+colnames(UPMC)[colnames(UPMC) == "BearMean"] = "UPMC_Bear"
+colnames(UO)[colnames(UO) == "DragonMean"] = "UO_Dragon"
+colnames(UPMC)[colnames(UPMC) == "DragonMean"] = "UPMC_Dragon"
+
+Mean_Table <- data.frame(UO[,c("UO_BearDragon","GroupAssignment", "UO_Bear", "UO_Dragon")],UPMC[,c("UPMC_BearDragon", "UPMC_Bear", "UPMC_Dragon")],Both_site_Mean[,c("BothSiteMean","n")])
+
+Mean_Table <- t(Mean_Table)
+
+Mean_Table <- data.frame(Mean_Table)
+
+Mean_Table <- Mean_Table[c(5,6,7,8,9,10,11,12,1,2,3,4)]
+
+Timepoint_names <- c("T1","T2", "T3", "T4","T1","T2", "T3", "T4","T1","T2", "T3", "T4")
+
+setnames(Mean_Table, names(Mean_Table), Timepoint_names)
+
+kable(Mean_Table) %>%
+  kable_styling(bootstrap_options = "striped", full_width = F) %>%
+  add_header_above(c(" " = 1, "Controls means" = 4, "FSU means" = 4, "DBT means" = 4)) %>%
+  add_header_above(c("Bear Dragon Table Means" = 13)) %>%
+  column_spec(c(1,5,9), border_right = T, include_thead = T) %>%
+  column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
+
+```
 
 
 

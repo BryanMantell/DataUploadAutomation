@@ -178,6 +178,7 @@ colnames(NDA_PKBS_Prep)[40] <- "basc_social_raw"
 
 
 #Merge PKBS Prep Sheet into NDA structure
+NDA_PKBS[1,] <- NA
 NDA_PKBS <- bind_rows(NDA_PKBS_Prep, NDA_PKBS)
 
 #Recreate the first line of the NDA
@@ -219,20 +220,22 @@ UPMC <- Progress_Mean[Progress_Mean$site == "UPMC",]
 Both_site_Mean <- Progress %>%
   group_by(GroupAssignment, Timepoint) %>%
   summarise(BothSiteMean = mean(pkbs_total, na.rm = T), n = sum(count = n()))
-#Progress_Mean <- Progress_Mean[order(GroupAssignment),] 
 
 #Change GroupMean column names according to site
-colnames(UO)[colnames(UO) == "GroupMean"] = "UO_CCNES"
-colnames(UPMC)[colnames(UPMC) == "GroupMean"] = "UPMC_CCNES"
+colnames(UO)[colnames(UO) == "GroupMean"] = "UO_PKBS"
+colnames(UPMC)[colnames(UPMC) == "GroupMean"] = "UPMC_PKBS"
 
 #Combine UO, UPMC, and Both_Site data 
-Mean_Table <- data.frame(UO[,c("UO_CCNES","GroupAssignment")],UPMC[,"UPMC_CCNES"],Both_site_Mean[,c("BothSiteMean","n")])
+Mean_Table <- data.frame(UO[,c("UO_PKBS","GroupAssignment")],UPMC[,"UPMC_PKBS"],Both_site_Mean[,c("BothSiteMean","n")])
 
 #Convert Mean_Table, make original column as row
 Mean_Table <- t(Mean_Table)
 
 #Make Mean_Table a data frame
 Mean_Table <- data.frame(Mean_Table)
+
+#Re-order Mean Table
+Mean_Table <- Mean_Table[c(5,6,7,8,9,10,11,12,1,2,3,4)]
 
 #Add Timepoint column
 Timepoint_names <- c("T1","T2", "T3", "T4","T1","T2", "T3", "T4","T1","T2", "T3", "T4")
@@ -246,7 +249,9 @@ install.packages(knitr)
 kable(Mean_Table) %>%
   kable_styling(bootstrap_options = "striped", full_width = F) %>%
   add_header_above(c(" " = 1, "Controls means" = 4, "FSU means" = 4, "DBT means" = 4)) %>%
-  add_header_above(c("PKBS Table Means" = 13))
+  add_header_above(c("PKBS Table Means" = 13)) %>%
+  column_spec(c(1,5,9), border_right = T, include_thead = T) %>%
+  column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
 
 
 
