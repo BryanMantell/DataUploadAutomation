@@ -73,7 +73,12 @@ DCS_PREP <- merge(Pedigree_Prep, Redcap_Data,by = c("timepoint","Fam_ID"), all =
 ```
 
 ```{r Re-code and Reverse Score}
-
+# Recode UO groupassignment 
+DCS_PREP <- DCS_PREP %>% 
+  mutate_at(c("GroupAssignment"),
+            funs(recode(., "Assigned Group 3 (HC)" = "Healthy", 
+                        'Assigned Group 2 (FSU)' = "NO DBT",
+                        'Assigned Group 1 (DBT)' = "DBT")))
 ```
 
 ```{r Colculated Columns}
@@ -137,18 +142,18 @@ UPMC <- Progress_Mean[Progress_Mean$site == "UPMC",]
 # Colculate Both site Mean 
 Both_site_Mean <- Progress %>%
   group_by(GroupAssignment, timepoint) %>%
-  summarise(BothSiteMean = mean(Row_Mean,na.rm = T),n = n())
+  summarise(BothSite_DimensionalCardSort_Mean = mean(Row_Mean,na.rm = T),n = n())
 #Progress_Mean <- Progress_Mean[order(GroupAssignment),] 
 
 
 # Change GroupMean Column names according to site
-colnames(UO)[colnames(UO) == "GroupMean"] = "UO_CCNES"
-colnames(UPMC)[colnames(UPMC) == "GroupMean"] = "UPMC_CCNES"
+colnames(UO)[colnames(UO) == "GroupMean"] = "UO_DimensionalCardSort"
+colnames(UPMC)[colnames(UPMC) == "GroupMean"] = "UPMC_DimensionalCardSort"
 
 
 
 # Combine UO,UPMC and both_site data 
-Mean_Table <- data.frame(UO[,c("UO_CCNES")],UPMC[,"UPMC_CCNES"],Both_site_Mean[,c("BothSiteMean","n","GroupAssignment")])
+Mean_Table <- data.frame(UO[,c("UO_DimensionalCardSort")],UPMC[,"UPMC_DimensionalCardSort"],Both_site_Mean[,c("BothSite_DimensionalCardSort_Mean","n","GroupAssignment")])
 
 # Remove GroupAssignment column 
 # Mean_Table <- select(Mean_Table, -c(GroupAssignment))
@@ -172,7 +177,7 @@ setnames(Mean_Table, names(Mean_Table), Timepoint_names)
 # Add a header 
 kable(Mean_Table) %>%
   kable_styling(bootstrap_options = "striped", full_width = F) %>%
-  add_header_above(c(" " = 1, "DBT Group means" = 4, "Controls Group means" = 4, "FSU Group means" = 4))%>%
+  add_header_above(c(" " = 1, "DBT Group means" = 4, "Controls Group means" = 4, "FSU Group means" = 4)) %>%
   add_header_above(c("Dimensional Card Sort Mean Table" = 13)) %>%
   column_spec(c(1,5,9), border_right = T, include_thead = T) %>%
   column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
