@@ -130,7 +130,7 @@ CCNES_PREP <- merge(CCNES_Qualtrics, Pedigree_Prep)
 CCNES_PREP$mother_sex <- "F"
 
 # Clean Flobal Enviorment
-rm(UO_CCNES_T1, UO_CCNES_T2, UO_CCNES_T3, UO_CCNES_T4, UPMC_CCNES_T1, UPMC_CCNES_T2, UPMC_CCNES_T3, UPMC_CCNES_T4,Pedigree,Pedigree_T1,Pedigree_T2,Pedigree_T3,Pedigree_T4,CCNES_T1,CCNES_T2,CCNES_T3,CCNES_T4)
+rm(UO_CCNES_T1, UO_CCNES_T2, UO_CCNES_T3, UO_CCNES_T4, UPMC_CCNES_T1, UPMC_CCNES_T2, UPMC_CCNES_T3, UPMC_CCNES_T4,Pedigree,Pedigree_T1,Pedigree_T2,Pedigree_T3,Pedigree_T4,CCNES_T1,CCNES_T2,CCNES_T3,CCNES_T4, CCNES_Qualtrics)
 ```
 
 ```{r Re-code and Reverse Score,  echo=FALSE}
@@ -236,8 +236,9 @@ CCNES_PREP$ccnes_PFR_cor <- ifelse(CCNES_PREP$NACheck < 0.67, rowMeans(CCNES_PRE
 CCNES_PREP$ccnes_MR_cor <- ifelse(CCNES_PREP$NACheck < 0.67, rowMeans(CCNES_PREP[,MR], na.rm = TRUE), "NA")
 
 # Drop people who are less than 67% 
-CCNES_PREP <- CCNES_PREP[CCNES_PREP$NACheck <= 0.67 ]
-CCNES_DROP <- CCNES_PREP[CCNES_PREP$NACheck > 0.67 ]
+CCNES_DROP <- CCNES_PREP[CCNES_PREP$NACheck > 0.67, ]
+CCNES_PREP <- CCNES_PREP[CCNES_PREP$NACheck <= 0.67, ]
+
 
 
 # Imputation -------------------------------------------------------------------------
@@ -295,7 +296,7 @@ Progress$site <- ifelse(startsWith(ID, "9"),"UO","UPMC")
 
 # Group by GroupAssissignment and Timepoint, and calculate the Supported_Mean and Unsupproted_Mean
 Progress_Supported_Mean <- Progress %>%
-  group_by(GroupAssignment,Timepoint,site) 
+  group_by(GroupAssignment,Timepoint,site) %>%
   summarise(SupportedMean = mean(Supported_Mean,na.rm = T), n = n())
 
 Progress_unsupported_Mean <- Progress %>%
