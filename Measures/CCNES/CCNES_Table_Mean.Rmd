@@ -172,10 +172,13 @@ CCNES_PREP <- CCNES_PREP %>%
 # Reverse_CCNES_names[c(7,39,45,55)] <- revers_CCNES_cols
 # setnames(CCNES_PREP, new_CCNES_names, Reverse_CCNES_names)
 # CCNES_PREP[,revers_CCNES_cols] = 8 - CCNES_PREP[,revers_CCNES_cols]
-CCNES_PREP$GroupAssignment[CCNES_PREP$GroupAssignment == "Assigned Group 3 (HC)" ] <- "Healthy"
 
-CCNES_PREP$GroupAssignment[CCNES_PREP$GroupAssignment == "Assigned Group 2 (FSU)" ] <- "NO DBT"
-CCNES_PREP$GroupAssignment[CCNES_PREP$GroupAssignment == "Assigned Group 1 (DBT)" ] <- "DBT"
+CCNES_PREP <- CCNES_PREP %>% 
+  mutate_at(c("GroupAssignment"),
+            funs(recode(., "Assigned Group 3 (HC)" = "Healthy", 
+                        'Assigned Group 2 (FSU)' = "NO DBT",
+                        'Assigned Group 1 (DBT)' = "DBT")))
+
 
 ```
 
