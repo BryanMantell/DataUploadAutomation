@@ -130,7 +130,7 @@ CCNES_PREP <- merge(CCNES_Qualtrics, Pedigree_Prep)
 CCNES_PREP$mother_sex <- "F"
 
 # Clean Flobal Enviorment
-rm(UO_CCNES_T1, UO_CCNES_T2, UO_CCNES_T3, UO_CCNES_T4, UPMC_CCNES_T1, UPMC_CCNES_T2, UPMC_CCNES_T3, UPMC_CCNES_T4,Pedigree,Pedigree_T1,Pedigree_T2,Pedigree_T3,Pedigree_T4,CCNES_T1,CCNES_T2,CCNES_T3,CCNES_T4)
+rm(UO_CCNES_T1, UO_CCNES_T2, UO_CCNES_T3, UO_CCNES_T4, UPMC_CCNES_T1, UPMC_CCNES_T2, UPMC_CCNES_T3, UPMC_CCNES_T4,Pedigree,Pedigree_T1,Pedigree_T2,Pedigree_T3,Pedigree_T4,CCNES_T1,CCNES_T2,CCNES_T3,CCNES_T4, CCNES_Qualtrics)
 ```
 
 ```{r Re-code and Reverse Score,  echo=FALSE}
@@ -172,6 +172,14 @@ CCNES_PREP <- CCNES_PREP %>%
 # Reverse_CCNES_names[c(7,39,45,55)] <- revers_CCNES_cols
 # setnames(CCNES_PREP, new_CCNES_names, Reverse_CCNES_names)
 # CCNES_PREP[,revers_CCNES_cols] = 8 - CCNES_PREP[,revers_CCNES_cols]
+
+CCNES_PREP <- CCNES_PREP %>% 
+  mutate_at(c("GroupAssignment"),
+            funs(recode(., "Assigned Group 3 (HC)" = "Healthy", 
+                        'Assigned Group 2 (FSU)' = "NO DBT",
+                        'Assigned Group 1 (DBT)' = "DBT")))
+
+
 ```
 
 ```{r Colculated Columns,  echo=FALSE}
@@ -226,6 +234,11 @@ CCNES_PREP$ccnes_EE_cor <- ifelse(CCNES_PREP$NACheck < 0.67, rowMeans(CCNES_PREP
 CCNES_PREP$ccnes_EFR_cor <- ifelse(CCNES_PREP$NACheck < 0.67, rowMeans(CCNES_PREP[,EFR], na.rm = TRUE), "NA")
 CCNES_PREP$ccnes_PFR_cor <- ifelse(CCNES_PREP$NACheck < 0.67, rowMeans(CCNES_PREP[,PFR], na.rm = TRUE), "NA")
 CCNES_PREP$ccnes_MR_cor <- ifelse(CCNES_PREP$NACheck < 0.67, rowMeans(CCNES_PREP[,MR], na.rm = TRUE), "NA")
+
+# Drop people who are less than 67% 
+CCNES_DROP <- CCNES_PREP[CCNES_PREP$NACheck > 0.67, ]
+CCNES_PREP <- CCNES_PREP[CCNES_PREP$NACheck <= 0.67, ]
+
 
 
 # Imputation -------------------------------------------------------------------------
@@ -349,11 +362,16 @@ setnames(Mean_Table, names(Mean_Table), Timepoint_names)
 kable(Mean_Table) %>%
   kable_styling(bootstrap_options = c("striped")) %>%
   add_header_above(c(" " = 1, "Controls Group means" = 4, "FSU Group means" = 4, "DBT Group means" = 4)) %>%
-  
   add_header_above(c("CCNES Mean Table" = 13)) %>%
   column_spec(c(1,5,9), border_right = T, include_thead = T) %>%
   column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
 ```
 
 ***Used CCNES Validation subscale only, information on Invalidation can be found in the data set
+
+```{r double check , include = T}
+ unique(UO_CCNES_T1$FamID)
+```
+
+
 

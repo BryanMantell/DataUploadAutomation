@@ -48,23 +48,14 @@ UPMC_T2_ders <- read.csv(file = 'UPMC_T2_ders.csv', stringsAsFactors = FALSE)
 UPMC_T3_ders <- read.csv(file = 'UPMC_T3_ders.csv', stringsAsFactors = FALSE)
 UPMC_T4_ders <- read.csv(file = 'UPMC_T4_ders.csv', stringsAsFactors = FALSE)
 
-#remove first two row, because un-revelent
-UO_T1_ders = UO_T1_ders[-c(1,2),]
-UO_T2_ders = UO_T2_ders[-c(1,2),]
-UO_T3_ders = UO_T3_ders[-c(1,2),]
-UO_T4_ders = UO_T4_ders[-c(1,2),]
 
-UPMC_T1_ders = UPMC_T1_ders[-c(1,2),]
-UPMC_T2_ders = UPMC_T2_ders[-c(1,2),]
-UPMC_T3_ders = UPMC_T3_ders[-c(1,2),]
-UPMC_T4_ders = UPMC_T4_ders[-c(1,2),]
 ```
 
 ```{r Rename Columns}
 # Create list of new variable names 
 ders <- "srm_ders"
 num_items <- seq(1:36)
-new_ders_names <- paste(ders, num_items, sep='_')
+new_ders_names <- paste(ders, num_items, sep = '_')
 
 # Create list of old variable names so we can replace them with the new ones 
 UO_ders_Item <- "Q137"
@@ -75,7 +66,7 @@ old_UPMC_ders_names <- paste(UPMC_ders_Item, num_items, sep = "_")
 #create list of new header 
 ders <- "ders"
 number_of_survey <- seq(1:36)
-NDA_names <- paste(ders,number_of_survey,sep='')
+NDA_names <- paste(ders,number_of_survey,sep = '')
 
 ```
 
@@ -117,7 +108,7 @@ Pedigree_T4 <- data.frame(c(select(Pedigree, FamID, mother_FamID = FamID_Mother,
 Pedigree_Prep <- bind_rows(Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4)
 
 # Merge Pedigree data to ders Time Points
-DERS_Prep<- merge(DERS_Qualtrics, Pedigree_Prep, all = TRUE)
+DERS_Prep <- merge(DERS_Qualtrics, Pedigree_Prep)
 
 # Change gemder to F instead of False
 DERS_Prep$mother_sex <- "F"
@@ -149,6 +140,12 @@ setnames(DERS_Prep, new_ders_names, Reverse_ders_names)
 # Reverse score certain items
 DERS_Prep[,revers_ders_cols] = 6 - DERS_Prep[,revers_ders_cols]
 
+# Recode UO groupassignment 
+DERS_Prep <- DERS_Prep %>% 
+  mutate_at(c("GroupAssignment"),
+            funs(recode(., "Assigned Group 3 (HC)" = "Healthy", 
+                        'Assigned Group 2 (FSU)' = "NO DBT",
+                        'Assigned Group 1 (DBT)' = "DBT")))
 ```
 
 
@@ -203,6 +200,11 @@ DERS_Prep$DERS_nonacceptance_cor <- ifelse(DERS_Prep$NACheck < 0.67, DERS_Prep$D
 DERS_Prep$DERS_strategies_cor <- ifelse(DERS_Prep$NACheck < 0.67, DERS_Prep$DERS_strategies_raw,  "NA")
 DERS_Prep$DERS_total_cor <- ifelse(DERS_Prep$NACheck < 0.67, DERS_Prep$DERS_total_raw, "NA")
 
+# Drop people who are less than 67% 
+DERS_Drop <- DERS_Prep[DERS_Prep$NACheck > 0.67, ]
+DERS_Prep <- DERS_Prep[DERS_Prep$NACheck <= 0.67, ]
+
+
 ```
 
 ```{r NDA Sheet}
@@ -211,7 +213,7 @@ NDA_ders_Prep <- select(DERS_Prep, c(subjectkey = mom_guid, src_subject_id = mot
                          
 # Combine NDA and prep sheet
 # Make sure put original NDA structure at first, because the order of the new sheet will be the order of the first item in bind_rows function
-setnames(NDA_ders_Prep, Reverse_DERS_names, NDA_Names)
+setnames(NDA_ders_Prep, Reverse_ders_names, NDA_names)
 
 # Recreate first line in orignial NDA file
 # Make a empty row, with same number of column in NDA_ders, as first line of NDA sheet
@@ -240,10 +242,8 @@ write.table(NDA_ders, file = 'ders.csv', sep = ",", append = TRUE, na = "", quot
 ```{r Table,  echo=FALSE}
 # Treatment Progress sheet
 # Select needed column
-Progress <- select(DERS_Prep, c(FamID, GroupAssignment, Timepoint, starts_with("srm")))
+Progress <- select(DERS_Prep, c(FamID, GroupAssignment, Timepoint, starts_with("srm"), Row_sum = DERS_total_raw))
 
-# Calculate row mean for each individual  
-Progress$Row_Mean <- rowMeans(select(DERS_Prep,c(starts_with("srm"))), na.rm = T)
 
 # Change FamId as character and assign to ID variable 
 ID <- c(as.character(Progress$FamID))
@@ -254,7 +254,7 @@ Progress$site <- ifelse(startsWith(ID, "9"),"UO","UPMC")
 # Group by GroupAssissignment and Timepoint, and calculate the Group Mean
 Progress_Mean <- Progress %>%
   group_by(GroupAssignment,Timepoint,site) %>%
-  summarise(GroupMean = mean(Row_Mean,na.rm = T),count = n())
+  summarise(GroupMean = mean(Row_sum,na.rm = T), n = n())
 
 # Select only UO Mean
 UO <- Progress_Mean[Progress_Mean$site == "UO",]
@@ -262,9 +262,9 @@ UO <- Progress_Mean[Progress_Mean$site == "UO",]
 UPMC <- Progress_Mean[Progress_Mean$site == "UPMC",]
 
 # Colculate Both site Mean 
-Both_site_Mean <- Progress_Mean %>%
+Both_site_Mean <- Progress %>%
   group_by(GroupAssignment, Timepoint) %>%
-  summarise(BothSiteMean = mean(GroupMean,na.rm = T),n = sum(count))
+  summarise(BothSite_DERS_Mean = mean(Row_sum,na.rm = T),n = n())
 #Progress_Mean <- Progress_Mean[order(GroupAssignment),] 
 
 
@@ -275,7 +275,7 @@ colnames(UPMC)[colnames(UPMC) == "GroupMean"] = "UPMC_DERS"
 
 
 # Combine UO,UPMC and both_site data 
-Mean_Table <- data.frame(UO[,c("UO_DERS","GroupAssignment")],UPMC[,"UPMC_DERS"],Both_site_Mean[,c("BothSiteMean","n")])
+Mean_Table <- data.frame(UO[,c("UO_DERS")],UPMC[,"UPMC_DERS"],Both_site_Mean[,c("BothSite_DERS_Mean","n", "GroupAssignment")])
 
 # Remove GroupAssignment column 
 # Mean_Table <- select(Mean_Table, -c(GroupAssignment))
@@ -286,6 +286,9 @@ Mean_Table <- t(Mean_Table)
 # Make Mean_Table as a data.frame
 Mean_Table <- data.frame(Mean_Table)
 
+# Reorder Mean_Table
+Mean_Table <- Mean_Table[c(5,6,7,8,9,10,11,12,1,2,3,4)]
+
 # Add Timepoint column 
 Timepoint_names <- c("T1","T2", "T3", "T4","T1","T2", "T3", "T4","T1","T2", "T3", "T4")
 
@@ -295,7 +298,17 @@ setnames(Mean_Table, names(Mean_Table), Timepoint_names)
 # Table output ----------
 # Add a header 
 kable(Mean_Table) %>%
-  kable_styling(bootstrap_options = "striped", full_width = F) %>%
-  add_header_above(c(" " = 1, "DBT Group means" = 4, "Controls means" = 4, "FSU means" = 4))
+  kable_styling(bootstrap_options = "striped", full_width = T) %>%
+  add_header_above(c(" " = 1, "DBT Group means" = 4, "Controls means" = 4, "FSU means" = 4)) %>%
+  add_header_above(c("DERS" = 13))
+
+kable(Mean_Table) %>%
+  kable_styling(bootstrap_options = c("striped")) %>%
+  add_header_above(c(" " = 1, "Controls Group means" = 4, "FSU Group means" = 4, "DBT Group means" = 4)) %>%
+  
+  add_header_above(c("DERS Mean Table" = 13)) %>%
+  column_spec(c(1,5,9), border_right = T, include_thead = T) %>%
+  column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
+ 
 ```
 
