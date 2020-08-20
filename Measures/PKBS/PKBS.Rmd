@@ -234,6 +234,9 @@ Mean_Table <- t(Mean_Table)
 #Make Mean_Table a data frame
 Mean_Table <- data.frame(Mean_Table)
 
+#Re-order Mean Table
+Mean_Table <- Mean_Table[c(5,6,7,8,9,10,11,12,1,2,3,4)]
+
 #Add Timepoint column
 Timepoint_names <- c("T1","T2", "T3", "T4","T1","T2", "T3", "T4","T1","T2", "T3", "T4")
 
