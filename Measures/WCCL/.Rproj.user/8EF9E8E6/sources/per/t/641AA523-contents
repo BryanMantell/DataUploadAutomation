@@ -200,7 +200,7 @@ colnames(UO)[colnames(UO) == "GroupMean"] = "UO_WCCL"
 colnames(UPMC)[colnames(UPMC) == "GroupMean"] = "UPMC_WCCL"
 
 # Combine UO,UPMC and both_site data 
-Mean_Table <- data.frame(UO[,c("UO_WCCL","GroupAssignment")],UPMC[,"UPMC_WCCL"],Both_site_Mean[,c("BothSiteMean","n")])
+Mean_Table <- data.frame(UO[,c("UO_WCCL")],UPMC[,"UPMC_WCCL"],Both_site_Mean[,c("BothSiteMean","n", "GroupAssignment")])
 
 #Mean_Table <- select(Mean_Table, -c(GroupAssignment))
 
