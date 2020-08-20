@@ -140,6 +140,12 @@ setnames(DERS_Prep, new_ders_names, Reverse_ders_names)
 # Reverse score certain items
 DERS_Prep[,revers_ders_cols] = 6 - DERS_Prep[,revers_ders_cols]
 
+# Recode UO groupassignment 
+DERS_Prep <- DERS_Prep %>% 
+  mutate_at(c("GroupAssignment"),
+            funs(recode(., "Assigned Group 3 (HC)" = "Healthy", 
+                        'Assigned Group 2 (FSU)' = "NO DBT",
+                        'Assigned Group 1 (DBT)' = "DBT")))
 ```
 
 
@@ -193,6 +199,11 @@ DERS_Prep$DERS_impulsecor <- ifelse(DERS_Prep$NACheck < 0.67, DERS_Prep$DERS_imp
 DERS_Prep$DERS_nonacceptance_cor <- ifelse(DERS_Prep$NACheck < 0.67, DERS_Prep$DERS_nonacceptance_raw, "NA")
 DERS_Prep$DERS_strategies_cor <- ifelse(DERS_Prep$NACheck < 0.67, DERS_Prep$DERS_strategies_raw,  "NA")
 DERS_Prep$DERS_total_cor <- ifelse(DERS_Prep$NACheck < 0.67, DERS_Prep$DERS_total_raw, "NA")
+
+# Drop people who are less than 67% 
+DERS_Drop <- DERS_Prep[DERS_Prep$NACheck > 0.67, ]
+DERS_Prep <- DERS_Prep[DERS_Prep$NACheck <= 0.67, ]
+
 
 ```
 
@@ -253,7 +264,7 @@ UPMC <- Progress_Mean[Progress_Mean$site == "UPMC",]
 # Colculate Both site Mean 
 Both_site_Mean <- Progress %>%
   group_by(GroupAssignment, Timepoint) %>%
-  summarise(BothSiteMean = mean(Row_sum,na.rm = T),n = n())
+  summarise(BothSite_DERS_Mean = mean(Row_sum,na.rm = T),n = n())
 #Progress_Mean <- Progress_Mean[order(GroupAssignment),] 
 
 
@@ -264,7 +275,7 @@ colnames(UPMC)[colnames(UPMC) == "GroupMean"] = "UPMC_DERS"
 
 
 # Combine UO,UPMC and both_site data 
-Mean_Table <- data.frame(UO[,c("UO_DERS")],UPMC[,"UPMC_DERS"],Both_site_Mean[,c("BothSiteMean","n", "GroupAssignment")])
+Mean_Table <- data.frame(UO[,c("UO_DERS")],UPMC[,"UPMC_DERS"],Both_site_Mean[,c("BothSite_DERS_Mean","n", "GroupAssignment")])
 
 # Remove GroupAssignment column 
 # Mean_Table <- select(Mean_Table, -c(GroupAssignment))
