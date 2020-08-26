@@ -111,6 +111,12 @@ WCCL_PREP[,8:59] <- sapply(WCCL_PREP[,8:59],as.numeric)
 
 #Change gender to F instead of false
 WCCL_PREP$mother_sex <- "F"
+
+WCCL_PREP <- WCCL_PREP %>% 
+  mutate_at(c("GroupAssignment"),
+            funs(recode(., "Assigned Group 3 (HC)" = "Healthy", 
+                        'Assigned Group 2 (FSU)' = "NO DBT",
+                        'Assigned Group 1 (DBT)' = "DBT")))
 ```
 ```{r Calculated Columns}
 #Items for SU
@@ -139,6 +145,10 @@ WCCL_PREP$wccl_SU_cor <- ifelse(WCCL_PREP$NACheck < 0.67, rowMeans(WCCL_PREP[,SU
 WCCL_PREP$wccl_GSC_cor <- ifelse(WCCL_PREP$NACheck < 0.67, rowMeans(WCCL_PREP[,GSC], na.rm = TRUE), "NA")
 
 WCCL_PREP$wccl_BO_cor <- ifelse(WCCL_PREP$NACheck < 0.67, rowMeans(WCCL_PREP[,BO], na.rm = TRUE), "NA")
+
+#Drop people who are at less than 67% response
+WCCL_DROP <- WCCL_PREP[WCCL_PREP$NACheck > 0.67, ]
+WCCL_PREP <- WCCL_PREP[WCCL_PREP$NACheck <= 0.67, ]
 ```
 ```{r NDA Sheet}
 # Create NDA structure column names

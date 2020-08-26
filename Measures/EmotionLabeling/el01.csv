@@ -1,0 +1,82 @@
+el,1,,,,,,,,,,,,,,,,,,,,,,,,
+subjectkey,src_subject_id,interview_date,interview_age,sex,visit,oc_elt_exp_1,oc_elt_exp_2,oc_elt_exp_3,oc_elt_exp_4,oc_elt_exp_5,oc_elt_exp_6,oc_elt_exp_7,oc_elt_exp_8,oc_elt_rec_1,oc_elt_rec_2,oc_elt_rec_3,oc_elt_rec_4,oc_elt_exp_total,oc_elt_rec_total,timepoint,Fam_ID,child_guid,child_famID,child_sex,GroupAssignment
+CHILD_GUID_10001,10001_child,14-Sep-18,459,F,1,happy,2,not happy,1,mad,2,mad,1,1,1,1,1,1.5,1,,,,,,
+CHILD_GUID_10002,10002_child,4-Oct-19,463,M,1,Happy,2,sad,2,Mad,2,Surprised,1,1,1,1,1,1.75,1,,,,,,
+CHILD_GUID_10003,10003_child,14-Jul-19,374,M,1,Laugh,1,Sad,2,Mad,2,Scream,1,1,1,1,1,1.5,1,,,,,,
+CHILD_GUID_10004,10004_child,14-Aug-19,382,M,1,Good,1,Crying,0,Crying,0,Crying,0,0,0,1,0,0.25,0.25,,,,,,
+CHILD_GUID_10005,10005_child,15-Jan-18,394,F,1,Happy,2,sad,2,mad,2,not clear,0,1,1,1,1,1.5,1,,,,,,
+CHILD_GUID_90001,90001_child,6-Jan-18,404,M,1,Good,1,,,,,,,0,1,1,1,1,0.75,,,,,,
+CHILD_GUID_90002,90002_child,3-Oct-19,418,M,1,Happy,2,Sad,2,grumpy,2,cute,0,1,1,1,1,1.5,1,,,,,,
+CHILD_GUID_90003,90003_child,29-Nov-18,444,M,1,Happy,2,Sad,2,Angry,2,nonsense,0,1,1,1,1,1.5,1,,,,,,
+CHILD_GUID_90004,90004_child,3-Nov-18,427,F,1,Happy,2,no response,1,Angry,2,Surprised,1,1,0,1,0,1.5,0.5,,,,,,
+CHILD_GUID_90005,90005_child,18-May-18,460,F,1,Angry,0,Sad,2,Angry,2,Angry,1,1,1,1,1,1.25,1,,,,,,
+CHILD_GUID_10001,10001_child,27-Feb-19,464,F,2,Happy,2,Sad,2,Mad,2,scared,2,1,1,1,1,2,1,,,,,,
+CHILD_GUID_10002,10002_child,3-Feb-20,467,M,2,smilin,1,Sad,2,Angry,2,Surprised,2,1,1,1,1,1.75,1,,,,,,
+CHILD_GUID_10003,10003_child,5-Nov-20,390,M,2,Happy,2,Sad,2,Mad,2,Scared,2,0,1,1,1,2,0.75,,,,,,
+CHILD_GUID_10004,10004_child,21-May-19,380,M,2,,,,,,,,,,,,,,,,,,,,
+CHILD_GUID_10005,10005_child,5/15/2018,398,F,2,,,,,,,,,,,,,,,,,,,,
+CHILD_GUID_90001,90001_child,5/5/2018,408,M,2,good guy,1,sad guy,2,Mad,2,crying,0,1,0,1,0,1.25,0.5,,,,,,
+CHILD_GUID_90002,90002_child,2/5/2020,421,M,2,happy,2,sad,2,mad,2,scared,2,1,1,1,1,2,1,,,,,,
+CHILD_GUID_90003,90003_child,25-Mar-19,448,M,2,Happy,2,Sad,2,Mad,2,Surprised,1,1,1,1,1,1.75,1,,,,,,
+CHILD_GUID_90004,90004_child,21-Mar-19,432,F,2,,,,,,,,,,,,,,,,,,,,
+CHILD_GUID_90005,90005_child,10-Sep-18,464,F,2,,,,,,,,,,,,,,,,,,,,
+CHILD_GUID_10001,10001_child,19-Jun-19,467,F,3,Happy,2,sad,2,sad,1,scared,2,1,1,1,1,1.75,1,,,,,,
+CHILD_GUID_10002,10002_child,6/15/2020,470,M,3,,,,,,,,,,,,,,,,,,,,
+CHILD_GUID_10003,10003_child,3/9/2020,382,M,3,,,,,,,,,,,,,,,,,,,,
+CHILD_GUID_10004,10004_child,9/21/2019,384,M,3,Happy,2,Sad,2,mad,2,No response,0,1,1,1,1,1.5,1,,,,,,
+CHILD_GUID_10005,10005_child,11-Sep-18,402,F,3,,,,,,,,,,,,,,,,,,,,
+CHILD_GUID_90001,90001_child,3-Oct-18,413,M,3,Happy,2,Mad,1,Angry,2,Sad,1,1,0,0,0,1.5,0.25,,,,,,
+CHILD_GUID_90002,90002_child,5/6/2020,424,M,3,,,,,Mad,2,Scared,2,1,1,1,1,2,1,,,,,,
+CHILD_GUID_90003,90003_child,26-Jul-19,452,M,3,Happy,2,Sad,2,mad,2,I don't know,0,1,1,1,1,1.5,1,,,,,,
+CHILD_GUID_90004,90004_child,5-Jul-19,436,F,3,Happy,2,Sad,2,Mad,2,Happy,0,1,1,1,1,1.5,1,,,,,,
+CHILD_GUID_90005,90005_child,9-Jan-19,468,F,3,Happy,2,Sad,2,angry,2,scared,2,1,1,1,1,2,1,,,,,,
+CHILD_GUID_10001,10001_child,14-Oct-19,471,F,4,Happy,2,Sad,2,Mad,2,Afraid,2,1,1,1,1,2,1,,,,,,
+CHILD_GUID_10002,10002_child,10/30/2020,475,M,4,,,,,,,,,,,,,,,,,,,,
+CHILD_GUID_10003,10003_child,6/1/2020,385,M,4,Happy,2,sad,2,mad,2,scared,2,1,1,1,1,2,1,,,,,,
+CHILD_GUID_10004,10004_child,1/22/2020,388,M,4,,,,,,,,,,,,,,,,,,,,
+CHILD_GUID_10005,10005_child,14-Jan-19,406,F,4,Happy,2,Sad,2,Mad,2,Scared,2,1,1,1,1,2,1,,,,,,
+CHILD_GUID_90001,90001_child,9-Feb-19,417,M,4,Mad,0,Mad,1,Mad,2,Mad,1,1,1,1,1,1,1,,,,,,
+CHILD_GUID_90002,90002_child,10/31/2020,429,M,4,Happy,2,Sad,2,Mad,2,Scared,2,1,1,1,1,2,1,,,,,,
+CHILD_GUID_90003,90003_child,21-Nov-19,456,M,4,Happy,2,Sad,2,Mad,2,Surprised,2,1,1,1,1,2,1,,,,,,
+CHILD_GUID_90004,90004_child,4-Nov-20,451,F,4,Happy,2,Sad,2,Mad,2,Surprised,2,1,1,1,1,2,1,,,,,,
+CHILD_GUID_90005,90005_child,5-Jun-19,473,F,4,,,,,,,,,,,,,,,,,,,,
+,,14-Sep-18,459,,,happy,2,not happy,1,mad,2,mad,1,1,1,1,1,1.5,1,1,10001,CHILD_GUID_10001,10001_child,F,NO DBT
+,,4-Oct-19,463,,,Happy,2,sad,2,Mad,2,Surprised,1,1,1,1,1,1.75,1,1,10002,CHILD_GUID_10002,10002_child,M,Healthy
+,,14-Jul-19,374,,,Laugh,1,Sad,2,Mad,2,Scream,1,1,1,1,1,1.5,1,1,10003,CHILD_GUID_10003,10003_child,M,DBT
+,,14-Aug-19,382,,,Good,1,Crying,0,Crying,0,Crying,0,0,0,1,0,0.25,0.25,1,10004,CHILD_GUID_10004,10004_child,M,Healthy
+,,15-Jan-18,394,,,Happy,2,sad,2,mad,2,not clear,0,1,1,1,1,1.5,1,1,10005,CHILD_GUID_10005,10005_child,F,Healthy
+,,6-Jan-18,404,,,Good,1,,,,,,,0,1,1,1,1,0.75,1,90001,CHILD_GUID_90001,90001_child,M,DBT
+,,3-Oct-19,418,,,Happy,2,Sad,2,grumpy,2,cute,0,1,1,1,1,1.5,1,1,90002,CHILD_GUID_90002,90002_child,M,NO DBT
+,,29-Nov-18,444,,,Happy,2,Sad,2,Angry,2,nonsense,0,1,1,1,1,1.5,1,1,90003,CHILD_GUID_90003,90003_child,M,NO DBT
+,,3-Nov-18,427,,,Happy,2,no response,1,Angry,2,Surprised,1,1,0,1,0,1.5,0.5,1,90004,CHILD_GUID_90004,90004_child,F,Healthy
+,,18-May-18,460,,,Angry,0,Sad,2,Angry,2,Angry,1,1,1,1,1,1.25,1,1,90005,CHILD_GUID_90005,90005_child,F,DBT
+,,27-Feb-19,464,,,Happy,2,Sad,2,Mad,2,scared,2,1,1,1,1,2,1,2,10001,CHILD_GUID_10001,10001_child,F,NO DBT
+,,3-Feb-20,467,,,smilin,1,Sad,2,Angry,2,Surprised,2,1,1,1,1,1.75,1,2,10002,CHILD_GUID_10002,10002_child,M,Healthy
+,,5-Nov-20,390,,,Happy,2,Sad,2,Mad,2,Scared,2,0,1,1,1,2,0.75,2,10003,CHILD_GUID_10003,10003_child,M,DBT
+,,21-May-19,380,,,,,,,,,,,,,,,,,2,10004,CHILD_GUID_10004,10004_child,M,Healthy
+,,5/15/2018,398,,,,,,,,,,,,,,,,,2,10005,CHILD_GUID_10005,10005_child,F,Healthy
+,,5/5/2018,408,,,good guy,1,sad guy,2,Mad,2,crying,0,1,0,1,0,1.25,0.5,2,90001,CHILD_GUID_90001,90001_child,M,DBT
+,,2/5/2020,421,,,happy,2,sad,2,mad,2,scared,2,1,1,1,1,2,1,2,90002,CHILD_GUID_90002,90002_child,M,NO DBT
+,,25-Mar-19,448,,,Happy,2,Sad,2,Mad,2,Surprised,1,1,1,1,1,1.75,1,2,90003,CHILD_GUID_90003,90003_child,M,NO DBT
+,,21-Mar-19,432,,,,,,,,,,,,,,,,,2,90004,CHILD_GUID_90004,90004_child,F,Healthy
+,,10-Sep-18,464,,,,,,,,,,,,,,,,,2,90005,CHILD_GUID_90005,90005_child,F,DBT
+,,19-Jun-19,467,,,Happy,2,sad,2,sad,1,scared,2,1,1,1,1,1.75,1,3,10001,CHILD_GUID_10001,10001_child,F,NO DBT
+,,6/15/2020,470,,,,,,,,,,,,,,,,,3,10002,CHILD_GUID_10002,10002_child,M,Healthy
+,,3/9/2020,382,,,,,,,,,,,,,,,,,3,10003,CHILD_GUID_10003,10003_child,M,DBT
+,,9/21/2019,384,,,Happy,2,Sad,2,mad,2,No response,0,1,1,1,1,1.5,1,3,10004,CHILD_GUID_10004,10004_child,M,Healthy
+,,11-Sep-18,402,,,,,,,,,,,,,,,,,3,10005,CHILD_GUID_10005,10005_child,F,Healthy
+,,3-Oct-18,413,,,Happy,2,Mad,1,Angry,2,Sad,1,1,0,0,0,1.5,0.25,3,90001,CHILD_GUID_90001,90001_child,M,DBT
+,,5/6/2020,424,,,,,,,Mad,2,Scared,2,1,1,1,1,2,1,3,90002,CHILD_GUID_90002,90002_child,M,NO DBT
+,,26-Jul-19,452,,,Happy,2,Sad,2,mad,2,I don't know,0,1,1,1,1,1.5,1,3,90003,CHILD_GUID_90003,90003_child,M,NO DBT
+,,5-Jul-19,436,,,Happy,2,Sad,2,Mad,2,Happy,0,1,1,1,1,1.5,1,3,90004,CHILD_GUID_90004,90004_child,F,Healthy
+,,9-Jan-19,468,,,Happy,2,Sad,2,angry,2,scared,2,1,1,1,1,2,1,3,90005,CHILD_GUID_90005,90005_child,F,DBT
+,,14-Oct-19,471,,,Happy,2,Sad,2,Mad,2,Afraid,2,1,1,1,1,2,1,4,10001,CHILD_GUID_10001,10001_child,F,NO DBT
+,,10/30/2020,475,,,,,,,,,,,,,,,,,4,10002,CHILD_GUID_10002,10002_child,M,Healthy
+,,6/1/2020,385,,,Happy,2,sad,2,mad,2,scared,2,1,1,1,1,2,1,4,10003,CHILD_GUID_10003,10003_child,M,DBT
+,,1/22/2020,388,,,,,,,,,,,,,,,,,4,10004,CHILD_GUID_10004,10004_child,M,Healthy
+,,14-Jan-19,406,,,Happy,2,Sad,2,Mad,2,Scared,2,1,1,1,1,2,1,4,10005,CHILD_GUID_10005,10005_child,F,Healthy
+,,9-Feb-19,417,,,Mad,0,Mad,1,Mad,2,Mad,1,1,1,1,1,1,1,4,90001,CHILD_GUID_90001,90001_child,M,DBT
+,,10/31/2020,429,,,Happy,2,Sad,2,Mad,2,Scared,2,1,1,1,1,2,1,4,90002,CHILD_GUID_90002,90002_child,M,NO DBT
+,,21-Nov-19,456,,,Happy,2,Sad,2,Mad,2,Surprised,2,1,1,1,1,2,1,4,90003,CHILD_GUID_90003,90003_child,M,NO DBT
+,,4-Nov-20,451,,,Happy,2,Sad,2,Mad,2,Surprised,2,1,1,1,1,2,1,4,90004,CHILD_GUID_90004,90004_child,F,Healthy
+,,5-Jun-19,473,,,,,,,,,,,,,,,,,4,90005,CHILD_GUID_90005,90005_child,F,DBT
