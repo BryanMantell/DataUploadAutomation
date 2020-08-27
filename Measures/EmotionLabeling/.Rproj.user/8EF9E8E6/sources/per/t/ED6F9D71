@@ -12,16 +12,16 @@
     "path" : null,
     "project_path" : null,
     "properties" : {
-        "cacheKey" : "69464D8",
+        "cacheKey" : "6EB67607",
         "caption" : "EL_PREP",
-        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=EL_PREP&cache_key=69464D8",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=EL_PREP&cache_key=6EB67607",
         "displayedObservations" : "40",
         "environment" : "",
         "expression" : "EL_PREP",
         "object" : "EL_PREP",
         "preview" : "0",
         "totalObservations" : "40",
-        "variables" : "22"
+        "variables" : "23"
     },
     "read_only" : false,
     "read_only_alternatives" : [
