@@ -130,7 +130,7 @@ CCNES_PREP <- merge(CCNES_Qualtrics, Pedigree_Prep)
 CCNES_PREP$mother_sex <- "F"
 
 # Clean Flobal Enviorment
-rm(UO_CCNES_T1, UO_CCNES_T2, UO_CCNES_T3, UO_CCNES_T4, UPMC_CCNES_T1, UPMC_CCNES_T2, UPMC_CCNES_T3, UPMC_CCNES_T4,Pedigree,Pedigree_T1,Pedigree_T2,Pedigree_T3,Pedigree_T4,CCNES_T1,CCNES_T2,CCNES_T3,CCNES_T4, CCNES_Qualtrics)
+rm(UO_CCNES_T1, UO_CCNES_T2, UO_CCNES_T3, UO_CCNES_T4, UPMC_CCNES_T1, UPMC_CCNES_T2, UPMC_CCNES_T3, UPMC_CCNES_T4,Pedigree,Pedigree_T1,Pedigree_T2,Pedigree_T3,Pedigree_T4,CCNES_T1,CCNES_T2,CCNES_T3,CCNES_T4)
 ```
 
 ```{r Re-code and Reverse Score,  echo=FALSE}
@@ -235,9 +235,13 @@ CCNES_PREP$ccnes_EFR_cor <- ifelse(CCNES_PREP$NACheck < 0.67, rowMeans(CCNES_PRE
 CCNES_PREP$ccnes_PFR_cor <- ifelse(CCNES_PREP$NACheck < 0.67, rowMeans(CCNES_PREP[,PFR], na.rm = TRUE), "NA")
 CCNES_PREP$ccnes_MR_cor <- ifelse(CCNES_PREP$NACheck < 0.67, rowMeans(CCNES_PREP[,MR], na.rm = TRUE), "NA")
 
+# progress 
+# hist(CCNES_PREP$NACheck, main = "Not NA Histogram")
+
+
 # Drop people who are less than 67% 
 CCNES_DROP <- CCNES_PREP[CCNES_PREP$NACheck > 0.67, ]
-CCNES_PREP <- CCNES_PREP[CCNES_PREP$NACheck <= 0.67, ]
+CCNES_PREP67 <- CCNES_PREP[CCNES_PREP$NACheck <= 0.67, ]
 
 
 
@@ -279,14 +283,14 @@ write.table(NDA_CCNES, file = 'pabq.csv', sep = ",", append = TRUE, na = "", quo
 ```
 
 
-```{r Table, include = T}
+```{r all data Table, include = T}
 # Treatment Progress sheet
 # Select needed column
 Progress <- select(CCNES_PREP, c(FamID, GroupAssignment, Timepoint, starts_with("srm")))
 
 # Calculate row mean for each individual  
-Progress$Supported_Mean <- rowMeans(CCNES_PREP[,c(EE,EFR,PFR)], na.rm = TRUE)
-Progress$Unsupproted_Mean <- rowMeans(CCNES_PREP[,c(DR, PR, MR)], na.rm = TRUE)
+Progress$Supported_Mean <- rowMeans(CCNES_PREP[,c("ccnes_EE_raw","ccnes_EFR_raw", "ccnes_PFR_raw")], na.rm = TRUE)
+Progress$Unsupproted_Mean <- rowMeans(CCNES_PREP[,c("ccnes_DR_raw", "ccnes_PR_raw", "ccnes_MR_raw")], na.rm = TRUE)
 
 # Change FamId as character and assign to ID variable 
 ID <- c(as.character(Progress$FamID))
@@ -361,7 +365,95 @@ setnames(Mean_Table, names(Mean_Table), Timepoint_names)
 # Add a header 
 kable(Mean_Table) %>%
   kable_styling(bootstrap_options = c("striped")) %>%
-  add_header_above(c(" " = 1, "Controls Group means" = 4, "FSU Group means" = 4, "DBT Group means" = 4)) %>%
+  add_header_above(c(" " = 1, "Controls Group means (All Data)" = 4, "FSU Group means" = 4, "DBT Group means" = 4)) %>%
+  add_header_above(c("CCNES Mean Table" = 13)) %>%
+  column_spec(c(1,5,9), border_right = T, include_thead = T) %>%
+  column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
+```
+
+```{r pass 67% Table, include = T}
+# Treatment Progress sheet
+# Select needed column
+Progress67 <- select(CCNES_PREP67, c(FamID, GroupAssignment, Timepoint, starts_with("srm")))
+
+# Calculate row mean for each individual  
+Progress67$Supported_Mean67 <- rowMeans(CCNES_PREP[,c("ccnes_EE_cor", "ccnes_EFR_cor", "ccnes_PFR_cor")], na.rm = TRUE)
+Progress67$Unsupproted_Mean67 <- rowMeans(CCNES_PREP[,c("ccnes_DR_cor", "ccnes_PR_cor", "ccnes_MR_cor")], na.rm = TRUE)
+
+# Change FamId as character and assign to ID variable 
+ID <- c(as.character(Progress$FamID))
+
+# Add Site column to Progress, if ID start with 9 then site is UO, else is UPMC
+Progress67$site <- ifelse(startsWith(ID, "9"),"UO","UPMC")
+
+# Group by GroupAssissignment and Timepoint, and calculate the Supported_Mean and Unsupproted_Mean
+Progress_Supported_Mean67 <- Progress67 %>%
+  group_by(GroupAssignment,Timepoint,site) %>%
+  summarise(SupportedMean67 = mean(Supported_Mean67,na.rm = T), n = n())
+
+Progress_unsupported_Mean67 <- Progress67 %>%
+  group_by(GroupAssignment,Timepoint,site) %>%
+  summarise(UnsupprotedMean67 = mean(Unsupproted_Mean67,na.rm = T), n = n())
+
+# Joint  Supported and un-supported 
+Progress_Mean67 <- merge(Progress_Supported_Mean67, Progress_unsupported_Mean67)
+
+# Select only UO Mean
+UO67 <- Progress_Mean67[Progress_Mean67$site == "UO",]
+# Select only UPMC Mean 
+UPMC67 <- Progress_Mean67[Progress_Mean67$site == "UPMC",]
+
+# Colculate Both site Mean 
+Progress_Supported_Mean_both67 <- Progress67 %>%
+  group_by(GroupAssignment,Timepoint) %>%
+  summarise("BothSite_CCNES_SupportedMean67" = mean(Supported_Mean67, na.rm = T), n = n())
+
+Progress_unsupported_Mean_both67 <- Progress67 %>%
+  group_by(GroupAssignment,Timepoint) %>%
+  summarise("BothSite_CCNES_UnsupprotedMean67" = mean(Unsupproted_Mean67,na.rm = T), n = n())
+
+Both_site_Mean67 <- merge(Progress_Supported_Mean_both67, Progress_unsupported_Mean_both67)
+#Progress_Mean <- Progress_Mean[order(GroupAssignment),] 
+
+
+# Change GroupMean Column names according to site
+colnames(UO67)[colnames(UO67) == "SupportedMean67"] = "UO_CCNES_SupportedMean"
+colnames(UO67)[colnames(UO67) == "UnsupprotedMean67"] = "UO_CCNES_UnsupprotedMean"
+colnames(UPMC67)[colnames(UPMC67) == "SupportedMean67"] = "UPMC_CCNES_SupportedMean"
+colnames(UPMC67)[colnames(UPMC67) == "UnsupprotedMean67"] = "UPMC_CCNES_UnsupprotedMean"
+
+
+# Combine UO,UPMC and both_site data 
+Mean_Table67 <- data.frame(UO[,c("UO_CCNES_SupportedMean","UO_CCNES_UnsupprotedMean")],UPMC[,c("UPMC_CCNES_SupportedMean","UPMC_CCNES_UnsupprotedMean")],Both_site_Mean[,c("BothSite_CCNES_SupportedMean","BothSite_CCNES_UnsupprotedMean","n","GroupAssignment")])
+
+
+# Remove GroupAssignment column 
+# Mean_Table <- select(Mean_Table, -c(GroupAssignment))
+
+# Convert Mean_Table, make original column as row
+Mean_Table67 <- t(Mean_Table67)
+
+# Make Mean_Table as a data.frame
+Mean_Table67 <- data.frame(Mean_Table67)
+
+# Reorder Mean_Table
+Mean_Table67 <- Mean_Table67[c(5,6,7,8,9,10,11,12,1,2,3,4)]
+
+#add support /non support 
+#add_column()
+
+# Add Timepoint column 
+Timepoint_names <- c("T1","T2", "T3", "T4","T1","T2", "T3", "T4","T1","T2", "T3", "T4")
+
+# Rename column name 
+setnames(Mean_Table67, names(Mean_Table67), Timepoint_names)
+
+
+# Table output ----------
+# Add a header 
+kable(Mean_Table67) %>%
+  kable_styling(bootstrap_options = c("striped")) %>%
+  add_header_above(c(" " = 1, "Controls Group means with 67% rule" = 4, "FSU Group means" = 4, "DBT Group means" = 4)) %>%
   add_header_above(c("CCNES Mean Table" = 13)) %>%
   column_spec(c(1,5,9), border_right = T, include_thead = T) %>%
   column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
