@@ -44,6 +44,15 @@ UPMC_CCNES_T2 <- read.csv("UPMC_T2_CCNES.csv")
 UPMC_CCNES_T3 <- read.csv("UPMC_T3_CCNES.csv")
 UPMC_CCNES_T4 <- read.csv("UPMC_T4_CCNES.csv")
 
+UO_CCNES_T1 <- UO_CCNES_T1[-c(1,2),]
+UO_CCNES_T2 <- UO_CCNES_T2[-c(1,2),]
+UO_CCNES_T3 <- UO_CCNES_T3[-c(1,2),]
+UO_CCNES_T4 <- UO_CCNES_T4[-c(1,2),]
+UPMC_CCNES_T1 <- UPMC_CCNES_T1[-c(1,2),]
+UPMC_CCNES_T2 <- UPMC_CCNES_T2[-c(1,2),]
+UPMC_CCNES_T3 <- UPMC_CCNES_T3[-c(1,2),]
+UPMC_CCNES_T4 <- UPMC_CCNES_T4[-c(1,2),]
+
 #NDA Structure
 NDA_CCNES <- read.csv("pabq01_template.csv", skip = 1)
 
@@ -241,7 +250,9 @@ CCNES_PREP$ccnes_MR_cor <- ifelse(CCNES_PREP$NACheck < 0.67, rowMeans(CCNES_PREP
 
 # Drop people who are less than 67% 
 CCNES_DROP <- CCNES_PREP[CCNES_PREP$NACheck > 0.67, ]
+
 CCNES_PREP67 <- CCNES_PREP[CCNES_PREP$NACheck <= 0.67, ]
+CCNES_PREP100 <- CCNES_PREP[CCNES_PREP$NACheck == 0, ]
 
 
 
@@ -459,10 +470,124 @@ kable(Mean_Table67) %>%
   column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
 ```
 
+```{r pass 100% Table, include = T}
+# Treatment Progress sheet
+# Select needed column
+Progress100 <- select(CCNES_PREP100, c(FamID, GroupAssignment, Timepoint, starts_with("srm")))
+
+# Calculate row mean for each individual  
+Progress100$Supported_Mean100 <- rowMeans(CCNES_PREP[,c("ccnes_EE_cor", "ccnes_EFR_cor", "ccnes_PFR_cor")], na.rm = TRUE)
+Progress100$Unsupproted_Mean100 <- rowMeans(CCNES_PREP[,c("ccnes_DR_cor", "ccnes_PR_cor", "ccnes_MR_cor")], na.rm = TRUE)
+
+# Change FamId as character and assign to ID variable 
+ID <- c(as.character(Progress$FamID))
+
+# Add Site column to Progress, if ID start with 9 then site is UO, else is UPMC
+Progress100$site <- ifelse(startsWith(ID, "9"),"UO","UPMC")
+
+# Group by GroupAssissignment and Timepoint, and calculate the Supported_Mean and Unsupproted_Mean
+Progress_Supported_Mean100 <- Progress100 %>%
+  group_by(GroupAssignment,Timepoint,site) %>%
+  summarise(SupportedMean100 = mean(Supported_Mean100,na.rm = T), n = n())
+
+Progress_unsupported_Mean100 <- Progress100 %>%
+  group_by(GroupAssignment,Timepoint,site) %>%
+  summarise(UnsupprotedMean100 = mean(Unsupproted_Mean100,na.rm = T), n = n())
+
+# Joint  Supported and un-supported 
+Progress_Mean100 <- merge(Progress_Supported_Mean100, Progress_unsupported_Mean100)
+
+# Select only UO Mean
+UO100 <- Progress_Mean100[Progress_Mean100$site == "UO",]
+# Select only UPMC Mean 
+UPMC100 <- Progress_Mean100[Progress_Mean100$site == "UPMC",]
+
+# Colculate Both site Mean 
+Progress_Supported_Mean_both100 <- Progress100 %>%
+  group_by(GroupAssignment,Timepoint) %>%
+  summarise("BothSite_CCNES_SupportedMean100" = mean(Supported_Mean100, na.rm = T), n = n())
+
+Progress_unsupported_Mean_both100 <- Progress100 %>%
+  group_by(GroupAssignment,Timepoint) %>%
+  summarise("BothSite_CCNES_UnsupprotedMean100" = mean(Unsupproted_Mean100,na.rm = T), n = n())
+
+Both_site_Mean100 <- merge(Progress_Supported_Mean_both100, Progress_unsupported_Mean_both100)
+#Progress_Mean <- Progress_Mean[order(GroupAssignment),] 
+
+
+# Change GroupMean Column names according to site
+colnames(UO100)[colnames(UO100) == "SupportedMean100"] = "UO_CCNES_SupportedMean"
+colnames(UO100)[colnames(UO100) == "UnsupprotedMean100"] = "UO_CCNES_UnsupprotedMean"
+colnames(UPMC100)[colnames(UPMC100) == "SupportedMean100"] = "UPMC_CCNES_SupportedMean"
+colnames(UPMC100)[colnames(UPMC100) == "UnsupprotedMean100"] = "UPMC_CCNES_UnsupprotedMean"
+
+
+# Combine UO,UPMC and both_site data 
+Mean_Table100 <- data.frame(UO[,c("UO_CCNES_SupportedMean","UO_CCNES_UnsupprotedMean")],UPMC[,c("UPMC_CCNES_SupportedMean","UPMC_CCNES_UnsupprotedMean")],Both_site_Mean[,c("BothSite_CCNES_SupportedMean","BothSite_CCNES_UnsupprotedMean","n","GroupAssignment")])
+
+
+# Remove GroupAssignment column 
+# Mean_Table <- select(Mean_Table, -c(GroupAssignment))
+
+# Convert Mean_Table, make original column as row
+Mean_Table100 <- t(Mean_Table100)
+
+# Make Mean_Table as a data.frame
+Mean_Table100 <- data.frame(Mean_Table100)
+
+# Reorder Mean_Table
+Mean_Table100 <- Mean_Table100[c(5,6,7,8,9,10,11,12,1,2,3,4)]
+
+#add support /non support 
+#add_column()
+
+# Add Timepoint column 
+Timepoint_names <- c("T1","T2", "T3", "T4","T1","T2", "T3", "T4","T1","T2", "T3", "T4")
+
+# Rename column name 
+setnames(Mean_Table100, names(Mean_Table100), Timepoint_names)
+
+
+# Table output ----------
+# Add a header 
+kable(Mean_Table100) %>%
+  kable_styling(bootstrap_options = c("striped")) %>%
+  add_header_above(c(" " = 1, "Controls Group means with 100% rule" = 4, "FSU Group means" = 4, "DBT Group means" = 4)) %>%
+  add_header_above(c("CCNES Mean Table" = 13)) %>%
+  column_spec(c(1,5,9), border_right = T, include_thead = T) %>%
+  column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
+```
+
 ***Used CCNES Validation subscale only, information on Invalidation can be found in the data set
 
-```{r double check , include = T}
- unique(UO_CCNES_T1$FamID)
+```{r number table, include = T}
+# Orig
+ID <- c(as.character(CCNES_PREP$FamID))
+CCNES_PREP$site <- ifelse(startsWith(ID, "9"),"UO","UPMC")
+N_org <- CCNES_PREP %>%
+  group_by(Timepoint, site, GroupAssignment) %>% 
+  summarise(n_orig = n())
+
+
+# 67%
+ID <- c(as.character(CCNES_PREP67$FamID))
+CCNES_PREP67$site <- ifelse(startsWith(ID, "9"),"UO","UPMC")
+N67 <- CCNES_PREP67 %>%
+  group_by(Timepoint, site, GroupAssignment) %>% 
+  summarise(n_67 = n())
+
+# 100%
+ID <- c(as.character(CCNES_PREP100$FamID))
+CCNES_PREP100$site <- ifelse(startsWith(ID, "9"),"UO","UPMC")
+N100 <- CCNES_PREP100 %>%
+  group_by(Timepoint, site, GroupAssignment) %>% 
+  summarise(n_100 = n())
+
+N <- cbind(N_org, N67, N100)
+N <- N[,-c(5,6,7,9, 10, 11)]
+N <- data.frame(t(N))
+
+
 ```
 
 
