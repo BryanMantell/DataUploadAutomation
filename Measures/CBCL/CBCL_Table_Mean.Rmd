@@ -148,12 +148,13 @@ cbcl_Prep <- cbcl_Prep %>%
                         "Somewhat or Sometimes True" = 1,
                         "Very True or Often True" = 2,.default = NaN)))
 
-# Check NA percentage
-cbcl_Prep$NACheck <- rowSums(is.na(select(cbcl_Prep, starts_with("srm"))))/ncol(dplyr::select(cbcl_Prep, starts_with("srm")))
+# Recode UPMC GroupAsignment name 
+cbcl_Prep <- cbcl_Prep %>% 
+  mutate_at(c("GroupAssignment"),
+            funs(recode(., "Assigned Group 3 (HC)" = "Healthy", 
+                        'Assigned Group 2 (FSU)' = "NO DBT",
+                        'Assigned Group 1 (DBT)' = "DBT")))
 
-# Drop people who are less than 67% 
-cbcl_Drop <- cbcl_Prep[cbcl_Prep$NACheck > 0.67, ]
-cbcl_Prep <- cbcl_Prep[cbcl_Prep$NACheck <= 0.67, ]
 
 ```
 
@@ -168,7 +169,7 @@ cbcl_Prep <- add_column(cbcl_Prep, cbcl_ad = rowSums(cbcl_Prep[, c("srm_cbcl_010
 cbcl_Prep <- add_column(cbcl_Prep, cbcl_sc = rowSums(cbcl_Prep[, c("srm_cbcl_001", "srm_cbcl_007", "srm_cbcl_012", "srm_cbcl_019", "srm_cbcl_024", "srm_cbcl_039", "srm_cbcl_045", 
                                                                    "srm_cbcl_052", "srm_cbcl_078", "srm_cbcl_086", "srm_cbcl_093")]),.after = "cbcl_ad")
 
-cbcl_Prep <- add_column(cbcl_Prep, cbcl_w = rowSums(cbcl_Prep[, c("srm_cbcl_002", "srm_cbcl_004", "srm_cbcl_023", "srm_cbcl_062", "srm_cbcl_067", "srm_cbcl_070", "srm_cbcl_071", 
+cbcl_Prep <- add_column(cbcl_Prep, cbcl_w = rowSums(cbcl_Prep[, c("srm_cbcl_002", "srm_cbcl_004", "srm_cbcl_023", "srm_cbcl_062", "srm_cbcl_100", "srm_cbcl_070", "srm_cbcl_071", 
                                                                   "srm_cbcl_098")]),.after = "cbcl_sc")
 
 cbcl_Prep <- add_column(cbcl_Prep, cbcl_sp = rowSums(cbcl_Prep[, c("srm_cbcl_022", "srm_cbcl_038", "srm_cbcl_048", "srm_cbcl_064", "srm_cbcl_074",
@@ -260,13 +261,22 @@ write.table(NDA_CBCL, file = 'cbcl1_5.csv', sep = ",", append = TRUE, na = "", q
 
 ```
 
-```{r table, echo=FALSE}
+```{r NA Percentage Drop}
+# Check NA percentage
+cbcl_Prep$NACheck <- rowSums(is.na(select(cbcl_Prep, starts_with("srm"))))/ncol(dplyr::select(cbcl_Prep, starts_with("srm")))
+
+# Drop people who are less than 67% & 100%
+cbcl_Drop_67 <- cbcl_Prep[cbcl_Prep$NACheck > 0.67, ]
+cbcl_Prep_67 <- cbcl_Prep[cbcl_Prep$NACheck <= 0.67, ]
+
+cbcl_Drop_100 <- cbcl_Prep[cbcl_Prep$NACheck > 0, ]
+cbcl_Prep_100 <- cbcl_Prep[cbcl_Prep$NACheck <= 0, ]
+```
+
+```{r table all data, echo=FALSE}
 # Treatment Progress sheet
 # Select needed column
 Progress <- select(cbcl_Prep, c(FamID, GroupAssignment, timepoint, cbcl_ext, cbcl_int, cbcl_total, starts_with("srm")))
-
-# Calculate row mean for each individual  
-# Progress$Row_Mean <- rowMeans(select(cbcl_Prep,c(starts_with("srm"))), na.rm = T)
 
 # Change FamId as character and assign to ID variable 
 ID <- c(as.character(Progress$FamID))
@@ -346,6 +356,180 @@ kable(Mean_Table) %>%
   kable_styling(bootstrap_options = "striped", full_width = T) %>%
   add_header_above(c(" " = 1, "Controls Group means" = 4, "FSU Group means" = 4, "DBT Group means" = 4)) %>%
   add_header_above(c("CBCL Mean Table" = 13)) %>%
+  column_spec(c(1,5,9), border_right = T, include_thead = T) %>%
+  column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
+```
+
+```{r table 67% data, echo=FALSE}
+# Treatment Progress sheet
+# Select needed column
+Progress_67 <- select(cbcl_Prep_67, c(FamID, GroupAssignment, timepoint, cbcl_ext, cbcl_int, cbcl_total, starts_with("srm")))
+
+# Change FamId as character and assign to ID variable 
+ID <- c(as.character(Progress_67$FamID))
+
+# Add Site column to Progress, if ID start with 9 then site is UO, else is UPMC
+Progress_67$site <- ifelse(startsWith(ID, "9"),"UO","UPMC")
+
+# Group by GroupAssissignment and Timepoint, and calculate the Group Mean
+Progress_67_Total_Mean <- Progress_67 %>%
+  group_by(GroupAssignment,timepoint,site) %>%
+  summarise(TotalMean = mean(cbcl_total,na.rm = T),count = n())
+
+Progress_67_Int_Mean <- Progress_67 %>%
+  group_by(GroupAssignment,timepoint,site) %>%
+  summarise(IntMean = mean(cbcl_int,na.rm = T),count = n())
+
+Progress_67_Ext_Mean <- Progress_67 %>%
+  group_by(GroupAssignment,timepoint,site) %>%
+  summarise(ExtMean = mean(cbcl_ext,na.rm = T),count = n())
+
+# Join Total, Int, and Ext
+Progress_67_Mean <- merge(Progress_67_Int_Mean, Progress_67_Ext_Mean)
+Progress_67_Mean <- merge(Progress_67_Mean, Progress_67_Total_Mean)
+
+# Select only UO Mean
+UO <- Progress_67_Mean[Progress_67_Mean$site == "UO",]
+# Select only UPMC Mean 
+UPMC <- Progress_67_Mean[Progress_67_Mean$site == "UPMC",]
+
+# Calculate Both site Mean 
+Progress_67_Total_Mean_Both <- Progress_67 %>%
+  group_by(GroupAssignment, timepoint) %>%
+  summarise("BothSite_CBCL_TotalMean" = mean(cbcl_total,na.rm = T),n = n())
+
+Progress_67_Int_Mean_Both <- Progress_67 %>%
+  group_by(GroupAssignment, timepoint) %>%
+  summarise("BothSite_CBCL_IntMean" = mean(cbcl_int,na.rm = T),n = n())
+
+Progress_67_Ext_Mean_Both <- Progress_67 %>%
+  group_by(GroupAssignment, timepoint) %>%
+  summarise("BothSite_CBCL_ExtMean" = mean(cbcl_ext,na.rm = T),n = n())
+
+Both_Site_Mean_67 <- merge(Progress_67_Int_Mean_Both, Progress_67_Ext_Mean_Both)
+Both_Site_Mean_67 <- merge(Both_Site_Mean_67, Progress_67_Total_Mean_Both)
+
+# Change GroupMean Column names according to site
+colnames(UO)[colnames(UO) == "TotalMean"] = "UO_CBCL_TotalMean"
+colnames(UO)[colnames(UO) == "IntMean"] = "UO_CBCL_IntMean"
+colnames(UO)[colnames(UO) == "ExtMean"] = "UO_CBCL_ExtMean"
+colnames(UPMC)[colnames(UPMC) == "TotalMean"] = "UPMC_CBCL_TotalMean"
+colnames(UPMC)[colnames(UPMC) == "IntMean"] = "UPMC_CBCL_IntMean"
+colnames(UPMC)[colnames(UPMC) == "ExtMean"] = "UPMC_CBCL_ExtMean"
+
+
+# Combine UO,UPMC and both_site data 
+Mean_Table <- data.frame(UO[,c("UO_CBCL_TotalMean","UO_CBCL_IntMean", "UO_CBCL_ExtMean")],UPMC[,c("UPMC_CBCL_TotalMean", "UPMC_CBCL_IntMean", "UPMC_CBCL_ExtMean")],Both_Site_Mean_67[,c("BothSite_CBCL_TotalMean", "BothSite_CBCL_IntMean", "BothSite_CBCL_ExtMean","n", "GroupAssignment")])
+
+
+# Convert Mean_Table, make original column as row
+Mean_Table <- t(Mean_Table)
+
+# Make Mean_Table as a data.frame
+Mean_Table <- data.frame(Mean_Table)
+
+# Reorder Mean_Table
+Mean_Table <- Mean_Table[c(5,6,7,8,9,10,11,12,1,2,3,4)]
+
+# Add Timepoint column 
+Timepoint_names <- c("T1","T2", "T3", "T4","T1","T2", "T3", "T4","T1","T2", "T3", "T4")
+
+# Rename column name 
+setnames(Mean_Table, names(Mean_Table), Timepoint_names)
+
+# Table output ----------
+# Add a header 
+kable(Mean_Table) %>%
+  kable_styling(bootstrap_options = "striped", full_width = T) %>%
+  add_header_above(c(" " = 1, "Controls Group means" = 4, "FSU Group means" = 4, "DBT Group means" = 4)) %>%
+  add_header_above(c("CBCL Mean Table (67% NA Check)" = 13)) %>%
+  column_spec(c(1,5,9), border_right = T, include_thead = T) %>%
+  column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
+```
+
+```{r table 100% data, echo=FALSE}
+# Treatment Progress sheet
+# Select needed column
+Progress_100 <- select(cbcl_Prep_100, c(FamID, GroupAssignment, timepoint, cbcl_ext, cbcl_int, cbcl_total, starts_with("srm")))
+
+# Change FamId as character and assign to ID variable 
+ID <- c(as.character(Progress_100$FamID))
+
+# Add Site column to Progress, if ID start with 9 then site is UO, else is UPMC
+Progress_100$site <- ifelse(startsWith(ID, "9"),"UO","UPMC")
+
+# Group by GroupAssissignment and Timepoint, and calculate the Group Mean
+Progress_100_Total_Mean <- Progress_100 %>%
+  group_by(GroupAssignment,timepoint,site) %>%
+  summarise(TotalMean = mean(cbcl_total,na.rm = T),count = n())
+
+Progress_100_Int_Mean <- Progress_100 %>%
+  group_by(GroupAssignment,timepoint,site) %>%
+  summarise(IntMean = mean(cbcl_int,na.rm = T),count = n())
+
+Progress_100_Ext_Mean <- Progress_100 %>%
+  group_by(GroupAssignment,timepoint,site) %>%
+  summarise(ExtMean = mean(cbcl_ext,na.rm = T),count = n())
+
+# Join Total, Int, and Ext
+Progress_100_Mean <- merge(Progress_100_Int_Mean, Progress_100_Ext_Mean)
+Progress_100_Mean <- merge(Progress_100_Mean, Progress_100_Total_Mean)
+
+# Select only UO Mean
+UO <- Progress_100_Mean[Progress_100_Mean$site == "UO",]
+# Select only UPMC Mean 
+UPMC <- Progress_100_Mean[Progress_100_Mean$site == "UPMC",]
+
+# Calculate Both site Mean 
+Progress_100_Total_Mean_Both <- Progress_100 %>%
+  group_by(GroupAssignment, timepoint) %>%
+  summarise("BothSite_CBCL_TotalMean" = mean(cbcl_total,na.rm = T),n = n())
+
+Progress_100_Int_Mean_Both <- Progress_100 %>%
+  group_by(GroupAssignment, timepoint) %>%
+  summarise("BothSite_CBCL_IntMean" = mean(cbcl_int,na.rm = T),n = n())
+
+Progress_100_Ext_Mean_Both <- Progress_100 %>%
+  group_by(GroupAssignment, timepoint) %>%
+  summarise("BothSite_CBCL_ExtMean" = mean(cbcl_ext,na.rm = T),n = n())
+
+Both_Site_Mean_100 <- merge(Progress_100_Int_Mean_Both, Progress_100_Ext_Mean_Both)
+Both_Site_Mean_100 <- merge(Both_Site_Mean_100, Progress_100_Total_Mean_Both)
+
+# Change GroupMean Column names according to site
+colnames(UO)[colnames(UO) == "TotalMean"] = "UO_CBCL_TotalMean"
+colnames(UO)[colnames(UO) == "IntMean"] = "UO_CBCL_IntMean"
+colnames(UO)[colnames(UO) == "ExtMean"] = "UO_CBCL_ExtMean"
+colnames(UPMC)[colnames(UPMC) == "TotalMean"] = "UPMC_CBCL_TotalMean"
+colnames(UPMC)[colnames(UPMC) == "IntMean"] = "UPMC_CBCL_IntMean"
+colnames(UPMC)[colnames(UPMC) == "ExtMean"] = "UPMC_CBCL_ExtMean"
+
+
+# Combine UO,UPMC and both_site data 
+Mean_Table <- data.frame(UO[,c("UO_CBCL_TotalMean","UO_CBCL_IntMean", "UO_CBCL_ExtMean")],UPMC[,c("UPMC_CBCL_TotalMean", "UPMC_CBCL_IntMean", "UPMC_CBCL_ExtMean")],Both_Site_Mean_100[,c("BothSite_CBCL_TotalMean", "BothSite_CBCL_IntMean", "BothSite_CBCL_ExtMean","n", "GroupAssignment")])
+
+
+# Convert Mean_Table, make original column as row
+Mean_Table <- t(Mean_Table)
+
+# Make Mean_Table as a data.frame
+Mean_Table <- data.frame(Mean_Table)
+
+# Reorder Mean_Table
+Mean_Table <- Mean_Table[c(5,6,7,8,9,10,11,12,1,2,3,4)]
+
+# Add Timepoint column 
+Timepoint_names <- c("T1","T2", "T3", "T4","T1","T2", "T3", "T4","T1","T2", "T3", "T4")
+
+# Rename column name 
+setnames(Mean_Table, names(Mean_Table), Timepoint_names)
+
+# Table output ----------
+# Add a header 
+kable(Mean_Table) %>%
+  kable_styling(bootstrap_options = "striped", full_width = T) %>%
+  add_header_above(c(" " = 1, "Controls Group means" = 4, "FSU Group means" = 4, "DBT Group means" = 4)) %>%
+  add_header_above(c("CBCL Mean Table (100% NA Check)" = 13)) %>%
   column_spec(c(1,5,9), border_right = T, include_thead = T) %>%
   column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
 ```
