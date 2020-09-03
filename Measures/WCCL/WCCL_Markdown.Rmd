@@ -5,10 +5,9 @@ date: "5/28/2020"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
 ```{r setup}
+knitr::opts_chunk$set(echo = TRUE)
+
 #Clear Environment 
 rm(list = ls())
 
@@ -148,7 +147,9 @@ WCCL_PREP$wccl_BO_cor <- ifelse(WCCL_PREP$NACheck < 0.67, rowMeans(WCCL_PREP[,BO
 
 #Drop people who are at less than 67% response
 WCCL_DROP <- WCCL_PREP[WCCL_PREP$NACheck > 0.67, ]
-WCCL_PREP <- WCCL_PREP[WCCL_PREP$NACheck <= 0.67, ]
+WCCL_PREP67 <- WCCL_PREP[WCCL_PREP$NACheck <= 0.67, ]
+WCCL_PREP100 <- WCCL_PREP[WCCL_PREP$NACheck <= 0, ]
+
 ```
 ```{r NDA Sheet}
 # Create NDA structure column names
@@ -156,7 +157,7 @@ dbt_wccl <- paste("dbt_wccl", 1:59, sep = "")
 NDA_Names <- c(dbt_wccl)
 
 #create NDA Prep structure 
-NDA_WCCL_Prep <- select(WCCL_PREP, c(subjectkey = mom_guid, src_subject_id = mother_FamID, interview_date, interview_age, sex = mother_sex , visit = timepoint, starts_with("srm")))
+NDA_WCCL_Prep <- select(WCCL_PREP67, c(subjectkey = mom_guid, src_subject_id = mother_FamID, interview_date, interview_age, sex = mother_sex , visit = timepoint, starts_with("srm")))
 setnames(NDA_WCCL_Prep, new_WCCL_names, NDA_Names)
 
 #bind NDA_WCCL_Prep and NDA structure  
@@ -173,22 +174,22 @@ first_line[,2] <- "1"
 write.table(first_line, file = "dbt_wccl.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = TRUE, row.names = FALSE)
 write.table(NDA_WCCL, file = "dbt_wccl.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = TRUE, row.names = FALSE)
 ```
-```{r Table}
+```{r Table 67%}
 
 #Progress DBT_WCCL Table
-Progress <- select(WCCL_PREP, c(FamID, GroupAssignment, timepoint, starts_with("srm")))
+Progress67 <- select(WCCL_PREP67, c(FamID, GroupAssignment, timepoint, starts_with("srm")))
 
 #calculate rowmeans for each individual
-Progress$Row_Mean <- rowMeans(select(WCCL_PREP,c(starts_with("srm"))), na.rm = T)
+Progress67$Row_Mean <- rowMeans(select(WCCL_PREP67,c(starts_with("srm"))), na.rm = T)
 
 # Change FamId as character and assign to ID variable 
-ID <- c(as.character(Progress$FamID))
+ID <- c(as.character(Progress67$FamID))
 
 # Add Site column to Progress, if ID start with 9 then site is UO, else is UPMC
-Progress$site <- ifelse(startsWith(ID, "9"),"UO","UPMC")
+Progress67$site <- ifelse(startsWith(ID, "9"),"UO","UPMC")
 
 # Group by GroupAssissignment and Timepoint, and calculate the Group Mean
-Progress_Mean <- Progress %>%
+Progress_Mean <- Progress67 %>%
   group_by(GroupAssignment,timepoint,site) %>%
   summarise(GroupMean = mean(Row_Mean,na.rm = T),count = n())
 
@@ -230,7 +231,7 @@ setnames(Mean_Table, names(Mean_Table), Timepoint_names)
 
 
 ```
-```{r Table}
+```{r Table 67%}
 # Add a header 
 kable(Mean_Table) %>%
   kable_styling(bootstrap_options = "striped", full_width = F) %>%
@@ -238,6 +239,73 @@ kable(Mean_Table) %>%
   column_spec(c(1,5,9), border_right = T, include_thead = T) %>%
   column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
 ```
+
+```{r Table 100%}
+#Progress DBT_WCCL Table
+Progress100 <- select(WCCL_PREP100, c(FamID, GroupAssignment, timepoint, starts_with("srm")))
+
+#calculate rowmeans for each individual
+Progress100$Row_Mean <- rowMeans(select(WCCL_PREP100,c(starts_with("srm"))), na.rm = T)
+
+# Change FamId as character and assign to ID variable 
+ID <- c(as.character(Progress100$FamID))
+
+# Add Site column to Progress, if ID start with 9 then site is UO, else is UPMC
+Progress100$site <- ifelse(startsWith(ID, "9"),"UO","UPMC")
+
+# Group by GroupAssissignment and Timepoint, and calculate the Group Mean
+Progress_Mean <- Progress100 %>%
+  group_by(GroupAssignment,timepoint,site) %>%
+  summarise(GroupMean = mean(Row_Mean,na.rm = T),count = n())
+
+# Select only UO Mean
+UO <- Progress_Mean[Progress_Mean$site == "UO",]
+# Select only UPMC Mean 
+UPMC <- Progress_Mean[Progress_Mean$site == "UPMC",]
+
+# Calculate Both site Means 
+Both_site_Mean <- Progress_Mean %>%
+  group_by(GroupAssignment, timepoint) %>%
+  summarise(BothSiteMean = mean(GroupMean,na.rm = T),n = sum(count))
+
+#Progress_Mean <- Progress_Mean[order(GroupAssignment),] 
+
+
+# Change GroupMean Column names according to site
+colnames(UO)[colnames(UO) == "GroupMean"] = "UO_WCCL"
+colnames(UPMC)[colnames(UPMC) == "GroupMean"] = "UPMC_WCCL"
+
+# Combine UO,UPMC and both_site data 
+Mean_Table100 <- data.frame(UO[,c("UO_WCCL")],UPMC[,"UPMC_WCCL"],Both_site_Mean[,c("BothSiteMean","n", "GroupAssignment")])
+
+#Mean_Table <- select(Mean_Table, -c(GroupAssignment))
+
+# Convert Mean_Table, make original column as row
+Mean_Table100 <- t(Mean_Table100)
+
+# Make Mean_Table as a data.frame
+Mean_Table100 <- data.frame(Mean_Table100)
+
+Mean_Table100 <- Mean_Table100[c(5,6,7,8,9,10,11,12,1,2,3,4)]
+
+# Add Timepoint column 
+Timepoint_names <- c("T1","T2", "T3", "T4","T1","T2", "T3", "T4","T1","T2", "T3", "T4")
+
+# Rename column name 
+setnames(Mean_Table100, names(Mean_Table100), Timepoint_names)
+
+
+
+
+# Add a header 
+kable(Mean_Table100) %>%
+  kable_styling(bootstrap_options = "striped", full_width = F) %>%
+  add_header_above(c(" " = 1, "Control Group means" = 4, "FSU means" = 4, "DBT Group means" = 4)) %>% add_header_above(c("WCCL Table Means 100%" = 13))%>%
+  column_spec(c(1,5,9), border_right = T, include_thead = T) %>%
+  column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
+```
+
+
 
 
 
