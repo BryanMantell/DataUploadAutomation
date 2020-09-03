@@ -1,7 +1,7 @@
 ---
-title: "WCCL"
+title: "WCCL_100%_ProgressTable"
 author: "Kyle Murray"
-date: "5/28/2020"
+date: "8/27/2020"
 output: html_document
 ---
 
@@ -111,6 +111,12 @@ WCCL_PREP[,8:59] <- sapply(WCCL_PREP[,8:59],as.numeric)
 
 #Change gender to F instead of false
 WCCL_PREP$mother_sex <- "F"
+
+WCCL_PREP <- WCCL_PREP %>% 
+  mutate_at(c("GroupAssignment"),
+            funs(recode(., "Assigned Group 3 (HC)" = "Healthy", 
+                        'Assigned Group 2 (FSU)' = "NO DBT",
+                        'Assigned Group 1 (DBT)' = "DBT")))
 ```
 ```{r Calculated Columns}
 #Items for SU
@@ -139,6 +145,10 @@ WCCL_PREP$wccl_SU_cor <- ifelse(WCCL_PREP$NACheck < 0.67, rowMeans(WCCL_PREP[,SU
 WCCL_PREP$wccl_GSC_cor <- ifelse(WCCL_PREP$NACheck < 0.67, rowMeans(WCCL_PREP[,GSC], na.rm = TRUE), "NA")
 
 WCCL_PREP$wccl_BO_cor <- ifelse(WCCL_PREP$NACheck < 0.67, rowMeans(WCCL_PREP[,BO], na.rm = TRUE), "NA")
+
+#Drop people who are at less than 67% response
+WCCL_DROP <- WCCL_PREP[WCCL_PREP$NACheck > 0.67, ]
+WCCL_PREP <- WCCL_PREP[WCCL_PREP$NACheck <= 0.67, ]
 ```
 ```{r NDA Sheet}
 # Create NDA structure column names
@@ -200,7 +210,7 @@ colnames(UO)[colnames(UO) == "GroupMean"] = "UO_WCCL"
 colnames(UPMC)[colnames(UPMC) == "GroupMean"] = "UPMC_WCCL"
 
 # Combine UO,UPMC and both_site data 
-Mean_Table <- data.frame(UO[,c("UO_WCCL","GroupAssignment")],UPMC[,"UPMC_WCCL"],Both_site_Mean[,c("BothSiteMean","n")])
+Mean_Table <- data.frame(UO[,c("UO_WCCL")],UPMC[,"UPMC_WCCL"],Both_site_Mean[,c("BothSiteMean","n", "GroupAssignment")])
 
 #Mean_Table <- select(Mean_Table, -c(GroupAssignment))
 
@@ -209,6 +219,8 @@ Mean_Table <- t(Mean_Table)
 
 # Make Mean_Table as a data.frame
 Mean_Table <- data.frame(Mean_Table)
+
+Mean_Table <- Mean_Table[c(5,6,7,8,9,10,11,12,1,2,3,4)]
 
 # Add Timepoint column 
 Timepoint_names <- c("T1","T2", "T3", "T4","T1","T2", "T3", "T4","T1","T2", "T3", "T4")
@@ -222,8 +234,7 @@ setnames(Mean_Table, names(Mean_Table), Timepoint_names)
 # Add a header 
 kable(Mean_Table) %>%
   kable_styling(bootstrap_options = "striped", full_width = F) %>%
-  add_header_above(c(" " = 1, "DBT Group means" = 4, "Controls means" = 4, "FSU means" = 4))
+  add_header_above(c(" " = 1, "Control Group means" = 4, "FSU means" = 4, "DBT Group means" = 4)) %>% add_header_above(c("WCCL Table Means" = 13))%>%
+  column_spec(c(1,5,9), border_right = T, include_thead = T) %>%
+  column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
 ```
-
-
-
