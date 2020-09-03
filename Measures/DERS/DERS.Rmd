@@ -30,7 +30,6 @@ options(digits = 3)
 
 ```
 
-
 ```{r Import}
 # Import File ------------
 # Import Pedigree and NDA Structure

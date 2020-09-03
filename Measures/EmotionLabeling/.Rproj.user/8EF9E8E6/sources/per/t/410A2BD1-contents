@@ -12,7 +12,9 @@ library(dplyr)
 library(tidyverse)
 library(eeptools)
 library(data.table)
+library(kableExtra)
 ```
+
 ```{r Import}
 Emotion_Labeling_REDCAP <- read.csv("Redcap_Data.csv")
 Pedigree <- read.csv("Reference_Pedigree.csv")
@@ -43,6 +45,7 @@ old_eltpart2_names <- paste(eltpart2_rec, num_items, sep = "")
 
 setnames(Emotion_Labeling_REDCAP, old_eltpart2_names, new_eltpart2_names)
 ```
+
 ``` {r Prep Sheet}
 #Assign timepoint from redcap_event_name
 Emotion_Labeling_REDCAP$timepoint = sapply(strsplit(as.character(Emotion_Labeling_REDCAP$redcap_event_name), split = '_', fixed = T), function(x) (x[2]))
@@ -65,6 +68,7 @@ EL_PREP <- merge(Pedigree_Prep, Emotion_Labeling_REDCAP,by = c("timepoint","Fam_
 #clean environment
 # rm(Pedigree, Pedigree_Prep, Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4, Emotion_Labeling_REDCAP)
 ```
+
 ```{r Calculated Columns}
 exp <- colnames(select(EL_PREP, c("oc_elt_exp_2", "oc_elt_exp_4", "oc_elt_exp_6", "oc_elt_exp_8")))
 
@@ -72,7 +76,13 @@ rec <- colnames(select(EL_PREP, c("oc_elt_rec_1", "oc_elt_rec_2", "oc_elt_rec_3"
 
 EL_PREP$oc_elt_exp_total <- rowMeans(EL_PREP[,exp], na.rm = TRUE)
 EL_PREP$oc_elt_rec_total <- rowMeans(EL_PREP[,rec], na.rm = TRUE)
+
+
+EL_PREP$NACheck <- rowSums(is.na(select(EL_PREP, starts_with("oc_elt_"))))/ncol(dplyr::select(EL_PREP, starts_with("oc_elt_")))
+
+#EL_PREP$EL_total_cor <- ifelse(EL_PREP$NACheck < 0.67, rowMeans(EL_PREP[,oc_elt_total], na.rm = TRUE), "NA")
 ```
+
 ```{r NDA Sheet}
 Emotion_Labeling_NDA <- select(EL_PREP, c(subjectkey = child_guid, src_subject_id = child_famID, interview_date, interview_age, sex = child_sex, visit = timepoint, starts_with("oc_elt_")))
 
@@ -98,8 +108,64 @@ write.table(Emotion_Labeling_NDA, file = 'el01.csv', sep = ",", append = TRUE, n
 ```{r Table}
 Progress <- select(EL_PREP, c(Fam_ID, GroupAssignment, timepoint, starts_with("oc_elt_")))
 
+EL_PREP[,1:23] <- sapply(EL_PREP[,1:23],as.numeric)
+
 # Calculate row mean for each individual  
 Progress$Row_Mean <- rowMeans(select(EL_PREP,c(starts_with("oc_elt"))), na.rm = T)
+
+# Change FamId as character and assign to ID variable 
+ID <- c(as.character(Progress$Fam_ID))
+
+# Add Site column to Progress, if ID start with 9 then site is UO, else is UPMC
+Progress$site <- ifelse(startsWith(ID, "9"),"UO","UPMC")
+
+# Group by GroupAssissignment and Timepoint, and calculate the Group Mean
+Progress_Mean <- Progress %>%
+  group_by(GroupAssignment,timepoint,site) %>%
+  summarise(GroupMean = mean(Row_Mean,na.rm = T),count = n())
+
+# Select only UO Mean
+UO <- Progress_Mean[Progress_Mean$site == "UO",]
+# Select only UPMC Mean 
+UPMC <- Progress_Mean[Progress_Mean$site == "UPMC",]
+
+# Calculate Both site Mean 
+Both_site_Mean <- Progress %>%
+  group_by(GroupAssignment, timepoint) %>%
+  summarise(BothSite_EmotionalLabeling_Mean = mean(Row_Mean,na.rm = T),n = n())
+
+# Change GroupMean Column names according to site
+colnames(UO)[colnames(UO) == "GroupMean"] = "UO_EmotionalLabeling"
+colnames(UPMC)[colnames(UPMC) == "GroupMean"] = "UPMC_EmotionalLabeling"
+
+# Combine UO,UPMC and both_site data 
+Mean_Table <- data.frame(UO[,c("UO_EmotionalLabeling")],UPMC[,"UPMC_EmotionalLabeling"],Both_site_Mean[,c("BothSite_EmotionalLabeling_Mean","n","GroupAssignment")])
+
+# Convert Mean_Table, make original column as row
+Mean_Table <- t(Mean_Table)
+
+# Make Mean_Table as a data.frame
+Mean_Table <- data.frame(Mean_Table)
+
+# Reorder Mean_Table
+Mean_Table <- Mean_Table[c(5,6,7,8,9,10,11,12,1,2,3,4)]
+
+# Add Timepoint column 
+Timepoint_names <- c("T1","T2", "T3", "T4","T1","T2", "T3", "T4","T1","T2", "T3", "T4")
+
+# Rename column name 
+setnames(Mean_Table, names(Mean_Table), Timepoint_names)
+
+# Table output ----------
+# Add a header 
+kable(Mean_Table) %>%
+  kable_styling(bootstrap_options = "striped", full_width = F) %>%
+  add_header_above(c(" " = 1, "Controls Group means" = 4, "FSU Group means" = 4, "DBT Group means" = 4)) %>%
+  add_header_above(c("Dimensional Card Sort Mean Table" = 13)) %>%
+  column_spec(c(1,5,9), border_right = T, include_thead = T) %>%
+  column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
+```
+
 
 
 
