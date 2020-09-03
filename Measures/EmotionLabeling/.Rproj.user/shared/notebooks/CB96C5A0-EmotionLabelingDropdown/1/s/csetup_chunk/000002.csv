@@ -3,6 +3,5 @@
 "0","#Enable Packages"
 "0","library(dplyr)"
 "0","library(tidyverse)"
-"0","library(eeptools)"
 "0","library(data.table)"
 "0","library(kableExtra)"
