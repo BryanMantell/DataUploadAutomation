@@ -13,6 +13,7 @@ library(dplyr)
 library(data.table)
 library(knitr)
 library(kableExtra)
+library(tidyverse)
 
 #Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 knitr::opts_chunk$set(echo = TRUE, include = FALSE)
@@ -23,7 +24,7 @@ fsep <- .Platform$file.sep;
 # Set the working directory ---------
 # for Bryan
 # setwd("C:/Users/bryan/Documents/GitHub/DataUploadAutomation/Measures/EmotionStrategies")
-setwd("D:/Austin/College (D-Drive)/DataUploadAutomation/Measures/EmotionStrategies")
+# setwd("D:/Austin/College (D-Drive)/DataUploadAutomation/Measures/EmotionStrategies")
 
 #sentific notation, round up to 3 digits
 options(digits = 3)
@@ -69,6 +70,8 @@ Pedigree_T4 <- data.frame(select(Pedigree, Fam_ID =  FamID, child_guid, child_fa
 
 Pedigree_Prep <- rbind(Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4)
 
+#Exchange commas out of Prep Sheet to avoid CSV issues. Personal selection was a "/" but you can change it here to preference. 
+Redcap_Data <- sapply(Redcap_Data, gsub, pattern = ",", replacement= "/")
 
 # Merge Predigree and redcap files
 ES_PREP <- merge(Pedigree_Prep, Redcap_Data,by = c("timepoint","Fam_ID"), all = TRUE)
@@ -78,6 +81,15 @@ rm(Pedigree, Pedigree_Prep, Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4, 
 ```
 
 ```{r Calculated Columns}
+# Set neccessary data to numeric so they can be used in calculations
+ES_PREP[, c(10:12,14:16,18:20)] <- sapply(ES_PREP[, c(10:12,14:16,18:20)], as.numeric)
+
+# Created calculated columns
+ES_PREP <- add_column(ES_PREP, oc_es_hap_total = rowSums(ES_PREP[, c("oc_es_hap_1", "oc_es_hap_2", "oc_es_hap_3")]),.after = "oc_es_hap_3")
+
+ES_PREP <- add_column(ES_PREP, oc_es_ang_total = rowSums(ES_PREP[, c("oc_es_ang_1", "oc_es_ang_2", "oc_es_ang_3")]),.after = "oc_es_ang_3")
+
+ES_PREP <- add_column(ES_PREP, oc_es_sad_total = rowSums(ES_PREP[, c("oc_es_sad_1", "oc_es_sad_2", "oc_es_sad_3")]),.after = "oc_es_sad_3")
 
 ```
 
@@ -104,25 +116,29 @@ write.table(first_line, file = "ers01.csv", sep = ",", append = FALSE, quote = F
 
 # Append data in NDA_DCCS into dccs.cav file 
 write.table(NDA_ES, file = 'ers01.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
+
+#Clean Global Environment
+rm(first_line, NDA_ES, NDA_ES_Prep, NDA_ES_names, new_ES_names, old_ES_names)
+```
+
+```{r NA Percentage Drop}
+# PAUSED: RedCap data shouldn't have NAs in the same way as survey data.  
+# Check NA percentage
+#ES_PREP$NACheck <- rowSums(is.na(select(ES_PREP, starts_with("oc_es"))))/ncol(dplyr::select(ES_PREP, starts_with("oc_es")))
+
+# Drop people who are less than 67% & 100%
+#ES_DROP_67 <- ES_PREP[ES_PREP$NACheck > 0.67, ]
+#ES_PREP_67 <- ES_PREP[ES_PREP$NACheck <= 0.67, ]
+
+#ES_DROP_100 <- ES_PREP[ES_PREP$NACheck > 0, ]
+#ES_PREP_100 <- ES_PREP[ES_PREP$NACheck <= 0, ]
+
 ```
 
 ```{r Table, echo=FALSE}
 # Treatment Progress sheet
 # Select needed column
-Progress <- select(ES_PREP, c(Fam_ID, GroupAssignment, timepoint, oc_es_hap_1, oc_es_hap_2, oc_es_hap_3, oc_es_ang_1, oc_es_ang_2, oc_es_ang_3, oc_es_sad_1, oc_es_sad_2, oc_es_sad_3))
-
-# change necessary column to numeric
-# There is a better way to do this but this will work for now
-# Say columns 3, 6-15 and 37 of you dataframe need to be converted to numeric one could:
-# dat[, c(3,6:15,37)] <- sapply(dat[, c(3,6:15,37)], as.numeric)
-ES_PREP[,10:12] <- sapply(ES_PREP[,10:12],as.numeric)
-ES_PREP[,14:16] <- sapply(ES_PREP[,14:16],as.numeric) 
-ES_PREP[,18:20] <- sapply(ES_PREP[,18:20],as.numeric)
-
-ES_PREP <- sapply(ES_PREP, as.numeric)
-
-# Calculate row mean for each individual, FAILURE, currently stuck here
-Progress$Row_Mean <- rowMeans(select(ES_PREP,c(starts_with("os_es_")), na.rm = T))
+Progress <- select(ES_PREP, c(Fam_ID, GroupAssignment, timepoint, oc_es_hap_total, oc_es_ang_total, oc_es_sad_total))
 
 # Change FamId as character and assign to ID variable 
 ID <- c(as.character(Progress$Fam_ID))
@@ -131,39 +147,64 @@ ID <- c(as.character(Progress$Fam_ID))
 Progress$site <- ifelse(startsWith(ID, "9"),"UO","UPMC")
 
 # Group by GroupAssissignment and Timepoint, and calculate the Group Mean
-Progress_Mean <- Progress %>%
+Progress_Hap_Mean <- Progress %>%
   group_by(GroupAssignment,timepoint,site) %>%
-  summarise(GroupMean = mean(Row_Mean,na.rm = T),count = n())
+  summarise(HapMean = mean(oc_es_hap_total,na.rm = T),count = n())
+
+Progress_Ang_Mean <- Progress %>%
+  group_by(GroupAssignment,timepoint,site) %>%
+  summarise(AngMean = mean(oc_es_ang_total,na.rm = T),count = n())
+
+Progress_Sad_Mean <- Progress %>%
+  group_by(GroupAssignment,timepoint,site) %>%
+  summarise(SadMean = mean(oc_es_sad_total,na.rm = T),count = n())
+
+# Join Happy, Angry, and Sad
+Progress_Mean <- merge(Progress_Hap_Mean, Progress_Ang_Mean)
+Progress_Mean <- merge(Progress_Mean, Progress_Sad_Mean)
 
 # Select only UO Mean
 UO <- Progress_Mean[Progress_Mean$site == "UO",]
 # Select only UPMC Mean 
 UPMC <- Progress_Mean[Progress_Mean$site == "UPMC",]
 
-# Colculate Both site Mean 
-Both_site_Mean <- Progress_Mean %>%
+# Calculate Both site Mean 
+Progress_Hap_Mean_Both <- Progress %>%
   group_by(GroupAssignment, timepoint) %>%
-  summarise(BothSiteMean = mean(GroupMean,na.rm = T),n = sum(count))
-#Progress_Mean <- Progress_Mean[order(GroupAssignment),] 
+  summarise("BothSite_ES_HappyMean" = mean(oc_es_hap_total,na.rm = T),n = n())
 
+Progress_Ang_Mean_Both <- Progress %>%
+  group_by(GroupAssignment, timepoint) %>%
+  summarise("BothSite_ES_AngryMean" = mean(oc_es_ang_total,na.rm = T),n = n())
+
+Progress_Sad_Mean_Both <- Progress %>%
+  group_by(GroupAssignment, timepoint) %>%
+  summarise("BothSite_ES_SadMean" = mean(oc_es_sad_total,na.rm = T),n = n())
+
+Both_Site_Mean <- merge(Progress_Hap_Mean_Both, Progress_Ang_Mean_Both)
+Both_Site_Mean <- merge(Both_Site_Mean, Progress_Sad_Mean_Both)
 
 # Change GroupMean Column names according to site
-colnames(UO)[colnames(UO) == "GroupMean"] = "UO_CCNES"
-colnames(UPMC)[colnames(UPMC) == "GroupMean"] = "UPMC_CCNES"
-
+colnames(UO)[colnames(UO) == "HapMean"] = "UO_ES_HappyMean"
+colnames(UO)[colnames(UO) == "AngMean"] = "UO_ES_AngryMean"
+colnames(UO)[colnames(UO) == "SadMean"] = "UO_ES_SadMean"
+colnames(UPMC)[colnames(UPMC) == "HapMean"] = "UPMC_ES_HappyMean"
+colnames(UPMC)[colnames(UPMC) == "AngMean"] = "UPMC_ES_AngryMean"
+colnames(UPMC)[colnames(UPMC) == "SadMean"] = "UPMC_ES_SadMean"
 
 
 # Combine UO,UPMC and both_site data 
-Mean_Table <- data.frame(UO[,c("UO_CCNES","GroupAssignment")],UPMC[,"UPMC_CCNES"],Both_site_Mean[,c("BothSiteMean","n")])
+Mean_Table <- data.frame(UO[,c("UO_ES_HappyMean","UO_ES_AngryMean", "UO_ES_SadMean")],UPMC[,c("UPMC_ES_HappyMean", "UPMC_ES_AngryMean", "UPMC_ES_SadMean")],Both_Site_Mean[,c("BothSite_ES_HappyMean", "BothSite_ES_AngryMean", "BothSite_ES_SadMean","n", "GroupAssignment")])
 
-# Remove GroupAssignment column 
-# Mean_Table <- select(Mean_Table, -c(GroupAssignment))
 
 # Convert Mean_Table, make original column as row
 Mean_Table <- t(Mean_Table)
 
 # Make Mean_Table as a data.frame
 Mean_Table <- data.frame(Mean_Table)
+
+# Reorder Mean_Table
+Mean_Table <- Mean_Table[c(5,6,7,8,9,10,11,12,1,2,3,4)]
 
 # Add Timepoint column 
 Timepoint_names <- c("T1","T2", "T3", "T4","T1","T2", "T3", "T4","T1","T2", "T3", "T4")
@@ -174,7 +215,13 @@ setnames(Mean_Table, names(Mean_Table), Timepoint_names)
 # Table output ----------
 # Add a header 
 kable(Mean_Table) %>%
-  kable_styling(bootstrap_options = "striped", full_width = F) %>%
-  add_header_above(c(" " = 1, "DBT Group means" = 4, "Controls means" = 4, "FSU means" = 4))
+  kable_styling(bootstrap_options = "striped", full_width = T) %>%
+  add_header_above(c(" " = 1, "Controls Group means" = 4, "FSU Group means" = 4, "DBT Group means" = 4)) %>%
+  add_header_above(c("Emotion Strategies Mean Table" = 13)) %>%
+  column_spec(c(1,5,9), border_right = T, include_thead = T) %>%
+  column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
+
+# Clean Environment
+rm(Both_Site_Mean, Progress, Progress_Mean, Progress_Ang_Mean, Progress_Ang_Mean_Both, Progress_Hap_Mean, Progress_Hap_Mean_Both, Progress_Sad_Mean, Progress_Sad_Mean_Both, UO, UPMC, ID, Timepoint_names)
 ```
 
