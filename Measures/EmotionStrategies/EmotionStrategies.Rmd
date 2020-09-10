@@ -91,6 +91,8 @@ ES_PREP <- add_column(ES_PREP, oc_es_ang_total = rowSums(ES_PREP[, c("oc_es_ang_
 
 ES_PREP <- add_column(ES_PREP, oc_es_sad_total = rowSums(ES_PREP[, c("oc_es_sad_1", "oc_es_sad_2", "oc_es_sad_3")]),.after = "oc_es_sad_3")
 
+ES_PREP <- add_column(ES_PREP, oc_es_total = rowSums(ES_PREP[, c("oc_es_hap_1", "oc_es_hap_2", "oc_es_hap_3", "oc_es_ang_1", "oc_es_ang_2", "oc_es_ang_3", "oc_es_sad_1", "oc_es_sad_2", "oc_es_sad_3")]),.after = "oc_es_sad_total")
+
 ```
 
 ```{r NDA Sheet}
@@ -138,7 +140,7 @@ rm(first_line, NDA_ES, NDA_ES_Prep, NDA_ES_names, new_ES_names, old_ES_names)
 ```{r Table, echo=FALSE}
 # Treatment Progress sheet
 # Select needed column
-Progress <- select(ES_PREP, c(Fam_ID, GroupAssignment, timepoint, oc_es_hap_total, oc_es_ang_total, oc_es_sad_total))
+Progress <- select(ES_PREP, c(Fam_ID, GroupAssignment, timepoint, oc_es_hap_total, oc_es_ang_total, oc_es_sad_total, oc_es_total))
 
 # Change FamId as character and assign to ID variable 
 ID <- c(as.character(Progress$Fam_ID))
@@ -159,9 +161,14 @@ Progress_Sad_Mean <- Progress %>%
   group_by(GroupAssignment,timepoint,site) %>%
   summarise(SadMean = mean(oc_es_sad_total,na.rm = T),count = n())
 
-# Join Happy, Angry, and Sad
+Progress_Total_Mean <- Progress %>%
+  group_by(GroupAssignment,timepoint,site) %>%
+  summarise(TotalMean = mean(oc_es_total,na.rm = T),count = n())
+
+# Join happy, angry, sad, and total
 Progress_Mean <- merge(Progress_Hap_Mean, Progress_Ang_Mean)
 Progress_Mean <- merge(Progress_Mean, Progress_Sad_Mean)
+Progress_Mean <- merge(Progress_Mean, Progress_Total_Mean)
 
 # Select only UO Mean
 UO <- Progress_Mean[Progress_Mean$site == "UO",]
@@ -181,20 +188,27 @@ Progress_Sad_Mean_Both <- Progress %>%
   group_by(GroupAssignment, timepoint) %>%
   summarise("BothSite_ES_SadMean" = mean(oc_es_sad_total,na.rm = T),n = n())
 
+Progress_Total_Mean_Both <- Progress %>%
+  group_by(GroupAssignment, timepoint) %>%
+  summarise("BothSite_ES_TotalMean" = mean(oc_es_total,na.rm = T),n = n())
+
 Both_Site_Mean <- merge(Progress_Hap_Mean_Both, Progress_Ang_Mean_Both)
 Both_Site_Mean <- merge(Both_Site_Mean, Progress_Sad_Mean_Both)
+Both_Site_Mean <- merge(Both_Site_Mean, Progress_Total_Mean_Both)
 
 # Change GroupMean Column names according to site
 colnames(UO)[colnames(UO) == "HapMean"] = "UO_ES_HappyMean"
 colnames(UO)[colnames(UO) == "AngMean"] = "UO_ES_AngryMean"
 colnames(UO)[colnames(UO) == "SadMean"] = "UO_ES_SadMean"
+colnames(UO)[colnames(UO) == "TotalMean"] = "UO_ES_TotalMean"
 colnames(UPMC)[colnames(UPMC) == "HapMean"] = "UPMC_ES_HappyMean"
 colnames(UPMC)[colnames(UPMC) == "AngMean"] = "UPMC_ES_AngryMean"
 colnames(UPMC)[colnames(UPMC) == "SadMean"] = "UPMC_ES_SadMean"
+colnames(UPMC)[colnames(UPMC) == "TotalMean"] = "UPMC_ES_TotalMean"
 
 
 # Combine UO,UPMC and both_site data 
-Mean_Table <- data.frame(UO[,c("UO_ES_HappyMean","UO_ES_AngryMean", "UO_ES_SadMean")],UPMC[,c("UPMC_ES_HappyMean", "UPMC_ES_AngryMean", "UPMC_ES_SadMean")],Both_Site_Mean[,c("BothSite_ES_HappyMean", "BothSite_ES_AngryMean", "BothSite_ES_SadMean","n", "GroupAssignment")])
+Mean_Table <- data.frame(UO[,c("UO_ES_HappyMean","UO_ES_AngryMean", "UO_ES_SadMean", "UO_ES_TotalMean")],UPMC[,c("UPMC_ES_HappyMean", "UPMC_ES_AngryMean", "UPMC_ES_SadMean", "UPMC_ES_TotalMean")],Both_Site_Mean[,c("BothSite_ES_HappyMean", "BothSite_ES_AngryMean", "BothSite_ES_SadMean", "BothSite_ES_TotalMean", "n", "GroupAssignment")])
 
 
 # Convert Mean_Table, make original column as row
@@ -222,6 +236,6 @@ kable(Mean_Table) %>%
   column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
 
 # Clean Environment
-rm(Both_Site_Mean, Progress, Progress_Mean, Progress_Ang_Mean, Progress_Ang_Mean_Both, Progress_Hap_Mean, Progress_Hap_Mean_Both, Progress_Sad_Mean, Progress_Sad_Mean_Both, UO, UPMC, ID, Timepoint_names)
+rm(Both_Site_Mean, Progress, Progress_Mean, Progress_Ang_Mean, Progress_Ang_Mean_Both, Progress_Hap_Mean, Progress_Hap_Mean_Both, Progress_Sad_Mean, Progress_Sad_Mean_Both, Progress_Total_Mean, Progress_Total_Mean_Both, UO, UPMC, ID, Timepoint_names)
 ```
 
