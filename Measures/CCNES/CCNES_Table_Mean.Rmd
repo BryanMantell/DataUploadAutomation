@@ -585,7 +585,7 @@ colnames(UPMC_N)[colnames(UPMC_N) == "n_67"] = "UPMC_CCNES_67_N"
 colnames(UPMC_N)[colnames(UPMC_N) == "n_100"] = "UPMC_CCNES_100_N"
 
 
-# Create N table (Selecting columns from UO_N, UPMC_N, BothSite_N)
+# Create N table (Selecting columns from UO_N, UPMC_N, BothSite_N) GroupAssignment included twice here, just checking it's align
 N <- data.frame(UO_N[, c("Timepoint","UO_CCNES_Original_N", "UO_CCNES_67_N", "UO_CCNES_100_N")], 
                 UPMC_N[, c("UPMC_CCNES_Original_N", "UPMC_CCNES_67_N", "UPMC_CCNES_100_N", "GroupAssignment")],
                 BothSite_N[, c("BothSite_Original_N", "BothSite_67_N", "BothSite_100_N", "GroupAssignment")])
@@ -611,6 +611,7 @@ Timepoint_names <- c("T1","T2", "T3", "T4","T1","T2", "T3", "T4","T1","T2", "T3"
 # Rename column name 
 setnames(N, names(N), Timepoint_names)
 
+# Remove un-needed column
 N <- N[-c(1,8,12),]
 
 
@@ -632,5 +633,7 @@ kable(N) %>%
 ```
 
 
+```{r imputation}
 
+```
 
