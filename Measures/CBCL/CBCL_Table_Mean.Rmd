@@ -358,6 +358,9 @@ kable(Mean_Table) %>%
   add_header_above(c("CBCL Mean Table" = 13)) %>%
   column_spec(c(1,5,9), border_right = T, include_thead = T) %>%
   column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
+
+# Clean Environment
+rm(Progress, Progress_Ext_Mean, Progress_Ext_Mean_Both, Progress_Int_Mean, Progress_Int_Mean_Both, Progress_Mean, Progress_Total_Mean, Progress_Total_Mean_Both, Both_Site_Mean)
 ```
 
 ```{r table 67% data, echo=FALSE}
@@ -445,6 +448,10 @@ kable(Mean_Table) %>%
   add_header_above(c("CBCL Mean Table (67% NA Check)" = 13)) %>%
   column_spec(c(1,5,9), border_right = T, include_thead = T) %>%
   column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
+
+# Clean Environment
+rm(Progress_67, Progress_67_Ext_Mean_Both, Progress_67_Int_Mean_Both, Progress_67_Total_Mean_Both, Progress_67_Mean, Progress_67_Ext_Mean, Progress_67_Int_Mean, Progress_67_Total_Mean)
+
 ```
 
 ```{r table 100% data, echo=FALSE}
@@ -532,6 +539,38 @@ kable(Mean_Table) %>%
   add_header_above(c("CBCL Mean Table (100% NA Check)" = 13)) %>%
   column_spec(c(1,5,9), border_right = T, include_thead = T) %>%
   column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
+
+# Clean Environment
+rm(Progress_100, Progress_100_Ext_Mean_Both, Progress_100_Int_Mean_Both, Progress_100_Total_Mean_Both, Progress_100_Mean, Progress_100_Ext_Mean, Progress_100_Int_Mean, Progress_100_Total_Mean)
+
 ```
 
+```{r number table, include = T}
+# Orig
+ID <- c(as.character(cbcl_Prep$FamID))
+cbcl_Prep$site <- ifelse(startsWith(ID, "9"),"UO","UPMC")
+N_org <- cbcl_Prep %>%
+  group_by(timepoint, site, GroupAssignment) %>% 
+  summarise(n_orig = n())
+
+
+# 67%
+ID <- c(as.character(cbcl_Prep_67$FamID))
+cbcl_Prep_67$site <- ifelse(startsWith(ID, "9"),"UO","UPMC")
+N67 <- cbcl_Prep_67 %>%
+  group_by(timepoint, site, GroupAssignment) %>% 
+  summarise(n_67 = n())
+
+# 100%
+ID <- c(as.character(cbcl_Prep_100$FamID))
+cbcl_Prep_100$site <- ifelse(startsWith(ID, "9"),"UO","UPMC")
+N100 <- cbcl_Prep_100 %>%
+  group_by(timepoint, site, GroupAssignment) %>% 
+  summarise(n_100 = n())
+
+N <- cbind(N_org, N67, N100)
+N <- N[,-c(5,6,7,9, 10, 11)]
+N <- data.frame(t(N))
+
+```
 
