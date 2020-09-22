@@ -248,12 +248,12 @@ N Table
 ```{r}
 # Create N table, GroupAssignment and Timepoint are dupliced here, just checking it's align
 
-N <- data.frame(UO[, c("Timepoint", "UO_PKBS_Original_N", "GroupAssignment")],
-                UO100[, c("Timepoint", "UO_PKBS_100_N", "GroupAssignment")],
-                UPMC[, c("Timepoint", "UPMC_PKBS_Original_N", "GroupAssignment")],
-                UPMC100[, c("Timepoint", "UPMC_PKBS_100_N", "GroupAssignment")],
+N <- data.frame(UO[, c("Timepoint", "UO_BearDragon_Original_N", "GroupAssignment")],
+                UO100[, c("Timepoint", "UO_BearDragon_100_N", "GroupAssignment")],
+                UPMC[, c("Timepoint", "UPMC_BearDragon_Original_N", "GroupAssignment")],
+                UPMC100[, c("Timepoint", "UPMC_BearDragon_100_N", "GroupAssignment")],
                 Both_site_Mean[,c("Timepoint", "BothSite_Original_N", "GroupAssignment")],
-                Both_site_Mean100[,c("Timepoint", "BothSite_PKBS_100_N", "GroupAssignment")]
+                Both_site_Mean100[,c("Timepoint", "BothSite_BearDragon_100_N", "GroupAssignment")]
                 )
 # Remove dupliced column 
 N <- N[,-c(1,3,4,6,7,9,10,12,13,15,16,18,19,21,22,24,25,27)]
