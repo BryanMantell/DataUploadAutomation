@@ -156,8 +156,11 @@ colnames(UO)[colnames(UO) == "BearMean"] = "UO_Bear"
 colnames(UPMC)[colnames(UPMC) == "BearMean"] = "UPMC_Bear"
 colnames(UO)[colnames(UO) == "DragonMean"] = "UO_Dragon"
 colnames(UPMC)[colnames(UPMC) == "DragonMean"] = "UPMC_Dragon"
+colnames(UO)[colnames(UO) == "count"] = "UO_BearDragon_Original_N"
+colnames(UPMC)[colnames(UPMC) == "count"] = "UPMC_BearDragon_Original_N"
+colnames(Both_site_Mean)[colnames(Both_site_Mean) == "n"] = "BothSite_Original_N"
 
-Mean_Table <- data.frame(UO[,c("UO_BearDragon","GroupAssignment", "UO_Bear", "UO_Dragon")],UPMC[,c("UPMC_BearDragon", "UPMC_Bear", "UPMC_Dragon")],Both_site_Mean[,c("BothSiteMean","n")])
+Mean_Table <- data.frame(UO[,c("UO_BearDragon","GroupAssignment", "UO_Bear", "UO_Dragon")],UPMC[,c("UPMC_BearDragon", "UPMC_Bear", "UPMC_Dragon")],Both_site_Mean[,c("BothSiteMean","BothSite_Original_N")])
 
 Mean_Table <- t(Mean_Table)
 
@@ -191,34 +194,37 @@ Progress_Mean <- Progress %>%
   group_by(GroupAssignment, timepoint, site) %>%
   summarise(GroupMean = mean(oc_beardragon_total, na.rm = T), count = n())
 
-UO <- Progress_Mean[Progress_Mean$site == "UO",]
-UPMC <- Progress_Mean[Progress_Mean$site == "UPMC",]
+UO100 <- Progress_Mean[Progress_Mean$site == "UO",]
+UPMC100 <- Progress_Mean[Progress_Mean$site == "UPMC",]
 
-Both_site_Mean <- Progress %>%
+Both_site_Mean100 <- Progress %>%
   group_by(GroupAssignment, timepoint) %>%
   summarise(BothSiteMean = mean(oc_beardragon_total, na.rm = T), n = sum(count = n()))
 
-Bear_Mean <- Progress %>%
+Bear_Mean100 <- Progress %>%
   group_by(GroupAssignment, timepoint, site) %>%
   summarise(BearMean = mean(oc_bear_total, na.rm = T), count = n())
 
-Dragon_Mean <- Progress %>%
+Dragon_Mean100 <- Progress %>%
   group_by(GroupAssignment, timepoint, site) %>%
   summarise(DragonMean = mean(oc_dragon_total, na.rm = T), count = n())
 
-UO <- merge(UO, Bear_Mean)
-UO <- merge(UO, Dragon_Mean)
-UPMC <- merge(UPMC, Bear_Mean)
-UPMC <- merge(UPMC, Dragon_Mean)
+UO100 <- merge(UO100, Bear_Mean100)
+UO100 <- merge(UO100, Dragon_Mean100)
+UPMC100 <- merge(UPMC100, Bear_Mean100)
+UPMC100 <- merge(UPMC100, Dragon_Mean100)
 
-colnames(UO)[colnames(UO) == "GroupMean"] = "UO_BearDragon"
-colnames(UPMC)[colnames(UPMC) == "GroupMean"] = "UPMC_BearDragon"
-colnames(UO)[colnames(UO) == "BearMean"] = "UO_Bear"
-colnames(UPMC)[colnames(UPMC) == "BearMean"] = "UPMC_Bear"
-colnames(UO)[colnames(UO) == "DragonMean"] = "UO_Dragon"
-colnames(UPMC)[colnames(UPMC) == "DragonMean"] = "UPMC_Dragon"
+colnames(UO100)[colnames(UO100) == "GroupMean"] = "UO_BearDragon"
+colnames(UPMC100)[colnames(UPMC100) == "GroupMean"] = "UPMC_BearDragon"
+colnames(UO100)[colnames(UO100) == "BearMean"] = "UO_Bear"
+colnames(UPMC100)[colnames(UPMC100) == "BearMean"] = "UPMC_Bear"
+colnames(UO100)[colnames(UO100) == "DragonMean"] = "UO_Dragon"
+colnames(UPMC100)[colnames(UPMC100) == "DragonMean"] = "UPMC_Dragon"
+colnames(UO100)[colnames(UO100) == "count"] = "UO_BearDragon_Original_N"
+colnames(UPMC100)[colnames(UPMC100) == "count"] = "UPMC_BearDragon_Original_N"
+colnames(Both_site_Mean100)[colnames(Both_site_Mean100) == "n"] = "BothSite_Original_N"
 
-Mean_Table <- data.frame(UO[,c("UO_BearDragon","GroupAssignment", "UO_Bear", "UO_Dragon")],UPMC[,c("UPMC_BearDragon", "UPMC_Bear", "UPMC_Dragon")],Both_site_Mean[,c("BothSiteMean","n")])
+Mean_Table <- data.frame(UO[,c("UO_BearDragon","GroupAssignment", "UO_Bear", "UO_Dragon")],UPMC[,c("UPMC_BearDragon", "UPMC_Bear", "UPMC_Dragon")],Both_site_Mean[,c("BothSiteMean","BothSite_Original_N")])
 
 Mean_Table <- t(Mean_Table)
 
@@ -237,6 +243,49 @@ kable(Mean_Table) %>%
   column_spec(c(1,5,9), border_right = T, include_thead = T) %>%
   column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
 ```
+
+N Table
+```{r}
+# Create N table, GroupAssignment and Timepoint are dupliced here, just checking it's align
+
+N <- data.frame(UO[, c("Timepoint", "UO_BearDragon_Original_N", "GroupAssignment")],
+                UO100[, c("Timepoint", "UO_BearDragon_100_N", "GroupAssignment")],
+                UPMC[, c("Timepoint", "UPMC_BearDragon_Original_N", "GroupAssignment")],
+                UPMC100[, c("Timepoint", "UPMC_BearDragon_100_N", "GroupAssignment")],
+                Both_site_Mean[,c("Timepoint", "BothSite_Original_N", "GroupAssignment")],
+                Both_site_Mean100[,c("Timepoint", "BothSite_BearDragon_100_N", "GroupAssignment")]
+                )
+# Remove dupliced column 
+N <- N[,-c(1,3,4,6,7,9,10,12,13,15,16,18,19,21,22,24,25,27)]
+
+
+# Convert data frame to numeric
+N <- as.data.frame(sapply(N, as.numeric))
+
+# Transfer N table from Horzontal to Vertical
+N <- data.frame(t(N))
+
+# Colculate Total N 
+N$T1 <- rowSums(N[,c(1,5,9)])
+N$T2 <- rowSums(N[,c(2,6,10)])
+N$T3 <- rowSums(N[,c(3,7,11)])
+N$T4 <- rowSums(N[,c(4,8,12)])
+
+# Timepoint names 
+Timepoint_names <- c("T1","T2", "T3", "T4","T1","T2", "T3", "T4","T1","T2", "T3", "T4", "T1","T2", "T3", "T4")
+
+# Rename column name 
+setnames(N, names(N), Timepoint_names)
+
+kable(N) %>%
+  kable_styling(bootstrap_options = c("striped"), fixed_thead = T) %>%
+  add_header_above(c(" " = 1, "DBT Group" = 4, "Control Group" = 4, "FSU Group" = 4, "Totals" = 4)) %>%
+  add_header_above(c("Participant Numbers" = 17)) %>%
+  column_spec(c(1,5,9,13), border_right = T, include_thead = T) %>%
+  column_spec(2:17, width_min = "2cm", width_max = "2cm") %>%
+  row_spec(7:9, background = "#d3d3d3")
+```
+
 
 
 
