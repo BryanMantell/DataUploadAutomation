@@ -109,19 +109,16 @@ write.table(first_line, file = "el01.csv", sep = ",", append = FALSE, quote = FA
 # Append data in Emotion_Ladeling_NDA into el.csv file 
 write.table(Emotion_Labeling_NDA, file = 'el01.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
 ```
+
 ```{r Table 67}
 Progress67 <- select(EL_PREP67, c(Fam_ID, GroupAssignment, timepoint, starts_with("oc_elt_")))
 
-#EL_PREP67[,1,2,3,4,5,6,7,8,10,12,14,16,17,18,19,20,21,22,23] <- sapply(EL_PREP67[,1,2,3,4,5,6,7,8,10,12,14,16,17,18,19,20,21,22,23] ,as.numeric)
-
-
-
-EL_PREP67[,9:23] <- sapply(EL_PREP67[,9:23],as.numeric)
-
-EL_PREP67[]
+EL_PREP67[, c(10,12,14,16:23)] <- sapply(EL_PREP67[, c(10,12,14,16:23)] ,as.numeric)
 
 # Calculate row mean for each individual  
-Progress67$Row_Mean <- rowMeans(select(EL_PREP67,c(starts_with("oc_elt"))), na.rm = T)
+#Progress67$Row_Mean <- rowMeans(select(EL_PREP67,c(starts_with("oc_elt"))), na.rm = T)
+
+Progress67$Row_Mean <- rowMeans(select(EL_PREP67, c(10,12,14,16:23)))
 
 # Change FamId as character and assign to ID variable 
 ID <- c(as.character(Progress67$Fam_ID))
@@ -182,10 +179,10 @@ kable(Mean_Table) %>%
 ```{r Table 100}
 Progress100 <- select(EL_PREP100, c(Fam_ID, GroupAssignment, timepoint, starts_with("oc_elt_")))
 
-EL_PREP100[,1:23] <- sapply(EL_PREP100[,1:23],as.numeric)
+EL_PREP100[, c(10,12,14,16:23)] <- sapply(EL_PREP100[, c(10,12,14,16:23)],as.numeric)
 
 # Calculate row mean for each individual  
-Progress100$Row_Mean <- rowMeans(select(EL_PREP100,c(starts_with("oc_elt"))), na.rm = T)
+Progress100$Row_Mean <- rowMeans(select(EL_PREP100, c(10,12,14,16:23)))
 
 # Change FamId as character and assign to ID variable 
 ID <- c(as.character(Progress100$Fam_ID))
@@ -245,12 +242,12 @@ kable(Mean_Table) %>%
 ```{r N's Table}
 #### Original Table ####
 # Original by site
-N_ori <- Progress %>%
+N_ori <- Progress_Mean %>%
   group_by(timepoint, site, GroupAssignment) %>% 
   summarise(n_ori = n())
 
 # Original both site 
-N_ori_BothSite <- Progress %>%
+N_ori_BothSite <-  %>%
   group_by(timepoint, GroupAssignment) %>% 
   summarise(BothSite_Original_N = n())
 
