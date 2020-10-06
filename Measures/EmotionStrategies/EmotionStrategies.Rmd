@@ -57,10 +57,8 @@ Redcap_Data$timepoint = sapply(strsplit(as.character(Redcap_Data$redcap_event_na
 
 # Select needed columns and rename in Redcap_Data
 Redcap_Data <- select(Redcap_Data, c(Fam_ID = fam_id,  timepoint, starts_with("oc_es_")))
-
 Redcap_Data <- select(Redcap_Data, -c(oc_es_notes, oc_es_hgen, oc_es_agen, oc_es_sgen, oc_es_intblue, oc_es_intgreen, oc_es_intmom))
-# Previous attempt to remove in a more concise way. starts_with failed to remove indicated columns. 
-# Redcap_Data <- select(Redcap_Data, -c(oc_es_notes, oc_es_hgen, oc_es_agen, oc_es_sgen, starts_with("oc_es_int"))
+
 
 # Select revelent pedigree information, rename as needed. (Include GroupAssignment for treatment progress calculation).
 Pedigree_T1 <- data.frame(select(Pedigree, Fam_ID =  FamID, child_guid, child_famID = FamID_Child, interview_date = Time1Date, interview_age = MomAge_T1, child_sex = ChildGender, GroupAssignment), timepoint = 1 )
@@ -68,6 +66,7 @@ Pedigree_T2 <- data.frame(select(Pedigree, Fam_ID =  FamID, child_guid, child_fa
 Pedigree_T3 <- data.frame(select(Pedigree, Fam_ID =  FamID, child_guid, child_famID = FamID_Child, interview_date = Time3Date, interview_age = MomAge_T3, child_sex = ChildGender, GroupAssignment), timepoint = 3 )
 Pedigree_T4 <- data.frame(select(Pedigree, Fam_ID =  FamID, child_guid, child_famID = FamID_Child, interview_date = Time4Date, interview_age = MomAge_T4, child_sex = ChildGender, GroupAssignment), timepoint = 4 )
 
+#N's issue is with pedigree prep
 Pedigree_Prep <- rbind(Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4)
 
 #Exchange commas out of Prep Sheet to avoid CSV issues. Personal selection was a "/" but you can change it here to preference. 
@@ -82,7 +81,7 @@ rm(Pedigree, Pedigree_Prep, Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4, 
 
 ```{r Calculated Columns}
 # Set neccessary data to numeric so they can be used in calculations
-ES_PREP[, c(10:12,14:16,18:20)] <- sapply(ES_PREP[, c(10:12,14:16,18:20)], as.numeric)
+ES_PREP[, c("oc_es_hap_1", "oc_es_hap_2", "oc_es_hap_3", "oc_es_ang_1", "oc_es_ang_2", "oc_es_ang_3", "oc_es_sad_1", "oc_es_sad_2", "oc_es_sad_3")] <- sapply(ES_PREP[, c("oc_es_hap_1", "oc_es_hap_2", "oc_es_hap_3", "oc_es_ang_1", "oc_es_ang_2", "oc_es_ang_3", "oc_es_sad_1", "oc_es_sad_2", "oc_es_sad_3")], as.numeric)
 
 # Created calculated columns
 ES_PREP <- add_column(ES_PREP, oc_es_hap_total = rowSums(ES_PREP[, c("oc_es_hap_1", "oc_es_hap_2", "oc_es_hap_3")]),.after = "oc_es_hap_3")
@@ -112,8 +111,8 @@ first_line[,2] <- "1"
 
 
 # NDA output ---------
-# Create a new file in folder called dccs.csv, and put first line into this file
-# dccs.csv file will be saved into same folder as current r script
+# Create a new file in folder called ers01.csv, and put first line into this file
+# ers01.csv file will be saved into same folder as current r script
 write.table(first_line, file = "ers01.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
 
 # Append data in NDA_DCCS into dccs.cav file 
@@ -140,7 +139,7 @@ rm(first_line, NDA_ES, NDA_ES_Prep, NDA_ES_names, new_ES_names, old_ES_names)
 ```{r Table, echo=FALSE}
 # Treatment Progress sheet
 # Select needed column
-Progress <- select(ES_PREP, c(Fam_ID, GroupAssignment, timepoint, oc_es_hap_total, oc_es_ang_total, oc_es_sad_total, oc_es_total))
+Progress <- select(ES_PREP, c(Fam_ID, GroupAssignment, timepoint, oc_es_hap_total, oc_es_ang_total, oc_es_sad_total, oc_es_total,))
 
 # Change FamId as character and assign to ID variable 
 ID <- c(as.character(Progress$Fam_ID))
@@ -195,6 +194,17 @@ Progress_Total_Mean_Both <- Progress %>%
 Both_Site_Mean <- merge(Progress_Hap_Mean_Both, Progress_Ang_Mean_Both)
 Both_Site_Mean <- merge(Both_Site_Mean, Progress_Sad_Mean_Both)
 Both_Site_Mean <- merge(Both_Site_Mean, Progress_Total_Mean_Both)
+
+#Filter group assignment so they all use the same language
+UO <- UO %>% filter(GroupAssignment == "DBT"
+         | GroupAssignment == "NO DBT"
+         | GroupAssignment == "Healthy")
+UPMC <- UPMC %>% filter(GroupAssignment == "DBT"
+         | GroupAssignment == "NO DBT"
+         | GroupAssignment == "Healthy")
+Both_Site_Mean <- Both_Site_Mean %>% filter(GroupAssignment == "DBT"
+         | GroupAssignment == "NO DBT"
+         | GroupAssignment == "Healthy")
 
 # Change GroupMean Column names according to site
 colnames(UO)[colnames(UO) == "HapMean"] = "UO_ES_HappyMean"
