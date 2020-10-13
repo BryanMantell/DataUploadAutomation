@@ -1,6 +1,6 @@
 ---
 title: "PKBS"
-author: START Lab
+author: "Jake Mulleavey""
 output: html_document
 ---
 
@@ -50,7 +50,7 @@ pkbs <- "srm_pkbs"
 num_items <- seq(1:33)
 new_PKBS_names <- paste(pkbs, num_items, sep='_')
 
-#Now make a list of old variables names so that we can replace them with the neww ones
+#Now make a list of old variable names so that we can replace them with the neww ones
 UO_Q407 <- "Q407"
 UO_Q359 <- "Q359"
 UO_Q524 <- "Q524"
@@ -134,22 +134,25 @@ PKBS_Prep <- rbind(PKBS_T1, PKBS_T2, PKBS_T3, PKBS_T4)
 #Change gender to F instead of FALSE
 PKBS_Prep$MomGender <- "F"
 
-
 #Clean up environment
 rm(PKBS_T1, PKBS_T2, PKBS_T3, PKBS_T4)
 ```
 
-## Re-code and Reverse Score
-```{r Re-code and Reverse Score}
+## Re-code and 67% Rule
+Convert Likert Scale text input into numerical values then create a dataframe to place ID's that do not have 67% of their data present.
+```{r Re-code and 67% Rule}
 #Turn Likert Scale from text string to numeric value
 PKBS_Prep[PKBS_Prep == "Never (0)"] <- 0; PKBS_Prep[PKBS_Prep == "Rarely (1)"] <- 1;
 PKBS_Prep[PKBS_Prep == "Sometimes (2)"] <- 2; PKBS_Prep[PKBS_Prep == "Often (3)"] <- 3;
 
+#Create NA Check column calculating what portion of the data is present
 PKBS_Prep$NACheck <- rowSums(is.na(select(PKBS_Prep, starts_with("srm_pkbs"))))/ncol(dplyr::select(PKBS_Prep, starts_with("srm_pkbs")))
 
+#Create Drop dataframe for anything less than 0.67; Allow anything over to be used for Prep sheet
 PKBS_Drop <- PKBS_Prep[PKBS_Prep$NACheck > 0.67, ]
 PKBS_Prep <- PKBS_Prep[PKBS_Prep$NACheck <= 0.67, ]
 
+#Create dataframe for all ID's that have 100% of their data present
 PKBS_100 <- PKBS_Prep[PKBS_Prep$NACheck == 0, ]
 ```
 
@@ -205,7 +208,7 @@ first_line[,2] <- "1"
 
 ## Table
 Create descriptive means table.
-```{r}
+```{r Table}
 library(knitr)
 library(magrittr)
 library(kableExtra)
@@ -265,10 +268,11 @@ setnames(Mean_Table, names(Mean_Table), Timepoint_names)
 #Add a header
 install.packages(knitr)
 
+#Create Table
 kable(Mean_Table) %>%
   kable_styling(bootstrap_options = "striped", full_width = F) %>%
   add_header_above(c(" " = 1, "Controls means" = 4, "FSU means" = 4, "DBT means" = 4)) %>%
-  add_header_above(c("PKBS Table Means" = 13)) %>%
+  add_header_above(c("PKBS Table Means (67%)" = 13)) %>%
   column_spec(c(1,5,9), border_right = T, include_thead = T) %>%
   column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
 
@@ -278,7 +282,8 @@ kable(Mean_Table) %>%
 
 
 #100% Table
-```{r}
+Create descriptives table for only ID's that have 100% of their data.
+```{r 100% Table}
 #Select necessary columns for means table
 Progress <- select((PKBS_100), c(FamID, GroupAssignment, Timepoint, starts_with("srm"), pkbs_total))
 
@@ -291,7 +296,7 @@ ID <- c(as.character(Progress$FamID))
 #Add Site column to Progress, if ID start with 9 then site is UO, else is UPMC
 Progress$site <- ifelse(startsWith(ID, "9"), "UO", "UPMC")
 
-#Group by GroupAssignment and Timepoint, and calcultae Group Mean
+#Group by GroupAssignment and Timepoint, and calculate Group Mean
 Progress_Mean <- Progress %>%
   group_by(GroupAssignment, Timepoint, site) %>%
   summarise(GroupMean = mean(pkbs_total, na.rm = T), count = n())
@@ -334,16 +339,18 @@ setnames(Mean_Table, names(Mean_Table), Timepoint_names)
 #Add a header
 install.packages(knitr)
 
+#Create Table
 kable(Mean_Table) %>%
   kable_styling(bootstrap_options = "striped", full_width = F) %>%
   add_header_above(c(" " = 1, "Controls means" = 4, "FSU means" = 4, "DBT means" = 4)) %>%
-  add_header_above(c("PKBS Table Means" = 13)) %>%
+  add_header_above(c("PKBS Table Means (100%)" = 13)) %>%
   column_spec(c(1,5,9), border_right = T, include_thead = T) %>%
   column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
 ```
-
+##N Table
+Create table for participant numbers.
 ```{r N Table}
-# Create N table, GroupAssignment and Timepoint are dupliced here, just checking it's align
+#Create N table, GroupAssignment and Timepoint are dupliced here, just checking it's align
 
 N <- data.frame(UO[, c("Timepoint", "UO_PKBS_Original_N", "GroupAssignment")],
                 UO100[, c("Timepoint", "UO_PKBS_100_N", "GroupAssignment")],
@@ -352,34 +359,35 @@ N <- data.frame(UO[, c("Timepoint", "UO_PKBS_Original_N", "GroupAssignment")],
                 Both_site_Mean[,c("Timepoint", "BothSite_Original_N", "GroupAssignment")],
                 Both_site_Mean100[,c("Timepoint", "BothSite_PKBS_100_N", "GroupAssignment")]
                 )
-# Remove dupliced column 
+#Remove dupliced column 
 N <- N[,-c(1,3,4,6,7,9,10,12,13,15,16,18,19,21,22,24,25,27)]
 
 
-# Convert data frame to numeric
+#Convert data frame to numeric
 N <- as.data.frame(sapply(N, as.numeric))
 
-# Transfer N table from Horzontal to Vertical
+#Transfer N table from Horzontal to Vertical
 N <- data.frame(t(N))
 
-# Colculate Total N 
+#Calculate Total N 
 N$T1 <- rowSums(N[,c(1,5,9)])
 N$T2 <- rowSums(N[,c(2,6,10)])
 N$T3 <- rowSums(N[,c(3,7,11)])
 N$T4 <- rowSums(N[,c(4,8,12)])
 
-# Timepoint names 
+#Timepoint names 
 Timepoint_names <- c("T1","T2", "T3", "T4","T1","T2", "T3", "T4","T1","T2", "T3", "T4", "T1","T2", "T3", "T4")
 
-# Rename column name 
+#Rename column name 
 setnames(N, names(N), Timepoint_names)
 
+#Create Table
 kable(N) %>%
   kable_styling(bootstrap_options = c("striped"), fixed_thead = T) %>%
   add_header_above(c(" " = 1, "DBT Group" = 4, "Control Group" = 4, "FSU Group" = 4, "Totals" = 4)) %>%
   add_header_above(c("Participant Numbers" = 17)) %>%
   column_spec(c(1,5,9,13), border_right = T, include_thead = T) %>%
-  column_spec(2:17, width_min = "2cm", width_max = "2cm") %>%
-  row_spec(7:9, background = "#d3d3d3")
+  column_spec(1:16, width_min = "2cm", width_max = "5cm") %>%
+  row_spec(1:6, background = "#d3d3d3")
 ```
 

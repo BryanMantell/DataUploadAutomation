@@ -1,6 +1,6 @@
 ---
 title: "BearDragon"
-author: "START Lab"
+author: "Jake Mulleavey"
 date: "7/16/2020"
 output: html_document
 ---
@@ -35,12 +35,14 @@ NDA_BearDragon <- read.csv("beardragon01_template.csv")
 BearDragon_Data <- read.csv("Redcap_Data.csv", stringsAsFactors = FALSE)
 ```
 
-## Rename columns
-Rename questions numbers to self-report measure scale items. Then, take each scale measure from both sites and combine them by timepoint.
-```{r}
+## Rename Columns and Create Prep Sheet
+Rename questions numbers to self-report measure scale items. Then, take each scale measure from both sites and combine them by timepoint. Finally, combine Pedigree information with RedCap data to get the Prep Sheet.
+```{r Rename Columns and Prep Sheet}
+#Select the relevant ID information and questions
 RedCap_Data <- select(BearDragon_Data, fam_id, redcap_event_name, oc_bd_01, oc_bd_02, oc_bd_03, oc_bd_04,
                       oc_bd_05, oc_bd_06, oc_bd_07, oc_bd_08, oc_bd_09, oc_bd_10)
 
+#Convert timepoint string input into 1 through 4 numerical value
 RedCap_Data$redcap_event_name[which(RedCap_Data$redcap_event_name == "time_1_arm_1")] = 1
 RedCap_Data$redcap_event_name[which(RedCap_Data$redcap_event_name == "time_1_arm_2")] = 1
 RedCap_Data$redcap_event_name[which(RedCap_Data$redcap_event_name == "time_2_arm_1")] = 2
@@ -50,14 +52,17 @@ RedCap_Data$redcap_event_name[which(RedCap_Data$redcap_event_name == "time_3_arm
 RedCap_Data$redcap_event_name[which(RedCap_Data$redcap_event_name == "time_4_arm_1")] = 4
 RedCap_Data$redcap_event_name[which(RedCap_Data$redcap_event_name == "time_4_arm_2")] = 4
 
+#Rename timepoint and Fam ID columns
 names(RedCap_Data)[names(RedCap_Data) == "redcap_event_name"] <- "timepoint"
 names(RedCap_Data)[names(RedCap_Data) == "fam_id"] <- "Fam_ID"
 
+#Create Pedigree sheets for each timepoint
 Pedigree_T1 <- select(Pedigree, FamID, child_guid, FamID_Child, Time1Date, ChildAge_T1, ChildGender, GroupAssignment)
 Pedigree_T2 <- select(Pedigree, FamID, child_guid, FamID_Child, Time2Date, ChildAge_T2, ChildGender, GroupAssignment)
 Pedigree_T3 <- select(Pedigree, FamID, child_guid, FamID_Child, Time3Date, ChildAge_T3, ChildGender, GroupAssignment)
 Pedigree_T4 <- select(Pedigree, FamID, child_guid, FamID_Child, Time4Date, ChildAge_T4, ChildGender, GroupAssignment)
 
+#Rename Age and Interview Date columns for each timepoint
 names(Pedigree_T1)[names(Pedigree_T1) == "ChildAge_T1"] <- "interview_age"
 names(Pedigree_T1)[names(Pedigree_T1) == "Time1Date"] <- "interview_date"
 names(Pedigree_T2)[names(Pedigree_T2) == "ChildAge_T2"] <- "interview_age"
@@ -67,44 +72,62 @@ names(Pedigree_T3)[names(Pedigree_T3) == "Time3Date"] <- "interview_date"
 names(Pedigree_T4)[names(Pedigree_T4) == "ChildAge_T4"] <- "interview_age"
 names(Pedigree_T4)[names(Pedigree_T4) == "Time4Date"] <- "interview_date"
 
-
+#Add timepoint
 Pedigree_T1$timepoint=1
 Pedigree_T2$timepoint=2
 Pedigree_T3$timepoint=3
 Pedigree_T4$timepoint=4
 
+#Combine each Pedigree timepoint dataframe into a single one
 Pedigree_Prep <- rbind(Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4)
 names(Pedigree_Prep)[names(Pedigree_Prep) == "FamID"] <- "Fam_ID"
 
+#Combine the Pedigree information with the RedCap data to output the Prep Sheet
 BearDragon_Prep <- merge(Pedigree_Prep, RedCap_Data, by = c("timepoint", "Fam_ID"), all = TRUE)
 
+#Clean Global Environment
+rm(BearDragon_Data, Pedigree_Prep, Pedigree, Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4)
 ```
 
 ## Calculated Columns
-```{r}
+Create sums column combining each individual measure. 
+```{r Calculated Columns}
+#Add total column for all data
 BearDragon_Prep <- add_column(BearDragon_Prep, oc_beardragon_total = rowSums(BearDragon_Prep[, c("oc_bd_01", "oc_bd_02", "oc_bd_03", "oc_bd_04", "oc_bd_05", "oc_bd_06", "oc_bd_07", "oc_bd_08", "oc_bd_09", "oc_bd_10")]))
 
+#Add total column for bear data
 BearDragon_Prep <- add_column(BearDragon_Prep, oc_bear_total = rowSums(BearDragon_Prep[, c("oc_bd_01", "oc_bd_03", "oc_bd_05", "oc_bd_07", "oc_bd_09")]))
 
+#Add total column for dragon data
 BearDragon_Prep <- add_column(BearDragon_Prep, oc_dragon_total = rowSums(BearDragon_Prep[, c("oc_bd_02", "oc_bd_04", "oc_bd_06", "oc_bd_08", "oc_bd_10")]))
+```
 
+##Implement 67% Rule
+Add a NA Check that calculates the decimal of what percentage of the data is present for a Fam ID.
+```{r Implement 67% Rule}
+#Create NA Check column (1.00 means 100% of the data is present)
 BearDragon_Prep$NACheck <- rowSums(is.na(select(BearDragon_Prep, starts_with("oc_bd_"))))/ncol(dplyr::select(BearDragon_Prep, starts_with("oc_bd_")))
 
+#Create Drop sheet where ID's that have less than 67% of data go; Rest of the ID's remain in Prep Sheet
 BearDragon_Drop <- BearDragon_Prep[BearDragon_Prep$NACheck > 0.67, ]
 BearDragon_Prep <- BearDragon_Prep[BearDragon_Prep$NACheck <= 0.67, ]
 
+#Create 100% Sheet that only contains ID's with 100% of data
 BearDragon_100 <- BearDragon_Prep[BearDragon_Prep$NACheck == 0, ]
-
 ```
 
 ## NDA Structure
-```{r}
+Re-name PKBS Prep Sheet columns to match NDA specifications. 
+```{r NDA Structure}
+#Select relevant columns from Prep Sheet to move into NDA Prep template
 NDA_BearDragon_Prep <- select(BearDragon_Prep, c(subjectkey = child_guid, src_subject_id = FamID_Child, interview_date, interview_age, sex = ChildGender, visit = timepoint, starts_with("oc_bd")))
 
+#Match Prep Sheet column names to required NDA names
 nda_names <- c(paste("beardragon", 1:10, sep = ""))
 prep_names <- c(paste("oc_bd_", 01:10, sep = "0"))
 setnames(NDA_BearDragon_Prep, prep_names, nda_names, skip_absent = TRUE)
 
+#Combine NDA Template with NDA Structure
 NDA_BearDragon[1,] <- NA
 NDA_BearDragon <- bind_rows(NDA_BearDragon, NDA_BearDragon_Prep)
 
@@ -114,42 +137,54 @@ first_line[,2] <- "1"
 ```
 
 ## Table
-```{r}
+Create descriptive means table.
+```{r Table}
 library(knitr)
 library(magrittr)
 library(kableExtra)
 
+#Select necessary columns for means table
 Progress <- select((BearDragon_Prep), c(Fam_ID, GroupAssignment, timepoint, starts_with("oc")))
 Progress$Row_Mean <- rowMeans(select(BearDragon_Prep, starts_with("oc_bd_")), na.rm = T)
 
+#Change FamID as character and assign to ID variable
 ID <- c(as.character(Progress$Fam_ID))
 
+#Add Site column to Progress, if ID start with 9 then site is UO, else is UPMC
 Progress$site <- ifelse(startsWith(ID, "9"), "UO", "UPMC")
 
+#Group by GroupAssignment and Timepoint, and calculate Group Mean
 Progress_Mean <- Progress %>%
   group_by(GroupAssignment, timepoint, site) %>%
   summarise(GroupMean = mean(oc_beardragon_total, na.rm = T), count = n())
 
+#Select only UO Mean
 UO <- Progress_Mean[Progress_Mean$site == "UO",]
+#Select only UPMC Mean
 UPMC <- Progress_Mean[Progress_Mean$site == "UPMC",]
 
-Both_site_Mean <- Progress %>%
+#Calculate mean from both sites
+Both_Site_Mean <- Progress %>%
   group_by(GroupAssignment, timepoint) %>%
   summarise(BothSiteMean = mean(oc_beardragon_total, na.rm = T), n = sum(count = n()))
 
+#Calculate mean from bear data points
 Bear_Mean <- Progress %>%
   group_by(GroupAssignment, timepoint, site) %>%
   summarise(BearMean = mean(oc_bear_total, na.rm = T), count = n())
 
+#Calculate mean from dragon data points
 Dragon_Mean <- Progress %>%
   group_by(GroupAssignment, timepoint, site) %>%
   summarise(DragonMean = mean(oc_dragon_total, na.rm = T), count = n())
 
+#Merge UO and UPMC site dataframes with Bear and Dragon means
 UO <- merge(UO, Bear_Mean)
 UO <- merge(UO, Dragon_Mean)
 UPMC <- merge(UPMC, Bear_Mean)
 UPMC <- merge(UPMC, Dragon_Mean)
 
+#Change mean columns names according to site
 colnames(UO)[colnames(UO) == "GroupMean"] = "UO_BearDragon"
 colnames(UPMC)[colnames(UPMC) == "GroupMean"] = "UPMC_BearDragon"
 colnames(UO)[colnames(UO) == "BearMean"] = "UO_Bear"
@@ -158,20 +193,27 @@ colnames(UO)[colnames(UO) == "DragonMean"] = "UO_Dragon"
 colnames(UPMC)[colnames(UPMC) == "DragonMean"] = "UPMC_Dragon"
 colnames(UO)[colnames(UO) == "count"] = "UO_BearDragon_Original_N"
 colnames(UPMC)[colnames(UPMC) == "count"] = "UPMC_BearDragon_Original_N"
-colnames(Both_site_Mean)[colnames(Both_site_Mean) == "n"] = "BothSite_Original_N"
+colnames(Both_Site_Mean)[colnames(Both_Site_Mean) == "n"] = "BothSite_Original_N"
 
+#Combine UO, UPMC, Both_Site, Bear and Dragon data 
 Mean_Table <- data.frame(UO[,c("UO_BearDragon","GroupAssignment", "UO_Bear", "UO_Dragon")],UPMC[,c("UPMC_BearDragon", "UPMC_Bear", "UPMC_Dragon")],Both_site_Mean[,c("BothSiteMean","BothSite_Original_N")])
 
+#Convert Mean_Table, make original column as row
 Mean_Table <- t(Mean_Table)
 
+#Make Mean_Table a data frame
 Mean_Table <- data.frame(Mean_Table)
 
+#Re-order Mean Table
 Mean_Table <- Mean_Table[c(5,6,7,8,9,10,11,12,1,2,3,4)]
 
+#Add Timepoint column
 Timepoint_names <- c("T1","T2", "T3", "T4","T1","T2", "T3", "T4","T1","T2", "T3", "T4")
 
+#Rename column name
 setnames(Mean_Table, names(Mean_Table), Timepoint_names)
 
+#Create Table
 kable(Mean_Table) %>%
   kable_styling(bootstrap_options = "striped", full_width = F) %>%
   add_header_above(c(" " = 1, "Controls means" = 4, "FSU means" = 4, "DBT means" = 4)) %>%
@@ -181,61 +223,80 @@ kable(Mean_Table) %>%
 
 ```
 
-#100% Table
-```{r}
+##100% Table
+Descriptive means table for ID's with 100% of their data.
+```{r 100% Table}
+#Select necessary columns for means table
 Progress <- select((BearDragon_100), c(Fam_ID, GroupAssignment, timepoint, starts_with("oc")))
 Progress$Row_Mean <- rowMeans(select(BearDragon_100, starts_with("oc_bd_")), na.rm = T)
 
+#Change FamID as character and assign to ID variable
 ID <- c(as.character(Progress$Fam_ID))
 
+#Add Site column to Progress, if ID start with 9 then site is UO, else is UPMC
 Progress$site <- ifelse(startsWith(ID, "9"), "UO", "UPMC")
 
+#Group by GroupAssignment and Timepoint, and calculate Group Mean
 Progress_Mean <- Progress %>%
   group_by(GroupAssignment, timepoint, site) %>%
   summarise(GroupMean = mean(oc_beardragon_total, na.rm = T), count = n())
 
+#Select only UO Mean
 UO100 <- Progress_Mean[Progress_Mean$site == "UO",]
+#Select only UPMC Mean
 UPMC100 <- Progress_Mean[Progress_Mean$site == "UPMC",]
 
-Both_site_Mean100 <- Progress %>%
+#Calculate mean from both sites
+Both_Site_Mean100 <- Progress %>%
   group_by(GroupAssignment, timepoint) %>%
   summarise(BothSiteMean = mean(oc_beardragon_total, na.rm = T), n = sum(count = n()))
 
+#Calculate mean from bear data points
 Bear_Mean100 <- Progress %>%
   group_by(GroupAssignment, timepoint, site) %>%
   summarise(BearMean = mean(oc_bear_total, na.rm = T), count = n())
 
+#Calculate mean from dragon data points
 Dragon_Mean100 <- Progress %>%
   group_by(GroupAssignment, timepoint, site) %>%
   summarise(DragonMean = mean(oc_dragon_total, na.rm = T), count = n())
 
+#Merge UO and UPMC site dataframes with Bear and Dragon means
 UO100 <- merge(UO100, Bear_Mean100)
 UO100 <- merge(UO100, Dragon_Mean100)
 UPMC100 <- merge(UPMC100, Bear_Mean100)
 UPMC100 <- merge(UPMC100, Dragon_Mean100)
 
+#Change mean columns names according to site
 colnames(UO100)[colnames(UO100) == "GroupMean"] = "UO_BearDragon"
 colnames(UPMC100)[colnames(UPMC100) == "GroupMean"] = "UPMC_BearDragon"
 colnames(UO100)[colnames(UO100) == "BearMean"] = "UO_Bear"
 colnames(UPMC100)[colnames(UPMC100) == "BearMean"] = "UPMC_Bear"
 colnames(UO100)[colnames(UO100) == "DragonMean"] = "UO_Dragon"
 colnames(UPMC100)[colnames(UPMC100) == "DragonMean"] = "UPMC_Dragon"
-colnames(UO100)[colnames(UO100) == "count"] = "UO_BearDragon_Original_N"
-colnames(UPMC100)[colnames(UPMC100) == "count"] = "UPMC_BearDragon_Original_N"
-colnames(Both_site_Mean100)[colnames(Both_site_Mean100) == "n"] = "BothSite_Original_N"
+colnames(UO100)[colnames(UO100) == "count"] = "UO_BearDragon_100_N"
+colnames(UPMC100)[colnames(UPMC100) == "count"] = "UPMC_BearDragon_100_N"
+colnames(Both_Site_Mean100)[colnames(Both_Site_Mean100) == "n"] = "BothSite_100_N"
 
-Mean_Table <- data.frame(UO[,c("UO_BearDragon","GroupAssignment", "UO_Bear", "UO_Dragon")],UPMC[,c("UPMC_BearDragon", "UPMC_Bear", "UPMC_Dragon")],Both_site_Mean[,c("BothSiteMean","BothSite_Original_N")])
+#Combine UO, UPMC, Both_Site, Bear and Dragon data 
+Mean_Table <- data.frame(UO[,c("UO_BearDragon","GroupAssignment", "UO_Bear", "UO_Dragon")],UPMC[,c("UPMC_BearDragon", "UPMC_Bear", "UPMC_Dragon")],Both_site_Mean[,c("BothSiteMean","BothSite_100_N")])
 
+#Convert Mean_Table, make original column as row
 Mean_Table <- t(Mean_Table)
 
+#Make Mean_Table a data frame
 Mean_Table <- data.frame(Mean_Table)
 
+#Re-order Mean Table
 Mean_Table <- Mean_Table[c(5,6,7,8,9,10,11,12,1,2,3,4)]
 
+#Add Timepoint column
 Timepoint_names <- c("T1","T2", "T3", "T4","T1","T2", "T3", "T4","T1","T2", "T3", "T4")
 
+#Rename column name
 setnames(Mean_Table, names(Mean_Table), Timepoint_names)
 
+#Create Table
 kable(Mean_Table) %>%
   kable_styling(bootstrap_options = "striped", full_width = F) %>%
   add_header_above(c(" " = 1, "Controls means" = 4, "FSU means" = 4, "DBT means" = 4)) %>%
@@ -244,39 +305,40 @@ kable(Mean_Table) %>%
   column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
 ```
 
-N Table
-```{r}
-# Create N table, GroupAssignment and Timepoint are dupliced here, just checking it's align
-
-N <- data.frame(UO[, c("Timepoint", "UO_BearDragon_Original_N", "GroupAssignment")],
-                UO100[, c("Timepoint", "UO_BearDragon_100_N", "GroupAssignment")],
-                UPMC[, c("Timepoint", "UPMC_BearDragon_Original_N", "GroupAssignment")],
-                UPMC100[, c("Timepoint", "UPMC_BearDragon_100_N", "GroupAssignment")],
-                Both_site_Mean[,c("Timepoint", "BothSite_Original_N", "GroupAssignment")],
-                Both_site_Mean100[,c("Timepoint", "BothSite_BearDragon_100_N", "GroupAssignment")]
+##N Table
+Create table for participant numbers.
+```{r N Table}
+#Create N table, GroupAssignment and Timepoint are dupliced here, just checking it's align
+N <- data.frame(UO[, c("timepoint", "UO_BearDragon_Original_N", "GroupAssignment")],
+                UO100[, c("timepoint", "UO_BearDragon_100_N", "GroupAssignment")],
+                UPMC[, c("timepoint", "UPMC_BearDragon_Original_N", "GroupAssignment")],
+                UPMC100[, c("timepoint", "UPMC_BearDragon_100_N", "GroupAssignment")],
+                Both_Site_Mean[,c("timepoint", "BothSite_Original_N", "GroupAssignment")],
+                Both_site_Mean100[,c("timepoint", "BothSite_100_N", "GroupAssignment")]
                 )
-# Remove dupliced column 
+
+#Remove dupliced column 
 N <- N[,-c(1,3,4,6,7,9,10,12,13,15,16,18,19,21,22,24,25,27)]
 
-
-# Convert data frame to numeric
+#Convert data frame to numeric
 N <- as.data.frame(sapply(N, as.numeric))
 
-# Transfer N table from Horzontal to Vertical
+#Transfer N table from Horzontal to Vertical
 N <- data.frame(t(N))
 
-# Colculate Total N 
+#Calculate Total N 
 N$T1 <- rowSums(N[,c(1,5,9)])
 N$T2 <- rowSums(N[,c(2,6,10)])
 N$T3 <- rowSums(N[,c(3,7,11)])
 N$T4 <- rowSums(N[,c(4,8,12)])
 
-# Timepoint names 
+#Timepoint names 
 Timepoint_names <- c("T1","T2", "T3", "T4","T1","T2", "T3", "T4","T1","T2", "T3", "T4", "T1","T2", "T3", "T4")
 
-# Rename column name 
+#Rename column name 
 setnames(N, names(N), Timepoint_names)
 
+#Create Table
 kable(N) %>%
   kable_styling(bootstrap_options = c("striped"), fixed_thead = T) %>%
   add_header_above(c(" " = 1, "DBT Group" = 4, "Control Group" = 4, "FSU Group" = 4, "Totals" = 4)) %>%
