@@ -8,33 +8,28 @@ output: pdf_document
 ```{r setup}
 # Empty Global Environment
 rm(list = ls())
+# Install package
 #install.packages("flextable")
+
+# Load package
 library(dplyr)
 library(data.table)
 library(knitr)
 library(kableExtra)
+library(tidyverse)
 
-
+# Setting for knit the whole document
+# Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 knitr::opts_chunk$set(echo = TRUE, include = FALSE)
-#Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
-
-fsep <- .Platform$file.sep;
-
-# Set the working directory ---------
-# for Bryan
-# setwd("C:/Users/bryan/Documents/GitHub/DataUploadAutomation/Measures/DERS")
-setwd("~/Documents/Min/Coding/DataUploadAutomation/Measures/DERS")
 
 #sentific notation, round up to 3 digits
 options(digits = 3)
-
 ```
 
 ```{r Import}
-# Import File ------------
+# Import File ####
 # Import Pedigree and NDA Structure
 Pedigree <- read.csv("Reference_Pedigree.csv")
-# TODO: check first line 
 NDA_ders <- read.csv("ders01_template.csv")
 
 # Import ders Files
@@ -46,8 +41,6 @@ UPMC_T1_ders <- read.csv(file = 'UPMC_T1_ders.csv', stringsAsFactors = FALSE)
 UPMC_T2_ders <- read.csv(file = 'UPMC_T2_ders.csv', stringsAsFactors = FALSE)
 UPMC_T3_ders <- read.csv(file = 'UPMC_T3_ders.csv', stringsAsFactors = FALSE)
 UPMC_T4_ders <- read.csv(file = 'UPMC_T4_ders.csv', stringsAsFactors = FALSE)
-
-
 ```
 
 ```{r Rename Columns}
@@ -66,7 +59,6 @@ old_UPMC_ders_names <- paste(UPMC_ders_Item, num_items, sep = "_")
 ders <- "ders"
 number_of_survey <- seq(1:36)
 NDA_names <- paste(ders,number_of_survey,sep = '')
-
 ```
 
 ```{r Prep Sheet, warning = F}
@@ -97,13 +89,13 @@ UPMC_T4_ders <- data.frame(c(select(UPMC_T4_ders, c(FamID = Q1.2, contains("ders
 # Bind 4 time points
 DERS_Qualtrics <- bind_rows(UO_T1_ders, UO_T2_ders, UO_T3_ders, UO_T4_ders, UPMC_T1_ders, UPMC_T2_ders, UPMC_T3_ders, UPMC_T4_ders)
 
-
 # Select revelent pedigree information, rename as needed. (Include GroupAssignment for treatment progross calculation.)
 Pedigree_T1 <- data.frame(c(select(Pedigree, FamID, mother_FamID = FamID_Mother, mom_guid, mother_sex = MomGender, interview_date = Time1Date, interview_age = MomAge_T1, GroupAssignment), Timepoint = "1"))
 Pedigree_T2 <- data.frame(c(select(Pedigree, FamID, mother_FamID = FamID_Mother, mom_guid, mother_sex = MomGender, interview_date = Time2Date, interview_age = MomAge_T2, GroupAssignment), Timepoint = "2"))
 Pedigree_T3 <- data.frame(c(select(Pedigree, FamID, mother_FamID = FamID_Mother, mom_guid, mother_sex = MomGender, interview_date = Time3Date, interview_age = MomAge_T3, GroupAssignment), Timepoint = "3"))
 Pedigree_T4 <- data.frame(c(select(Pedigree, FamID, mother_FamID = FamID_Mother, mom_guid, mother_sex = MomGender, interview_date = Time4Date, interview_age = MomAge_T4, GroupAssignment), Timepoint = "4"))
 
+# Merge 4 pedigree files
 Pedigree_Prep <- bind_rows(Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4)
 
 # Merge Pedigree data to ders Time Points
@@ -114,8 +106,6 @@ DERS_Prep$mother_sex <- "F"
 
 # Clean Global Enviorment 
 rm(UO_T1_ders, UO_T2_ders, UO_T3_ders, UO_T4_ders, UPMC_T1_ders, UPMC_T2_ders, UPMC_T3_ders, UPMC_T4_ders, Pedigree, Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4)
-
-
 ```
 
 ```{r Re-code and Reverse Score}
@@ -129,13 +119,13 @@ DERS_Prep <- DERS_Prep %>%
                         "Almost Always (91-100%)" = 5,.default = NaN)))
 
 # Rename the reverse scored columns 
-
 Reverse_ders_names <- new_ders_names
 revers_ders_cols <- c("srm_ders_1", "srm_ders_2", "srm_ders_6", "srm_ders_7", "srm_ders_8", "srm_ders_10", 
                       "srm_ders_17", "srm_ders_20", "srm_ders_22","srm_ders_24", "srm_ders_34")
 revers_ders_cols <- paste(revers_ders_cols, "r", sep = "")
 Reverse_ders_names[c(1,2,6,7,8,10,17,20,22,24,34)] <- revers_ders_cols
 setnames(DERS_Prep, new_ders_names, Reverse_ders_names)
+
 # Reverse score certain items
 DERS_Prep[,revers_ders_cols] = 6 - DERS_Prep[,revers_ders_cols]
 
@@ -149,56 +139,54 @@ DERS_Prep <- DERS_Prep %>%
 
 
 ```{r Colculated Columns}
-# Craeted calcualted columns
-awareness <- colnames(select(DERS_Prep, c("srm_ders_2r", "srm_ders_6r", "srm_ders_8r", "srm_ders_10r", 
-                                                                          "srm_ders_17r", "srm_ders_34r")))
+# Calculated awareness
+DERS_Prep <- add_column(DERS_Prep, 
+               DERS_awareness_raw = rowSums(DERS_Prep[, 
+               c("srm_ders_2r", "srm_ders_6r", "srm_ders_8r", 
+                 "srm_ders_10r","srm_ders_17r", "srm_ders_34r")], 
+                  na.rm = T), .after = "srm_ders_36")
 
-clarity <- colnames(select(DERS_Prep, c("srm_ders_1r", "srm_ders_4", "srm_ders_5", "srm_ders_7r",
-                                                                        "srm_ders_9")))
+# Calculated clarity
+DERS_Prep <- add_column(DERS_Prep, 
+               DERS_clarity_raw = rowSums(DERS_Prep[, 
+               c("srm_ders_1r", "srm_ders_4", "srm_ders_5", 
+                 "srm_ders_7r", "srm_ders_9")], na.rm = T), 
+               .after = "DERS_awareness_raw")
 
-goals <- colnames(select(DERS_Prep, c("srm_ders_13", "srm_ders_18", "srm_ders_20r", "srm_ders_26",
-                                                                      "srm_ders_33")))
+# Calculated goals 
+DERS_Prep <- add_column(DERS_Prep, 
+               DERS_goals_raw = rowSums(DERS_Prep[, 
+               c("srm_ders_13", "srm_ders_18", "srm_ders_20r", 
+                 "srm_ders_26", "srm_ders_33")], na.rm = T),
+               .after = "DERS_clarity_raw")
 
-impulse <- colnames(select(DERS_Prep, c("srm_ders_3", "srm_ders_14", "srm_ders_19", "srm_ders_24r", 
-                                                                        "srm_ders_27", "srm_ders_32")))
+# Calculated impulse 
+DERS_Prep <- add_column(DERS_Prep, 
+               DERS_impulse_raw = rowSums(DERS_Prep[, 
+               c("srm_ders_3", "srm_ders_14", "srm_ders_19", 
+                 "srm_ders_24r", "srm_ders_27", "srm_ders_32")],
+               na.rm = T), .after = "DERS_goals_raw")
 
-nonacceptance <- colnames(select(DERS_Prep, c("srm_ders_11", "srm_ders_12", "srm_ders_21", "srm_ders_23",
-                                                                              "srm_ders_25", "srm_ders_29")))
+# Calculated enonacceptance
+DERS_Prep <- add_column(DERS_Prep, 
+               DERS_nonacceptance_raw = rowSums(DERS_Prep[, 
+               c("srm_ders_11", "srm_ders_12", "srm_ders_21", 
+                 "srm_ders_23", "srm_ders_25", "srm_ders_29")],
+               na.rm = T), .after = "DERS_impulse_raw")
 
-strategies <- colnames(select(DERS_Prep, c("srm_ders_15", "srm_ders_16", "srm_ders_22r", "srm_ders_28",
-                                                                           "srm_ders_30", "srm_ders_31", "srm_ders_35", "srm_ders_36")))
-total <- colnames(select(DERS_Prep, c("srm_ders_1r", "srm_ders_2r", "srm_ders_3", "srm_ders_4", "srm_ders_5", 
-                                                                      "srm_ders_6r", "srm_ders_7r", "srm_ders_8r", "srm_ders_9", "srm_ders_10r",
-                                                                      "srm_ders_11", "srm_ders_12", "srm_ders_13", "srm_ders_14", "srm_ders_15",
-                                                                      "srm_ders_16", "srm_ders_17r", "srm_ders_18", "srm_ders_19", "srm_ders_20r", 
-                                                                      "srm_ders_21", "srm_ders_22r", "srm_ders_23", "srm_ders_24r", "srm_ders_25", 
-                                                                      "srm_ders_26", "srm_ders_27", "srm_ders_28", "srm_ders_29", "srm_ders_30", 
-                                                                      "srm_ders_31", "srm_ders_32", "srm_ders_33", "srm_ders_34r", "srm_ders_35", 
-                                                                      "srm_ders_36")))
+# Calculated strategies 
+DERS_Prep <- add_column(DERS_Prep, 
+               DERS_strategies_raw = rowSums(DERS_Prep[, 
+               c("srm_ders_15", "srm_ders_16", "srm_ders_22r", 
+                 "srm_ders_28", "srm_ders_30", "srm_ders_31", 
+                 "srm_ders_35", "srm_ders_36")], na.rm = T), 
+               .after = "DERS_nonacceptance_raw")
 
-# Calculated raw mean --------------------------------------------------------------------------------------------------
-# Calculated Columns
-DERS_Prep$DERS_awareness_raw <- rowMeans(DERS_Prep[,awareness], na.rm = TRUE)
-DERS_Prep$DERS_clarity_raw <- rowMeans(DERS_Prep[,clarity], na.rm = TRUE)
-DERS_Prep$DERS_goals_raw <- rowMeans(DERS_Prep[,goals], na.rm = TRUE)
-DERS_Prep$DERS_impulse_raw <- rowMeans(DERS_Prep[,impulse], na.rm = TRUE)
-DERS_Prep$DERS_nonacceptance_raw <- rowMeans(DERS_Prep[,nonacceptance], na.rm = TRUE)
-DERS_Prep$DERS_strategies_raw <- rowMeans(DERS_Prep[,strategies], na.rm = TRUE)
-DERS_Prep$DERS_total_raw <- rowMeans(DERS_Prep[,total], na.rm = TRUE)
-
-# Mean with 67% rule --------------------------------------------------------------------------------------------------
+# Calculated total 
+DERS_Prep <- add_column(DERS_Prep, DERS_total_raw = rowSums(select(DERS_Prep,c(starts_with("srm"))), na.rm = T), .after = "DERS_strategies_raw")
+# Mean with 67% rule ####
 # Check NA percentage
 DERS_Prep$NACheck <- rowSums(is.na(select(DERS_Prep, starts_with("srm"))))/ncol(dplyr::select(DERS_Prep, starts_with("srm")))
-
-# New mean with 67% rule
-DERS_Prep$DERS_awareness_cor <- ifelse(DERS_Prep$NACheck < 0.67, DERS_Prep$DERS_awareness_raw, "NA")
-DERS_Prep$DERS_clarity_cor <- ifelse(DERS_Prep$NACheck < 0.67, DERS_Prep$DERS_clarity_raw, "NA")
-DERS_Prep$DERS_goals_cor <- ifelse(DERS_Prep$NACheck < 0.67, DERS_Prep$DERS_goals_raw, "NA")
-DERS_Prep$DERS_impulsecor <- ifelse(DERS_Prep$NACheck < 0.67, DERS_Prep$DERS_impulse_raw, "NA")
-DERS_Prep$DERS_nonacceptance_cor <- ifelse(DERS_Prep$NACheck < 0.67, DERS_Prep$DERS_nonacceptance_raw, "NA")
-DERS_Prep$DERS_strategies_cor <- ifelse(DERS_Prep$NACheck < 0.67, DERS_Prep$DERS_strategies_raw,  "NA")
-DERS_Prep$DERS_total_cor <- ifelse(DERS_Prep$NACheck < 0.67, DERS_Prep$DERS_total_raw, "NA")
-
 ```
 
 ```{r NDA Sheet}
@@ -211,6 +199,7 @@ setnames(NDA_ders_Prep, Reverse_ders_names, NDA_names)
 
 # Recreate first line in orignial NDA file
 # Make a empty row, with same number of column in NDA_ders, as first line of NDA sheet
+NDA_ders[1,] <- NA
 # ncol(NDA_ders)  is number of columns in NDA_ders
 NDA_ders <- bind_rows(NDA_ders,NDA_ders_Prep)
 
@@ -223,8 +212,7 @@ first_line[,1] <- "ders"
 # assign the second cell in first_lineas ders
 first_line[,2] <- "1"
 
-
-# NDA output ---------
+# NDA output ####
 # Create a new file in folder called ders.csv, and put first line into this file
 # ders.csv file will be saved into same folder as current r script
 write.table(first_line, file = "ders.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
@@ -247,8 +235,6 @@ Progress$site <- ifelse(startsWith(ID, "9"),"UO","UPMC")
 DERS_DROP <- Progress[Progress$NACheck > 0.67, ]
 Progress67 <- Progress[Progress$NACheck <= 0.67, ]
 Progress100 <- Progress[Progress$NACheck == 0, ]
-
-
 ```
 
 ```{r Original Table,  echo=FALSE}
@@ -262,14 +248,10 @@ Both_site_Mean <- Progress %>%
   group_by(GroupAssignment, Timepoint) %>%
   summarise(BothSite_DERS_Mean = mean(Row_sum,na.rm = T), BothSite_Original_N = n())
 
-## Reorder dataset base on GroupAssignment
-#Progress_Mean <- Progress_Mean[order(GroupAssignment),] 
-
 # Select only UO Mean
 UO <- Progress_Mean[Progress_Mean$site == "UO",]
 # Select only UPMC Mean 
 UPMC <- Progress_Mean[Progress_Mean$site == "UPMC",]
-
 
 # Change GroupMean Column names according to site
 colnames(UO)[colnames(UO) == "GroupMean"] = "UO_DERS"
@@ -277,19 +259,14 @@ colnames(UO)[colnames(UO) == "N_Ori"] = "UO_DERS_Original_N"
 colnames(UPMC)[colnames(UPMC) == "GroupMean"] = "UPMC_DERS"
 colnames(UPMC)[colnames(UPMC) == "N_Ori"] = "UPMC_DERS_Original_N"
 
-
 # Combine UO,UPMC and both_site data 
-Mean_Table <- data.frame(UO[,c("UO_DERS")],UPMC[,"UPMC_DERS"],Both_site_Mean[,c("BothSite_DERS_Mean", "BothSite_N", "GroupAssignment")])
-
-# Remove GroupAssignment column 
-# Mean_Table <- select(Mean_Table, -c(GroupAssignment))
+Mean_Table <- data.frame(UO[,c("UO_DERS")],UPMC[,"UPMC_DERS"],Both_site_Mean[,c("BothSite_DERS_Mean", "BothSite_Original_N", "GroupAssignment")])
 
 # Convert Mean_Table, make original column as row
 Mean_Table <- t(Mean_Table)
 
 # Make Mean_Table as a data.frame
 Mean_Table <- data.frame(Mean_Table)
-
 
 # Reorder Mean_Table
 Mean_Table <- Mean_Table[c(5,6,7,8,9,10,11,12,1,2,3,4)]
@@ -300,16 +277,14 @@ Timepoint_names <- c("T1","T2", "T3", "T4","T1","T2", "T3", "T4","T1","T2", "T3"
 # Rename column name 
 setnames(Mean_Table, names(Mean_Table), Timepoint_names)
 
-# Table output ----------
+# Table output ####
 # Add a header 
-
 kable(Mean_Table) %>%
   kable_styling(bootstrap_options = c("striped")) %>%
   add_header_above(c(" " = 1, "Controls Group means" = 4, "FSU Group means" = 4, "DBT Group means" = 4)) %>%
   add_header_above(c("DERS Mean Table (All Data)" = 13)) %>%
   column_spec(c(1,5,9), border_right = T, include_thead = T) %>%
   column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
- 
 ```
 
 ```{r 67% Table,  echo=FALSE}
@@ -323,14 +298,10 @@ Both_site_Mean_67 <- Progress67 %>%
   group_by(GroupAssignment, Timepoint) %>%
   summarise(BothSite_DERS_Mean67 = mean(Row_sum,na.rm = T), BothSite_DERS_67_N = n())
 
-## Reorder dataset base on GroupAssignment
-#Progress_Mean <- Progress_Mean[order(GroupAssignment),] 
-
 # Select only UO Mean
 UO67 <- Progress_Mean_67[Progress_Mean_67$site == "UO",]
 # Select only UPMC Mean 
 UPMC67 <- Progress_Mean_67[Progress_Mean_67$site == "UPMC",]
-
 
 # Change GroupMean Column names according to site
 colnames(UO67)[colnames(UO67) == "GroupMean"] = "UO_DERS67"
@@ -338,12 +309,8 @@ colnames(UO67)[colnames(UO67) == "N_67"] = "UO_DERS_67_N"
 colnames(UPMC67)[colnames(UPMC67) == "GroupMean"] = "UPMC_DERS67"
 colnames(UPMC67)[colnames(UPMC67) == "N_67"] = "UPMC_DERS_67_N"
 
-
 # Combine UO,UPMC and both_site data 
 Mean_Table67 <- data.frame(UO67[,c("UO_DERS67")],UPMC67[,"UPMC_DERS67"],Both_site_Mean_67[,c("BothSite_DERS_Mean67","BothSite_DERS_67_N", "GroupAssignment")])
-
-# Remove GroupAssignment column 
-# Mean_Table <- select(Mean_Table, -c(GroupAssignment))
 
 # Convert Mean_Table, make original column as row
 Mean_Table67 <- t(Mean_Table67)
@@ -360,7 +327,7 @@ Timepoint_names <- c("T1","T2", "T3", "T4","T1","T2", "T3", "T4","T1","T2", "T3"
 # Rename column name 
 setnames(Mean_Table67, names(Mean_Table67), Timepoint_names)
 
-# Table output ----------
+# Table output ####
 # Add a header 
 kable(Mean_Table67) %>%
   kable_styling(bootstrap_options = c("striped")) %>%
@@ -368,7 +335,6 @@ kable(Mean_Table67) %>%
   add_header_above(c("DERS Mean Table" = 13)) %>%
   column_spec(c(1,5,9), border_right = T, include_thead = T) %>%
   column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
- 
 ```
 
 ```{r 100% Table,  echo=FALSE}
@@ -382,14 +348,10 @@ Both_site_Mean_100 <- Progress100 %>%
   group_by(GroupAssignment, Timepoint) %>%
   summarise(BothSite_DERS_Mean100 = mean(Row_sum,na.rm = T), BothSite_DERS_100_N = n())
 
-## Reorder dataset base on GroupAssignment
-#Progress_Mean <- Progress_Mean[order(GroupAssignment),] 
-
 # Select only UO Mean
 UO100 <- Progress_Mean_100[Progress_Mean_100$site == "UO",]
 # Select only UPMC Mean 
 UPMC100 <- Progress_Mean_100[Progress_Mean_100$site == "UPMC",]
-
 
 # Change GroupMean Column names according to site
 colnames(UO100)[colnames(UO100) == "GroupMean"] = "UO_DERS100"
@@ -397,12 +359,8 @@ colnames(UO100)[colnames(UO100) == "N_100"] = "UO_DERS_100_N"
 colnames(UPMC100)[colnames(UPMC100) == "GroupMean"] = "UPMC_DERS100"
 colnames(UPMC100)[colnames(UPMC100) == "N_100"] = "UPMC_DERS_100_N"
 
-
 # Combine UO,UPMC and both_site data 
 Mean_Table100 <- data.frame(UO100[,c("UO_DERS100")],UPMC100[,"UPMC_DERS100"],Both_site_Mean_100[,c("BothSite_DERS_Mean100","BothSite_DERS_100_N", "GroupAssignment")])
-
-# Remove GroupAssignment column 
-# Mean_Table <- select(Mean_Table, -c(GroupAssignment))
 
 # Convert Mean_Table, make original column as row
 Mean_Table100 <- t(Mean_Table100)
@@ -419,7 +377,7 @@ Timepoint_names <- c("T1","T2", "T3", "T4","T1","T2", "T3", "T4","T1","T2", "T3"
 # Rename column name 
 setnames(Mean_Table100, names(Mean_Table100), Timepoint_names)
 
-# Table output ----------
+# Table output ####
 # Add a header 
 kable(Mean_Table100) %>%
   kable_styling(bootstrap_options = c("striped")) %>%
@@ -427,12 +385,10 @@ kable(Mean_Table100) %>%
   add_header_above(c("DERS Mean Table" = 13)) %>%
   column_spec(c(1,5,9), border_right = T, include_thead = T) %>%
   column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
- 
 ```
 
 ```{r N table}
 # Create N table, GroupAssignment and Timepoint are dupliced here, just checking it's align
-
 N <- data.frame(UO[, c("Timepoint", "UO_DERS_Original_N", "GroupAssignment")],
                 UO67[, c("Timepoint", "UO_DERS_67_N", "GroupAssignment")],
                 UO100[, c("Timepoint", "UO_DERS_100_N", "GroupAssignment")],
@@ -445,7 +401,6 @@ N <- data.frame(UO[, c("Timepoint", "UO_DERS_Original_N", "GroupAssignment")],
                 )
 # Remove dupliced column 
 N <- N[,-c(1,3,4,6,7,9,10,12,13,15,16,18,19,21,22,24,25,27)]
-
 
 # Convert data frame to numeric
 N <- as.data.frame(sapply(N, as.numeric))
@@ -465,6 +420,7 @@ Timepoint_names <- c("T1","T2", "T3", "T4","T1","T2", "T3", "T4","T1","T2", "T3"
 # Rename column name 
 setnames(N, names(N), Timepoint_names)
 
+# Create N table 
 kable(N) %>%
   kable_styling(bootstrap_options = c("striped"), fixed_thead = T) %>%
   add_header_above(c(" " = 1, "DBT Group" = 4, "Control Group" = 4, "FSU Group" = 4, "Totals" = 4)) %>%
@@ -472,6 +428,97 @@ kable(N) %>%
   column_spec(c(1,5,9,13), border_right = T, include_thead = T) %>%
   column_spec(2:17, width_min = "2cm", width_max = "2cm") %>%
   row_spec(7:9, background = "#d3d3d3")
-  
+```
 
+```{r }
+# Original data ####
+# Original by site
+N_ori <- Progress %>%
+  group_by(Timepoint, site, GroupAssignment) %>% 
+  summarise(n_ori = n())
+
+# Original both site 
+N_ori_BothSite <- Progress %>%
+  group_by(Timepoint, GroupAssignment) %>% 
+  summarise(BothSite_Original_N = n())
+
+# 67% data ####
+# 67% by site 
+N67 <- Progress67 %>%
+  group_by(Timepoint, site, GroupAssignment) %>% 
+  summarise(n_67 = n())
+
+# 67% both site 
+N67_BothSite <- Progress67 %>%
+  group_by(Timepoint, GroupAssignment) %>% 
+  summarise(BothSite_67_N = n())
+
+# 100% data ####
+N100 <- Progress100 %>%
+  group_by(Timepoint, site, GroupAssignment) %>% 
+  summarise(n_100 = n())
+
+# 100% both site 
+N100_BothSite <- Progress100 %>%
+  group_by(Timepoint, GroupAssignment) %>% 
+  summarise(BothSite_100_N = n())
+            
+# N table ####
+# combine all three n table 
+N_bySite <- merge(N_ori, N67, all = T)
+N_bySite <- merge(N_bySite,N100, all = T)
+# Bind both site data 
+BothSite_N <- merge(N_ori_BothSite, N67_BothSite, all = T)
+BothSite_N <- merge(BothSite_N, N100_BothSite, all = T)
+
+# Seperate UO and UPMC data 
+UO_N <- data.frame(N_bySite[N_bySite$site == "UO",])
+UPMC_N <- data.frame(N_bySite[N_bySite$site == "UPMC",])
+
+# Change column names 
+colnames(UO_N)[colnames(UO_N) == "n_ori"] = "UO_CCNES_Original_N"
+colnames(UO_N)[colnames(UO_N) == "n_67"] = "UO_CCNES_67_N"
+colnames(UO_N)[colnames(UO_N) == "n_100"] = "UO_CCNES_100_N"
+
+colnames(UPMC_N)[colnames(UPMC_N) == "n_ori"] = "UPMC_CCNES_Original_N"
+colnames(UPMC_N)[colnames(UPMC_N) == "n_67"] = "UPMC_CCNES_67_N"
+colnames(UPMC_N)[colnames(UPMC_N) == "n_100"] = "UPMC_CCNES_100_N"
+
+# Create N table (Selecting columns from UO_N, UPMC_N, BothSite_N) GroupAssignment included twice here, just checking it's align
+N <- data.frame(UO_N[, c("Timepoint","UO_CCNES_Original_N", "UO_CCNES_67_N", "UO_CCNES_100_N")], 
+                UPMC_N[, c("UPMC_CCNES_Original_N", "UPMC_CCNES_67_N", "UPMC_CCNES_100_N", "GroupAssignment")],
+                BothSite_N[, c("BothSite_Original_N", "BothSite_67_N", "BothSite_100_N", "GroupAssignment")])
+
+# Reorder N table base on GroupAssignment 
+N <- N[order(N$GroupAssignment),]
+
+# Convert data frame to numeric
+N <- as.data.frame(sapply(N, as.numeric))
+
+# Transfer N table from Horizontal to Vertical
+N <- data.frame(t(N))
+
+# Calculate Total N 
+N$T1 <- rowSums(N[,c(1,5,9)], na.rm = T)
+N$T2 <- rowSums(N[,c(2,6,10)], na.rm = T)
+N$T3 <- rowSums(N[,c(3,7,11)], na.rm = T)
+N$T4 <- rowSums(N[,c(4,8,12)], na.rm = T)
+
+# Timepoint names 
+Timepoint_names <- c("T1","T2", "T3", "T4","T1","T2", "T3", "T4","T1","T2", "T3", "T4", "T1","T2", "T3", "T4")
+
+# Rename column name 
+setnames(N, names(N), Timepoint_names)
+
+# Remove un-needed column
+N <- N[-c(1,8,12),]
+
+# N table output
+kable(N) %>%
+  kable_styling(bootstrap_options = c("striped"), fixed_thead = T) %>%
+  add_header_above(c(" " = 1, "DBT Group" = 4, "Control Group" = 4, "FSU Group" = 4, "Totals" = 4)) %>%
+  add_header_above(c("Participant Numbers" = 17)) %>%
+  column_spec(c(1,5,9,13), border_right = T, include_thead = T) %>%
+  column_spec(2:17, width_min = "2cm", width_max = "2cm") %>%
+  row_spec(7:9, background = "#d3d3d3")
 ```
