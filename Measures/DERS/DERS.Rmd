@@ -232,7 +232,7 @@ ID <- c(as.character(Progress$FamID))
 Progress$site <- ifelse(startsWith(ID, "9"),"UO","UPMC")
 
 # Drop people who are less than 67% 
-DERS_DROP <- Progress[Progress$NACheck > 0.67, ]
+DERS_Drop <- Progress[Progress$NACheck > 0.67, ]
 Progress67 <- Progress[Progress$NACheck <= 0.67, ]
 Progress100 <- Progress[Progress$NACheck == 0, ]
 ```
