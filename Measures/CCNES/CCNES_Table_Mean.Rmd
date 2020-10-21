@@ -77,7 +77,7 @@ for (i in sprintf("Q8.%d",2:13)) {
   odd_UPMC_CCNES_names2 <- c(odd_UPMC_CCNES_names2, Name)
 }
 
-# CCNES prep Column Names ####
+# CCNES Prep Column Names ####
 new_CCNES_names <- sprintf("srm_CCNES_%02d",1:72)
 
 # NDA structure Column Names ####
@@ -128,10 +128,10 @@ Pedigree_T4 <- data.frame(c(select(Pedigree, FamID, mother_FamID = FamID_Mother,
 Pedigree_Prep <- bind_rows(Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4)
 
 # Merge CCNES data with pedigree
-CCNES_PREP <- merge(CCNES_Qualtrics, Pedigree_Prep)
+CCNES_Prep <- merge(CCNES_Qualtrics, Pedigree_Prep)
 
 # Change gender to F instead of False
-CCNES_PREP$mother_sex <- "F"
+CCNES_Prep$mother_sex <- "F"
 
 # Clean global Environment
 rm(UO_CCNES_T1, UO_CCNES_T2, UO_CCNES_T3, UO_CCNES_T4, UPMC_CCNES_T1, UPMC_CCNES_T2, UPMC_CCNES_T3, UPMC_CCNES_T4,Pedigree,Pedigree_T1,Pedigree_T2,Pedigree_T3,Pedigree_T4)
@@ -139,7 +139,7 @@ rm(UO_CCNES_T1, UO_CCNES_T2, UO_CCNES_T3, UO_CCNES_T4, UPMC_CCNES_T1, UPMC_CCNES
 
 ```{r Re-code and Reverse Score,  echo=FALSE}
 # Re-code the strings of text to numbers 
-CCNES_PREP <- CCNES_PREP %>% 
+CCNES_Prep <- CCNES_Prep %>% 
   mutate_at(new_CCNES_names,
             funs(recode(., "1 - Very Unlikely" = 1, 
                         '1' = 1,
@@ -155,10 +155,10 @@ CCNES_PREP <- CCNES_PREP %>%
 # Adding r at end of variable which needed to be reversed
 Reverse_CCNES_names <- new_CCNES_names
 Reverse_CCNES_names[c(7,39,45,55)] <- paste(new_CCNES_names[c(7,39,45,55)],"r", sep = "")
-setnames(CCNES_PREP, new_CCNES_names, Reverse_CCNES_names)
+setnames(CCNES_Prep, new_CCNES_names, Reverse_CCNES_names)
 
 # Reversed Scored
-CCNES_PREP <- CCNES_PREP %>% 
+CCNES_Prep <- CCNES_Prep %>% 
   mutate_at(c("srm_CCNES_07r", "srm_CCNES_39r", "srm_CCNES_45r", "srm_CCNES_55r"),
             funs(recode(., "1" = 7, 
                         '2' = 6,
@@ -169,7 +169,7 @@ CCNES_PREP <- CCNES_PREP %>%
                         '7' = 1, defaut = NaN)))
 
 # Recode Group Assignment
-CCNES_PREP <- CCNES_PREP %>% 
+CCNES_Prep <- CCNES_Prep %>% 
   mutate_at(c("GroupAssignment"),
             funs(recode(., "Assigned Group 3 (HC)" = "Healthy", 
                         'Assigned Group 2 (FSU)' = "NO DBT",
@@ -178,8 +178,8 @@ CCNES_PREP <- CCNES_PREP %>%
 
 ```{r Colculated Columns,  echo=FALSE}
 # Creating CCNES_DR_raw column
-CCNES_PREP <- add_column(CCNES_PREP, CCNES_DR_raw =
-                           rowSums(CCNES_PREP[, c("srm_CCNES_02", 
+CCNES_Prep <- add_column(CCNES_Prep, CCNES_DR_raw =
+                           rowSums(CCNES_Prep[, c("srm_CCNES_02", 
                             "srm_CCNES_07r", "srm_CCNES_13",  "srm_CCNES_22", 
                             "srm_CCNES_29", "srm_CCNES_33", "srm_CCNES_39r", 
                             "srm_CCNES_45r", "srm_CCNES_50", "srm_CCNES_55r", 
@@ -187,8 +187,8 @@ CCNES_PREP <- add_column(CCNES_PREP, CCNES_DR_raw =
                             .after = "srm_CCNES_72")
 
 # Creating CCNES_PR_raw column
-CCNES_PREP <- add_column(CCNES_PREP, CCNES_PR_raw = 
-                           rowSums(CCNES_PREP[, c("srm_CCNES_01",
+CCNES_Prep <- add_column(CCNES_Prep, CCNES_PR_raw = 
+                           rowSums(CCNES_Prep[, c("srm_CCNES_01",
                             "srm_CCNES_12", "srm_CCNES_18", "srm_CCNES_19", 
                             "srm_CCNES_28", "srm_CCNES_34", "srm_CCNES_41", 
                             "srm_CCNES_47", "srm_CCNES_53", "srm_CCNES_56", 
@@ -196,8 +196,8 @@ CCNES_PREP <- add_column(CCNES_PREP, CCNES_PR_raw =
                             .after = "CCNES_DR_raw")
 
 # Creating CCNES_EE_raw column
-CCNES_PREP <- add_column(CCNES_PREP, CCNES_EE_raw = 
-                           rowSums(CCNES_PREP[, c("srm_CCNES_05", 
+CCNES_Prep <- add_column(CCNES_Prep, CCNES_EE_raw = 
+                           rowSums(CCNES_Prep[, c("srm_CCNES_05", 
                             "srm_CCNES_11", "srm_CCNES_17", "srm_CCNES_20", 
                             "srm_CCNES_30", "srm_CCNES_35", "srm_CCNES_42", 
                             "srm_CCNES_43", "srm_CCNES_49", "srm_CCNES_57", 
@@ -205,8 +205,8 @@ CCNES_PREP <- add_column(CCNES_PREP, CCNES_EE_raw =
                             .after = "CCNES_PR_raw")
 
 # Creating CCNES_EFR_raw column
-CCNES_PREP <- add_column(CCNES_PREP, CCNES_EFR_raw = 
-                           rowSums(CCNES_PREP[, c("srm_CCNES_06", 
+CCNES_Prep <- add_column(CCNES_Prep, CCNES_EFR_raw = 
+                           rowSums(CCNES_Prep[, c("srm_CCNES_06", 
                            "srm_CCNES_08", "srm_CCNES_16", "srm_CCNES_23", 
                            "srm_CCNES_25", "srm_CCNES_31", "srm_CCNES_38", 
                            "srm_CCNES_48", "srm_CCNES_54", "srm_CCNES_58", 
@@ -214,8 +214,8 @@ CCNES_PREP <- add_column(CCNES_PREP, CCNES_EFR_raw =
                            .after = "CCNES_EE_raw")
 
 # Creating CCNES_PFR_raw column
-CCNES_PREP <- add_column(CCNES_PREP, CCNES_PFR_raw = 
-                           rowSums(CCNES_PREP[, c("srm_CCNES_03", 
+CCNES_Prep <- add_column(CCNES_Prep, CCNES_PFR_raw = 
+                           rowSums(CCNES_Prep[, c("srm_CCNES_03", 
                            "srm_CCNES_10", "srm_CCNES_15", "srm_CCNES_24", 
                            "srm_CCNES_26", "srm_CCNES_36", "srm_CCNES_37", 
                            "srm_CCNES_44", "srm_CCNES_52", "srm_CCNES_59", 
@@ -223,8 +223,8 @@ CCNES_PREP <- add_column(CCNES_PREP, CCNES_PFR_raw =
                            .after = "CCNES_EFR_raw")
 
 # Creating CCNES_MR_raw column
-CCNES_PREP <- add_column(CCNES_PREP, CCNES_MR_raw = 
-                           rowSums(CCNES_PREP[, c("srm_CCNES_04", 
+CCNES_Prep <- add_column(CCNES_Prep, CCNES_MR_raw = 
+                           rowSums(CCNES_Prep[, c("srm_CCNES_04", 
                            "srm_CCNES_09", "srm_CCNES_14", "srm_CCNES_21", 
                            "srm_CCNES_27", "srm_CCNES_32",  "srm_CCNES_40", 
                            "srm_CCNES_46", "srm_CCNES_51",  "srm_CCNES_60", 
@@ -233,14 +233,14 @@ CCNES_PREP <- add_column(CCNES_PREP, CCNES_MR_raw =
 
 # Mean with 67% rule ####
 # Check NA percentage   0:100%data     1 0% data 
-CCNES_PREP$NACheck <- rowSums(is.na(select(CCNES_PREP, starts_with("srm"))))/ncol(dplyr::select(CCNES_PREP, starts_with("srm")))
+CCNES_Prep$NACheck <- rowSums(is.na(select(CCNES_Prep, starts_with("srm"))))/ncol(dplyr::select(CCNES_Prep, starts_with("srm")))
 ```
 
 ```{r NDA Sheet,  echo=FALSE}
-# Create NDA prep sheet, select all the needed columns from prep sheet
-NDA_CCNES_Prep <- select(CCNES_PREP, c(subjectkey = mom_guid, src_subject_id = mother_FamID, sex = mother_sex ,interview_age, interview_date, starts_with("srm")))
+# Create NDA Prep sheet, select all the needed columns from Prep sheet
+NDA_CCNES_Prep <- select(CCNES_Prep, c(subjectkey = mom_guid, src_subject_id = mother_FamID, sex = mother_sex ,interview_age, interview_date, starts_with("srm")))
                          
-# Combine NDA and prep sheet
+# Combine NDA and Prep sheet
 # Make sure put original NDA structure at first, because the order of the new sheet will be the order of the first item in bind_rows function
 setnames(NDA_CCNES_Prep, Reverse_CCNES_names, NDA_Names)
 
@@ -277,11 +277,11 @@ rm(first_line)
 
 ```{r Table Preparation, include = F}
 # Select needed column
-Progress <- select(CCNES_PREP, c(FamID, GroupAssignment, Timepoint, starts_with("srm"), NACheck))
+Progress <- select(CCNES_Prep, c(FamID, GroupAssignment, Timepoint, starts_with("srm"), NACheck))
 
 # Calculate row mean for each individual  
-Progress$Supported_Mean <- rowMeans(CCNES_PREP[,c("CCNES_EE_raw","CCNES_EFR_raw", "CCNES_PFR_raw")], na.rm = TRUE)
-Progress$Unsupproted_Mean <- rowMeans(CCNES_PREP[,c("CCNES_DR_raw", "CCNES_PR_raw", "CCNES_MR_raw")], na.rm = TRUE)
+Progress$Supported_Mean <- rowMeans(CCNES_Prep[,c("CCNES_EE_raw","CCNES_EFR_raw", "CCNES_PFR_raw")], na.rm = TRUE)
+Progress$Unsupproted_Mean <- rowMeans(CCNES_Prep[,c("CCNES_DR_raw", "CCNES_PR_raw", "CCNES_MR_raw")], na.rm = TRUE)
 
 # Change FamId as character and assign to ID variable 
 ID <- c(as.character(Progress$FamID))
