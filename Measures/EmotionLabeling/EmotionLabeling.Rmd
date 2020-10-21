@@ -19,6 +19,7 @@ Emotion_Labeling_REDCAP <- read.csv("Redcap_Data.csv")
 Pedigree <- read.csv("Reference_Pedigree.csv")
 Emotion_Labeling_NDA <- read.csv("elt01_template.csv", skip=1)
 ```
+
 ```{r Rename Columns}
 #rename elt_exp names
 eltpart1_exp <- "oc_elt_exp"
@@ -34,7 +35,6 @@ new_eltpart2_names <- paste(eltpart2_rec, num_items, sep = "_")
 eltpart1_exp <- "eltpart1_exp"
 num_items <- seq (1:8)
 old_eltpart1_names <- paste(eltpart1_exp, num_items, sep = "")
-
 setnames(Emotion_Labeling_REDCAP, old_eltpart1_names, new_eltpart1_names)
 
 #replace old eltpart2 names with new names
@@ -69,28 +69,28 @@ EL_PREP <- merge(Pedigree_Prep, Emotion_Labeling_REDCAP,by = c("timepoint","Fam_
 ```
 
 ```{r Calculated Columns}
+#add calculated colums to dataframe
 exp <- colnames(select(EL_PREP, c("oc_elt_exp_2", "oc_elt_exp_4", "oc_elt_exp_6", "oc_elt_exp_8")))
 
 rec <- colnames(select(EL_PREP, c("oc_elt_rec_1", "oc_elt_rec_2", "oc_elt_rec_3", "oc_elt_rec_4")))
-
+#add mean coulumns 
 EL_PREP$oc_elt_exp_total <- rowMeans(EL_PREP[,exp], na.rm = TRUE)
 EL_PREP$oc_elt_rec_total <- rowMeans(EL_PREP[,rec], na.rm = TRUE)
 
-
+#add NA check column
 EL_PREP$NACheck <- rowSums(is.na(select(EL_PREP, starts_with("oc_elt_"))))/ncol(dplyr::select(EL_PREP, starts_with("oc_elt_")))
 
 #EL_PREP$EL_total_cor <- ifelse(EL_PREP$NACheck < 0.67, rowMeans(EL_PREP[,oc_elt_total], na.rm = TRUE), "NA")
 
-#Separate Data into % response 
+#Separate Data into NA% response 
 EL_DROP <- EL_PREP[EL_PREP$NACheck > 0.67, ]
 EL_PREP67 <- EL_PREP[EL_PREP$NACheck <= 0.67, ]
 EL_PREP100 <- EL_PREP[EL_PREP$NACheck <= 0, ]
 ```
 
 ```{r NDA Sheet}
+#Move relevant info to NDA dataframe
 Emotion_Labeling_NDA <- select(EL_PREP67, c(subjectkey = child_guid, src_subject_id = child_famID, interview_date, interview_age, sex = child_sex, visit = timepoint, starts_with("oc_elt_")))
-
-# Replace columns name 
 
 # Recreate first line in orignial NDA file
 Emotion_Labeling_NDA <- bind_rows(Emotion_Labeling_NDA, EL_PREP67)
@@ -98,8 +98,6 @@ first_line <- matrix("", nrow = 1, ncol = ncol(Emotion_Labeling_NDA))
 first_line[,1] <- "el"
 # assign the second cell in first_line as "el"
 first_line[,2] <- "1"
-
-
 
 # NDA output ---------
 # Create a new file in folder called el.csv, and put first line into this file
@@ -109,13 +107,17 @@ write.table(first_line, file = "el01.csv", sep = ",", append = FALSE, quote = FA
 # Append data in Emotion_Ladeling_NDA into el.csv file 
 write.table(Emotion_Labeling_NDA, file = 'el01.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
 ```
+
 ```{r Table 67}
+#Establish 67% Table dataframe and import relevant data
 Progress67 <- select(EL_PREP67, c(Fam_ID, GroupAssignment, timepoint, starts_with("oc_elt_")))
 
-EL_PREP67[,1:23] <- sapply(EL_PREP67[,1:23],as.numeric)
+EL_PREP67[, c(10,12,14,16:23)] <- sapply(EL_PREP67[, c(10,12,14,16:23)] ,as.numeric)
 
 # Calculate row mean for each individual  
-Progress67$Row_Mean <- rowMeans(select(EL_PREP67,c(starts_with("oc_elt"))), na.rm = T)
+#Progress67$Row_Mean <- rowMeans(select(EL_PREP67,c(starts_with("oc_elt"))), na.rm = T)
+
+Progress67$Row_Mean <- rowMeans(select(EL_PREP67, c(10,12,14,16:23)))
 
 # Change FamId as character and assign to ID variable 
 ID <- c(as.character(Progress67$Fam_ID))
@@ -176,10 +178,10 @@ kable(Mean_Table) %>%
 ```{r Table 100}
 Progress100 <- select(EL_PREP100, c(Fam_ID, GroupAssignment, timepoint, starts_with("oc_elt_")))
 
-EL_PREP100[,1:23] <- sapply(EL_PREP100[,1:23],as.numeric)
+EL_PREP100[, c(10,12,14,16:23)] <- sapply(EL_PREP100[, c(10,12,14,16:23)],as.numeric)
 
 # Calculate row mean for each individual  
-Progress100$Row_Mean <- rowMeans(select(EL_PREP100,c(starts_with("oc_elt"))), na.rm = T)
+Progress100$Row_Mean <- rowMeans(select(EL_PREP100, c(10,12,14,16:23)))
 
 # Change FamId as character and assign to ID variable 
 ID <- c(as.character(Progress100$Fam_ID))
@@ -239,12 +241,12 @@ kable(Mean_Table) %>%
 ```{r N's Table}
 #### Original Table ####
 # Original by site
-N_ori <- Progress %>%
+N_ori <- Progress_Mean %>%
   group_by(timepoint, site, GroupAssignment) %>% 
   summarise(n_ori = n())
 
 # Original both site 
-N_ori_BothSite <- Progress %>%
+N_ori_BothSite <-  %>%
   group_by(timepoint, GroupAssignment) %>% 
   summarise(BothSite_Original_N = n())
 

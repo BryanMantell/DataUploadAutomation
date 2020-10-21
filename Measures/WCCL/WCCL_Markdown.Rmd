@@ -268,7 +268,7 @@ Progress100$site <- ifelse(startsWith(ID, "9"),"UO","UPMC")
 #calculate rowmeans for each individual
 Progress100$Row_Mean <- rowMeans(select(WCCL_PREP100,c(starts_with("srm"))), na.rm = T)
 
-# Group by GroupAssissignment and Timepoint, and calculate the Group Mean
+# Group by GroupAssignment and Timepoint, and calculate the Group Mean
 Progress_Mean <- Progress100 %>%
   group_by(GroupAssignment,Timepoint,site) %>%
   summarise(GroupMean = mean(Row_Mean,na.rm = T),count = n())
@@ -342,6 +342,8 @@ N67_BothSite <- WCCL_PREP67 %>%
   summarise(BothSite_67_N = n())
 
 #### 100% table ####
+
+#100% by site
 N100 <- WCCL_PREP100 %>%
   group_by(Timepoint, site, GroupAssignment) %>% 
   summarise(n_100 = n())
@@ -386,7 +388,7 @@ N <- as.data.frame(sapply(N, as.numeric))
 # Transfer N table from Horzontal to Vertical
 N <- data.frame(t(N))
 
-# Colculate Total N 
+# Calculate Total N 
 N$T1 <- rowSums(N[,c(1,5,9)])
 N$T2 <- rowSums(N[,c(2,6,10)])
 N$T3 <- rowSums(N[,c(3,7,11)])

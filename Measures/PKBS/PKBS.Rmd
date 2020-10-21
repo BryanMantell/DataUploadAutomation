@@ -1,6 +1,6 @@
 ---
 title: "PKBS"
-author: START Lab
+author: "Jake Mulleavey""
 output: html_document
 ---
 
@@ -50,7 +50,7 @@ pkbs <- "srm_pkbs"
 num_items <- seq(1:33)
 new_PKBS_names <- paste(pkbs, num_items, sep='_')
 
-#Now make a list of old variables names so that we can replace them with the neww ones
+#Now make a list of old variable names so that we can replace them with the neww ones
 UO_Q407 <- "Q407"
 UO_Q359 <- "Q359"
 UO_Q524 <- "Q524"
@@ -95,7 +95,7 @@ PKBS_T3 <- rbind(UO_T3_PKBS, UPMC_T3_PKBS)
 PKBS_T4 <- rbind(UO_T4_PKBS, UPMC_T4_PKBS)
 
 #Clean up environment
-# rm(UO_T1_PKBS, UO_T2_PKBS, UO_T3_PKBS, UO_T4_PKBS, UPMC_T1_PKBS, UPMC_T2_PKBS, UPMC_T3_PKBS, UPMC_T4_PKBS)
+rm(UO_T1_PKBS, UO_T2_PKBS, UO_T3_PKBS, UO_T4_PKBS, UPMC_T1_PKBS, UPMC_T2_PKBS, UPMC_T3_PKBS, UPMC_T4_PKBS)
 ```
 
 ## Prep Sheet
@@ -134,22 +134,25 @@ PKBS_Prep <- rbind(PKBS_T1, PKBS_T2, PKBS_T3, PKBS_T4)
 #Change gender to F instead of FALSE
 PKBS_Prep$MomGender <- "F"
 
-
 #Clean up environment
-# rm(PKBS_T1, PKBS_T2, PKBS_T3, PKBS_T4)
+rm(PKBS_T1, PKBS_T2, PKBS_T3, PKBS_T4)
 ```
 
-## Re-code and Reverse Score
-```{r Re-code and Reverse Score}
+## Re-code and 67% Rule
+Convert Likert Scale text input into numerical values then create a dataframe to place ID's that do not have 67% of their data present.
+```{r Re-code and 67% Rule}
 #Turn Likert Scale from text string to numeric value
 PKBS_Prep[PKBS_Prep == "Never (0)"] <- 0; PKBS_Prep[PKBS_Prep == "Rarely (1)"] <- 1;
 PKBS_Prep[PKBS_Prep == "Sometimes (2)"] <- 2; PKBS_Prep[PKBS_Prep == "Often (3)"] <- 3;
 
+#Create NA Check column calculating what portion of the data is present
 PKBS_Prep$NACheck <- rowSums(is.na(select(PKBS_Prep, starts_with("srm_pkbs"))))/ncol(dplyr::select(PKBS_Prep, starts_with("srm_pkbs")))
 
+#Create Drop dataframe for anything less than 0.67; Allow anything over to be used for Prep sheet
 PKBS_Drop <- PKBS_Prep[PKBS_Prep$NACheck > 0.67, ]
 PKBS_Prep <- PKBS_Prep[PKBS_Prep$NACheck <= 0.67, ]
 
+#Create dataframe for all ID's that have 100% of their data present
 PKBS_100 <- PKBS_Prep[PKBS_Prep$NACheck == 0, ]
 ```
 
@@ -160,6 +163,15 @@ Create sums column combining each individual measure.
 PKBS_Prep[,8:40] <- sapply(PKBS_Prep[,8:40],as.numeric)
 
 PKBS_Prep  <- add_column(PKBS_Prep, pkbs_total = rowSums(PKBS_Prep[, c("srm_pkbs_1", "srm_pkbs_2","srm_pkbs_3","srm_pkbs_4", "srm_pkbs_5", "srm_pkbs_6",
+                                                                       "srm_pkbs_7", "srm_pkbs_8", "srm_pkbs_9", "srm_pkbs_10", "srm_pkbs_11", "srm_pkbs_12", "srm_pkbs_13",
+                                                                       "srm_pkbs_14", "srm_pkbs_15", "srm_pkbs_16", "srm_pkbs_17", "srm_pkbs_18", "srm_pkbs_19", "srm_pkbs_20",
+                                                                       "srm_pkbs_21", "srm_pkbs_22", "srm_pkbs_23", "srm_pkbs_24", "srm_pkbs_25", "srm_pkbs_26", "srm_pkbs_27",
+                                                                       "srm_pkbs_28", "srm_pkbs_29", "srm_pkbs_30", "srm_pkbs_31", "srm_pkbs_32", "srm_pkbs_33")]),.after = "srm_pkbs_33")
+
+#100% Table Calculated Columns
+PKBS_100[,8:40] <- sapply(PKBS_Prep[,8:40],as.numeric)
+
+PKBS_100  <- add_column(PKBS_100, pkbs_total = rowSums(PKBS_Prep[, c("srm_pkbs_1", "srm_pkbs_2","srm_pkbs_3","srm_pkbs_4", "srm_pkbs_5", "srm_pkbs_6",
                                                                        "srm_pkbs_7", "srm_pkbs_8", "srm_pkbs_9", "srm_pkbs_10", "srm_pkbs_11", "srm_pkbs_12", "srm_pkbs_13",
                                                                        "srm_pkbs_14", "srm_pkbs_15", "srm_pkbs_16", "srm_pkbs_17", "srm_pkbs_18", "srm_pkbs_19", "srm_pkbs_20",
                                                                        "srm_pkbs_21", "srm_pkbs_22", "srm_pkbs_23", "srm_pkbs_24", "srm_pkbs_25", "srm_pkbs_26", "srm_pkbs_27",
@@ -196,7 +208,7 @@ first_line[,2] <- "1"
 
 ## Table
 Create descriptive means table.
-```{r}
+```{r Table}
 library(knitr)
 library(magrittr)
 library(kableExtra)
@@ -230,10 +242,13 @@ Both_site_Mean <- Progress %>%
 
 #Change GroupMean column names according to site
 colnames(UO)[colnames(UO) == "GroupMean"] = "UO_PKBS"
+colnames(UO)[colnames(UO) == "count"] = "UO_PKBS_Original_N"
 colnames(UPMC)[colnames(UPMC) == "GroupMean"] = "UPMC_PKBS"
+colnames(UPMC)[colnames(UPMC) == "count"] = "UPMC_PKBS_Original_N"
+colnames(Both_site_Mean)[colnames(Both_site_Mean) == "n"] = "BothSite_Original_N"
 
 #Combine UO, UPMC, and Both_Site data 
-Mean_Table <- data.frame(UO[,c("UO_PKBS","GroupAssignment")],UPMC[,"UPMC_PKBS"],Both_site_Mean[,c("BothSiteMean_PKBS","n")])
+Mean_Table <- data.frame(UO[,c("UO_PKBS","GroupAssignment")],UPMC[,"UPMC_PKBS"],Both_site_Mean[,c("BothSiteMean_PKBS","BothSite_Original_N")])
 
 #Convert Mean_Table, make original column as row
 Mean_Table <- t(Mean_Table)
@@ -253,10 +268,11 @@ setnames(Mean_Table, names(Mean_Table), Timepoint_names)
 #Add a header
 install.packages(knitr)
 
+#Create Table
 kable(Mean_Table) %>%
   kable_styling(bootstrap_options = "striped", full_width = F) %>%
   add_header_above(c(" " = 1, "Controls means" = 4, "FSU means" = 4, "DBT means" = 4)) %>%
-  add_header_above(c("PKBS Table Means" = 13)) %>%
+  add_header_above(c("PKBS Table Means (67%)" = 13)) %>%
   column_spec(c(1,5,9), border_right = T, include_thead = T) %>%
   column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
 
@@ -266,7 +282,8 @@ kable(Mean_Table) %>%
 
 
 #100% Table
-```{r}
+Create descriptives table for only ID's that have 100% of their data.
+```{r 100% Table}
 #Select necessary columns for means table
 Progress <- select((PKBS_100), c(FamID, GroupAssignment, Timepoint, starts_with("srm"), pkbs_total))
 
@@ -279,27 +296,30 @@ ID <- c(as.character(Progress$FamID))
 #Add Site column to Progress, if ID start with 9 then site is UO, else is UPMC
 Progress$site <- ifelse(startsWith(ID, "9"), "UO", "UPMC")
 
-#Group by GroupAssignment and Timepoint, and calcultae Group Mean
+#Group by GroupAssignment and Timepoint, and calculate Group Mean
 Progress_Mean <- Progress %>%
   group_by(GroupAssignment, Timepoint, site) %>%
   summarise(GroupMean = mean(pkbs_total, na.rm = T), count = n())
 
 #Select only UO Mean
-UO <- Progress_Mean[Progress_Mean$site == "UO",]
+UO100 <- Progress_Mean[Progress_Mean$site == "UO",]
 #Select only UPMC Mean
-UPMC <- Progress_Mean[Progress_Mean$site == "UPMC",]
+UPMC100 <- Progress_Mean[Progress_Mean$site == "UPMC",]
 
 #Calculate mean from both sites
-Both_site_Mean <- Progress %>%
+Both_site_Mean100 <- Progress %>%
   group_by(GroupAssignment, Timepoint) %>%
   summarise(BothSiteMean_PKBS = mean(pkbs_total, na.rm = T), n = sum(count = n()))
 
 #Change GroupMean column names according to site
-colnames(UO)[colnames(UO) == "GroupMean"] = "UO_PKBS"
-colnames(UPMC)[colnames(UPMC) == "GroupMean"] = "UPMC_PKBS"
+colnames(UO100)[colnames(UO100) == "GroupMean"] = "UO_PKBS"
+colnames(UO100)[colnames(UO100) == "count"] = "UO_PKBS_100_N"
+colnames(UPMC100)[colnames(UPMC100) == "GroupMean"] = "UPMC_PKBS"
+colnames(UPMC100)[colnames(UPMC100) == "count"] = "UPMC_PKBS_100_N"
+colnames(Both_site_Mean100)[colnames(Both_site_Mean100) == "n"] = "BothSite_PKBS_100_N"
 
 #Combine UO, UPMC, and Both_Site data 
-Mean_Table <- data.frame(UO[,c("UO_PKBS","GroupAssignment")],UPMC[,"UPMC_PKBS"],Both_site_Mean[,c("BothSiteMean_PKBS","n")])
+Mean_Table <- data.frame(UO100[,c("UO_PKBS","GroupAssignment")],UPMC100[,"UPMC_PKBS"],Both_site_Mean100[,c("BothSiteMean_PKBS","BothSite_PKBS_100_N")])
 
 #Convert Mean_Table, make original column as row
 Mean_Table <- t(Mean_Table)
@@ -319,11 +339,55 @@ setnames(Mean_Table, names(Mean_Table), Timepoint_names)
 #Add a header
 install.packages(knitr)
 
+#Create Table
 kable(Mean_Table) %>%
   kable_styling(bootstrap_options = "striped", full_width = F) %>%
   add_header_above(c(" " = 1, "Controls means" = 4, "FSU means" = 4, "DBT means" = 4)) %>%
-  add_header_above(c("PKBS Table Means" = 13)) %>%
+  add_header_above(c("PKBS Table Means (100%)" = 13)) %>%
   column_spec(c(1,5,9), border_right = T, include_thead = T) %>%
   column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
+```
+##N Table
+Create table for participant numbers.
+```{r N Table}
+#Create N table, GroupAssignment and Timepoint are dupliced here, just checking it's align
+
+N <- data.frame(UO[, c("Timepoint", "UO_PKBS_Original_N", "GroupAssignment")],
+                UO100[, c("Timepoint", "UO_PKBS_100_N", "GroupAssignment")],
+                UPMC[, c("Timepoint", "UPMC_PKBS_Original_N", "GroupAssignment")],
+                UPMC100[, c("Timepoint", "UPMC_PKBS_100_N", "GroupAssignment")],
+                Both_site_Mean[,c("Timepoint", "BothSite_Original_N", "GroupAssignment")],
+                Both_site_Mean100[,c("Timepoint", "BothSite_PKBS_100_N", "GroupAssignment")]
+                )
+#Remove dupliced column 
+N <- N[,-c(1,3,4,6,7,9,10,12,13,15,16,18,19,21,22,24,25,27)]
+
+
+#Convert data frame to numeric
+N <- as.data.frame(sapply(N, as.numeric))
+
+#Transfer N table from Horzontal to Vertical
+N <- data.frame(t(N))
+
+#Calculate Total N 
+N$T1 <- rowSums(N[,c(1,5,9)])
+N$T2 <- rowSums(N[,c(2,6,10)])
+N$T3 <- rowSums(N[,c(3,7,11)])
+N$T4 <- rowSums(N[,c(4,8,12)])
+
+#Timepoint names 
+Timepoint_names <- c("T1","T2", "T3", "T4","T1","T2", "T3", "T4","T1","T2", "T3", "T4", "T1","T2", "T3", "T4")
+
+#Rename column name 
+setnames(N, names(N), Timepoint_names)
+
+#Create Table
+kable(N) %>%
+  kable_styling(bootstrap_options = c("striped"), fixed_thead = T) %>%
+  add_header_above(c(" " = 1, "DBT Group" = 4, "Control Group" = 4, "FSU Group" = 4, "Totals" = 4)) %>%
+  add_header_above(c("Participant Numbers" = 17)) %>%
+  column_spec(c(1,5,9,13), border_right = T, include_thead = T) %>%
+  column_spec(1:16, width_min = "2cm", width_max = "5cm") %>%
+  row_spec(1:6, background = "#d3d3d3")
 ```
 
