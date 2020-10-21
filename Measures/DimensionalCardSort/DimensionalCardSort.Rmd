@@ -62,7 +62,7 @@ Pedigree_T4 <- data.frame(select(Pedigree, Fam_ID =  FamID, child_guid, child_fa
 Pedigree_Prep <- rbind(Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4)
 
 # Merge Pedigree and redcap files
-DCS_PREP <- merge(Pedigree_Prep, Redcap_Data,by = c("timepoint","Fam_ID"), all = TRUE)
+DCS_Prep <- merge(Pedigree_Prep, Redcap_Data,by = c("timepoint","Fam_ID"), all = TRUE)
 
 # Clean Environment
 rm(Pedigree, Pedigree_Prep, Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4, Redcap_Data)
@@ -70,7 +70,7 @@ rm(Pedigree, Pedigree_Prep, Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4, 
 
 ```{r Re-code and Reverse Score}
 # Re=-code UO Groupassignment 
-DCS_PREP <- DCS_PREP %>% 
+DCS_Prep <- DCS_Prep %>% 
   mutate_at(c("GroupAssignment"),
             funs(recode(., "Assigned Group 3 (HC)" = "Healthy", 
                         'Assigned Group 2 (FSU)' = "NO DBT",
@@ -82,8 +82,8 @@ DCS_PREP <- DCS_PREP %>%
 ```
 
 ```{r NDA Sheet}
-# Create NDA prep sheet, select all the needed columns from prep sheet
-NDA_DCCS_Prep <- select(DCS_PREP, c(subjectkey = child_guid, src_subject_id = child_famID, interview_date, interview_age, sex = child_sex, visit = timepoint, starts_with("oc_dcs_") ))
+# Create NDA Prep sheet, select all the needed columns from Prep sheet
+NDA_DCCS_Prep <- select(DCS_Prep, c(subjectkey = child_guid, src_subject_id = child_famID, interview_date, interview_age, sex = child_sex, visit = timepoint, starts_with("oc_dcs_") ))
 
 # Replace columns name 
 setnames(NDA_DCCS_Prep, old_DCS_names, NDA_DCS_names)
@@ -110,10 +110,10 @@ write.table(NDA_DCCS, file = 'dccs01.csv', sep = ",", append = TRUE, na = "", qu
 ```{r Table,  echo=FALSE}
 # Treatment Progress sheet
 # Select needed column
-Progress <- select(DCS_PREP, c(Fam_ID, GroupAssignment, timepoint, starts_with("oc_dcs_")))
+Progress <- select(DCS_Prep, c(Fam_ID, GroupAssignment, timepoint, starts_with("oc_dcs_")))
 
 # Calculate row mean for each individual  ss
-Progress$Row_Mean <- rowMeans(select(DCS_PREP,c(starts_with("oc_dcs_"))), na.rm = T)
+Progress$Row_Mean <- rowMeans(select(DCS_Prep,c(starts_with("oc_dcs_"))), na.rm = T)
 
 # Change FamId as character and assign to ID variable 
 ID <- c(as.character(Progress$Fam_ID))
