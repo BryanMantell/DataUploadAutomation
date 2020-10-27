@@ -7,33 +7,28 @@ date: "5/16/2020"
 ```{r setup, include = F}
 # Empty Global Environment
 rm(list = ls())
-#install.packages("flextable")
-library(dplyr)
+
+# Loading library
+library(tidyverse)
 library(data.table)
 library(knitr)
 library(kableExtra)
+library(dplyr)
 
-
+# Settings for knit the whole document 
+# Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 knitr::opts_chunk$set(echo = F, warning = FALSE)
-#Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 
-fsep <- .Platform$file.sep;
-
-# Set the working directory ---------
-# for Bryan
-# setwd("C:/Users/bryan/Documents/GitHub/DataUploadAutomation/Measures/CCNES")
-setwd("~/Documents/Min/Coding/DataUploadAutomation/Measures/CCNES")
-
-#sentific notation, round up to 3 digits
+#scientific notation, round up to 3 digits
 options(digits = 3)
-
 ```
 
-
 ```{r Import, echo=FALSE}
-# Import File ------------
+# Import Pedigree and NDA structure
 Pedigree <- read.csv("Reference_Pedigree.csv")
+NDA_CCNES <- read.csv("pabq01_template.csv", skip = 1)
 
+# Import UO and UPMC files 
 UO_CCNES_T1 <- read.csv("UO_T1_Qualtrics.csv")
 UO_CCNES_T2 <- read.csv("UO_T2_Qualtrics.csv")
 UO_CCNES_T3 <- read.csv("UO_T3_Qualtrics.csv")
@@ -44,32 +39,31 @@ UPMC_CCNES_T2 <- read.csv("UPMC_T2_CCNES.csv")
 UPMC_CCNES_T3 <- read.csv("UPMC_T3_CCNES.csv")
 UPMC_CCNES_T4 <- read.csv("UPMC_T4_CCNES.csv")
 
+# Remove first two lines 
 UO_CCNES_T1 <- UO_CCNES_T1[-c(1,2),]
 UO_CCNES_T2 <- UO_CCNES_T2[-c(1,2),]
 UO_CCNES_T3 <- UO_CCNES_T3[-c(1,2),]
 UO_CCNES_T4 <- UO_CCNES_T4[-c(1,2),]
+
 UPMC_CCNES_T1 <- UPMC_CCNES_T1[-c(1,2),]
 UPMC_CCNES_T2 <- UPMC_CCNES_T2[-c(1,2),]
 UPMC_CCNES_T3 <- UPMC_CCNES_T3[-c(1,2),]
 UPMC_CCNES_T4 <- UPMC_CCNES_T4[-c(1,2),]
-
-#NDA Structure
-NDA_CCNES <- read.csv("pabq01_template.csv", skip = 1)
-
 ```
 
+
 ```{r Rename Columns, echo=FALSE}
-## OLD UO CCNES Column Names -------------------------------------------------------------
+# OLD UO CCNES Column Names ####
 # for each item in UO paste number 1 to 6
-# sprintf used to formate str
-# I use for loop because My variable name are start from different number
+# sprintf used to format str
+# I use for loop because My variable names are start from different number
 odd_UO_CCNES_names <- c()
 for (i in sprintf("Q%03d",140:151)) {
   name <- paste(i, 1:6, sep = "_")
   odd_UO_CCNES_names <- c(odd_UO_CCNES_names, name)
 }
 
-# OLD UPMC CCNES Column Names -------------------------------------------------------------
+# OLD UPMC CCNES Column Names ####
 # OLD UPMC CCNES Column Names for T1 & T4
 odd_UPMC_CCNES_names <- c()
 for (i in sprintf("Q10.%d",2:13)) {
@@ -83,10 +77,10 @@ for (i in sprintf("Q8.%d",2:13)) {
   odd_UPMC_CCNES_names2 <- c(odd_UPMC_CCNES_names2, Name)
 }
 
-# CCNES prep Column Names ------------------------------------------------------------------
-new_CCNES_names <- sprintf("srm_ccnes_%02d",1:72)
+# CCNES Prep Column Names ####
+new_CCNES_names <- sprintf("srm_CCNES_%02d",1:72)
 
-# NDA structure Column Names --------------------------------------------------------------
+# NDA structure Column Names ####
 pabq <- paste("pabq",1:12, sep = "")
 NDA_Names <- c()
 for (i in pabq) {
@@ -108,43 +102,44 @@ setnames(UPMC_CCNES_T2, odd_UPMC_CCNES_names2, new_CCNES_names)
 setnames(UPMC_CCNES_T3, odd_UPMC_CCNES_names2, new_CCNES_names)
 setnames(UPMC_CCNES_T4, odd_UPMC_CCNES_names, new_CCNES_names)
 
-# Edit UO CCNES Time 1 - 4 to have only CCNES quesions, FamID and Timepoint. Rename as needed, remove first two lines 
-UO_CCNES_T1 <- select(UO_CCNES_T1, c(FamID = Q221, Timepoint = Q146, contains("ccnes")))
-UO_CCNES_T2 <- select(UO_CCNES_T2, c(FamID = Q116, Timepoint = Q117, contains("ccnes")))
-UO_CCNES_T3 <- select(UO_CCNES_T3, c(FamID = Q174, Timepoint = Q176, contains("ccnes")))
-UO_CCNES_T4 <- select(UO_CCNES_T4, c(FamID = Q203, Timepoint = Q206, contains("ccnes")))
+# Edit UO CCNES Time 1 - 4 to have only CCNES questions
+# FamID and Timepoint. Rename as needed, remove first two lines 
+UO_CCNES_T1 <- select(UO_CCNES_T1, c(FamID = Q221, Timepoint = Q146, contains("CCNES")))
+UO_CCNES_T2 <- select(UO_CCNES_T2, c(FamID = Q116, Timepoint = Q117, contains("CCNES")))
+UO_CCNES_T3 <- select(UO_CCNES_T3, c(FamID = Q174, Timepoint = Q176, contains("CCNES")))
+UO_CCNES_T4 <- select(UO_CCNES_T4, c(FamID = Q203, Timepoint = Q206, contains("CCNES")))
 
-# Edit UPMC CCNES Time 1 - 4 to have only CCNES quesions and FamID. Rename as needed
-UPMC_CCNES_T1 <- data.frame(c(select(UPMC_CCNES_T1, c(FamID = Q1.2, contains("ccnes"))), Timepoint = "1"))
-UPMC_CCNES_T2 <- data.frame(c(select(UPMC_CCNES_T2, c(FamID = Q1.2, contains("ccnes"))), Timepoint = "2"))  
-UPMC_CCNES_T3 <- data.frame(c(select(UPMC_CCNES_T3, c(FamID = Q1.2, contains("ccnes"))), Timepoint = "3"))  
-UPMC_CCNES_T4 <- data.frame(c(select(UPMC_CCNES_T4, c(FamID = Q1.2, contains("ccnes"))), Timepoint = "4"))
+# Edit UPMC CCNES Time 1 - 4 to have only CCNES questions and FamID. Rename as needed
+UPMC_CCNES_T1 <- data.frame(c(select(UPMC_CCNES_T1, c(FamID = Q1.2, contains("CCNES"))), Timepoint = "1"))
+UPMC_CCNES_T2 <- data.frame(c(select(UPMC_CCNES_T2, c(FamID = Q1.2, contains("CCNES"))), Timepoint = "2"))  
+UPMC_CCNES_T3 <- data.frame(c(select(UPMC_CCNES_T3, c(FamID = Q1.2, contains("CCNES"))), Timepoint = "3"))  
+UPMC_CCNES_T4 <- data.frame(c(select(UPMC_CCNES_T4, c(FamID = Q1.2, contains("CCNES"))), Timepoint = "4"))
 
-
-
-# Bind 4 time points
+# Bind 4 time points from two site 
 CCNES_Qualtrics <- bind_rows(UO_CCNES_T1,UO_CCNES_T2,UO_CCNES_T3,UO_CCNES_T4, UPMC_CCNES_T1, UPMC_CCNES_T2, UPMC_CCNES_T3, UPMC_CCNES_T4)
 
-# Select revelent pedigree information, rename as needed. (Include GroupAssignment for treatment progross calculation.)
+# Select relevant pedigree information, rename as needed. (Include GroupAssignment for treatment progress calculation.)
 Pedigree_T1 <- data.frame(c(select(Pedigree, FamID, mother_FamID = FamID_Mother, mom_guid, mother_sex = MomGender, interview_date = Time1Date, interview_age = MomAge_T1, GroupAssignment), Timepoint = "1"))
 Pedigree_T2 <- data.frame(c(select(Pedigree, FamID, mother_FamID = FamID_Mother, mom_guid, mother_sex = MomGender, interview_date = Time2Date, interview_age = MomAge_T2, GroupAssignment), Timepoint = "2"))
 Pedigree_T3 <- data.frame(c(select(Pedigree, FamID, mother_FamID = FamID_Mother, mom_guid, mother_sex = MomGender, interview_date = Time3Date, interview_age = MomAge_T3, GroupAssignment), Timepoint = "3"))
 Pedigree_T4 <- data.frame(c(select(Pedigree, FamID, mother_FamID = FamID_Mother, mom_guid, mother_sex = MomGender, interview_date = Time4Date, interview_age = MomAge_T4, GroupAssignment), Timepoint = "4"))
 
+# Bind 4 pedigree 
 Pedigree_Prep <- bind_rows(Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4)
 
-CCNES_PREP <- merge(CCNES_Qualtrics, Pedigree_Prep)
+# Merge CCNES data with pedigree
+CCNES_Prep <- merge(CCNES_Qualtrics, Pedigree_Prep)
 
-# Change gemder to F instead of False
-CCNES_PREP$mother_sex <- "F"
+# Change gender to F instead of False
+CCNES_Prep$mother_sex <- "F"
 
-# Clean Flobal Enviorment
-rm(UO_CCNES_T1, UO_CCNES_T2, UO_CCNES_T3, UO_CCNES_T4, UPMC_CCNES_T1, UPMC_CCNES_T2, UPMC_CCNES_T3, UPMC_CCNES_T4,Pedigree,Pedigree_T1,Pedigree_T2,Pedigree_T3,Pedigree_T4,CCNES_T1,CCNES_T2,CCNES_T3,CCNES_T4)
+# Clean global Environment
+rm(UO_CCNES_T1, UO_CCNES_T2, UO_CCNES_T3, UO_CCNES_T4, UPMC_CCNES_T1, UPMC_CCNES_T2, UPMC_CCNES_T3, UPMC_CCNES_T4,Pedigree,Pedigree_T1,Pedigree_T2,Pedigree_T3,Pedigree_T4)
 ```
 
 ```{r Re-code and Reverse Score,  echo=FALSE}
-# Recode the strings of text to numbers 
-CCNES_PREP <- CCNES_PREP %>% 
+# Re-code the strings of text to numbers 
+CCNES_Prep <- CCNES_Prep %>% 
   mutate_at(new_CCNES_names,
             funs(recode(., "1 - Very Unlikely" = 1, 
                         '1' = 1,
@@ -157,15 +152,14 @@ CCNES_PREP <- CCNES_PREP %>%
                         '7' = 7,
                         '7 - Very Likely' = 7,.default = NaN)))
 
-
 # Adding r at end of variable which needed to be reversed
 Reverse_CCNES_names <- new_CCNES_names
 Reverse_CCNES_names[c(7,39,45,55)] <- paste(new_CCNES_names[c(7,39,45,55)],"r", sep = "")
-setnames(CCNES_PREP, new_CCNES_names, Reverse_CCNES_names)
+setnames(CCNES_Prep, new_CCNES_names, Reverse_CCNES_names)
 
 # Reversed Scored
-CCNES_PREP <- CCNES_PREP %>% 
-  mutate_at(c("srm_ccnes_07r", "srm_ccnes_39r", "srm_ccnes_45r", "srm_ccnes_55r"),
+CCNES_Prep <- CCNES_Prep %>% 
+  mutate_at(c("srm_CCNES_07r", "srm_CCNES_39r", "srm_CCNES_45r", "srm_CCNES_55r"),
             funs(recode(., "1" = 7, 
                         '2' = 6,
                         '3' = 5,
@@ -174,121 +168,120 @@ CCNES_PREP <- CCNES_PREP %>%
                         '6' = 2,
                         '7' = 1, defaut = NaN)))
 
-# # reverse score alternative
-# Reverse_CCNES_names <- new_CCNES_names
-# revers_CCNES_cols <- c("srm_ccnes_07", "srm_ccnes_39", "srm_ccnes_45", "srm_ccnes_55")
-# revers_CCNES_cols <- paste(revers_CCNES_cols, "r", sep = "")
-# Reverse_CCNES_names[c(7,39,45,55)] <- revers_CCNES_cols
-# setnames(CCNES_PREP, new_CCNES_names, Reverse_CCNES_names)
-# CCNES_PREP[,revers_CCNES_cols] = 8 - CCNES_PREP[,revers_CCNES_cols]
-
-CCNES_PREP <- CCNES_PREP %>% 
+# Recode Group Assignment
+CCNES_Prep <- CCNES_Prep %>% 
   mutate_at(c("GroupAssignment"),
             funs(recode(., "Assigned Group 3 (HC)" = "Healthy", 
                         'Assigned Group 2 (FSU)' = "NO DBT",
                         'Assigned Group 1 (DBT)' = "DBT")))
-
-
 ```
 
 ```{r Colculated Columns,  echo=FALSE}
-# Creating list of item need to be colculated --------------------------------------------------
-# list of item which needed when colculating DR
-DR <- colnames(select(CCNES_PREP, c("srm_ccnes_02", "srm_ccnes_07r", "srm_ccnes_13", 
-                                              "srm_ccnes_22", "srm_ccnes_29", "srm_ccnes_33", 
-                                              "srm_ccnes_39r", "srm_ccnes_45r", "srm_ccnes_50", 
-                                              "srm_ccnes_55r", "srm_ccnes_62", "srm_ccnes_70")))
-# list of item which needed when colculating DR
-PR <- colnames(select(CCNES_PREP, c("srm_ccnes_01", "srm_ccnes_12", "srm_ccnes_18", 
-                                              "srm_ccnes_19", "srm_ccnes_28", "srm_ccnes_34", 
-                                              "srm_ccnes_41", "srm_ccnes_47", "srm_ccnes_53", 
-                                              "srm_ccnes_56", "srm_ccnes_63", "srm_ccnes_71")))
+# Creating CCNES_DR_raw column
+CCNES_Prep <- add_column(CCNES_Prep, CCNES_DR_raw =
+                           rowSums(CCNES_Prep[, c("srm_CCNES_02", 
+                            "srm_CCNES_07r", "srm_CCNES_13",  "srm_CCNES_22", 
+                            "srm_CCNES_29", "srm_CCNES_33", "srm_CCNES_39r", 
+                            "srm_CCNES_45r", "srm_CCNES_50", "srm_CCNES_55r", 
+                            "srm_CCNES_62", "srm_CCNES_70")], na.rm = TRUE), 
+                            .after = "srm_CCNES_72")
 
-# list of item which needed when colculating EE
-EE <- colnames(select(CCNES_PREP, c("srm_ccnes_05", "srm_ccnes_11", "srm_ccnes_17", 
-                                              "srm_ccnes_20", "srm_ccnes_30", "srm_ccnes_35", 
-                                              "srm_ccnes_42", "srm_ccnes_43", "srm_ccnes_49", 
-                                              "srm_ccnes_57", "srm_ccnes_66", "srm_ccnes_68")))
-# list of item which needed when colculating EFR
-EFR <- colnames(select(CCNES_PREP, c("srm_ccnes_06", "srm_ccnes_08", "srm_ccnes_16", 
-                                               "srm_ccnes_23", "srm_ccnes_25", "srm_ccnes_31", 
-                                               "srm_ccnes_38", "srm_ccnes_48", "srm_ccnes_54",
-                                               "srm_ccnes_58", "srm_ccnes_65", "srm_ccnes_69")))
-# list of item which needed when colculating PFR
-PFR <- colnames(select(CCNES_PREP, c("srm_ccnes_03", "srm_ccnes_10", "srm_ccnes_15", 
-                                               "srm_ccnes_24", "srm_ccnes_26", "srm_ccnes_36", 
-                                               "srm_ccnes_37", "srm_ccnes_44", "srm_ccnes_52",
-                                               "srm_ccnes_59", "srm_ccnes_64", "srm_ccnes_67")))
-# list of item which needed when colculating MR
-MR <- colnames(select(CCNES_PREP, c("srm_ccnes_04", "srm_ccnes_09", "srm_ccnes_14", 
-                                              "srm_ccnes_21", "srm_ccnes_27", "srm_ccnes_32", 
-                                              "srm_ccnes_40", "srm_ccnes_46", "srm_ccnes_51", 
-                                              "srm_ccnes_60", "srm_ccnes_61", "srm_ccnes_72")))
-# Calculated raw mean --------------------------------------------------------------------------------------------------
-# Calculated Columns
-CCNES_PREP$ccnes_DR_raw <- rowMeans(CCNES_PREP[,DR], na.rm = TRUE)
-CCNES_PREP$ccnes_PR_raw <- rowMeans(CCNES_PREP[,PR], na.rm = TRUE)
-CCNES_PREP$ccnes_EE_raw <- rowMeans(CCNES_PREP[,EE], na.rm = TRUE)
-CCNES_PREP$ccnes_EFR_raw <- rowMeans(CCNES_PREP[,EFR], na.rm = TRUE)
-CCNES_PREP$ccnes_PFR_raw <- rowMeans(CCNES_PREP[,PFR], na.rm = TRUE)
-CCNES_PREP$ccnes_MR_raw <- rowMeans(CCNES_PREP[,MR], na.rm = TRUE)
-# Mean with 67% rule --------------------------------------------------------------------------------------------------
-# Check NA percentage
-CCNES_PREP$NACheck <- rowSums(is.na(select(CCNES_PREP, starts_with("srm"))))/ncol(dplyr::select(CCNES_PREP, starts_with("srm")))
+# Creating CCNES_PR_raw column
+CCNES_Prep <- add_column(CCNES_Prep, CCNES_PR_raw = 
+                           rowSums(CCNES_Prep[, c("srm_CCNES_01",
+                            "srm_CCNES_12", "srm_CCNES_18", "srm_CCNES_19", 
+                            "srm_CCNES_28", "srm_CCNES_34", "srm_CCNES_41", 
+                            "srm_CCNES_47", "srm_CCNES_53", "srm_CCNES_56", 
+                            "srm_CCNES_63", "srm_CCNES_71")], na.rm = TRUE), 
+                            .after = "CCNES_DR_raw")
 
-# New mean with 67% rule
-CCNES_PREP$ccnes_DR_cor <- ifelse(CCNES_PREP$NACheck < 0.67, rowMeans(CCNES_PREP[,DR], na.rm = TRUE), "NA")
-CCNES_PREP$ccnes_PR_cor <- ifelse(CCNES_PREP$NACheck < 0.67, rowMeans(CCNES_PREP[,PR], na.rm = TRUE), "NA")
-CCNES_PREP$ccnes_EE_cor <- ifelse(CCNES_PREP$NACheck < 0.67, rowMeans(CCNES_PREP[,EE], na.rm = TRUE), "NA")
-CCNES_PREP$ccnes_EFR_cor <- ifelse(CCNES_PREP$NACheck < 0.67, rowMeans(CCNES_PREP[,EFR], na.rm = TRUE), "NA")
-CCNES_PREP$ccnes_PFR_cor <- ifelse(CCNES_PREP$NACheck < 0.67, rowMeans(CCNES_PREP[,PFR], na.rm = TRUE), "NA")
-CCNES_PREP$ccnes_MR_cor <- ifelse(CCNES_PREP$NACheck < 0.67, rowMeans(CCNES_PREP[,MR], na.rm = TRUE), "NA")
+# Creating CCNES_EE_raw column
+CCNES_Prep <- add_column(CCNES_Prep, CCNES_EE_raw = 
+                           rowSums(CCNES_Prep[, c("srm_CCNES_05", 
+                            "srm_CCNES_11", "srm_CCNES_17", "srm_CCNES_20", 
+                            "srm_CCNES_30", "srm_CCNES_35", "srm_CCNES_42", 
+                            "srm_CCNES_43", "srm_CCNES_49", "srm_CCNES_57", 
+                            "srm_CCNES_66", "srm_CCNES_68")],  na.rm = TRUE), 
+                            .after = "CCNES_PR_raw")
 
-# progress 
-# hist(CCNES_PREP$NACheck, main = "Not NA Histogram")
+# Creating CCNES_EFR_raw column
+CCNES_Prep <- add_column(CCNES_Prep, CCNES_EFR_raw = 
+                           rowSums(CCNES_Prep[, c("srm_CCNES_06", 
+                           "srm_CCNES_08", "srm_CCNES_16", "srm_CCNES_23", 
+                           "srm_CCNES_25", "srm_CCNES_31", "srm_CCNES_38", 
+                           "srm_CCNES_48", "srm_CCNES_54", "srm_CCNES_58", 
+                           "srm_CCNES_65", "srm_CCNES_69")], na.rm = TRUE), 
+                           .after = "CCNES_EE_raw")
+
+# Creating CCNES_PFR_raw column
+CCNES_Prep <- add_column(CCNES_Prep, CCNES_PFR_raw = 
+                           rowSums(CCNES_Prep[, c("srm_CCNES_03", 
+                           "srm_CCNES_10", "srm_CCNES_15", "srm_CCNES_24", 
+                           "srm_CCNES_26", "srm_CCNES_36", "srm_CCNES_37", 
+                           "srm_CCNES_44", "srm_CCNES_52", "srm_CCNES_59", 
+                           "srm_CCNES_64", "srm_CCNES_67")], na.rm = TRUE), 
+                           .after = "CCNES_EFR_raw")
+
+# Creating CCNES_MR_raw column
+CCNES_Prep <- add_column(CCNES_Prep, CCNES_MR_raw = 
+                           rowSums(CCNES_Prep[, c("srm_CCNES_04", 
+                           "srm_CCNES_09", "srm_CCNES_14", "srm_CCNES_21", 
+                           "srm_CCNES_27", "srm_CCNES_32",  "srm_CCNES_40", 
+                           "srm_CCNES_46", "srm_CCNES_51",  "srm_CCNES_60", 
+                           "srm_CCNES_61", "srm_CCNES_72")], na.rm = TRUE), 
+                           .after = "CCNES_PFR_raw")
+
+# Mean with 67% rule ####
+# Check NA percentage   0:100%data     1 0% data 
+CCNES_Prep$NACheck <- rowSums(is.na(select(CCNES_Prep, starts_with("srm"))))/ncol(dplyr::select(CCNES_Prep, starts_with("srm")))
 ```
 
 ```{r NDA Sheet,  echo=FALSE}
-# Create NDA prep sheet, select all the needed columns from prep sheet
-NDA_CCNES_Prep <- select(CCNES_PREP, c(subjectkey = mom_guid, src_subject_id = mother_FamID, sex = mother_sex ,interview_age, interview_date, starts_with("srm")))
+# Create NDA Prep sheet, select all the needed columns from Prep sheet
+NDA_CCNES_Prep <- select(CCNES_Prep, c(subjectkey = mom_guid, src_subject_id = mother_FamID, sex = mother_sex ,interview_age, interview_date, starts_with("srm")))
                          
-# Combine NDA and prep sheet
+# Combine NDA and Prep sheet
 # Make sure put original NDA structure at first, because the order of the new sheet will be the order of the first item in bind_rows function
 setnames(NDA_CCNES_Prep, Reverse_CCNES_names, NDA_Names)
 
-# Recreate first line in orignial NDA file
+# Recreate first line in original NDA file
 # Make a empty row, with same number of column in NDA_CCNES, as first line of NDA sheet
 NDA_CCNES[1,] <- NA
+
 # ncol(NDA_CCNES)  is number of columns in NDA_CCNES
 NDA_CCNES <- bind_rows(NDA_CCNES,NDA_CCNES_Prep)
 
-# Recreate first line in orignial NDA file
+# Recreate first line in original NDA file
 # Make a empty row, with same number of column in NDA_CCNES, as first line of NDA sheet
 # ncol(NDA_CCNES)  is number of columns in NDA_CCNES
 first_line <- matrix("", nrow = 1, ncol = ncol(NDA_CCNES))
-# assign the firt cell in first_line as pabq which is the first cell in orignial NDA structure
+
+# assign the first cell in first_line as pabq which is the first cell in original NDA structure
 first_line[,1] <- "pabq"
-# assign the second cell in first_lineas pabq
+
+# assign the second cell in first_line as pabq
 first_line[,2] <- "1"
-
-
-# NDA output ---------
+6
+# NDA output ####
 # Create a new file in folder called pabq.csv, and put first line into this file
 # pabq.csv file will be saved into same folder as current r script
 write.table(first_line, file = "pabq.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
 
 # Append data in NDA_CCNES into pabq.cav file 
 write.table(NDA_CCNES, file = 'pabq.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
+
+# Clean Global Environment 
+rm(first_line)
 ```
 
 
 ```{r Table Preparation, include = F}
 # Select needed column
-Progress <- select(CCNES_PREP, c(FamID, GroupAssignment, Timepoint, starts_with("srm"), NACheck))
+Progress <- select(CCNES_Prep, c(FamID, GroupAssignment, Timepoint, starts_with("srm"), NACheck))
 
 # Calculate row mean for each individual  
-Progress$Supported_Mean <- rowMeans(CCNES_PREP[,c("ccnes_EE_raw","ccnes_EFR_raw", "ccnes_PFR_raw")], na.rm = TRUE)
-Progress$Unsupproted_Mean <- rowMeans(CCNES_PREP[,c("ccnes_DR_raw", "ccnes_PR_raw", "ccnes_MR_raw")], na.rm = TRUE)
+Progress$Supported_Mean <- rowMeans(CCNES_Prep[,c("CCNES_EE_raw","CCNES_EFR_raw", "CCNES_PFR_raw")], na.rm = TRUE)
+Progress$Unsupproted_Mean <- rowMeans(CCNES_Prep[,c("CCNES_DR_raw", "CCNES_PR_raw", "CCNES_MR_raw")], na.rm = TRUE)
 
 # Change FamId as character and assign to ID variable 
 ID <- c(as.character(Progress$FamID))
@@ -296,9 +289,13 @@ ID <- c(as.character(Progress$FamID))
 # Add Site column to Progress, if ID start with 9 then site is UO, else is UPMC
 Progress$site <- ifelse(startsWith(ID, "9"),"UO","UPMC")
 
-# Drop people who are less than 67% 
+# Drop participant who has less than 67% data
 CCNES_DROP <- Progress[Progress$NACheck > 0.67, ]
+# Drop participant who has NAs 
+#CCNES_notperfect <- Progress[Progress$NACheck != 0,]
+# Data contain 67% data or more
 Progress67 <- Progress[Progress$NACheck <= 0.67, ]
+# Data contain 100% data
 Progress100 <- Progress[Progress$NACheck == 0, ]
 ```
 
@@ -306,7 +303,7 @@ Progress100 <- Progress[Progress$NACheck == 0, ]
 ```{r all data Table, include = T}
 # Group by GroupAssissignment and Timepoint, and calculate the Supported_Mean and Unsupproted_Mean
 Progress_Supported_Mean <- Progress %>%
-  group_by(GroupAssignment,Timepoint,site) %>%
+  group_by(GroupAssignment, Timepoint, site) %>%
   summarise(SupportedMean = mean(Supported_Mean,na.rm = T), n = n())
 
 Progress_unsupported_Mean <- Progress %>%
@@ -321,18 +318,19 @@ UO <- Progress_Mean[Progress_Mean$site == "UO",]
 # Select only UPMC Mean 
 UPMC <- Progress_Mean[Progress_Mean$site == "UPMC",]
 
-# Colculate Both site Mean 
+# Calculate Both site Mean for supported elements
 Progress_Supported_Mean_both <- Progress %>%
   group_by(GroupAssignment,Timepoint) %>%
   summarise("BothSite_CCNES_SupportedMean" = mean(Supported_Mean,na.rm = T), n = n())
 
+# Calculate Both site Mean for unsupported elements
 Progress_unsupported_Mean_both <- Progress %>%
   group_by(GroupAssignment,Timepoint) %>%
   summarise("BothSite_CCNES_UnsupprotedMean" = mean(Unsupproted_Mean,na.rm = T), n = n())
 
+# merge Supported and unsupported table for both site table 
 Both_site_Mean <- merge(Progress_Supported_Mean_both, Progress_unsupported_Mean_both)
 #Progress_Mean <- Progress_Mean[order(GroupAssignment),] 
-
 
 # Change GroupMean Column names according to site
 colnames(UO)[colnames(UO) == "SupportedMean"] = "UO_CCNES_SupportedMean"
@@ -340,13 +338,8 @@ colnames(UO)[colnames(UO) == "UnsupprotedMean"] = "UO_CCNES_UnsupprotedMean"
 colnames(UPMC)[colnames(UPMC) == "SupportedMean"] = "UPMC_CCNES_SupportedMean"
 colnames(UPMC)[colnames(UPMC) == "UnsupprotedMean"] = "UPMC_CCNES_UnsupprotedMean"
 
-
 # Combine UO,UPMC and both_site data 
 Mean_Table <- data.frame(UO[,c("UO_CCNES_SupportedMean","UO_CCNES_UnsupprotedMean")],UPMC[,c("UPMC_CCNES_SupportedMean","UPMC_CCNES_UnsupprotedMean")],Both_site_Mean[,c("BothSite_CCNES_SupportedMean","BothSite_CCNES_UnsupprotedMean","n","GroupAssignment")])
-
-
-# Remove GroupAssignment column 
-# Mean_Table <- select(Mean_Table, -c(GroupAssignment))
 
 # Convert Mean_Table, make original column as row
 Mean_Table <- t(Mean_Table)
@@ -357,17 +350,13 @@ Mean_Table <- data.frame(Mean_Table)
 # Reorder Mean_Table
 Mean_Table <- Mean_Table[c(5,6,7,8,9,10,11,12,1,2,3,4)]
 
-#add support /non support 
-#add_column()
-
 # Add Timepoint column 
 Timepoint_names <- c("T1","T2", "T3", "T4","T1","T2", "T3", "T4","T1","T2", "T3", "T4")
 
 # Rename column name 
 setnames(Mean_Table, names(Mean_Table), Timepoint_names)
 
-
-# Table output ----------
+# Table output ####
 # Add a header 
 kable(Mean_Table) %>%
   kable_styling(bootstrap_options = c("striped")) %>%
@@ -400,13 +389,14 @@ Progress_Supported_Mean_both67 <- Progress67 %>%
   group_by(GroupAssignment,Timepoint) %>%
   summarise("BothSite_CCNES_SupportedMean67" = mean(Supported_Mean, na.rm = T), n = n())
 
+# Calculate Both site Mean for unsupported elements
 Progress_unsupported_Mean_both67 <- Progress67 %>%
   group_by(GroupAssignment,Timepoint) %>%
   summarise("BothSite_CCNES_UnsupprotedMean67" = mean(Unsupproted_Mean,na.rm = T), n = n())
 
+# merge Supported and unsupported table for both site table 
 Both_site_Mean67 <- merge(Progress_Supported_Mean_both67, Progress_unsupported_Mean_both67)
 #Progress_Mean <- Progress_Mean[order(GroupAssignment),] 
-
 
 # Change GroupMean Column names according to site
 colnames(UO67)[colnames(UO67) == "SupportedMean67"] = "UO_CCNES_SupportedMean"
@@ -414,13 +404,8 @@ colnames(UO67)[colnames(UO67) == "UnsupprotedMean67"] = "UO_CCNES_UnsupprotedMea
 colnames(UPMC67)[colnames(UPMC67) == "SupportedMean67"] = "UPMC_CCNES_SupportedMean"
 colnames(UPMC67)[colnames(UPMC67) == "UnsupprotedMean67"] = "UPMC_CCNES_UnsupprotedMean"
 
-
 # Combine UO,UPMC and both_site data 
-Mean_Table67 <- data.frame(UO[,c("UO_CCNES_SupportedMean","UO_CCNES_UnsupprotedMean")],UPMC[,c("UPMC_CCNES_SupportedMean","UPMC_CCNES_UnsupprotedMean")],Both_site_Mean[,c("BothSite_CCNES_SupportedMean","BothSite_CCNES_UnsupprotedMean","n","GroupAssignment")])
-
-
-# Remove GroupAssignment column 
-# Mean_Table <- select(Mean_Table, -c(GroupAssignment))
+Mean_Table67 <- data.frame(UO[,c("UO_CCNES_SupportedMean","UO_CCNES_UnsupprotedMean")],UPMC[,c("UPMC_CCNES_SupportedMean","UPMC_CCNES_UnsupprotedMean")],Both_site_Mean67[,c("BothSite_CCNES_SupportedMean67","BothSite_CCNES_UnsupprotedMean67","n","GroupAssignment")])
 
 # Convert Mean_Table, make original column as row
 Mean_Table67 <- t(Mean_Table67)
@@ -431,17 +416,13 @@ Mean_Table67 <- data.frame(Mean_Table67)
 # Reorder Mean_Table
 Mean_Table67 <- Mean_Table67[c(5,6,7,8,9,10,11,12,1,2,3,4)]
 
-#add support /non support 
-#add_column()
-
 # Add Timepoint column 
 Timepoint_names <- c("T1","T2", "T3", "T4","T1","T2", "T3", "T4","T1","T2", "T3", "T4")
 
 # Rename column name 
 setnames(Mean_Table67, names(Mean_Table67), Timepoint_names)
 
-
-# Table output ----------
+# Table output ####
 # Add a header 
 kable(Mean_Table67) %>%
   kable_styling(bootstrap_options = c("striped")) %>%
@@ -474,12 +455,13 @@ Progress_Supported_Mean_both100 <- Progress100 %>%
   group_by(GroupAssignment,Timepoint) %>%
   summarise("BothSite_CCNES_SupportedMean100" = mean(Supported_Mean, na.rm = T), n = n())
 
+# Calculate Both site Mean for unsupported elements
 Progress_unsupported_Mean_both100 <- Progress100 %>%
   group_by(GroupAssignment,Timepoint) %>%
   summarise("BothSite_CCNES_UnsupprotedMean100" = mean(Unsupproted_Mean,na.rm = T), n = n())
 
+# merge Supported and unsupported table for both site table 
 Both_site_Mean100 <- merge(Progress_Supported_Mean_both100, Progress_unsupported_Mean_both100)
-#Progress_Mean <- Progress_Mean[order(GroupAssignment),] 
 
 
 # Change GroupMean Column names according to site
@@ -488,13 +470,8 @@ colnames(UO100)[colnames(UO100) == "UnsupprotedMean100"] = "UO_CCNES_Unsupproted
 colnames(UPMC100)[colnames(UPMC100) == "SupportedMean100"] = "UPMC_CCNES_SupportedMean"
 colnames(UPMC100)[colnames(UPMC100) == "UnsupprotedMean100"] = "UPMC_CCNES_UnsupprotedMean"
 
-
 # Combine UO,UPMC and both_site data 
-Mean_Table100 <- data.frame(UO[,c("UO_CCNES_SupportedMean","UO_CCNES_UnsupprotedMean")],UPMC[,c("UPMC_CCNES_SupportedMean","UPMC_CCNES_UnsupprotedMean")],Both_site_Mean[,c("BothSite_CCNES_SupportedMean","BothSite_CCNES_UnsupprotedMean","n","GroupAssignment")])
-
-
-# Remove GroupAssignment column 
-# Mean_Table <- select(Mean_Table, -c(GroupAssignment))
+Mean_Table100 <- data.frame(UO[,c("UO_CCNES_SupportedMean","UO_CCNES_UnsupprotedMean")],UPMC[,c("UPMC_CCNES_SupportedMean","UPMC_CCNES_UnsupprotedMean")],Both_site_Mean100[,c("BothSite_CCNES_SupportedMean100","BothSite_CCNES_UnsupprotedMean100","n","GroupAssignment")])
 
 # Convert Mean_Table, make original column as row
 Mean_Table100 <- t(Mean_Table100)
@@ -505,17 +482,13 @@ Mean_Table100 <- data.frame(Mean_Table100)
 # Reorder Mean_Table
 Mean_Table100 <- Mean_Table100[c(5,6,7,8,9,10,11,12,1,2,3,4)]
 
-#add support /non support 
-#add_column()
-
 # Add Timepoint column 
 Timepoint_names <- c("T1","T2", "T3", "T4","T1","T2", "T3", "T4","T1","T2", "T3", "T4")
 
 # Rename column name 
 setnames(Mean_Table100, names(Mean_Table100), Timepoint_names)
 
-
-# Table output ----------
+# Table output ####
 # Add a header 
 kable(Mean_Table100) %>%
   kable_styling(bootstrap_options = c("striped")) %>%
@@ -527,7 +500,7 @@ kable(Mean_Table100) %>%
 
 
 ```{r number table, include = T}
-#### Original Table ####
+# Original data ####
 # Original by site
 N_ori <- Progress %>%
   group_by(Timepoint, site, GroupAssignment) %>% 
@@ -538,8 +511,7 @@ N_ori_BothSite <- Progress %>%
   group_by(Timepoint, GroupAssignment) %>% 
   summarise(BothSite_Original_N = n())
 
-
-#### 67% table ####
+# 67% data ####
 # 67% by site 
 N67 <- Progress67 %>%
   group_by(Timepoint, site, GroupAssignment) %>% 
@@ -550,7 +522,7 @@ N67_BothSite <- Progress67 %>%
   group_by(Timepoint, GroupAssignment) %>% 
   summarise(BothSite_67_N = n())
 
-#### 100% table ####
+# 100% data ####
 N100 <- Progress100 %>%
   group_by(Timepoint, site, GroupAssignment) %>% 
   summarise(n_100 = n())
@@ -559,21 +531,18 @@ N100 <- Progress100 %>%
 N100_BothSite <- Progress100 %>%
   group_by(Timepoint, GroupAssignment) %>% 
   summarise(BothSite_100_N = n())
-
-
-
-#### N table ####
-
+            
+# N table ####
 # combine all three n table 
-N_bySite <- cbind(N_ori, N67, N100)
+N_bySite <- merge(N_ori, N67, all = T)
+N_bySite <- merge(N_bySite,N100, all = T)
 # Bind both site data 
-BothSite_N <- cbind(N_ori_BothSite, N67_BothSite, N100_BothSite)
-
+BothSite_N <- merge(N_ori_BothSite, N67_BothSite, all = T)
+BothSite_N <- merge(BothSite_N, N100_BothSite, all = T)
 
 # Seperate UO and UPMC data 
-UO_N <- data.frame(N_bySite[N_bySite$site == "UO",],  N_total[N_total$site == "UO",])
-UPMC_N <- data.frame(N_bySite[N_bySite$site == "UPMC",], N_total[N_total$site == "UPMC",])
-
+UO_N <- data.frame(N_bySite[N_bySite$site == "UO",])
+UPMC_N <- data.frame(N_bySite[N_bySite$site == "UPMC",])
 
 # Change column names 
 colnames(UO_N)[colnames(UO_N) == "n_ori"] = "UO_CCNES_Original_N"
@@ -583,7 +552,6 @@ colnames(UO_N)[colnames(UO_N) == "n_100"] = "UO_CCNES_100_N"
 colnames(UPMC_N)[colnames(UPMC_N) == "n_ori"] = "UPMC_CCNES_Original_N"
 colnames(UPMC_N)[colnames(UPMC_N) == "n_67"] = "UPMC_CCNES_67_N"
 colnames(UPMC_N)[colnames(UPMC_N) == "n_100"] = "UPMC_CCNES_100_N"
-
 
 # Create N table (Selecting columns from UO_N, UPMC_N, BothSite_N) GroupAssignment included twice here, just checking it's align
 N <- data.frame(UO_N[, c("Timepoint","UO_CCNES_Original_N", "UO_CCNES_67_N", "UO_CCNES_100_N")], 
@@ -596,14 +564,14 @@ N <- N[order(N$GroupAssignment),]
 # Convert data frame to numeric
 N <- as.data.frame(sapply(N, as.numeric))
 
-# Transfer N table from Horzontal to Vertical
+# Transfer N table from Horizontal to Vertical
 N <- data.frame(t(N))
 
-# Colculate Total N 
-N$T1 <- rowSums(N[,c(1,5,9)])
-N$T2 <- rowSums(N[,c(2,6,10)])
-N$T3 <- rowSums(N[,c(3,7,11)])
-N$T4 <- rowSums(N[,c(4,8,12)])
+# Calculate Total N 
+N$T1 <- rowSums(N[,c(1,5,9)], na.rm = T)
+N$T2 <- rowSums(N[,c(2,6,10)], na.rm = T)
+N$T3 <- rowSums(N[,c(3,7,11)], na.rm = T)
+N$T4 <- rowSums(N[,c(4,8,12)], na.rm = T)
 
 # Timepoint names 
 Timepoint_names <- c("T1","T2", "T3", "T4","T1","T2", "T3", "T4","T1","T2", "T3", "T4", "T1","T2", "T3", "T4")
@@ -614,14 +582,7 @@ setnames(N, names(N), Timepoint_names)
 # Remove un-needed column
 N <- N[-c(1,8,12),]
 
-
-
-# Remove un-needed lines in table
-# N <- N[-c(1,2,3),]
-
-# Total number colculation 
-
-
+# N table output
 kable(N) %>%
   kable_styling(bootstrap_options = c("striped"), fixed_thead = T) %>%
   add_header_above(c(" " = 1, "DBT Group" = 4, "Control Group" = 4, "FSU Group" = 4, "Totals" = 4)) %>%
@@ -629,11 +590,6 @@ kable(N) %>%
   column_spec(c(1,5,9,13), border_right = T, include_thead = T) %>%
   column_spec(2:17, width_min = "2cm", width_max = "2cm") %>%
   row_spec(7:9, background = "#d3d3d3")
-  
 ```
 
-
-```{r imputation}
-
-```
 
