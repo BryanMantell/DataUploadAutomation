@@ -30,7 +30,7 @@ options(digits = 3)
 Pedigree <- read.csv("Reference_Pedigree.csv")
 NDA_CBCL <- read.csv("cbcl1_501_template.csv", skip = 1)
 
-# Import UO and UMPC flies. Data is kept from being factors so later modifications will work. 
+# Import UO and UMPC flies, data is kept from being factors so later modifications will work
 UO_T1_CBCL <- read.csv(file = 'UO_T1_Qualtrics.csv', stringsAsFactors = FALSE)
 UO_T2_CBCL <- read.csv(file = 'UO_T2_Qualtrics.csv', stringsAsFactors = FALSE)
 UO_T3_CBCL <- read.csv(file = 'UO_T3_Qualtrics.csv', stringsAsFactors = FALSE)
@@ -48,7 +48,7 @@ UPMC_T4_CBCL <- read.csv(file = 'UPMC_T4_cbcl.csv', stringsAsFactors = FALSE)
 New_CBCL_Names <- sprintf("srm_cbcl_%03d", seq(1:100))
 
 # Create list of old variable names so we can target them to be replaced with the new ones
-# Since the question names change by timepoint we'll have to make unique lists by timepoint, starting with UO Timepoint 1 and UMPC Timepoint 1 and 4. 
+# Since the question names change by timepoint we'll have to make unique lists by timepoint, starting with UO Timepoint 1 and UMPC Timepoint 1 and 4
 Old_UO_CBCL_Names_T1 <- sprintf("Q264_%01d", seq(1:100))
 Old_UPMC_CBCL_Names_T1_T4 <- sprintf("Q15.1_%01d", seq(1:100))
 
@@ -77,13 +77,13 @@ setnames(UPMC_T2_CBCL, Old_UPMC_CBCL_Names_T2_T3, New_CBCL_Names)
 setnames(UPMC_T3_CBCL, Old_UPMC_CBCL_Names_T2_T3, New_CBCL_Names)
 setnames(UPMC_T4_CBCL, Old_UPMC_CBCL_Names_T1_T4, New_CBCL_Names)
 
-# Edit UO CBCL Time 1 - 4 to have only CBCL quesions and the FamID. 
+# Edit UO CBCL Time 1 - 4 to have only CBCL quesions and the FamID
 UO_T1_CBCL <- select(UO_T1_CBCL, c(FamID = Q221, contains("cbcl")))
 UO_T2_CBCL <- select(UO_T2_CBCL, c(FamID = Q116, contains("cbcl")))
 UO_T3_CBCL <- select(UO_T3_CBCL, c(FamID = Q174, contains("cbcl")))
 UO_T4_CBCL <- select(UO_T4_CBCL, c(FamID = Q203, contains("cbcl")))
 
-# Edit UPMC CBCL Time 1 - 4 to have only CBCL quesions and the FamID.
+# Edit UPMC CBCL Time 1 - 4 to have only CBCL quesions and the FamID
 UPMC_T1_CBCL <- select(UPMC_T1_CBCL, c(FamID = Q1.2, contains("cbcl")))
 UPMC_T2_CBCL <- select(UPMC_T2_CBCL, c(FamID = Q1.2, contains("cbcl")))
 UPMC_T3_CBCL <- select(UPMC_T3_CBCL, c(FamID = Q1.2, contains("cbcl")))
@@ -95,7 +95,7 @@ CBCL_T2 <- rbind(UO_T2_CBCL, UPMC_T2_CBCL)
 CBCL_T3 <- rbind(UO_T3_CBCL, UPMC_T3_CBCL)
 CBCL_T4 <- rbind(UO_T4_CBCL, UPMC_T4_CBCL)
 
-# Clean Global Enviorment 
+# Clean  Environment of intermediate calculations for question selection and column renaming
 rm(UO_T1_CBCL, UO_T2_CBCL, UO_T3_CBCL, UO_T4_CBCL, UPMC_T1_CBCL, UPMC_T2_CBCL, UPMC_T3_CBCL, UPMC_T4_CBCL, 
    Old_UO_CBCL_Names_T1, Old_UO_CBCL_Names_T2, Old_UO_CBCL_Names_T3, Old_UO_CBCL_Names_T4, Old_UPMC_CBCL_Names_T1_T4, Old_UPMC_CBCL_Names_T2_T3)
 
@@ -111,7 +111,7 @@ CBCL_T2 <- merge(Pedigree_T2, CBCL_T2, by = 'FamID')
 CBCL_T3 <- merge(Pedigree_T3, CBCL_T3, by = 'FamID')
 CBCL_T4 <- merge(Pedigree_T4, CBCL_T4, by = 'FamID')
 
-# Clean Global Enviorment 
+# Clean Environment of intermediate calculations for pedigree data
 rm(Pedigree, Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4)
 
 # Create Time Point coloumn in each CBCL Sheet and populate the cell with time point
@@ -123,7 +123,7 @@ CBCL_T4$timepoint <- "Time 4"
 # Bind all cbcl Time Points together creating the CBCL Prep sheet
 CBCL_Prep <- rbind(CBCL_T1, CBCL_T2, CBCL_T3, CBCL_T4)
 
-# Clean Global Enviorment 
+# Clean Environment of intermediate calculations for Prep sheet binding
 rm(CBCL_T1, CBCL_T2, CBCL_T3, CBCL_T4)
 
 ```
@@ -228,11 +228,11 @@ CBCL_Prep <- add_column(CBCL_Prep, cbcl_total = rowSums(CBCL_Prep[, c("srm_cbcl_
 ```
 
 ```{r NDA Sheet}
-# Create NDA prep sheet. 
+# Create NDA prep sheet
 # Select all the needed columns from CBCL_Prep sheet
 NDA_CBCL_Prep <- select(CBCL_Prep, c(subjectkey = child_guid, src_subject_id = child_FamID, sex = child_sex ,interview_age, interview_date, starts_with("srm")))
 
-# Create NDA structure column names. They are unique and without a pattern so they must be made manually. 
+# Create NDA structure column names, they are unique and without a pattern so they must be made manually 
 NDA_CBCL_Names <- paste(c("cbcl56a", "cbcl1", "cbcl_nt", "cbcl_eye", "cbcl8", "cbcl10", "cbcl_out", "cbcl_wait", "cbcl_chew", "cbcl11", "cbcl_help", "cbcl49", "cbcl14", "cbcl15", "cbcl_defiant", "cbcl_dem", "cbcl20", 
                          "cbcl21", "cbcl_diar", "cbcl_disob", "cbcl_dist", "cbcl_alonsleep", "cbcl_answer", "cbcl24", "cbcl25", "cbcl_fun", "cbcl26", "cbcl_home", "cbcl_frust", "cbcl27", "cbcl_eat", "cbcl29", "cbcl_feel", "cbcl36", 
                          "cbcl37", "cbcl_every", "cbcl_upset", "cbcl_troubsleep", "cbcl56b", "cbcl_hit", "cbcl_breath", "cbcl_hurt", "cbcl_unhap", "cbcl_angry", "cbcl56c", "cbcl46", "cbcl45", "cbcl47", "cbcl53", "cbcl54", "cbcl_panic",
@@ -240,13 +240,13 @@ NDA_CBCL_Names <- paste(c("cbcl56a", "cbcl1", "cbcl_nt", "cbcl_eye", "cbcl8", "c
                          "cbcl_littleaf", "cbcl_inter", "cbcl_fear", "cbcl75", "cbcl76", "cbcl_smear", "cbcl79", "cbcl_stares", "cbcl56f", "cbcl_sad", "cbcl84", "cbcl86", "cbcl87", "cbcl88", "cbcl_crie", "cbcl95", "cbcl_clean", "cbcl50",
                          "cbcl_uncoop", "cbcl102", "cbcl103", "cbcl104", "cbcl_people", "cbcl56g", "cbcl_wake", "cbcl_wand", "cbcl19", "cbcl109", "cbcl_withdr", "cbcl112", "cbcl113a"))
 
-# Change names in the NDA_CBCL_Prep to match the NDA structure column names. 
+# Change names in the NDA_CBCL_Prep to match the NDA structure column names
 setnames(NDA_CBCL_Prep, New_CBCL_Names, NDA_CBCL_Names)
 
-# Make an empty row in the NDA sheet for compatibility (to avoid some potential errors).
+# Make an empty row in the NDA sheet for compatibility (to avoid some potential errors)
 NDA_CBCL[1,] <- NA
 
-# Combine NDA CBCL Prep sheet with the NDA structure. 
+# Combine NDA CBCL Prep sheet with the NDA structure
 NDA_CBCL <- bind_rows(NDA_CBCL,NDA_CBCL_Prep)
 
 # Recreate first line in orignial NDA file
@@ -267,6 +267,9 @@ write.table(first_line, file = "cbcl1_5.csv", sep = ",", append = FALSE, quote =
 # Append data in NDA_CBCL into cbcl1_5.csv file 
 write.table(NDA_CBCL, file = 'cbcl1_5.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
 
+#Clean environment of intermediate calculations for NDA structure
+rm(NDA_CBCL_Prep, NDA_CBCL_Names, UO, UPMC, first_line)
+
 ```
 
 ```{r NA Percentage Drop}
@@ -279,9 +282,10 @@ CBCL_Prep_67 <- CBCL_Prep[CBCL_Prep$NACheck <= 0.67, ]
 
 CBCL_Drop_100 <- CBCL_Prep[CBCL_Prep$NACheck > 0, ]
 CBCL_Prep_100 <- CBCL_Prep[CBCL_Prep$NACheck <= 0, ]
+
 ```
 
-```{r table all data, echo=FALSE}
+```{r All Data Table, echo=FALSE}
 # Select needed columns
 Progress <- select(CBCL_Prep, c(FamID, GroupAssignment, timepoint, cbcl_ext, cbcl_int, cbcl_total, starts_with("srm")))
 
@@ -372,12 +376,12 @@ kable(Mean_Table) %>%
   column_spec(c(1,5,9), border_right = T, include_thead = T) %>%
   column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
 
-# Clean Environment of intermediate calculations for all data table.
+# Clean Environment of intermediate calculations for "all data" table.
 rm(Progress, Progress_Ext_Mean, Progress_Ext_Mean_Both, Progress_Int_Mean, Progress_Int_Mean_Both, Progress_Mean, Progress_Total_Mean, Progress_Total_Mean_Both, Both_Site_Mean)
 
 ```
 
-```{r table 67% data, echo=FALSE}
+```{r Pass 67% Table, echo=FALSE}
 # Select needed column
 Progress_67 <- select(CBCL_Prep_67, c(FamID, GroupAssignment, timepoint, cbcl_ext, cbcl_int, cbcl_total, starts_with("srm")))
 
@@ -475,7 +479,7 @@ rm(Progress_67, Progress_67_Ext_Mean_Both, Progress_67_Int_Mean_Both, Progress_6
 
 ```
 
-```{r table 100% data, echo=FALSE}
+```{r Pass 100% Table, echo=FALSE}
 # Select needed column
 Progress_100 <- select(CBCL_Prep_100, c(FamID, GroupAssignment, timepoint, cbcl_ext, cbcl_int, cbcl_total, starts_with("srm")))
 
