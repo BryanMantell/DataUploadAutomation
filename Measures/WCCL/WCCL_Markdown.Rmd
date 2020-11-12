@@ -5,13 +5,13 @@ date: "5/28/2020"
 output: html_document
 ---
 
-```{r setup}
+```{r Setup}
 knitr::opts_chunk$set(echo = TRUE)
 
-#Clear Environment 
+#Clear environment 
 rm(list = ls())
 
-#Enable Packages 
+#Enable packages 
 library(dplyr)
 library(tidyverse)
 library(data.table)
@@ -20,12 +20,15 @@ library(knitr)
 
 options(digits = 3)
 ```
+## Import
+Import Qualtrics excel files into R
+
 ```{r Import}
-#Importing Pedigree/NDA Structure
+#Import Pedigree/NDA structure
 Pedigree <- read.csv("Reference_Pedigree.csv")
 NDA_WCCL <- read.csv("dbt_wccl01_template.csv", skip = 1)
 
-# Import WCCL Files 
+# Import WCCL files 
 UO_T1_WCCL <- read.csv("UO_T1_Qualtrics.csv", stringsAsFactors = FALSE)
 UPMC_T1_WCCL <- read.csv("UPMC_T1_WCCL.csv", stringsAsFactors = FALSE)
 UO_T2_WCCL <- read.csv("UO_T2_Qualtrics.csv", stringsAsFactors = FALSE)
@@ -35,9 +38,11 @@ UPMC_T3_WCCL <- read.csv("UPMC_T3_WCCL.csv", stringsAsFactors = FALSE)
 UO_T4_WCCL <- read.csv("UO_T4_Qualtrics.csv", stringsAsFactors = FALSE)
 UPMC_T4_WCCL <- read.csv("UPMC_T4_WCCL.csv", stringsAsFactors = FALSE)
 ```
+## Rename Columns
+Rename questions numbers to self-report measure scale items. Then, take each scale measure from both sites and combine them by timepoint.
 
 ```{r Rename Columns}
-# creating new variable names 
+# Create new variable names 
 wccl <- "srm_wccl"
 num_items <- seq(1:59)
 new_WCCL_names <- paste(wccl, num_items, sep = "_")
@@ -76,6 +81,8 @@ WCCL_T2 <- rbind(UO_T2_WCCL, UPMC_T2_WCCL)
 WCCL_T3 <- rbind(UO_T3_WCCL, UPMC_T3_WCCL)
 WCCL_T4 <- rbind(UO_T4_WCCL, UPMC_T4_WCCL)
 ```
+## Prep Sheet
+Create prep sheet to begin transferring data into NDA format. Rename relevant GUID information to match NDA specifications. Finally, bind all timepoints into single WCCL Prep Sheet.
 
 ```{r Prep Sheet}
 #setup Pedigree data by time point
@@ -96,24 +103,26 @@ WCCL_T2$Timepoint <- "Time 2"
 WCCL_T3$Timepoint <- "Time 3"
 WCCL_T4$Timepoint <- "Time 4"
 
-#Create WCCL_prep and merge datasets 
-WCCL_PREP <- rbind(WCCL_T1, WCCL_T2, WCCL_T3, WCCL_T4)
+#Create WCCL_Prep and merge datasets 
+WCCL_Prep <- rbind(WCCL_T1, WCCL_T2, WCCL_T3, WCCL_T4)
 
 #Clean Global Environment
 rm(UO_T1_WCCL, UO_T2_WCCL, UO_T3_WCCL, UO_T4_WCCL, UPMC_T1_WCCL, UPMC_T2_WCCL, UPMC_T3_WCCL, UPMC_T4_WCCL, Pedigree, Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4, WCCL_T1, WCCL_T2, WCCL_T3, WCCL_T4)
 ```
+## Re-code and 67% Rule
+Convert Likert Scale text input into numerical values then create a dataframe to place ID's that do not have 67% of their data present.
 
 ```{r Recode}
 #Recode Text to Integers
-WCCL_PREP <- WCCL_PREP %>% mutate_at(new_WCCL_names,funs(recode(., '0 Never Used' = 0, '1 Rarely Used' = 1, '2 Sometimes Used' = 2, '3 Regularly Used' = 3,.default = NaN)))
+WCCL_Prep <- WCCL_Prep %>% mutate_at(new_WCCL_names,funs(recode(., '0 Never Used' = 0, '1 Rarely Used' = 1, '2 Sometimes Used' = 2, '3 Regularly Used' = 3,.default = NaN)))
 
 #Change Numbers to Numeric values
-WCCL_PREP[,8:59] <- sapply(WCCL_PREP[,8:59],as.numeric)
+WCCL_Prep[,8:59] <- sapply(WCCL_Prep[,8:59],as.numeric)
 
 #Change gender to F instead of false
-WCCL_PREP$mother_sex <- "F"
+WCCL_Prep$mother_sex <- "F"
 
-WCCL_PREP <- WCCL_PREP %>% 
+WCCL_Prep <- WCCL_Prep %>% 
   mutate_at(c("GroupAssignment"),
             funs(recode(., "Assigned Group 3 (HC)" = "Healthy", 
                         'Assigned Group 2 (FSU)' = "NO DBT",
@@ -122,32 +131,32 @@ WCCL_PREP <- WCCL_PREP %>%
 
 ```{r Calculated Columns}
 #Items for SU
-SU <- colnames(select(WCCL_PREP, c("srm_wccl_1", "srm_wccl_2", "srm_wccl_4", "srm_wccl_6", "srm_wccl_9", "srm_wccl_10", "srm_wccl_11", "srm_wccl_13", "srm_wccl_16", "srm_wccl_18", "srm_wccl_19", "srm_wccl_21", "srm_wccl_22", "srm_wccl_23", "srm_wccl_26", "srm_wccl_27", "srm_wccl_29", "srm_wccl_31", "srm_wccl_33", "srm_wccl_34", "srm_wccl_35", "srm_wccl_36", "srm_wccl_38", "srm_wccl_39", "srm_wccl_40", "srm_wccl_42", "srm_wccl_43", "srm_wccl_44", "srm_wccl_47", "srm_wccl_49", "srm_wccl_50", "srm_wccl_51", "srm_wccl_53", "srm_wccl_54", "srm_wccl_56", "srm_wccl_57", "srm_wccl_58", "srm_wccl_59")))
+SU <- colnames(select(WCCL_Prep, c("srm_wccl_1", "srm_wccl_2", "srm_wccl_4", "srm_wccl_6", "srm_wccl_9", "srm_wccl_10", "srm_wccl_11", "srm_wccl_13", "srm_wccl_16", "srm_wccl_18", "srm_wccl_19", "srm_wccl_21", "srm_wccl_22", "srm_wccl_23", "srm_wccl_26", "srm_wccl_27", "srm_wccl_29", "srm_wccl_31", "srm_wccl_33", "srm_wccl_34", "srm_wccl_35", "srm_wccl_36", "srm_wccl_38", "srm_wccl_39", "srm_wccl_40", "srm_wccl_42", "srm_wccl_43", "srm_wccl_44", "srm_wccl_47", "srm_wccl_49", "srm_wccl_50", "srm_wccl_51", "srm_wccl_53", "srm_wccl_54", "srm_wccl_56", "srm_wccl_57", "srm_wccl_58", "srm_wccl_59")))
 
 #Items for GSC
-GSC <- colnames(select(WCCL_PREP, c("srm_wccl_3", "srm_wccl_5", "srm_wccl_8", "srm_wccl_12", "srm_wccl_14", "srm_wccl_17", "srm_wccl_20", "srm_wccl_25", "srm_wccl_32", "srm_wccl_37", "srm_wccl_41", "srm_wccl_45", "srm_wccl_46", "srm_wccl_52", "srm_wccl_55")))
+GSC <- colnames(select(WCCL_Prep, c("srm_wccl_3", "srm_wccl_5", "srm_wccl_8", "srm_wccl_12", "srm_wccl_14", "srm_wccl_17", "srm_wccl_20", "srm_wccl_25", "srm_wccl_32", "srm_wccl_37", "srm_wccl_41", "srm_wccl_45", "srm_wccl_46", "srm_wccl_52", "srm_wccl_55")))
 
 #Items for BO
-BO <- colnames(select(WCCL_PREP, c("srm_wccl_7", "srm_wccl_15", "srm_wccl_24", "srm_wccl_28", "srm_wccl_30", "srm_wccl_48")))
+BO <- colnames(select(WCCL_Prep, c("srm_wccl_7", "srm_wccl_15", "srm_wccl_24", "srm_wccl_28", "srm_wccl_30", "srm_wccl_48")))
 
 #Calculated Columns 
-WCCL_PREP$wccl_SU_raw <- rowMeans(WCCL_PREP[,SU], na.rm = TRUE)
+WCCL_Prep$wccl_SU_raw <- rowMeans(WCCL_Prep[,SU], na.rm = TRUE)
 
-WCCL_PREP$wccl_GSC_raw <- rowMeans(WCCL_PREP[,GSC], na.rm = TRUE)
+WCCL_Prep$wccl_GSC_raw <- rowMeans(WCCL_Prep[,GSC], na.rm = TRUE)
 
-WCCL_PREP$wccl_BO_raw <- rowMeans(WCCL_PREP[,BO], na.rm = TRUE)
+WCCL_Prep$wccl_BO_raw <- rowMeans(WCCL_Prep[,BO], na.rm = TRUE)
 
 ####Mean with 67% Rule#### 
 
 #Check NA Percentage
-WCCL_PREP$NACheck <- rowSums(is.na(select(WCCL_PREP, starts_with("srm"))))/ncol(dplyr::select(WCCL_PREP, starts_with("srm")))
+WCCL_Prep$NACheck <- rowSums(is.na(select(WCCL_Prep, starts_with("srm"))))/ncol(dplyr::select(WCCL_Prep, starts_with("srm")))
 
 #New Mean with 67% Rule 
-WCCL_PREP$wccl_SU_cor <- ifelse(WCCL_PREP$NACheck < 0.67, rowMeans(WCCL_PREP[,SU], na.rm = TRUE), "NA")
+WCCL_Prep$wccl_SU_cor <- ifelse(WCCL_Prep$NACheck < 0.67, rowMeans(WCCL_Prep[,SU], na.rm = TRUE), "NA")
 
-WCCL_PREP$wccl_GSC_cor <- ifelse(WCCL_PREP$NACheck < 0.67, rowMeans(WCCL_PREP[,GSC], na.rm = TRUE), "NA")
+WCCL_Prep$wccl_GSC_cor <- ifelse(WCCL_Prep$NACheck < 0.67, rowMeans(WCCL_Prep[,GSC], na.rm = TRUE), "NA")
 
-WCCL_PREP$wccl_BO_cor <- ifelse(WCCL_PREP$NACheck < 0.67, rowMeans(WCCL_PREP[,BO], na.rm = TRUE), "NA")
+WCCL_Prep$wccl_BO_cor <- ifelse(WCCL_Prep$NACheck < 0.67, rowMeans(WCCL_Prep[,BO], na.rm = TRUE), "NA")
 ```
 
 ```{r NDA Sheet}
@@ -156,7 +165,7 @@ dbt_wccl <- paste("dbt_wccl", 1:59, sep = "")
 NDA_Names <- c(dbt_wccl)
 
 #create NDA Prep structure 
-NDA_WCCL_Prep <- select(WCCL_PREP, c(subjectkey = mom_guid, src_subject_id = mother_FamID, interview_date, interview_age, sex = mother_sex , visit = Timepoint, starts_with("srm")))
+NDA_WCCL_Prep <- select(WCCL_Prep, c(subjectkey = mom_guid, src_subject_id = mother_FamID, interview_date, interview_age, sex = mother_sex , visit = Timepoint, starts_with("srm")))
 setnames(NDA_WCCL_Prep, new_WCCL_names, NDA_Names)
 
 #bind NDA_WCCL_Prep and NDA structure  
@@ -176,7 +185,7 @@ write.table(NDA_WCCL, file = "dbt_wccl.csv", sep = ",", append = FALSE, quote = 
 
 ```{r Table Preparation}
 #Make Progress 
-Progress <- select(WCCL_PREP, c(FamID, GroupAssignment, Timepoint, starts_with("srm"), NACheck))
+Progress <- select(WCCL_Prep, c(FamID, GroupAssignment, Timepoint, starts_with("srm"), NACheck))
 
 # Change FamId as character and assign to ID variable 
 ID <- c(as.character(Progress$FamID))
@@ -187,15 +196,15 @@ Progress$site <- ifelse(startsWith(ID, "9"),"UO","UPMC")
 
 #Drop people who are at less than 67% response
 WCCL_DROP <- Progress[Progress$NACheck > 0.67, ]
-WCCL_PREP67 <- Progress[Progress$NACheck <= 0.67, ]
-WCCL_PREP100 <- Progress[Progress$NACheck == 0, ]
+WCCL_Prep67 <- Progress[Progress$NACheck <= 0.67, ]
+WCCL_Prep100 <- Progress[Progress$NACheck == 0, ]
 
 ```
 
 ```{r Table 67%}
 
 #Progress DBT_WCCL Table
-Progress67 <- select(WCCL_PREP67, c(FamID, GroupAssignment, Timepoint, starts_with("srm")))
+Progress67 <- select(WCCL_Prep67, c(FamID, GroupAssignment, Timepoint, starts_with("srm")))
 
 # Change FamId as character and assign to ID variable 
 ID <- c(as.character(Progress67$FamID))
@@ -204,7 +213,7 @@ ID <- c(as.character(Progress67$FamID))
 Progress67$site <- ifelse(startsWith(ID, "9"),"UO","UPMC")
 
 #calculate rowmeans for each individual
-Progress67$Row_Mean <- rowMeans(select(WCCL_PREP67,c(starts_with("srm"))), na.rm = T)
+Progress67$Row_Mean <- rowMeans(select(WCCL_Prep67,c(starts_with("srm"))), na.rm = T)
 
 # Group by GroupAssissignment and Timepoint, and calculate the Group Mean
 Progress_Mean <- Progress67 %>%
@@ -257,7 +266,7 @@ kable(Mean_Table) %>%
 
 ```{r Table 100%}
 #Progress DBT_WCCL Table
-Progress100 <- select(WCCL_PREP100, c(FamID, GroupAssignment, Timepoint, starts_with("srm")))
+Progress100 <- select(WCCL_Prep100, c(FamID, GroupAssignment, Timepoint, starts_with("srm")))
 
 # Change FamId as character and assign to ID variable 
 ID <- c(as.character(Progress100$FamID))
@@ -266,7 +275,7 @@ ID <- c(as.character(Progress100$FamID))
 Progress100$site <- ifelse(startsWith(ID, "9"),"UO","UPMC")
 
 #calculate rowmeans for each individual
-Progress100$Row_Mean <- rowMeans(select(WCCL_PREP100,c(starts_with("srm"))), na.rm = T)
+Progress100$Row_Mean <- rowMeans(select(WCCL_Prep100,c(starts_with("srm"))), na.rm = T)
 
 # Group by GroupAssignment and Timepoint, and calculate the Group Mean
 Progress_Mean <- Progress100 %>%
@@ -332,24 +341,24 @@ N_ori_BothSite <- Progress %>%
 
 #### 67% table ####
 # 67% by site 
-N67 <- WCCL_PREP67 %>%
+N67 <- WCCL_Prep67 %>%
   group_by(Timepoint, site, GroupAssignment) %>% 
   summarise(n_67 = n())
 
 # 67% both site 
-N67_BothSite <- WCCL_PREP67 %>%
+N67_BothSite <- WCCL_Prep67 %>%
   group_by(Timepoint, GroupAssignment) %>% 
   summarise(BothSite_67_N = n())
 
 #### 100% table ####
 
 #100% by site
-N100 <- WCCL_PREP100 %>%
+N100 <- WCCL_Prep100 %>%
   group_by(Timepoint, site, GroupAssignment) %>% 
   summarise(n_100 = n())
 
 # 100% both site 
-N100_BothSite <- WCCL_PREP100 %>%
+N100_BothSite <- WCCL_Prep100 %>%
   group_by(Timepoint, GroupAssignment) %>% 
   summarise(BothSite_100_N = n())
 
