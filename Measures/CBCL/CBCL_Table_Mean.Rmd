@@ -1,5 +1,5 @@
 ---
-title: "CBCL_Table_Mean"
+title: "CBCL"
 author: "Austin Fisenko"
 date: "7/9/2020"
 output: html_document
@@ -25,7 +25,9 @@ options(digits = 3)
 
 ```
 
-```{r import}
+## Import
+Import Qualtrics excel files into R
+```{r Import}
 # Import Pedigree and NDA Structure
 Pedigree <- read.csv("Reference_Pedigree.csv")
 NDA_CBCL <- read.csv("cbcl1_501_template.csv", skip = 1)
@@ -43,7 +45,9 @@ UPMC_T4_CBCL <- read.csv(file = 'UPMC_T4_cbcl.csv', stringsAsFactors = FALSE)
 
 ```
 
-```{r rename columns}
+## Rename Columns
+Rename questions numbers to self-report measure scale items. Then, take each scale measure from both sites and combine them by timepoint.
+```{r Rename Columns}
 # Create list of new variable names for the Prep Sheet
 New_CBCL_Names <- sprintf("srm_cbcl_%03d", seq(1:100))
 
@@ -62,9 +66,6 @@ Old_UO_CBCL_Names_T3 <- sprintf("Q534_%01d", seq(1:100))
 # Old names for UO timepoint 4
 Old_UO_CBCL_Names_T4 <- sprintf("Q828_%01d", seq(1:100))
 
-```
-
-```{r prep sheet}
 # Replace UO column names (there may be errors from the CBCL TEXT question responses) 
 setnames(UO_T1_CBCL, Old_UO_CBCL_Names_T1, New_CBCL_Names)
 setnames(UO_T2_CBCL, Old_UO_CBCL_Names_T2, New_CBCL_Names)
@@ -77,6 +78,11 @@ setnames(UPMC_T2_CBCL, Old_UPMC_CBCL_Names_T2_T3, New_CBCL_Names)
 setnames(UPMC_T3_CBCL, Old_UPMC_CBCL_Names_T2_T3, New_CBCL_Names)
 setnames(UPMC_T4_CBCL, Old_UPMC_CBCL_Names_T1_T4, New_CBCL_Names)
 
+```
+
+## Prep Sheet
+Create prep sheet to begin transferring data into NDA format. Rename relevant GUID information to match NDA specifications. Finally, bind all timepoints into single CBCL Prep Sheet.
+```{r Prep Sheet}
 # Edit UO CBCL Time 1 - 4 to have only CBCL quesions and the FamID
 UO_T1_CBCL <- select(UO_T1_CBCL, c(FamID = Q221, contains("cbcl")))
 UO_T2_CBCL <- select(UO_T2_CBCL, c(FamID = Q116, contains("cbcl")))
@@ -128,7 +134,9 @@ rm(CBCL_T1, CBCL_T2, CBCL_T3, CBCL_T4)
 
 ```
 
-```{r recode}
+## Re-code
+Convert Likert Scale text input into numerical values then create a dataframe to place ID's that do not have 67% of their data present.(There's an issue this presents that I will have to deal with later)
+```{r Re-code and 67% Rule}
 # Recode text responses into numbers so they can be used in calculations
 CBCL_Prep <- CBCL_Prep %>% 
   mutate_at(New_CBCL_Names,
@@ -143,49 +151,60 @@ CBCL_Prep <- CBCL_Prep %>%
                         'Assigned Group 2 (FSU)' = "NO DBT",
                         'Assigned Group 1 (DBT)' = "DBT")))
 
+# Check NA percentage
+CBCL_Prep$NACheck <- rowSums(is.na(select(CBCL_Prep, starts_with("srm"))))/ncol(dplyr::select(CBCL_Prep, starts_with("srm")))
+
+# Drop people who are less than 67% & 100%
+CBCL_Drop_67 <- CBCL_Prep[CBCL_Prep$NACheck > 0.67, ]
+CBCL_Prep_67 <- CBCL_Prep[CBCL_Prep$NACheck <= 0.67, ]
+
+CBCL_Drop_100 <- CBCL_Prep[CBCL_Prep$NACheck > 0, ]
+CBCL_Prep_100 <- CBCL_Prep[CBCL_Prep$NACheck <= 0, ]
 
 ```
 
+## Calculated Columns
+Create sums column combining each individual measure. Separate caulculations are needed for the 67% and 100% Prep Sheet.
 ```{r calculated columns}
-# Create calculated columns
+# Create calculated columns for 67% version of the Prep Sheet
 # Creating calculated columns for "cbcl_er"
-CBCL_Prep <- add_column(CBCL_Prep, cbcl_er = rowSums(CBCL_Prep[, c("srm_cbcl_021", "srm_cbcl_046", "srm_cbcl_051", "srm_cbcl_079", "srm_cbcl_082", "srm_cbcl_083", "srm_cbcl_092", 
+CBCL_Prep_67 <- add_column(CBCL_Prep_67, cbcl_er = rowSums(CBCL_Prep_67[, c("srm_cbcl_021", "srm_cbcl_046", "srm_cbcl_051", "srm_cbcl_079", "srm_cbcl_082", "srm_cbcl_083", "srm_cbcl_092", 
                                                                    "srm_cbcl_097", "srm_cbcl_099")]),.after = "srm_cbcl_100")
 
 
 # Creating calculated columns for "cbcl_ad"
-CBCL_Prep <- add_column(CBCL_Prep, cbcl_ad = rowSums(CBCL_Prep[, c("srm_cbcl_010", "srm_cbcl_033", "srm_cbcl_037", "srm_cbcl_043", "srm_cbcl_047", "srm_cbcl_068", "srm_cbcl_087", 
+CBCL_Prep_67 <- add_column(CBCL_Prep_67, cbcl_ad = rowSums(CBCL_Prep_67[, c("srm_cbcl_010", "srm_cbcl_033", "srm_cbcl_037", "srm_cbcl_043", "srm_cbcl_047", "srm_cbcl_068", "srm_cbcl_087", 
                                                                    "srm_cbcl_090")]),.after = "cbcl_er")
 
 
 # Creating calculated columns for "cbcl_sc"
-CBCL_Prep <- add_column(CBCL_Prep, cbcl_sc = rowSums(CBCL_Prep[, c("srm_cbcl_001", "srm_cbcl_007", "srm_cbcl_012", "srm_cbcl_019", "srm_cbcl_024", "srm_cbcl_039", "srm_cbcl_045", 
+CBCL_Prep_67 <- add_column(CBCL_Prep_67, cbcl_sc = rowSums(CBCL_Prep_67[, c("srm_cbcl_001", "srm_cbcl_007", "srm_cbcl_012", "srm_cbcl_019", "srm_cbcl_024", "srm_cbcl_039", "srm_cbcl_045", 
                                                                    "srm_cbcl_052", "srm_cbcl_078", "srm_cbcl_086", "srm_cbcl_093")]),.after = "cbcl_ad")
 
 
 # Creating calculated columns for "cbcl_w"
-CBCL_Prep <- add_column(CBCL_Prep, cbcl_w = rowSums(CBCL_Prep[, c("srm_cbcl_002", "srm_cbcl_004", "srm_cbcl_023", "srm_cbcl_062", "srm_cbcl_100", "srm_cbcl_070", "srm_cbcl_071", 
+CBCL_Prep_67 <- add_column(CBCL_Prep_67, cbcl_w = rowSums(CBCL_Prep_67[, c("srm_cbcl_002", "srm_cbcl_004", "srm_cbcl_023", "srm_cbcl_062", "srm_cbcl_100", "srm_cbcl_070", "srm_cbcl_071", 
                                                                   "srm_cbcl_098")]),.after = "cbcl_sc")
 
 
 # Creating calculated columns for "cbcl_sp"
-CBCL_Prep <- add_column(CBCL_Prep, cbcl_sp = rowSums(CBCL_Prep[, c("srm_cbcl_022", "srm_cbcl_038", "srm_cbcl_048", "srm_cbcl_064", "srm_cbcl_074",
+CBCL_Prep_67 <- add_column(CBCL_Prep_67, cbcl_sp = rowSums(CBCL_Prep_67[, c("srm_cbcl_022", "srm_cbcl_038", "srm_cbcl_048", "srm_cbcl_064", "srm_cbcl_074",
                                                                    "srm_cbcl_084")]),.after = "cbcl_w")
 
 
 # Creating calculated columns for "cbcl_ap"
-CBCL_Prep <- add_column(CBCL_Prep, cbcl_ap = rowSums(CBCL_Prep[, c("srm_cbcl_005", "srm_cbcl_006", "srm_cbcl_056", "srm_cbcl_059",
+CBCL_Prep_67 <- add_column(CBCL_Prep_67, cbcl_ap = rowSums(CBCL_Prep_67[, c("srm_cbcl_005", "srm_cbcl_006", "srm_cbcl_056", "srm_cbcl_059",
                                                                    "srm_cbcl_095")]),.after = "cbcl_sp")
 
 
 # Creating calculated columns for "cbcl_ab"
-CBCL_Prep <- add_column(CBCL_Prep, cbcl_ab = rowSums(CBCL_Prep[, c("srm_cbcl_008", "srm_cbcl_015", "srm_cbcl_016", "srm_cbcl_018", "srm_cbcl_020", "srm_cbcl_027", "srm_cbcl_029", 
+CBCL_Prep_67 <- add_column(CBCL_Prep_67, cbcl_ab = rowSums(CBCL_Prep_67[, c("srm_cbcl_008", "srm_cbcl_015", "srm_cbcl_016", "srm_cbcl_018", "srm_cbcl_020", "srm_cbcl_027", "srm_cbcl_029", 
                                                                    "srm_cbcl_035", "srm_cbcl_040", "srm_cbcl_042", "srm_cbcl_044", "srm_cbcl_053", "srm_cbcl_058", "srm_cbcl_066", 
                                                                    "srm_cbcl_069", "srm_cbcl_081", "srm_cbcl_085", "srm_cbcl_088", "srm_cbcl_096")]),.after = "cbcl_ap")
 
 
 # Creating calculated columns for "cbcl_op"
-CBCL_Prep <- add_column(CBCL_Prep, cbcl_op = rowSums(CBCL_Prep[, c("srm_cbcl_003", "srm_cbcl_009", "srm_cbcl_011", "srm_cbcl_013", "srm_cbcl_014", "srm_cbcl_017", "srm_cbcl_025", 
+CBCL_Prep_67 <- add_column(CBCL_Prep_67, cbcl_op = rowSums(CBCL_Prep_67[, c("srm_cbcl_003", "srm_cbcl_009", "srm_cbcl_011", "srm_cbcl_013", "srm_cbcl_014", "srm_cbcl_017", "srm_cbcl_025", 
                                                                    "srm_cbcl_026", "srm_cbcl_028", "srm_cbcl_030", "srm_cbcl_031", "srm_cbcl_032", "srm_cbcl_034", "srm_cbcl_036", 
                                                                    "srm_cbcl_041", "srm_cbcl_049", "srm_cbcl_050", "srm_cbcl_054", "srm_cbcl_055", "srm_cbcl_057", "srm_cbcl_060",
                                                                    "srm_cbcl_061", "srm_cbcl_063", "srm_cbcl_065", "srm_cbcl_072", "srm_cbcl_073", "srm_cbcl_075", "srm_cbcl_076",
@@ -193,7 +212,7 @@ CBCL_Prep <- add_column(CBCL_Prep, cbcl_op = rowSums(CBCL_Prep[, c("srm_cbcl_003
 
 
 # Creating calculated columns for "cbcl_int"
-CBCL_Prep <- add_column(CBCL_Prep, cbcl_int = rowSums(CBCL_Prep[, c("srm_cbcl_021", "srm_cbcl_046", "srm_cbcl_051", "srm_cbcl_079", "srm_cbcl_082", "srm_cbcl_083", "srm_cbcl_092", 
+CBCL_Prep_67 <- add_column(CBCL_Prep_67, cbcl_int = rowSums(CBCL_Prep_67[, c("srm_cbcl_021", "srm_cbcl_046", "srm_cbcl_051", "srm_cbcl_079", "srm_cbcl_082", "srm_cbcl_083", "srm_cbcl_092", 
                                                                     "srm_cbcl_097", "srm_cbcl_099", "srm_cbcl_010", "srm_cbcl_033", "srm_cbcl_037", "srm_cbcl_043", "srm_cbcl_047", 
                                                                     "srm_cbcl_068", "srm_cbcl_087", "srm_cbcl_090", "srm_cbcl_001", "srm_cbcl_007", "srm_cbcl_012", "srm_cbcl_019",
                                                                     "srm_cbcl_024", "srm_cbcl_039", "srm_cbcl_045", "srm_cbcl_052", "srm_cbcl_078", "srm_cbcl_086", "srm_cbcl_093", 
@@ -202,14 +221,94 @@ CBCL_Prep <- add_column(CBCL_Prep, cbcl_int = rowSums(CBCL_Prep[, c("srm_cbcl_02
 
 
 # Creating calculated columns for "cbcl_ext"
-CBCL_Prep <- add_column(CBCL_Prep, cbcl_ext = rowSums(CBCL_Prep[, c("srm_cbcl_005", "srm_cbcl_006", "srm_cbcl_056", "srm_cbcl_059", "srm_cbcl_095", "srm_cbcl_008", "srm_cbcl_015",
+CBCL_Prep_67 <- add_column(CBCL_Prep_67, cbcl_ext = rowSums(CBCL_Prep_67[, c("srm_cbcl_005", "srm_cbcl_006", "srm_cbcl_056", "srm_cbcl_059", "srm_cbcl_095", "srm_cbcl_008", "srm_cbcl_015",
                                                                     "srm_cbcl_016", "srm_cbcl_018", "srm_cbcl_020", "srm_cbcl_027", "srm_cbcl_029", "srm_cbcl_035", "srm_cbcl_040",
                                                                     "srm_cbcl_042", "srm_cbcl_044", "srm_cbcl_053", "srm_cbcl_058", "srm_cbcl_066", "srm_cbcl_069", "srm_cbcl_081",
                                                                     "srm_cbcl_085", "srm_cbcl_088", "srm_cbcl_096")]),.after = "cbcl_int")
 
 
 # Creating calculated columns for "cbcl_total"
-CBCL_Prep <- add_column(CBCL_Prep, cbcl_total = rowSums(CBCL_Prep[, c("srm_cbcl_001", "srm_cbcl_002", "srm_cbcl_003", "srm_cbcl_004", "srm_cbcl_005", "srm_cbcl_006", "srm_cbcl_007",
+CBCL_Prep_67 <- add_column(CBCL_Prep_67, cbcl_total = rowSums(CBCL_Prep_67[, c("srm_cbcl_001", "srm_cbcl_002", "srm_cbcl_003", "srm_cbcl_004", "srm_cbcl_005", "srm_cbcl_006", "srm_cbcl_007",
+                                                                      "srm_cbcl_008", "srm_cbcl_009", "srm_cbcl_010", "srm_cbcl_011", "srm_cbcl_012", "srm_cbcl_013", "srm_cbcl_014",
+                                                                      "srm_cbcl_015", "srm_cbcl_016", "srm_cbcl_017", "srm_cbcl_018", "srm_cbcl_019", "srm_cbcl_020", "srm_cbcl_021",
+                                                                      "srm_cbcl_022", "srm_cbcl_023", "srm_cbcl_024", "srm_cbcl_025", "srm_cbcl_026", "srm_cbcl_027", "srm_cbcl_028",
+                                                                      "srm_cbcl_029", "srm_cbcl_030", "srm_cbcl_031", "srm_cbcl_032", "srm_cbcl_033", "srm_cbcl_034", "srm_cbcl_035",
+                                                                      "srm_cbcl_036", "srm_cbcl_037", "srm_cbcl_038", "srm_cbcl_039", "srm_cbcl_040", "srm_cbcl_041", "srm_cbcl_042",
+                                                                      "srm_cbcl_043", "srm_cbcl_044", "srm_cbcl_045", "srm_cbcl_046", "srm_cbcl_047", "srm_cbcl_048", "srm_cbcl_049",
+                                                                      "srm_cbcl_050", "srm_cbcl_051", "srm_cbcl_052", "srm_cbcl_053", "srm_cbcl_054", "srm_cbcl_055", "srm_cbcl_056",
+                                                                      "srm_cbcl_057", "srm_cbcl_058", "srm_cbcl_059", "srm_cbcl_060", "srm_cbcl_061", "srm_cbcl_062", "srm_cbcl_063",
+                                                                      "srm_cbcl_064", "srm_cbcl_065", "srm_cbcl_066", "srm_cbcl_067", "srm_cbcl_068", "srm_cbcl_069", "srm_cbcl_070",
+                                                                      "srm_cbcl_071", "srm_cbcl_072", "srm_cbcl_073", "srm_cbcl_074", "srm_cbcl_075", "srm_cbcl_076", "srm_cbcl_077",
+                                                                      "srm_cbcl_078", "srm_cbcl_079", "srm_cbcl_080", "srm_cbcl_081", "srm_cbcl_082", "srm_cbcl_083", "srm_cbcl_084",
+                                                                      "srm_cbcl_085", "srm_cbcl_086", "srm_cbcl_087", "srm_cbcl_088", "srm_cbcl_089", "srm_cbcl_090", "srm_cbcl_091",
+                                                                      "srm_cbcl_092", "srm_cbcl_093", "srm_cbcl_094", "srm_cbcl_095", "srm_cbcl_096", "srm_cbcl_097", "srm_cbcl_098",
+                                                                      "srm_cbcl_099")]),.after = "cbcl_ext")
+
+#--------------------------------------------------------------------------------------------------------------
+
+# Create calculated columns for 100% version of the Prep Sheet
+# Creating calculated columns for "cbcl_er"
+CBCL_Prep_100 <- add_column(CBCL_Prep_100, cbcl_er = rowSums(CBCL_Prep_100[, c("srm_cbcl_021", "srm_cbcl_046", "srm_cbcl_051", "srm_cbcl_079", "srm_cbcl_082", "srm_cbcl_083", "srm_cbcl_092", 
+                                                                   "srm_cbcl_097", "srm_cbcl_099")]),.after = "srm_cbcl_100")
+
+
+# Creating calculated columns for "cbcl_ad"
+CBCL_Prep_100 <- add_column(CBCL_Prep_100, cbcl_ad = rowSums(CBCL_Prep_100[, c("srm_cbcl_010", "srm_cbcl_033", "srm_cbcl_037", "srm_cbcl_043", "srm_cbcl_047", "srm_cbcl_068", "srm_cbcl_087", 
+                                                                   "srm_cbcl_090")]),.after = "cbcl_er")
+
+
+# Creating calculated columns for "cbcl_sc"
+CBCL_Prep_100 <- add_column(CBCL_Prep_100, cbcl_sc = rowSums(CBCL_Prep_100[, c("srm_cbcl_001", "srm_cbcl_007", "srm_cbcl_012", "srm_cbcl_019", "srm_cbcl_024", "srm_cbcl_039", "srm_cbcl_045", 
+                                                                   "srm_cbcl_052", "srm_cbcl_078", "srm_cbcl_086", "srm_cbcl_093")]),.after = "cbcl_ad")
+
+
+# Creating calculated columns for "cbcl_w"
+CBCL_Prep_100 <- add_column(CBCL_Prep_100, cbcl_w = rowSums(CBCL_Prep_100[, c("srm_cbcl_002", "srm_cbcl_004", "srm_cbcl_023", "srm_cbcl_062", "srm_cbcl_100", "srm_cbcl_070", "srm_cbcl_071", 
+                                                                  "srm_cbcl_098")]),.after = "cbcl_sc")
+
+
+# Creating calculated columns for "cbcl_sp"
+CBCL_Prep_100 <- add_column(CBCL_Prep_100, cbcl_sp = rowSums(CBCL_Prep_100[, c("srm_cbcl_022", "srm_cbcl_038", "srm_cbcl_048", "srm_cbcl_064", "srm_cbcl_074",
+                                                                   "srm_cbcl_084")]),.after = "cbcl_w")
+
+
+# Creating calculated columns for "cbcl_ap"
+CBCL_Prep_100 <- add_column(CBCL_Prep_100, cbcl_ap = rowSums(CBCL_Prep_100[, c("srm_cbcl_005", "srm_cbcl_006", "srm_cbcl_056", "srm_cbcl_059",
+                                                                   "srm_cbcl_095")]),.after = "cbcl_sp")
+
+
+# Creating calculated columns for "cbcl_ab"
+CBCL_Prep_100 <- add_column(CBCL_Prep_100, cbcl_ab = rowSums(CBCL_Prep_100[, c("srm_cbcl_008", "srm_cbcl_015", "srm_cbcl_016", "srm_cbcl_018", "srm_cbcl_020", "srm_cbcl_027", "srm_cbcl_029", 
+                                                                   "srm_cbcl_035", "srm_cbcl_040", "srm_cbcl_042", "srm_cbcl_044", "srm_cbcl_053", "srm_cbcl_058", "srm_cbcl_066", 
+                                                                   "srm_cbcl_069", "srm_cbcl_081", "srm_cbcl_085", "srm_cbcl_088", "srm_cbcl_096")]),.after = "cbcl_ap")
+
+
+# Creating calculated columns for "cbcl_op"
+CBCL_Prep_100 <- add_column(CBCL_Prep_100, cbcl_op = rowSums(CBCL_Prep_100[, c("srm_cbcl_003", "srm_cbcl_009", "srm_cbcl_011", "srm_cbcl_013", "srm_cbcl_014", "srm_cbcl_017", "srm_cbcl_025", 
+                                                                   "srm_cbcl_026", "srm_cbcl_028", "srm_cbcl_030", "srm_cbcl_031", "srm_cbcl_032", "srm_cbcl_034", "srm_cbcl_036", 
+                                                                   "srm_cbcl_041", "srm_cbcl_049", "srm_cbcl_050", "srm_cbcl_054", "srm_cbcl_055", "srm_cbcl_057", "srm_cbcl_060",
+                                                                   "srm_cbcl_061", "srm_cbcl_063", "srm_cbcl_065", "srm_cbcl_072", "srm_cbcl_073", "srm_cbcl_075", "srm_cbcl_076",
+                                                                   "srm_cbcl_077", "srm_cbcl_080", "srm_cbcl_089", "srm_cbcl_091", "srm_cbcl_094")]),.after = "cbcl_ab")
+
+
+# Creating calculated columns for "cbcl_int"
+CBCL_Prep_100 <- add_column(CBCL_Prep_100, cbcl_int = rowSums(CBCL_Prep_100[, c("srm_cbcl_021", "srm_cbcl_046", "srm_cbcl_051", "srm_cbcl_079", "srm_cbcl_082", "srm_cbcl_083", "srm_cbcl_092", 
+                                                                    "srm_cbcl_097", "srm_cbcl_099", "srm_cbcl_010", "srm_cbcl_033", "srm_cbcl_037", "srm_cbcl_043", "srm_cbcl_047", 
+                                                                    "srm_cbcl_068", "srm_cbcl_087", "srm_cbcl_090", "srm_cbcl_001", "srm_cbcl_007", "srm_cbcl_012", "srm_cbcl_019",
+                                                                    "srm_cbcl_024", "srm_cbcl_039", "srm_cbcl_045", "srm_cbcl_052", "srm_cbcl_078", "srm_cbcl_086", "srm_cbcl_093", 
+                                                                    "srm_cbcl_002", "srm_cbcl_004", "srm_cbcl_023", "srm_cbcl_062", "srm_cbcl_067", "srm_cbcl_070", "srm_cbcl_071",
+                                                                    "srm_cbcl_098")]),.after = "cbcl_op")
+
+
+# Creating calculated columns for "cbcl_ext"
+CBCL_Prep_100 <- add_column(CBCL_Prep_100, cbcl_ext = rowSums(CBCL_Prep_100[, c("srm_cbcl_005", "srm_cbcl_006", "srm_cbcl_056", "srm_cbcl_059", "srm_cbcl_095", "srm_cbcl_008", "srm_cbcl_015",
+                                                                    "srm_cbcl_016", "srm_cbcl_018", "srm_cbcl_020", "srm_cbcl_027", "srm_cbcl_029", "srm_cbcl_035", "srm_cbcl_040",
+                                                                    "srm_cbcl_042", "srm_cbcl_044", "srm_cbcl_053", "srm_cbcl_058", "srm_cbcl_066", "srm_cbcl_069", "srm_cbcl_081",
+                                                                    "srm_cbcl_085", "srm_cbcl_088", "srm_cbcl_096")]),.after = "cbcl_int")
+
+
+# Creating calculated columns for "cbcl_total"
+CBCL_Prep_100 <- add_column(CBCL_Prep_100, cbcl_total = rowSums(CBCL_Prep_100[, c("srm_cbcl_001", "srm_cbcl_002", "srm_cbcl_003", "srm_cbcl_004", "srm_cbcl_005", "srm_cbcl_006", "srm_cbcl_007",
                                                                       "srm_cbcl_008", "srm_cbcl_009", "srm_cbcl_010", "srm_cbcl_011", "srm_cbcl_012", "srm_cbcl_013", "srm_cbcl_014",
                                                                       "srm_cbcl_015", "srm_cbcl_016", "srm_cbcl_017", "srm_cbcl_018", "srm_cbcl_019", "srm_cbcl_020", "srm_cbcl_021",
                                                                       "srm_cbcl_022", "srm_cbcl_023", "srm_cbcl_024", "srm_cbcl_025", "srm_cbcl_026", "srm_cbcl_027", "srm_cbcl_028",
@@ -227,6 +326,8 @@ CBCL_Prep <- add_column(CBCL_Prep, cbcl_total = rowSums(CBCL_Prep[, c("srm_cbcl_
 
 ```
 
+## NDA Sheet
+Re-name CBCL Prep Sheet columns to match NDA specifications. 
 ```{r NDA Sheet}
 # Create NDA prep sheet
 # Select all the needed columns from CBCL_Prep sheet
@@ -268,23 +369,12 @@ write.table(first_line, file = "cbcl1_5.csv", sep = ",", append = FALSE, quote =
 write.table(NDA_CBCL, file = 'cbcl1_5.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
 
 #Clean environment of intermediate calculations for NDA structure
-rm(NDA_CBCL_Prep, NDA_CBCL_Names, UO, UPMC, first_line)
+rm(NDA_CBCL_Prep, NDA_CBCL_Names, UO, UPMC, first_line, New_CBCL_Names, Timepoint_names)
 
 ```
 
-```{r NA Percentage Drop}
-# Check NA percentage
-CBCL_Prep$NACheck <- rowSums(is.na(select(CBCL_Prep, starts_with("srm"))))/ncol(dplyr::select(CBCL_Prep, starts_with("srm")))
-
-# Drop people who are less than 67% & 100%
-CBCL_Drop_67 <- CBCL_Prep[CBCL_Prep$NACheck > 0.67, ]
-CBCL_Prep_67 <- CBCL_Prep[CBCL_Prep$NACheck <= 0.67, ]
-
-CBCL_Drop_100 <- CBCL_Prep[CBCL_Prep$NACheck > 0, ]
-CBCL_Prep_100 <- CBCL_Prep[CBCL_Prep$NACheck <= 0, ]
-
-```
-
+## All Data Table
+Create descriptive means table. (This all data table no longer functions but isn't used regardless)
 ```{r All Data Table, echo=FALSE}
 # Select needed columns
 Progress <- select(CBCL_Prep, c(FamID, GroupAssignment, timepoint, cbcl_ext, cbcl_int, cbcl_total, starts_with("srm")))
@@ -381,7 +471,9 @@ rm(Progress, Progress_Ext_Mean, Progress_Ext_Mean_Both, Progress_Int_Mean, Progr
 
 ```
 
-```{r Pass 67% Table, echo=FALSE}
+#67% Data Table
+Create descriptives table for only ID's that have 67% of their data.
+```{r 67% Data Table, echo=FALSE}
 # Select needed column
 Progress_67 <- select(CBCL_Prep_67, c(FamID, GroupAssignment, timepoint, cbcl_ext, cbcl_int, cbcl_total, starts_with("srm")))
 
@@ -475,11 +567,13 @@ kable(Mean_Table) %>%
   column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
 
 # Clean Environment of intermediate calculations for 67% table
-rm(Progress_67, Progress_67_Ext_Mean_Both, Progress_67_Int_Mean_Both, Progress_67_Total_Mean_Both, Progress_67_Mean, Progress_67_Ext_Mean, Progress_67_Int_Mean, Progress_67_Total_Mean)
+rm(Progress_67, Progress_67_Ext_Mean_Both, Progress_67_Int_Mean_Both, Progress_67_Total_Mean_Both, Progress_67_Mean, Progress_67_Ext_Mean, Progress_67_Int_Mean, Progress_67_Total_Mean, Both_Site_Mean_67, ID)
 
 ```
 
-```{r Pass 100% Table, echo=FALSE}
+#100% Table
+Create descriptives table for only ID's that have 100% of their data.
+```{r 100% Data Table, echo=FALSE}
 # Select needed column
 Progress_100 <- select(CBCL_Prep_100, c(FamID, GroupAssignment, timepoint, cbcl_ext, cbcl_int, cbcl_total, starts_with("srm")))
 
@@ -572,10 +666,12 @@ kable(Mean_Table) %>%
   column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
 
 # Clean Environment of intermediate calculations for 100% table. 
-rm(Progress_100, Progress_100_Ext_Mean_Both, Progress_100_Int_Mean_Both, Progress_100_Total_Mean_Both, Progress_100_Mean, Progress_100_Ext_Mean, Progress_100_Int_Mean, Progress_100_Total_Mean)
+rm(Progress_100, Progress_100_Ext_Mean_Both, Progress_100_Int_Mean_Both, Progress_100_Total_Mean_Both, Progress_100_Mean, Progress_100_Ext_Mean, Progress_100_Int_Mean, Progress_100_Total_Mean, Both_Site_Mean_100, ID)
 
 ```
 
+##N Table
+Create table for participant numbers. (Currently unused/unfinished)
 ```{r number table, include = T}
 
 #Ignore all, incomplete
@@ -608,4 +704,3 @@ N <- N[,-c(5,6,7,9, 10, 11)]
 N <- data.frame(t(N))
 
 ```
-

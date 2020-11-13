@@ -1,5 +1,5 @@
 ---
-title: "EmotionStrategies"
+title: "Emotion Strategies"
 author: "Austin Fisenko"
 date: "7/30/2020"
 output: html_document
@@ -30,6 +30,8 @@ fsep <- .Platform$file.sep;
 options(digits = 3)
 ```
 
+## Import
+Import Qualtrics excel files into R
 ```{r Import}
 Pedigree <- read.csv("Reference_Pedigree.csv", stringsAsFactors = FALSE)
 Redcap_Data <- read.csv("Redcap_Data.csv", stringsAsFactors = FALSE)
@@ -41,6 +43,8 @@ NDA_ES <- read.csv("ers01_template.csv", skip = 1, stringsAsFactors = FALSE)
 #NDA_DCCS <- read.csv("dccs01_template.csv", skip=1)
 ```
 
+## Rename Columns
+Rename questions numbers to self-report measure scale items.Then, take each scale measure from both sites and combine them by timepoint.
 ```{r Rename Columns}
 # Redcap column names for locating old names to be replaced with Prep names and NDA names
 new_ES_names <- c("oc_es_hapstrat", "oc_es_hap_1", "oc_es_hap_2", "oc_es_hap_3", "oc_es_angstrat", "oc_es_ang_1", "oc_es_ang_2", "oc_es_ang_3", "oc_es_sadstrat", "oc_es_sad_1", "oc_es_sad_2", "oc_es_sad_3")
@@ -49,17 +53,18 @@ NDA_ES_names <- sprintf("es_%01d", 1:12)
 
 # Replace Column Names
 setnames(Redcap_Data, old_ES_names, new_ES_names)
-```
 
-```{r Prep Sheet}
 # Assign timepoint base on redcap_event_name
 Redcap_Data$timepoint = sapply(strsplit(as.character(Redcap_Data$redcap_event_name), split = '_', fixed = T), function(x) (x[2])) 
 
 # Select needed columns and rename in Redcap_Data
 Redcap_Data <- select(Redcap_Data, c(Fam_ID = fam_id,  timepoint, starts_with("oc_es_")))
 Redcap_Data <- select(Redcap_Data, -c(oc_es_notes, oc_es_hgen, oc_es_agen, oc_es_sgen, oc_es_intblue, oc_es_intgreen, oc_es_intmom))
+```
 
-
+## Prep Sheet
+Create prep sheet to begin transferring data into NDA format. Rename relevant GUID information to match NDA specifications. Finally, bind all timepoints into single Emotion Strategies Prep Sheet.
+```{r Prep Sheet}
 # Select revelent pedigree information, rename as needed. (Include GroupAssignment for treatment progress calculation).
 Pedigree_T1 <- data.frame(select(Pedigree, Fam_ID =  FamID, child_guid, child_famID = FamID_Child, interview_date = Time1Date, interview_age = MomAge_T1, child_sex = ChildGender, GroupAssignment), timepoint = 1 )
 Pedigree_T2 <- data.frame(select(Pedigree, Fam_ID =  FamID, child_guid, child_famID = FamID_Child, interview_date = Time2Date, interview_age = MomAge_T2, child_sex = ChildGender, GroupAssignment), timepoint = 2 )
@@ -79,6 +84,8 @@ ES_PREP <- merge(Pedigree_Prep, Redcap_Data,by = c("timepoint","Fam_ID"), all = 
 rm(Pedigree, Pedigree_Prep, Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4, Redcap_Data)
 ```
 
+## Calculated Columns
+Create sums column combining each individual measure.
 ```{r Calculated Columns}
 # Set neccessary data to numeric so they can be used in calculations
 ES_PREP[, c("oc_es_hap_1", "oc_es_hap_2", "oc_es_hap_3", "oc_es_ang_1", "oc_es_ang_2", "oc_es_ang_3", "oc_es_sad_1", "oc_es_sad_2", "oc_es_sad_3")] <- sapply(ES_PREP[, c("oc_es_hap_1", "oc_es_hap_2", "oc_es_hap_3", "oc_es_ang_1", "oc_es_ang_2", "oc_es_ang_3", "oc_es_sad_1", "oc_es_sad_2", "oc_es_sad_3")], as.numeric)
@@ -94,6 +101,8 @@ ES_PREP <- add_column(ES_PREP, oc_es_total = rowSums(ES_PREP[, c("oc_es_hap_1", 
 
 ```
 
+## NDA Sheet
+Re-name Emotion Strategies Prep Sheet columns to match NDA specifications. 
 ```{r NDA Sheet}
 # Create NDA prep sheet, select all the needed columns from prep sheet
 NDA_ES_Prep <- select(ES_PREP, c(subjectkey = child_guid, src_subject_id = child_famID, interview_date, interview_age, sex = child_sex, visit = timepoint, starts_with("oc_es_") ))
@@ -122,24 +131,24 @@ write.table(NDA_ES, file = 'ers01.csv', sep = ",", append = TRUE, na = "", quote
 rm(first_line, NDA_ES, NDA_ES_Prep, NDA_ES_names, new_ES_names, old_ES_names)
 ```
 
+## NA Percentage Drop
+Currently not used
 ```{r NA Percentage Drop}
-# PAUSED: RedCap data shouldn't have NAs in the same way as survey data.  
-# Check NA percentage
-#ES_PREP$NACheck <- rowSums(is.na(select(ES_PREP, starts_with("oc_es"))))/ncol(dplyr::select(ES_PREP, starts_with("oc_es")))
-
-# Drop people who are less than 67% & 100%
-#ES_DROP_67 <- ES_PREP[ES_PREP$NACheck > 0.67, ]
-#ES_PREP_67 <- ES_PREP[ES_PREP$NACheck <= 0.67, ]
-
-#ES_DROP_100 <- ES_PREP[ES_PREP$NACheck > 0, ]
-#ES_PREP_100 <- ES_PREP[ES_PREP$NACheck <= 0, ]
 
 ```
 
+## All Data Table
+Create descriptive means table. (This table reports an incorrect N value since it is using missing data in its calculations for N)
 ```{r Table, echo=FALSE}
 # Treatment Progress sheet
 # Select needed column
 Progress <- select(ES_PREP, c(Fam_ID, GroupAssignment, timepoint, oc_es_hap_total, oc_es_ang_total, oc_es_sad_total, oc_es_total,))
+
+# Calculate row mean for each individual  
+Progress$Row_Mean_Hap <- rowMeans(select(ES_PREP,c(oc_es_hap_total)), na.rm = TRUE)
+Progress$Row_Mean_Ang <- rowMeans(select(ES_PREP,c(oc_es_ang_total)), na.rm = TRUE)
+Progress$Row_Mean_Sad <- rowMeans(select(ES_PREP,c(oc_es_sad_total)), na.rm = TRUE)
+Progress$Row_Mean_Total <- rowMeans(select(ES_PREP,c(oc_es_total)), na.rm = TRUE)
 
 # Change FamId as character and assign to ID variable 
 ID <- c(as.character(Progress$Fam_ID))
@@ -150,19 +159,19 @@ Progress$site <- ifelse(startsWith(ID, "9"),"UO","UPMC")
 # Group by GroupAssissignment and Timepoint, and calculate the Group Mean
 Progress_Hap_Mean <- Progress %>%
   group_by(GroupAssignment,timepoint,site) %>%
-  summarise(HapMean = mean(oc_es_hap_total,na.rm = T),count = n())
+  summarise(HapMean = mean(Row_Mean_Hap,na.rm = T),count = n())
 
 Progress_Ang_Mean <- Progress %>%
   group_by(GroupAssignment,timepoint,site) %>%
-  summarise(AngMean = mean(oc_es_ang_total,na.rm = T),count = n())
+  summarise(AngMean = mean(Row_Mean_Ang,na.rm = T),count = n())
 
 Progress_Sad_Mean <- Progress %>%
   group_by(GroupAssignment,timepoint,site) %>%
-  summarise(SadMean = mean(oc_es_sad_total,na.rm = T),count = n())
+  summarise(SadMean = mean(Row_Mean_Sad,na.rm = T),count = n())
 
 Progress_Total_Mean <- Progress %>%
   group_by(GroupAssignment,timepoint,site) %>%
-  summarise(TotalMean = mean(oc_es_total,na.rm = T),count = n())
+  summarise(TotalMean = mean(Row_Mean_Total,na.rm = T),count = n())
 
 # Join happy, angry, sad, and total
 Progress_Mean <- merge(Progress_Hap_Mean, Progress_Ang_Mean)
@@ -177,19 +186,19 @@ UPMC <- Progress_Mean[Progress_Mean$site == "UPMC",]
 # Calculate Both site Mean 
 Progress_Hap_Mean_Both <- Progress %>%
   group_by(GroupAssignment, timepoint) %>%
-  summarise("BothSite_ES_HappyMean" = mean(oc_es_hap_total,na.rm = T),n = n())
+  summarise("BothSite_ES_HappyMean" = mean(Row_Mean_Hap,na.rm = T),n = n())
 
 Progress_Ang_Mean_Both <- Progress %>%
   group_by(GroupAssignment, timepoint) %>%
-  summarise("BothSite_ES_AngryMean" = mean(oc_es_ang_total,na.rm = T),n = n())
+  summarise("BothSite_ES_AngryMean" = mean(Row_Mean_Ang,na.rm = T),n = n())
 
 Progress_Sad_Mean_Both <- Progress %>%
   group_by(GroupAssignment, timepoint) %>%
-  summarise("BothSite_ES_SadMean" = mean(oc_es_sad_total,na.rm = T),n = n())
+  summarise("BothSite_ES_SadMean" = mean(Row_Mean_Sad,na.rm = T),n = n())
 
 Progress_Total_Mean_Both <- Progress %>%
   group_by(GroupAssignment, timepoint) %>%
-  summarise("BothSite_ES_TotalMean" = mean(oc_es_total,na.rm = T),n = n())
+  summarise("BothSite_ES_TotalMean" = mean(Row_Mean_Total,na.rm = T),n = n())
 
 Both_Site_Mean <- merge(Progress_Hap_Mean_Both, Progress_Ang_Mean_Both)
 Both_Site_Mean <- merge(Both_Site_Mean, Progress_Sad_Mean_Both)
