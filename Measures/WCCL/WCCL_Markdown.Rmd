@@ -4,31 +4,35 @@ author: "Kyle Murray"
 date: "5/28/2020"
 output: html_document
 ---
-
+#Setup 
+Empty environment, loading library, set knitr and scientific notation
 ```{r Setup}
-knitr::opts_chunk$set(echo = TRUE)
-
-#Clear environment 
+# Empty global environment
 rm(list = ls())
 
-#Enable packages 
+#Loading library 
 library(dplyr)
 library(tidyverse)
 library(data.table)
 library(kableExtra)
 library(knitr)
 
+# Settings for knit the whole document 
+# Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+knitr::opts_chunk$set(echo = TRUE)
+
+#scientific notation, round up to 3 digits
 options(digits = 3)
 ```
 ## Import
-Import Qualtrics excel files into R
+Import Measurement, Pedigree data and NDA structure
 
 ```{r Import}
-#Import Pedigree/NDA structure
+#Import Pedigree and NDA structure
 Pedigree <- read.csv("Reference_Pedigree.csv")
 NDA_WCCL <- read.csv("dbt_wccl01_template.csv", skip = 1)
 
-# Import WCCL files 
+# Import UO and UPMC files 
 UO_T1_WCCL <- read.csv("UO_T1_Qualtrics.csv", stringsAsFactors = FALSE)
 UPMC_T1_WCCL <- read.csv("UPMC_T1_WCCL.csv", stringsAsFactors = FALSE)
 UO_T2_WCCL <- read.csv("UO_T2_Qualtrics.csv", stringsAsFactors = FALSE)
@@ -106,6 +110,9 @@ WCCL_T4$Timepoint <- "Time 4"
 #Create WCCL_Prep and merge datasets 
 WCCL_Prep <- rbind(WCCL_T1, WCCL_T2, WCCL_T3, WCCL_T4)
 
+#Change gender to F instead of false
+WCCL_Prep$mother_sex <- "F"
+
 #Clean Global Environment
 rm(UO_T1_WCCL, UO_T2_WCCL, UO_T3_WCCL, UO_T4_WCCL, UPMC_T1_WCCL, UPMC_T2_WCCL, UPMC_T3_WCCL, UPMC_T4_WCCL, Pedigree, Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4, WCCL_T1, WCCL_T2, WCCL_T3, WCCL_T4)
 ```
@@ -118,9 +125,6 @@ WCCL_Prep <- WCCL_Prep %>% mutate_at(new_WCCL_names,funs(recode(., '0 Never Used
 
 #Change Numbers to Numeric values
 WCCL_Prep[,8:59] <- sapply(WCCL_Prep[,8:59],as.numeric)
-
-#Change gender to F instead of false
-WCCL_Prep$mother_sex <- "F"
 
 WCCL_Prep <- WCCL_Prep %>% 
   mutate_at(c("GroupAssignment"),

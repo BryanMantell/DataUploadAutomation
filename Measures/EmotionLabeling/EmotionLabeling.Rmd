@@ -4,21 +4,27 @@ author: "Kyle Murray"
 date: "6/3/2020"
 output: html_document
 ---
+#Setup 
+Empty environment, loading library, set knitr and scientific notation
 ```{r Setup}
 #Clear Environment Setup
 rm(list = ls())
-#Enable Packages
+
+#Loading library
 library(dplyr)
 library(tidyverse)
 library(data.table)
 library(kableExtra)
 ```
+##Import 
+Import Measurement, Pedigree data and NDA structure
 
 ```{r Import}
 Emotion_Labeling_REDCAP <- read.csv("Redcap_Data.csv")
 Pedigree <- read.csv("Reference_Pedigree.csv")
 Emotion_Labeling_NDA <- read.csv("elt01_template.csv", skip=1)
 ```
+##Rename Columns 
 
 ```{r Rename Columns}
 #rename elt_exp names
