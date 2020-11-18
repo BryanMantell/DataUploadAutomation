@@ -85,7 +85,7 @@ WCCL_T4 <- rbind(UO_T4_WCCL, UPMC_T4_WCCL)
 Create prep sheet to begin transferring data into NDA format. Rename relevant GUID information to match NDA specifications. Finally, bind all timepoints into single WCCL Prep Sheet.
 
 ```{r Prep Sheet}
-#setup Pedigree data by time point
+# Select relevant pedigree information, rename as needed. (Include GroupAssignment for treatment progress calculation.)
 Pedigree_T1 <- select(Pedigree, FamID, mother_FamID = FamID_Mother, mom_guid, mother_sex = MomGender, interview_date = Time1Date, interview_age = MomAge_T1, GroupAssignment)
 Pedigree_T2 <- select(Pedigree, FamID, mother_FamID = FamID_Mother, mom_guid, mother_sex = MomGender, interview_date = Time2Date, interview_age = MomAge_T2, GroupAssignment)
 Pedigree_T3 <- select(Pedigree, FamID, mother_FamID = FamID_Mother, mom_guid, mother_sex = MomGender, interview_date = Time3Date, interview_age = MomAge_T3, GroupAssignment)
