@@ -3,8 +3,9 @@ title: "CCNES"
 author: "Min Zhang"
 date: "5/16/2020"
 ---
-
-```{r setup, include = F}
+# Setup
+Empty environment, loading library, set knitr and scientific notation
+```{r setup}
 # Empty Global Environment
 rm(list = ls())
 
@@ -23,7 +24,9 @@ knitr::opts_chunk$set(echo = F, warning = FALSE)
 options(digits = 3)
 ```
 
-```{r Import, echo=FALSE}
+# Import
+Import measurement, Pedigree data and NDA structure
+```{r Import}
 # Import Pedigree and NDA structure
 Pedigree <- read.csv("Reference_Pedigree.csv")
 NDA_CCNES <- read.csv("pabq01_template.csv", skip = 1)
@@ -51,8 +54,15 @@ UPMC_CCNES_T3 <- UPMC_CCNES_T3[-c(1,2),]
 UPMC_CCNES_T4 <- UPMC_CCNES_T4[-c(1,2),]
 ```
 
+# Rename Columns
+Create old & new variable names
+Old UO name: Q140_1 ~ Q151_3
+Old UPMC (T1, T4) name: Q10.2_1 ~ Q10.13_6
+Old UPMC (T2, T3) name: Q8.2_1 ~ Q8.13_6
 
-```{r Rename Columns, echo=FALSE}
+New CCNES name: srm_CCNES_01 ~ srm_CCNES_72
+NDA name: pabq1a ~ pabq12f
+```{r Rename Columns}
 # OLD UO CCNES Column Names ####
 # for each item in UO paste number 1 to 6
 # sprintf used to format str
@@ -88,8 +98,9 @@ for (i in pabq) {
   NDA_Names <- c(NDA_Names, Name)
 }
 ```
-
-```{r Prep Sheet, echo=FALSE}
+#Prep Sheet
+Select relevant pedigree information, rename as needed. (Include GroupAssignment for treatment progress calculation.)
+```{r Prep Sheet}
 # Replace UO column names
 setnames(UO_CCNES_T1, odd_UO_CCNES_names, new_CCNES_names)
 setnames(UO_CCNES_T2, odd_UO_CCNES_names, new_CCNES_names)
@@ -137,7 +148,8 @@ CCNES_Prep$mother_sex <- "F"
 rm(UO_CCNES_T1, UO_CCNES_T2, UO_CCNES_T3, UO_CCNES_T4, UPMC_CCNES_T1, UPMC_CCNES_T2, UPMC_CCNES_T3, UPMC_CCNES_T4,Pedigree,Pedigree_T1,Pedigree_T2,Pedigree_T3,Pedigree_T4)
 ```
 
-```{r Re-code and Reverse Score,  echo=FALSE}
+# Recode and Reverse-Score
+```{r Re-code and Reverse Score}
 # Re-code the strings of text to numbers 
 CCNES_Prep <- CCNES_Prep %>% 
   mutate_at(new_CCNES_names,
@@ -176,7 +188,8 @@ CCNES_Prep <- CCNES_Prep %>%
                         'Assigned Group 1 (DBT)' = "DBT")))
 ```
 
-```{r Colculated Columns,  echo=FALSE}
+# Calculated Columns
+```{r Calculated Columns}
 # Creating CCNES_DR_raw column
 CCNES_Prep <- add_column(CCNES_Prep, CCNES_DR_raw =
                            rowSums(CCNES_Prep[, c("srm_CCNES_02", 
@@ -231,12 +244,13 @@ CCNES_Prep <- add_column(CCNES_Prep, CCNES_MR_raw =
                            "srm_CCNES_61", "srm_CCNES_72")], na.rm = TRUE), 
                            .after = "CCNES_PFR_raw")
 
-# Mean with 67% rule ####
+
 # Check NA percentage   0:100%data     1 0% data 
 CCNES_Prep$NACheck <- rowSums(is.na(select(CCNES_Prep, starts_with("srm"))))/ncol(dplyr::select(CCNES_Prep, starts_with("srm")))
 ```
 
-```{r NDA Sheet,  echo=FALSE}
+#NDA Sheet
+```{r NDA Sheet}
 # Create NDA Prep sheet, select all the needed columns from Prep sheet
 NDA_CCNES_Prep <- select(CCNES_Prep, c(subjectkey = mom_guid, src_subject_id = mother_FamID, sex = mother_sex ,interview_age, interview_date, starts_with("srm")))
                          
@@ -274,8 +288,9 @@ write.table(NDA_CCNES, file = 'pabq.csv', sep = ",", append = TRUE, na = "", quo
 rm(first_line)
 ```
 
-
-```{r Table Preparation, include = F}
+# All responsees Table 
+Mean Table with all data (no drop)
+```{r All responsees Table}
 # Select needed column
 Progress <- select(CCNES_Prep, c(FamID, GroupAssignment, Timepoint, starts_with("srm"), NACheck))
 
@@ -289,18 +304,6 @@ ID <- c(as.character(Progress$FamID))
 # Add Site column to Progress, if ID start with 9 then site is UO, else is UPMC
 Progress$site <- ifelse(startsWith(ID, "9"),"UO","UPMC")
 
-# Drop participant who has less than 67% data
-CCNES_DROP <- Progress[Progress$NACheck > 0.67, ]
-# Drop participant who has NAs 
-#CCNES_notperfect <- Progress[Progress$NACheck != 0,]
-# Data contain 67% data or more
-Progress67 <- Progress[Progress$NACheck <= 0.67, ]
-# Data contain 100% data
-Progress100 <- Progress[Progress$NACheck == 0, ]
-```
-
-
-```{r all data Table, include = T}
 # Group by GroupAssissignment and Timepoint, and calculate the Supported_Mean and Unsupproted_Mean
 Progress_Supported_Mean <- Progress %>%
   group_by(GroupAssignment, Timepoint, site) %>%
@@ -366,7 +369,14 @@ kable(Mean_Table) %>%
   column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
 ```
 
-```{r pass 67% Table, include = T}
+# 67% Responses Table
+Drop participant have less than 67% data 
+```{r 67% Responses Table}
+# Drop participant who has less than 67% data
+CCNES_DROP <- Progress[Progress$NACheck > 0.67, ]
+# Data contain 67% data or more
+Progress67 <- Progress[Progress$NACheck <= 0.67, ]
+
 # Group by GroupAssissignment and Timepoint, and calculate the Supported_Mean and Unsupproted_Mean
 Progress_Supported_Mean67 <- Progress67 %>%
   group_by(GroupAssignment,Timepoint,site) %>%
@@ -432,7 +442,12 @@ kable(Mean_Table67) %>%
   column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
 ```
 
-```{r pass 100% Table, include = T}
+# 100% Responses Table
+Drop participant have less than 100% data 
+```{r 100% Responses Table}
+# Data contain 100% data
+Progress100 <- Progress[Progress$NACheck == 0, ]
+
 # Group by GroupAssissignment and Timepoint, and calculate the Supported_Mean and Unsupproted_Mean
 Progress_Supported_Mean100 <- Progress100 %>%
   group_by(GroupAssignment,Timepoint,site) %>%
@@ -498,8 +513,8 @@ kable(Mean_Table100) %>%
   column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
 ```
 
-
-```{r number table, include = T}
+# Ns Table
+```{r Ns Table}
 # Original data ####
 # Original by site
 N_ori <- Progress %>%
