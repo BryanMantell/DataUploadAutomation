@@ -25,6 +25,7 @@ Pedigree <- read.csv("Reference_Pedigree.csv")
 Emotion_Labeling_NDA <- read.csv("elt01_template.csv", skip=1)
 ```
 ##Rename Columns 
+Replace column names with NDA specified names 
 
 ```{r Rename Columns}
 #rename elt_exp names
