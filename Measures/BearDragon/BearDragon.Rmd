@@ -117,7 +117,7 @@ BearDragon_100 <- BearDragon_Prep[BearDragon_Prep$NACheck == 0, ]
 ```
 
 ## NDA Structure
-Re-name PKBS Prep Sheet columns to match NDA specifications. 
+Re-name Bear Dragon Prep Sheet columns to match NDA specifications. 
 ```{r NDA Structure}
 #Select relevant columns from Prep Sheet to move into NDA Prep template
 NDA_BearDragon_Prep <- select(BearDragon_Prep, c(subjectkey = child_guid, src_subject_id = FamID_Child, interview_date, interview_age, sex = ChildGender, visit = timepoint, starts_with("oc_bd")))

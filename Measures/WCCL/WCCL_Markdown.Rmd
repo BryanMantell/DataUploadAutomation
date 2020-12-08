@@ -1,7 +1,7 @@
 ---
 title: "WCCL"
 author: "Kyle Murray"
-date: "5/28/2020"
+date: "11/--/2020"
 output: html_document
 ---
 #Setup 
@@ -21,7 +21,7 @@ library(knitr)
 # Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 knitr::opts_chunk$set(echo = TRUE)
 
-#scientific notation, round up to 3 digits
+#Scientific notation, round up to 3 digits
 options(digits = 3)
 ```
 ## Import

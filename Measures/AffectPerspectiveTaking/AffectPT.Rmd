@@ -1,0 +1,395 @@
+---
+title: "Affect Perspective Taking"
+author: "Jake Mulleavey"
+date: "10/27/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(message = FALSE)
+# Empty Global Environment
+rm(list = ls())
+```
+
+## Import
+Import Qualtrics excel files into R
+```{r Import}
+#Install Package, this only need to be done once.
+#install.packages(c("dplyr","tidyverse","data.table","contrib.url","knitr"))
+#install.packages('plyr', repos = "http://cran.us.r-project.org")
+
+#Load packages, this need to be done every time you run this script. 
+library(dplyr)
+library(tidyverse)
+library(data.table)
+library(knitr)
+
+#Set Working Directory
+setwd("~/Documents/GitHub/DataUploadAutomation/Measures/PKBS/DataUploadAutomation/Measures/AffectPerspectiveTaking/")
+
+#Import Pedigree and NDA Structure
+Pedigree <- read.csv("Reference_Pedigree.csv")
+NDA_AffectPT <- read.csv("apt01_template.csv", skip = 1)
+
+#Import PKBS files from both sites and every timepoint
+RedCap_Data <- read.csv("Redcap_Data.csv")
+```
+
+## Rename Columns and Create Prep Sheet
+Select relevant data from master RedCap sheet. Recode child ratings to master code. Create Pedigree sheets, rename columns, add timepoint and combine with data to create Prep Sheet.
+```{r Rename Columns and Create Prep Sheet}
+#Select the relevant ID information and questions
+AffectPT_Data <- select(RedCap_Data, fam_id, redcap_event_name, oc_apt_01, oc_apt_02, oc_apt_03, oc_apt_04, oc_apt_05, oc_apt_06, oc_apt_07, oc_apt_08)
+
+#Convert each columns different child ratings into master recode
+AffectPT_Data$oc_apt_01[which(AffectPT_Data$oc_apt_01 == "2")] = 1
+AffectPT_Data$oc_apt_01[which(AffectPT_Data$oc_apt_01 == "4")] = 2
+AffectPT_Data$oc_apt_01[which(AffectPT_Data$oc_apt_01 == "5")] = 3
+AffectPT_Data$oc_apt_01[which(AffectPT_Data$oc_apt_01 == "6")] = 4
+
+AffectPT_Data$oc_apt_02[which(AffectPT_Data$oc_apt_02 == "4")] = 1
+AffectPT_Data$oc_apt_02[which(AffectPT_Data$oc_apt_02 == "2")] = 2
+AffectPT_Data$oc_apt_02[which(AffectPT_Data$oc_apt_02 == "7")] = 3
+AffectPT_Data$oc_apt_02[which(AffectPT_Data$oc_apt_02 == "8")] = 4
+
+AffectPT_Data$oc_apt_03[which(AffectPT_Data$oc_apt_03 == "4")] = 1
+AffectPT_Data$oc_apt_03[which(AffectPT_Data$oc_apt_03 == "7")] = 2
+AffectPT_Data$oc_apt_03[which(AffectPT_Data$oc_apt_03 == "2")] = 3
+AffectPT_Data$oc_apt_03[which(AffectPT_Data$oc_apt_03 == "8")] = 4
+
+AffectPT_Data$oc_apt_04[which(AffectPT_Data$oc_apt_04 == "4")] = 1
+AffectPT_Data$oc_apt_04[which(AffectPT_Data$oc_apt_04 == "7")] = 2
+AffectPT_Data$oc_apt_04[which(AffectPT_Data$oc_apt_04 == "8")] = 3
+AffectPT_Data$oc_apt_04[which(AffectPT_Data$oc_apt_04 == "2")] = 4
+
+AffectPT_Data$oc_apt_05[which(AffectPT_Data$oc_apt_05 == "2")] = 1
+AffectPT_Data$oc_apt_05[which(AffectPT_Data$oc_apt_05 == "4")] = 2
+AffectPT_Data$oc_apt_05[which(AffectPT_Data$oc_apt_05 == "5")] = 3
+AffectPT_Data$oc_apt_05[which(AffectPT_Data$oc_apt_05 == "6")] = 4
+
+AffectPT_Data$oc_apt_06[which(AffectPT_Data$oc_apt_06 == "4")] = 1
+AffectPT_Data$oc_apt_06[which(AffectPT_Data$oc_apt_06 == "2")] = 2
+AffectPT_Data$oc_apt_06[which(AffectPT_Data$oc_apt_06 == "7")] = 3
+AffectPT_Data$oc_apt_06[which(AffectPT_Data$oc_apt_06 == "8")] = 4
+
+AffectPT_Data$oc_apt_07[which(AffectPT_Data$oc_apt_07 == "4")] = 1
+AffectPT_Data$oc_apt_07[which(AffectPT_Data$oc_apt_07 == "7")] = 2
+AffectPT_Data$oc_apt_07[which(AffectPT_Data$oc_apt_07 == "8")] = 3
+AffectPT_Data$oc_apt_07[which(AffectPT_Data$oc_apt_07 == "2")] = 4
+
+AffectPT_Data$oc_apt_08[which(AffectPT_Data$oc_apt_08 == "4")] = 1
+AffectPT_Data$oc_apt_08[which(AffectPT_Data$oc_apt_08 == "7")] = 2
+AffectPT_Data$oc_apt_08[which(AffectPT_Data$oc_apt_08 == "2")] = 3
+AffectPT_Data$oc_apt_08[which(AffectPT_Data$oc_apt_08 == "8")] = 4
+
+#Convert timepoint string input into 1 through 4 numerical value
+AffectPT_Data$redcap_event_name[which(AffectPT_Data$redcap_event_name == "time_1_arm_1")] = 1
+AffectPT_Data$redcap_event_name[which(AffectPT_Data$redcap_event_name == "time_1_arm_2")] = 1
+AffectPT_Data$redcap_event_name[which(AffectPT_Data$redcap_event_name == "time_2_arm_1")] = 2
+AffectPT_Data$redcap_event_name[which(AffectPT_Data$redcap_event_name == "time_2_arm_2")] = 2
+AffectPT_Data$redcap_event_name[which(AffectPT_Data$redcap_event_name == "time_3_arm_1")] = 3
+AffectPT_Data$redcap_event_name[which(AffectPT_Data$redcap_event_name == "time_3_arm_2")] = 3
+AffectPT_Data$redcap_event_name[which(AffectPT_Data$redcap_event_name == "time_4_arm_1")] = 4
+AffectPT_Data$redcap_event_name[which(AffectPT_Data$redcap_event_name == "time_4_arm_2")] = 4
+
+#Rename timepoint and Fam ID columns
+names(AffectPT_Data)[names(AffectPT_Data) == "redcap_event_name"] <- "timepoint"
+names(AffectPT_Data)[names(AffectPT_Data) == "fam_id"] <- "Fam_ID"
+
+#Create Pedigree sheets for each timepoint
+Pedigree_T1 <- select(Pedigree, FamID, child_guid, FamID_Child, Time1Date, ChildAge_T1, ChildGender, GroupAssignment)
+Pedigree_T2 <- select(Pedigree, FamID, child_guid, FamID_Child, Time2Date, ChildAge_T2, ChildGender, GroupAssignment)
+Pedigree_T3 <- select(Pedigree, FamID, child_guid, FamID_Child, Time3Date, ChildAge_T3, ChildGender, GroupAssignment)
+Pedigree_T4 <- select(Pedigree, FamID, child_guid, FamID_Child, Time4Date, ChildAge_T4, ChildGender, GroupAssignment)
+
+#Rename Age and Interview Date columns for each timepoint
+names(Pedigree_T1)[names(Pedigree_T1) == "ChildAge_T1"] <- "interview_age"
+names(Pedigree_T1)[names(Pedigree_T1) == "Time1Date"] <- "interview_date"
+names(Pedigree_T2)[names(Pedigree_T2) == "ChildAge_T2"] <- "interview_age"
+names(Pedigree_T2)[names(Pedigree_T2) == "Time2Date"] <- "interview_date"
+names(Pedigree_T3)[names(Pedigree_T3) == "ChildAge_T3"] <- "interview_age"
+names(Pedigree_T3)[names(Pedigree_T3) == "Time3Date"] <- "interview_date"
+names(Pedigree_T4)[names(Pedigree_T4) == "ChildAge_T4"] <- "interview_age"
+names(Pedigree_T4)[names(Pedigree_T4) == "Time4Date"] <- "interview_date"
+
+#Add timepoint
+Pedigree_T1$timepoint=1
+Pedigree_T2$timepoint=2
+Pedigree_T3$timepoint=3
+Pedigree_T4$timepoint=4
+
+#Combine each Pedigree timepoint dataframe into a single one
+Pedigree_Prep <- rbind(Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4)
+names(Pedigree_Prep)[names(Pedigree_Prep) == "FamID"] <- "Fam_ID"
+
+#Combine the Pedigree information with the RedCap data to output the Prep Sheet
+AffectPT_Prep <- merge(Pedigree_Prep, AffectPT_Data, by = c("timepoint", "Fam_ID"), all = TRUE)
+
+#Convert column names to odd numbers to represent participant response
+old_AffectPT_names <- c("oc_apt_01", "oc_apt_02", "oc_apt_03", "oc_apt_04", "oc_apt_05", "oc_apt_06", 
+                        "oc_apt_07", "oc_apt_08")
+new_AffectPT_names <- c("oc_apt_01", "oc_apt_03", "oc_apt_05", "oc_apt_07", "oc_apt_09", "oc_apt_11", 
+                        "oc_apt_13", "oc_apt_15")
+setnames(AffectPT_Prep, old_AffectPT_names, new_AffectPT_names, skip_absent = FALSE)
+
+#Clean Global Environment
+rm(AffectPT_Data, Pedigree_Prep, Pedigree, Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4)
+```
+
+## Add Scoring and Calculated Columns
+For the Affect Perspective Taking task there are two scores; the child's rating and whether or not they answer the task correctly, incorrectly or was within the correct valence. The scores in the previous prep sheet is the child's rating so now we have to add the scoring columns. After, create a sums column for the added scores.
+```{r Calculated Columns}
+#Add empty scoring column to the existing data frame
+AffectPT_Prep[, c("oc_apt_02", "oc_apt_04", "oc_apt_06", "oc_apt_08", "oc_apt_10", "oc_apt_12", 
+                  "oc_apt_14", "oc_apt_16")] <- NA
+
+#Reorder scoring columns with existing child response columns
+col_order <- c("timepoint", "Fam_ID", "child_guid", "FamID_Child", "interview_date", "interview_age", 
+               "ChildGender", "GroupAssignment", "oc_apt_01", "oc_apt_02", "oc_apt_03", "oc_apt_04", 
+               "oc_apt_05", "oc_apt_06", "oc_apt_07", "oc_apt_08", "oc_apt_09", "oc_apt_10", "oc_apt_11", 
+               "oc_apt_12", "oc_apt_13", "oc_apt_14", "oc_apt_15", "oc_apt_16")
+
+AffectPT_Prep <- AffectPT_Prep[, col_order]
+
+#Add values dependant on previous child's rating column into each scoring column
+AffectPT_Prep$oc_apt_02 <- ifelse(AffectPT_Prep$oc_apt_01 == 1, 2, 0)
+
+AffectPT_Prep$oc_apt_04 <- ifelse(AffectPT_Prep$oc_apt_03 == 2, 2, 
+                                  ifelse(AffectPT_Prep$oc_apt_03 == 3, 1,
+                                         ifelse(AffectPT_Prep$oc_apt_03 == 4, 1, 0)))
+
+AffectPT_Prep$oc_apt_06 <- ifelse(AffectPT_Prep$oc_apt_05 == 3, 2, 
+                                  ifelse(AffectPT_Prep$oc_apt_05 == 2, 1,
+                                         ifelse(AffectPT_Prep$oc_apt_05 == 4, 1, 0)))
+
+AffectPT_Prep$oc_apt_08 <- ifelse(AffectPT_Prep$oc_apt_07 == 4, 2, 
+                                  ifelse(AffectPT_Prep$oc_apt_07 == 2, 1,
+                                         ifelse(AffectPT_Prep$oc_apt_07 == 3, 1, 0)))
+
+AffectPT_Prep$oc_apt_10 <- ifelse(AffectPT_Prep$oc_apt_09 == 1, 2, 0)
+
+AffectPT_Prep$oc_apt_12 <- ifelse(AffectPT_Prep$oc_apt_11 == 2, 2, 
+                                  ifelse(AffectPT_Prep$oc_apt_11 == 3, 1,
+                                         ifelse(AffectPT_Prep$oc_apt_11 == 4, 1, 0)))
+
+AffectPT_Prep$oc_apt_14 <- ifelse(AffectPT_Prep$oc_apt_13 == 4, 2, 
+                                  ifelse(AffectPT_Prep$oc_apt_13 == 2, 1,
+                                         ifelse(AffectPT_Prep$oc_apt_13 == 3, 1, 0)))
+
+AffectPT_Prep$oc_apt_16 <- ifelse(AffectPT_Prep$oc_apt_15 == 3, 2, 
+                                  ifelse(AffectPT_Prep$oc_apt_15 == 2, 1,
+                                         ifelse(AffectPT_Prep$oc_apt_15 == 4, 1, 0)))
+
+#Add aggregate total column for all the scoring columns
+AffectPT_Prep <- add_column(AffectPT_Prep, oc_apt_total = rowSums(AffectPT_Prep[, c("oc_apt_02", "oc_apt_04", "oc_apt_06", "oc_apt_08", "oc_apt_10", "oc_apt_12", "oc_apt_14", "oc_apt_16")]))
+```
+
+##Implement 67% Rule
+Add a NA Check that calculates the decimal of what percentage of the data is present for a Fam ID.
+```{r Implement 67% Rule}
+#Create NA Check column (1.00 means 100% of the data is present)
+AffectPT_Prep$NACheck <- rowSums(is.na(select(AffectPT_Prep, starts_with("oc_apt_"))))/ncol(dplyr::select(AffectPT_Prep, starts_with("oc_apt_")))
+
+#Create Drop sheet where ID's that have less than 67% of data go; Rest of the ID's remain in Prep Sheet
+AffectPT_Drop <- AffectPT_Prep[AffectPT_Prep$NACheck > 0.67, ]
+AffectPT_Prep <- AffectPT_Prep[AffectPT_Prep$NACheck <= 0.67, ]
+
+#Create 100% Sheet that only contains ID's with 100% of data
+AffectPT_100 <- AffectPT_Prep[AffectPT_Prep$NACheck == 0, ]
+```
+
+## NDA Structure
+Re-name Affect Perspective Taking Prep Sheet columns to match NDA specifications. 
+```{r NDA Structure}
+#Select relevant columns from Prep Sheet to move into NDA Prep template
+NDA_AffectPT_Prep <- select(AffectPT_Prep, c(subjectkey = child_guid, src_subject_id = FamID_Child, interview_date, interview_age, sex = ChildGender, visit = timepoint, starts_with("oc_apt")))
+
+#Match Prep Sheet column names to required NDA names
+nda_names <- c(paste("apt", 1:16, sep = ""))
+prep_names <- c("oc_apt_01", "oc_apt_02", "oc_apt_03", "oc_apt_04", 
+               "oc_apt_05", "oc_apt_06", "oc_apt_07", "oc_apt_08", "oc_apt_09", "oc_apt_10", "oc_apt_11", 
+               "oc_apt_12", "oc_apt_13", "oc_apt_14", "oc_apt_15", "oc_apt_16")
+setnames(NDA_AffectPT_Prep, prep_names, nda_names, skip_absent = FALSE)
+
+#Drop total column
+NDA_AffectPT <- NDA_AffectPT[-c(23)]
+
+#Combine NDA Template with NDA Structure
+NDA_AffectPT[1,] <- NA
+NDA_AffectPT <- bind_rows(NDA_AffectPT, NDA_AffectPT_Prep)
+
+first_line <- matrix("", nrow = 1, ncol = ncol(NDA_AffectPT))
+first_line[,1] <- "apt"
+first_line[,2] <- "1"
+```
+
+## Table
+Create descriptives means table.
+```{r Table}
+library(knitr)
+library(magrittr)
+library(kableExtra)
+
+#Select necessary columns for means table
+Progress <- select((AffectPT_Prep), c(Fam_ID, GroupAssignment, timepoint, starts_with("oc")))
+
+#Change FamID as character and assign to ID variable
+ID <- c(as.character(Progress$Fam_ID))
+
+#Add Site column to Progress, if ID start with 9 then site is UO, else is UPMC
+Progress$site <- ifelse(startsWith(ID, "9"), "UO", "UPMC")
+
+#Group by GroupAssignment and Timepoint, and calculate Group Mean
+Progress_Mean <- Progress %>%
+  group_by(GroupAssignment, timepoint, site) %>%
+  summarise(GroupMean = mean(oc_apt_total, na.rm = T), count = n())
+
+#Select only UO Mean
+UO <- Progress_Mean[Progress_Mean$site == "UO",]
+#Select only UPMC Mean
+UPMC <- Progress_Mean[Progress_Mean$site == "UPMC",]
+
+#Calculate mean from both sites
+Both_Site_Mean <- Progress %>%
+  group_by(GroupAssignment, timepoint) %>%
+  summarise(BothSiteMean = mean(oc_apt_total, na.rm = T), n = sum(count = n()))
+
+#Change GroupMean column names according to site
+colnames(UO)[colnames(UO) == "GroupMean"] = "UO_APT"
+colnames(UO)[colnames(UO) == "count"] = "UO_APT_Original_N"
+colnames(UPMC)[colnames(UPMC) == "GroupMean"] = "UPMC_APT"
+colnames(UPMC)[colnames(UPMC) == "count"] = "UPMC_APT_Original_N"
+colnames(Both_Site_Mean)[colnames(Both_Site_Mean) == "n"] = "BothSite_Original_N"
+
+#Combine UO, UPMC, Both_Site, Bear and Dragon data 
+Mean_Table <- data.frame(UO[,c("UO_APT","GroupAssignment")],UPMC[,c("UPMC_APT")],Both_Site_Mean[,c("BothSiteMean","BothSite_Original_N")])
+
+#Convert Mean_Table, make original column as row
+Mean_Table <- t(Mean_Table)
+
+#Make Mean_Table a data frame
+Mean_Table <- data.frame(Mean_Table)
+
+#Re-order Mean Table
+Mean_Table <- Mean_Table[c(5,6,7,8,9,10,11,12,1,2,3,4)]
+
+#Add Timepoint column
+Timepoint_names <- c("T1","T2", "T3", "T4","T1","T2", "T3", "T4","T1","T2", "T3", "T4")
+
+#Rename column name
+setnames(Mean_Table, names(Mean_Table), Timepoint_names)
+
+#Create Table
+kable(Mean_Table) %>%
+  kable_styling(bootstrap_options = "striped", full_width = F) %>%
+  add_header_above(c(" " = 1, "Controls means" = 4, "FSU means" = 4, "DBT means" = 4)) %>%
+  add_header_above(c("Affect Perspective Taking Table Means" = 13)) %>%
+  column_spec(c(1,5,9), border_right = T, include_thead = T) %>%
+  column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
+```
+
+## 100% Table
+Descriptive means table for ID's with 100% of their data.
+```{r 100% Table}
+#Select necessary columns for means table
+Progress100 <- select((AffectPT_100), c(Fam_ID, GroupAssignment, timepoint, starts_with("oc")))
+
+#Change FamID as character and assign to ID variable
+ID <- c(as.character(Progress100$Fam_ID))
+
+#Add Site column to Progress, if ID start with 9 then site is UO, else is UPMC
+Progress100$site <- ifelse(startsWith(ID, "9"), "UO", "UPMC")
+
+#Group by GroupAssignment and Timepoint, and calculate Group Mean
+Progress100_Mean <- Progress100 %>%
+  group_by(GroupAssignment, timepoint, site) %>%
+  summarise(GroupMean = mean(oc_apt_total, na.rm = T), count = n())
+
+#Select only UO Mean
+UO100 <- Progress100_Mean[Progress100_Mean$site == "UO",]
+#Select only UPMC Mean
+UPMC100 <- Progress100_Mean[Progress100_Mean$site == "UPMC",]
+
+#Calculate mean from both sites
+Both_Site_Mean100 <- Progress100 %>%
+  group_by(GroupAssignment, timepoint) %>%
+  summarise(BothSiteMean = mean(oc_apt_total, na.rm = T), n = sum(count = n()))
+
+#Change GroupMean column names according to site
+colnames(UO100)[colnames(UO100) == "GroupMean"] = "UO100_APT"
+colnames(UO100)[colnames(UO100) == "count"] = "UO100_APT_N"
+colnames(UPMC100)[colnames(UPMC100) == "GroupMean"] = "UPMC100_APT"
+colnames(UPMC100)[colnames(UPMC100) == "count"] = "UPMC100_APT_N"
+colnames(Both_Site_Mean100)[colnames(Both_Site_Mean100) == "n"] = "BothSite100_N"
+
+#Combine UO, UPMC, Both_Site, Bear and Dragon data 
+Mean_Table100 <- data.frame(UO100[,c("UO100_APT","GroupAssignment")],UPMC100[,c("UPMC100_APT")],
+                            Both_Site_Mean100[,c("BothSiteMean","BothSite100_N")])
+
+#Convert Mean_Table, make original column as row
+Mean_Table100 <- t(Mean_Table100)
+
+#Make Mean_Table a data frame
+Mean_Table100 <- data.frame(Mean_Table)
+
+#Re-order Mean Table
+Mean_Table100 <- Mean_Table100[c(5,6,7,8,9,10,11,12,1,2,3,4)]
+
+#Add Timepoint column
+Timepoint_names <- c("T1","T2", "T3", "T4","T1","T2", "T3", "T4","T1","T2", "T3", "T4")
+
+#Rename column name
+setnames(Mean_Table100, names(Mean_Table100), Timepoint_names)
+
+#Create Table
+kable(Mean_Table100) %>%
+  kable_styling(bootstrap_options = "striped", full_width = F) %>%
+  add_header_above(c(" " = 1, "Controls means" = 4, "FSU means" = 4, "DBT means" = 4)) %>%
+  add_header_above(c("Affect Perspective Taking Table Means (100%)" = 13)) %>%
+  column_spec(c(1,5,9), border_right = T, include_thead = T) %>%
+  column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
+```
+
+## N Table
+Create table for participant numbers.
+```{r N Table}
+#Create N table, GroupAssignment and Timepoint are dupliced here, just checking it's align
+N <- data.frame(UO[, c("timepoint", "UO_APT_Original_N", "GroupAssignment")],
+                UO100[, c("timepoint", "UO100_APT_N", "GroupAssignment")],
+                UPMC[, c("timepoint", "UPMC_APT_Original_N", "GroupAssignment")],
+                UPMC100[, c("timepoint", "UPMC100_APT_N", "GroupAssignment")],
+                Both_Site_Mean[,c("timepoint", "BothSite_Original_N", "GroupAssignment")],
+                Both_Site_Mean100[,c("timepoint", "BothSite100_N", "GroupAssignment")]
+                )
+#Remove dupliced column 
+N <- N[,-c(1,3,4,6,7,9,10,12,13,15,16,18,19,21,22,24,25,27)]
+
+
+#Convert data frame to numeric
+N <- as.data.frame(sapply(N, as.numeric))
+
+#Transfer N table from Horzontal to Vertical
+N <- data.frame(t(N))
+
+#Calculate Total N 
+N$T1 <- rowSums(N[,c(1,5,9)])
+N$T2 <- rowSums(N[,c(2,6,10)])
+N$T3 <- rowSums(N[,c(3,7,11)])
+N$T4 <- rowSums(N[,c(4,8,12)])
+
+#Timepoint names 
+Timepoint_names <- c("T1","T2", "T3", "T4","T1","T2", "T3", "T4","T1","T2", "T3", "T4", "T1","T2", "T3", "T4")
+
+#Rename column name 
+setnames(N, names(N), Timepoint_names)
+
+#Create Table
+kable(N) %>%
+  kable_styling(bootstrap_options = c("striped"), fixed_thead = T) %>%
+  add_header_above(c(" " = 1, "DBT Group" = 4, "Control Group" = 4, "FSU Group" = 4, "Totals" = 4)) %>%
+  add_header_above(c("Participant Numbers" = 17)) %>%
+  column_spec(c(1,5,9,13), border_right = T, include_thead = T) %>%
+  column_spec(1:16, width_min = "2cm", width_max = "5cm") %>%
+  row_spec(1:6, background = "#d3d3d3")
+```
+
