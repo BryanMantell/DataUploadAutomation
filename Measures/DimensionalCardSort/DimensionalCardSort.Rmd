@@ -7,8 +7,6 @@ output: html_document
 # Setup
 Empty environment, loading library, set knitr and scientific notation
 ```{r setup}
-# Empty Global Environment
-rm(list = ls())
 #install.packages("flextable")
 # Load package
 library(tidyverse)
@@ -28,14 +26,14 @@ options(digits = 3)
 # Import
 Import measurement, Pedigree data and NDA structure
 ```{r Import}
+# Empty Global Environment
+rm(list = ls())
+
 # Importe needed fils 
 Pedigree <- read.csv("Reference_Pedigree.csv", stringsAsFactors = FALSE)
 Redcap_Data <- read.csv("Redcap_Data.csv", stringsAsFactors = FALSE)
-NDA_DCCS <- read.csv("dccs01_template.csv", skip = 1, stringsAsFactors = FALSE)
-Pedigree <- read.csv("Reference_Pedigree.csv")
-Redcap_Data <- read.csv("Redcap_Data.csv")
-NDA_DCCS <- read.csv("dccs01_template.csv", skip = 1)
 
+NDA_DCCS <- read.csv("dccs01_template.csv", skip = 1, stringsAsFactors = FALSE)
 ```
 
 # Rename Columns
