@@ -7,13 +7,14 @@ output: html_document
 
 ```{r Setup, include=FALSE}
 knitr::opts_chunk$set(message = FALSE)
-# Empty Global Enivronment
-rm(list = ls())
 ```
 
 ## Import
 Import Qualtrics Excel files into R
 ```{r}
+# Empty Global Enivronment
+rm(list = ls())
+
 #Install Package, this only need to be done once.
 #install.packages(c("dplyr","tidyverse","data.table","knitr"))
 #install.packages('plyr', repos = "http://cran.us.r-project.org")
@@ -134,6 +135,13 @@ NDA_BearDragon <- bind_rows(NDA_BearDragon, NDA_BearDragon_Prep)
 first_line <- matrix("", nrow = 1, ncol = ncol(NDA_BearDragon))
 first_line[,1] <- "beardragon"
 first_line[,2] <- "1"
+
+# Create a new file in folder called pabq.csv, and put first line into this file
+# pabq.csv file will be saved into same folder as current r script
+write.table(first_line, file = "beardragon.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
+
+# Append data in NDA_CCNES into pabq.cav file 
+write.table(NDA_BearDragon, file = 'beardragon.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
 ```
 
 ## Table
