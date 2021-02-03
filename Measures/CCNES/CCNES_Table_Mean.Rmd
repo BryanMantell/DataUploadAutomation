@@ -6,8 +6,7 @@ date: "5/16/2020"
 # Setup
 Empty environment, loading library, set knitr and scientific notation
 ```{r setup}
-# Empty Global Environment
-rm(list = ls())
+
 
 # Loading library
 library(tidyverse)
@@ -27,6 +26,9 @@ options(digits = 3)
 # Import
 Import measurement, Pedigree data and NDA structure
 ```{r Import}
+# Empty Global Environment
+rm(list = ls())
+
 # Import Pedigree and NDA structure
 Pedigree <- read.csv("Reference_Pedigree.csv")
 NDA_CCNES <- read.csv("pabq01_template.csv", skip = 1)
@@ -594,7 +596,7 @@ Timepoint_names <- c("T1","T2", "T3", "T4","T1","T2", "T3", "T4","T1","T2", "T3"
 # Rename column name 
 setnames(N, names(N), Timepoint_names)
 
-# Remove un-needed column
+
 N <- N[-c(1,8,12),]
 
 # N table output
