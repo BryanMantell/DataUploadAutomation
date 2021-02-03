@@ -5,11 +5,8 @@ date: "11/--/2020"
 output: html_document
 ---
 #Setup 
-Empty environment, loading library, set knitr and scientific notation
+Loading library, set knitr and scientific notation
 ```{r Setup}
-# Empty global environment
-rm(list = ls())
-
 #Loading library 
 library(dplyr)
 library(tidyverse)
@@ -25,21 +22,25 @@ knitr::opts_chunk$set(echo = TRUE)
 options(digits = 3)
 ```
 ## Import
-Import Measurement, Pedigree data and NDA structure
+Empty Environment, Import Measurement, Pedigree data and NDA structure
 
 ```{r Import}
+# Empty global environment
+rm(list = ls())
+
 #Import Pedigree and NDA structure
 Pedigree <- read.csv("Reference_Pedigree.csv")
 NDA_WCCL <- read.csv("dbt_wccl01_template.csv", skip = 1)
 
 # Import UO and UPMC files 
 UO_T1_WCCL <- read.csv("UO_T1_Qualtrics.csv", stringsAsFactors = FALSE)
-UPMC_T1_WCCL <- read.csv("UPMC_T1_WCCL.csv", stringsAsFactors = FALSE)
 UO_T2_WCCL <- read.csv("UO_T2_Qualtrics.csv", stringsAsFactors = FALSE)
-UPMC_T2_WCCL <- read.csv("UPMC_T2_WCCL.csv", stringsAsFactors = FALSE)
 UO_T3_WCCL <- read.csv("UO_T3_Qualtrics.csv", stringsAsFactors = FALSE)
-UPMC_T3_WCCL <- read.csv("UPMC_T3_WCCL.csv", stringsAsFactors = FALSE)
 UO_T4_WCCL <- read.csv("UO_T4_Qualtrics.csv", stringsAsFactors = FALSE)
+
+UPMC_T1_WCCL <- read.csv("UPMC_T1_WCCL.csv", stringsAsFactors = FALSE)
+UPMC_T2_WCCL <- read.csv("UPMC_T2_WCCL.csv", stringsAsFactors = FALSE)
+UPMC_T3_WCCL <- read.csv("UPMC_T3_WCCL.csv", stringsAsFactors = FALSE)
 UPMC_T4_WCCL <- read.csv("UPMC_T4_WCCL.csv", stringsAsFactors = FALSE)
 ```
 ## Rename Columns
