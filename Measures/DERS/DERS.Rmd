@@ -7,8 +7,6 @@ output: pdf_document
 # Setup
 Empty environment, loading library, set knitr and scientific notation
 ```{r setup}
-# Empty Global Environment
-rm(list = ls())
 # Install package
 #install.packages("flextable")
 
@@ -30,6 +28,9 @@ options(digits = 3)
 # Import
 Import measurement, Pedigree data and NDA structure
 ```{r Import}
+# Empty Global Environment
+rm(list = ls())
+
 # Import File ####
 # Import Pedigree and NDA Structure
 Pedigree <- read.csv("Reference_Pedigree.csv")
@@ -40,6 +41,7 @@ UO_T1_ders <- read.csv(file = 'UO_T1_Qualtrics.csv', stringsAsFactors = FALSE)
 UO_T2_ders <- read.csv(file = 'UO_T2_Qualtrics.csv', stringsAsFactors = FALSE)
 UO_T3_ders <- read.csv(file = 'UO_T3_Qualtrics.csv', stringsAsFactors = FALSE)
 UO_T4_ders <- read.csv(file = 'UO_T4_Qualtrics.csv', stringsAsFactors = FALSE)
+
 UPMC_T1_ders <- read.csv(file = 'UPMC_T1_ders.csv', stringsAsFactors = FALSE)
 UPMC_T2_ders <- read.csv(file = 'UPMC_T2_ders.csv', stringsAsFactors = FALSE)
 UPMC_T3_ders <- read.csv(file = 'UPMC_T3_ders.csv', stringsAsFactors = FALSE)
