@@ -7,7 +7,7 @@ output: html_document
 # Setup
 Empty environment, loading library, set knitr and scientific notation
 ```{r setup}
-#install.packages("flextable")
+# install.packages("flextable")
 # Load package
 library(tidyverse)
 library(dplyr)
@@ -19,7 +19,7 @@ library(kableExtra)
 # Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 knitr::opts_chunk$set(echo = TRUE, include = FALSE)
 
-#scientific notation, round up to 3 digits
+# scientific notation, round up to 3 digits
 options(digits = 3)
 ```
 
@@ -47,7 +47,7 @@ old_DCS_names <- sprintf("oc_dcs_%02d", 1:36)
 # DCCS NDA Columns Name TODO:wait for Bryan to confirm
 NDA_DCS_names <- sprintf("dcs%02d", 1:36)
 ```
-#Prep Sheet
+# Prep Sheet
 Select relevant pedigree information, rename as needed. (Include GroupAssignment for treatment progress calculation.)
 ```{r Prep Sheet}
 # Assign Timepoint base on redcap_event_name
@@ -89,7 +89,7 @@ DCS_Prep <- DCS_Prep %>%
 DCS_Prep$NACheck <- rowSums(is.na(select(DCS_Prep, starts_with("srm"))))/ncol(dplyr::select(DCS_Prep, starts_with("srm")))
 ```
 
-#NDA Sheet
+# NDA Sheet
 ```{r NDA Sheet}
 # Create NDA Prep sheet, select all the needed columns from Prep sheet
 NDA_DCCS_Prep <- select(DCS_Prep, c(subjectkey = child_guid, src_subject_id = child_famID, interview_date, interview_age, sex = child_sex, visit = Timepoint, starts_with("oc_dcs_") ))

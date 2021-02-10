@@ -151,7 +151,7 @@ WCCL_Prep$wccl_GSC_raw <- rowMeans(WCCL_Prep[,GSC], na.rm = TRUE)
 
 WCCL_Prep$wccl_BO_raw <- rowMeans(WCCL_Prep[,BO], na.rm = TRUE)
 
-####Mean with 67% Rule#### 
+# Mean with 67% Rule#### 
 
 # Check NA Percentage
 WCCL_Prep$NACheck <- rowSums(is.na(select(WCCL_Prep, starts_with("srm"))))/ncol(dplyr::select(WCCL_Prep, starts_with("srm")))
@@ -332,7 +332,7 @@ kable(Mean_Table100) %>%
 ```
 
 ```{r N's Table}
-#### Original Table ####
+# Original Table ####
 # Original by site
 N_ori <- Progress %>%
   group_by(Timepoint, site, GroupAssignment) %>% 
@@ -344,7 +344,7 @@ N_ori_BothSite <- Progress %>%
   summarise(BothSite_Original_N = n())
 
 
-#### 67% table ####
+# 67% table ####
 # 67% by site 
 N67 <- WCCL_Prep67 %>%
   group_by(Timepoint, site, GroupAssignment) %>% 
@@ -355,7 +355,7 @@ N67_BothSite <- WCCL_Prep67 %>%
   group_by(Timepoint, GroupAssignment) %>% 
   summarise(BothSite_67_N = n())
 
-#### 100% table ####
+# 100% table ####
 
 # 100% by site
 N100 <- WCCL_Prep100 %>%
@@ -367,7 +367,7 @@ N100_BothSite <- WCCL_Prep100 %>%
   group_by(Timepoint, GroupAssignment) %>% 
   summarise(BothSite_100_N = n())
 
-#### N table ####
+# N table ####
 
 # combine all three n table 
 N_bySite <- cbind(N_ori, N67, N100)

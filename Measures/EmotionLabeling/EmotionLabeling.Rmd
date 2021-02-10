@@ -4,10 +4,10 @@ author: "Kyle Murray"
 date: "6/3/2020"
 output: html_document
 ---
-#Setup 
+# Setup 
 Loading library, set knitr and scientific notation
 ```{r Setup}
-#Loading library
+# Loading library
 library(dplyr)
 library(tidyverse)
 library(data.table)
@@ -15,11 +15,11 @@ library(kableExtra)
 
 
 ```
-##Import 
+# Import 
 Import Measurement, Pedigree data and NDA structure
 
 ```{r Import}
-#Clear Environment Setup
+# Clear Environment Setup
 rm(list = ls())
 
 Emotion_Labeling_REDCAP <- read.csv("Redcap_Data.csv")
@@ -28,27 +28,27 @@ Emotion_Labeling_NDA <- read.csv("elt01_template.csv", skip=1)
 
 
 ```
-##Rename Columns 
+# Rename Columns 
 Replace column names with NDA specified names 
 
 ```{r Rename Columns}
-#rename elt_exp names
+# rename elt_exp names
 eltpart1_exp <- "oc_elt_exp"
 num_items <- seq(1:8)
 new_eltpart1_names <- paste(eltpart1_exp, num_items, sep = "_")
 
-#rename elt_rec names
+# rename elt_rec names
 eltpart2_rec <- "oc_elt_rec"
 num_items <- seq (1:4) 
 new_eltpart2_names <- paste(eltpart2_rec, num_items, sep = "_")
 
-#replace old eltpart1 names with new names
+# replace old eltpart1 names with new names
 eltpart1_exp <- "eltpart1_exp"
 num_items <- seq (1:8)
 old_eltpart1_names <- paste(eltpart1_exp, num_items, sep = "")
 setnames(Emotion_Labeling_REDCAP, old_eltpart1_names, new_eltpart1_names)
 
-#replace old eltpart2 names with new names
+# replace old eltpart2 names with new names
 eltpart2_rec <- "eltpart2_rec"
 num_items <- seq (1:4)
 old_eltpart2_names <- paste(eltpart2_rec, num_items, sep = "")
@@ -57,50 +57,50 @@ setnames(Emotion_Labeling_REDCAP, old_eltpart2_names, new_eltpart2_names)
 ```
 
 ``` {r Prep Sheet}
-#Assign timepoint from redcap_event_name
+# Assign timepoint from redcap_event_name
 Emotion_Labeling_REDCAP$timepoint = sapply(strsplit(as.character(Emotion_Labeling_REDCAP$redcap_event_name), split = '_', fixed = T), function(x) (x[2]))
 
 Emotion_Labeling_REDCAP <- select(Emotion_Labeling_REDCAP, c(Fam_ID = fam_id,  timepoint, starts_with("oc_elt_")))
 Emotion_Labeling_REDCAP <- select(Emotion_Labeling_REDCAP, -c(oc_elt_notes))
 
-#Select relevant pedigree information 
+# Select relevant pedigree information 
 Pedigree_T1 <- data.frame(select(Pedigree, Fam_ID =  FamID, child_guid, child_famID = FamID_Child, interview_date = Time1Date, interview_age = MomAge_T1, child_sex = ChildGender, GroupAssignment), timepoint = 1 )
 Pedigree_T2 <- data.frame(select(Pedigree, Fam_ID =  FamID, child_guid, child_famID = FamID_Child, interview_date = Time2Date, interview_age = MomAge_T2, child_sex = ChildGender, GroupAssignment), timepoint = 2 )
 Pedigree_T3 <- data.frame(select(Pedigree, Fam_ID =  FamID, child_guid, child_famID = FamID_Child, interview_date = Time3Date, interview_age = MomAge_T3, child_sex = ChildGender, GroupAssignment), timepoint = 3 )
 Pedigree_T4 <- data.frame(select(Pedigree, Fam_ID =  FamID, child_guid, child_famID = FamID_Child, interview_date = Time4Date, interview_age = MomAge_T4, child_sex = ChildGender, GroupAssignment), timepoint = 4 )
 
-#Merge pedigree info
+# Merge pedigree info
 Pedigree_Prep <- rbind(Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4)
 
-#merge Pedigree info and Redcap data
+# merge Pedigree info and Redcap data
 EL_PREP <- merge(Pedigree_Prep, Emotion_Labeling_REDCAP,by = c("timepoint","Fam_ID"), all = TRUE)
 
-#clean environment
+# clean environment
 # rm(Pedigree, Pedigree_Prep, Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4, Emotion_Labeling_REDCAP)
 ```
 
 ```{r Calculated Columns}
-#add calculated colums to dataframe
+# add calculated colums to dataframe
 exp <- colnames(select(EL_PREP, c("oc_elt_exp_2", "oc_elt_exp_4", "oc_elt_exp_6", "oc_elt_exp_8")))
 
 rec <- colnames(select(EL_PREP, c("oc_elt_rec_1", "oc_elt_rec_2", "oc_elt_rec_3", "oc_elt_rec_4")))
-#add mean coulumns 
+# add mean coulumns 
 EL_PREP$oc_elt_exp_total <- rowMeans(EL_PREP[,exp], na.rm = TRUE)
 EL_PREP$oc_elt_rec_total <- rowMeans(EL_PREP[,rec], na.rm = TRUE)
 
-#add NA check column
+# add NA check column
 EL_PREP$NACheck <- rowSums(is.na(select(EL_PREP, starts_with("oc_elt_"))))/ncol(dplyr::select(EL_PREP, starts_with("oc_elt_")))
 
 #EL_PREP$EL_total_cor <- ifelse(EL_PREP$NACheck < 0.67, rowMeans(EL_PREP[,oc_elt_total], na.rm = TRUE), "NA")
 
-#Separate Data into NA% response 
+# Separate Data into NA% response 
 EL_DROP <- EL_PREP[EL_PREP$NACheck > 0.67, ]
 EL_PREP67 <- EL_PREP[EL_PREP$NACheck <= 0.67, ]
 EL_PREP100 <- EL_PREP[EL_PREP$NACheck <= 0, ]
 ```
 
 ```{r NDA Sheet}
-#Move relevant info to NDA dataframe
+# Move relevant info to NDA dataframe
 Emotion_Labeling_NDA <- select(EL_PREP67, c(subjectkey = child_guid, src_subject_id = child_famID, interview_date, interview_age, sex = child_sex, visit = timepoint, starts_with("oc_elt_")))
 
 # Recreate first line in orignial NDA file
@@ -250,7 +250,7 @@ kable(Mean_Table) %>%
 ```
 
 ```{r N's Table}
-#### Original Table ####
+# Original Table ####
 # Original by site
 N_ori <- Progress_Mean %>%
   group_by(timepoint, site, GroupAssignment) %>% 
@@ -262,7 +262,7 @@ N_ori_BothSite <-  %>%
   summarise(BothSite_Original_N = n())
 
 
-#### 67% table ####
+# 67% table ####
 # 67% by site 
 N67 <- Progress67 %>%
   group_by(timepoint, site, GroupAssignment) %>% 
@@ -273,7 +273,7 @@ N67_BothSite <- Progress67 %>%
   group_by(timepoint, GroupAssignment) %>% 
   summarise(BothSite_67_N = n())
 
-#### 100% table ####
+# 100% table ####
 N100 <- Progress100 %>%
   group_by(timepoint, site, GroupAssignment) %>% 
   summarise(n_100 = n())
@@ -283,7 +283,7 @@ N100_BothSite <- Progress100 %>%
   group_by(timepoint, GroupAssignment) %>% 
   summarise(BothSite_100_N = n())
 
-#### N table ####
+# N table ####
 
 # combine all three n table 
 N_bySite <- cbind(N_ori, N67, N100)

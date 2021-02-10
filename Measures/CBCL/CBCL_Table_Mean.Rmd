@@ -6,9 +6,6 @@ output: html_document
 ---
 
 ```{r setup}
-# Empty Global Environment
-rm(list = ls())
-
 # Loading Library
 library(dplyr)
 library(data.table)
@@ -20,14 +17,17 @@ library(tidyverse)
 # Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 knitr::opts_chunk$set(echo = TRUE, include = FALSE)
 
-#sentific notation, round up to 3 digits
+# scientific notation, round up to 3 digits
 options(digits = 3)
 
 ```
 
-## Import
+# Import
 Import Qualtrics excel files into R
 ```{r Import}
+# Empty Global Environment
+rm(list = ls())
+
 # Import Pedigree and NDA Structure
 Pedigree <- read.csv("Reference_Pedigree.csv")
 NDA_CBCL <- read.csv("cbcl1_501_template.csv", skip = 1)
@@ -45,7 +45,7 @@ UPMC_T4_CBCL <- read.csv(file = 'UPMC_T4_cbcl.csv', stringsAsFactors = FALSE)
 
 ```
 
-## Rename Columns
+# Rename Columns
 Rename questions numbers to self-report measure scale items. Then, take each scale measure from both sites and combine them by timepoint.
 ```{r Rename Columns}
 # Create list of new variable names for the Prep Sheet
@@ -80,7 +80,7 @@ setnames(UPMC_T4_CBCL, Old_UPMC_CBCL_Names_T1_T4, New_CBCL_Names)
 
 ```
 
-## Prep Sheet
+# Prep Sheet
 Create prep sheet to begin transferring data into NDA format. Rename relevant GUID information to match NDA specifications. Finally, bind all timepoints into single CBCL Prep Sheet.
 ```{r Prep Sheet}
 # Edit UO CBCL Time 1 - 4 to have only CBCL quesions and the FamID
@@ -134,7 +134,7 @@ rm(CBCL_T1, CBCL_T2, CBCL_T3, CBCL_T4)
 
 ```
 
-## Re-code
+# Re-code
 Convert Likert Scale text input into numerical values then create a dataframe to place ID's that do not have 67% of their data present.(There's an issue this presents that I will have to deal with later)
 ```{r Re-code and 67% Rule}
 # Recode text responses into numbers so they can be used in calculations
@@ -163,7 +163,7 @@ CBCL_Prep_100 <- CBCL_Prep[CBCL_Prep$NACheck <= 0, ]
 
 ```
 
-## Calculated Columns
+# Calculated Columns
 Create sums column combining each individual measure. Separate caulculations are needed for the 67% and 100% Prep Sheet.
 ```{r calculated columns}
 # Create calculated columns for 67% version of the Prep Sheet
@@ -326,7 +326,7 @@ CBCL_Prep_100 <- add_column(CBCL_Prep_100, cbcl_total = rowSums(CBCL_Prep_100[, 
 
 ```
 
-## NDA Sheet
+# NDA Sheet
 Re-name CBCL Prep Sheet columns to match NDA specifications. 
 ```{r NDA Sheet}
 # Create NDA prep sheet
@@ -368,12 +368,12 @@ write.table(first_line, file = "cbcl1_5.csv", sep = ",", append = FALSE, quote =
 # Append data in NDA_CBCL into cbcl1_5.csv file 
 write.table(NDA_CBCL, file = 'cbcl1_5.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
 
-#Clean environment of intermediate calculations for NDA structure
+# Clean environment of intermediate calculations for NDA structure
 rm(NDA_CBCL_Prep, NDA_CBCL_Names, UO, UPMC, first_line, New_CBCL_Names, Timepoint_names)
 
 ```
 
-## All Data Table
+# All Data Table
 Create descriptive means table. (This all data table no longer functions but isn't used regardless)
 ```{r All Data Table, echo=FALSE}
 # Select needed columns
@@ -471,7 +471,7 @@ rm(Progress, Progress_Ext_Mean, Progress_Ext_Mean_Both, Progress_Int_Mean, Progr
 
 ```
 
-#67% Data Table
+# 67% Data Table
 Create descriptives table for only ID's that have 67% of their data.
 ```{r 67% Data Table, echo=FALSE}
 # Select needed column
@@ -571,7 +571,7 @@ rm(Progress_67, Progress_67_Ext_Mean_Both, Progress_67_Int_Mean_Both, Progress_6
 
 ```
 
-#100% Table
+# 100% Table
 Create descriptives table for only ID's that have 100% of their data.
 ```{r 100% Data Table, echo=FALSE}
 # Select needed column
@@ -670,11 +670,11 @@ rm(Progress_100, Progress_100_Ext_Mean_Both, Progress_100_Int_Mean_Both, Progres
 
 ```
 
-##N Table
+# N Table
 Create table for participant numbers. (Currently unused/unfinished)
 ```{r number table, include = T}
 
-#Ignore all, incomplete
+# Ignore all, incomplete
 
 
 # Orig

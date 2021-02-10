@@ -21,7 +21,7 @@ library(tidyverse)
 # Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 knitr::opts_chunk$set(echo = TRUE, include = FALSE)
 
-#sentific notation, round up to 3 digits
+# scientific notation, round up to 3 digits
 options(digits = 3)
 ```
 
@@ -66,12 +66,12 @@ UPMC_ders_Item <- "Q6.1"
 old_UO_ders_names <- paste(UO_ders_Item, num_items, sep = "_")
 old_UPMC_ders_names <- paste(UPMC_ders_Item, num_items, sep = "_")
 
-#create list of new header 
+# create list of new header 
 ders <- "ders"
 number_of_survey <- seq(1:36)
 NDA_names <- paste(ders,number_of_survey,sep = '')
 ```
-#Prep Sheet
+# Prep Sheet
 Select relevant pedigree information, rename as needed. (Include GroupAssignment for treatment progress calculation.)
 ```{r Prep Sheet, warning = F}
 # Replace UO column names 
@@ -113,7 +113,7 @@ Pedigree_Prep <- bind_rows(Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4)
 # Merge Pedigree data to ders Time Points
 DERS_Prep <- merge(DERS_Qualtrics, Pedigree_Prep)
 
-# Change gemder to F instead of False
+# Change gender to F instead of False
 DERS_Prep$mother_sex <- "F"
 
 # Clean Global Enviorment 
@@ -122,7 +122,7 @@ rm(UO_T1_ders, UO_T2_ders, UO_T3_ders, UO_T4_ders, UPMC_T1_ders, UPMC_T2_ders, U
 
 # Recode and Reverse-Score
 ```{r Re-code and Reverse Score}
-#TODO: Prefer not to answer now as NA?
+# TODO: Prefer not to answer now as NA?
 DERS_Prep <- DERS_Prep %>% 
   mutate_at(new_ders_names,
             funs(recode(., "Almost Never (0-10%)" = 1, 
@@ -180,7 +180,7 @@ DERS_Prep <- add_column(DERS_Prep,
                  "srm_ders_24r", "srm_ders_27", "srm_ders_32")],
                na.rm = T), .after = "DERS_goals_raw")
 
-# Calculated enonacceptance
+# Calculated nonacceptance
 DERS_Prep <- add_column(DERS_Prep, 
                DERS_nonacceptance_raw = rowSums(DERS_Prep[, 
                c("srm_ders_11", "srm_ders_12", "srm_ders_21", 
@@ -202,7 +202,7 @@ DERS_Prep <- add_column(DERS_Prep, DERS_total_raw = rowSums(select(DERS_Prep,c(s
 DERS_Prep$NACheck <- rowSums(is.na(select(DERS_Prep, starts_with("srm"))))/ncol(dplyr::select(DERS_Prep, starts_with("srm")))
 ```
 
-#NDA Sheet
+# NDA Sheet
 ```{r NDA Sheet}
 # Create NDA prep sheet, select all the needed columns from prep sheet
 NDA_ders_Prep <- select(DERS_Prep, c(subjectkey = mom_guid, src_subject_id = mother_FamID, sex = mother_sex ,interview_age, interview_date, starts_with("srm")))

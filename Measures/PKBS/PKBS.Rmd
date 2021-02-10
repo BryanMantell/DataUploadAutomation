@@ -8,30 +8,30 @@ output: html_document
 knitr::opts_chunk$set(message = FALSE)
 ```
 
-## Import
+# Import
 Import Qualtrics excel files into R
 ```{r Import}
 # Empty Global Enivronment
 rm(list = ls())
 
-#Install Package, this only need to be done once.
-#install.packages(c("dplyr","tidyverse","data.table","contrib.url","knitr"))
-#install.packages('plyr', repos = "http://cran.us.r-project.org")
+# Install Package, this only need to be done once.
+# install.packages(c("dplyr","tidyverse","data.table","contrib.url","knitr"))
+# install.packages('plyr', repos = "http://cran.us.r-project.org")
 
-#Load packages, this need to be done every time you run this script. 
+# Load packages, this need to be done every time you run this script. 
 library(dplyr)
 library(tidyverse)
 library(data.table)
 library(knitr)
 
-#Set Working Directory
+# Set Working Directory
 setwd("~/Documents/GitHub/DataUploadAutomation/Measures/PKBS/DataUploadAutomation/Measures/PKBS/")
 
-#Import Pedigree and NDA Structure
+# Import Pedigree and NDA Structure
 Pedigree <- read.csv("Reference_Pedigree.csv")
 NDA_PKBS <- read.csv("pkbs01_template.csv", skip = 1)
 
-#Import PKBS files from both sites and every timepoint
+# Import PKBS files from both sites and every timepoint
 UO_T1_PKBS <- read.csv("UO_T1_Qualtrics.csv", stringsAsFactors = FALSE)
 UPMC_T1_PKBS <- read.csv("UPMC_T1_PKBS.csv", stringsAsFactors = FALSE)
 UO_T2_PKBS <- read.csv("UO_T2_Qualtrics.csv", stringsAsFactors = FALSE)
@@ -42,16 +42,16 @@ UO_T4_PKBS <- read.csv("UO_T4_Qualtrics.csv", stringsAsFactors = FALSE)
 UPMC_T4_PKBS <- read.csv("UPMC_T4_PKBS.csv", stringsAsFactors = FALSE)
 ```
 
-## Rename Columns
+# Rename Columns
 Rename questions numbers to self-report measure scale items. Then, take each scale measure from both sites and combine them by timepoint.
 ```{r Rename Columns}
-#Rename variables that we want to select for PKBS
-#Create list of new variable names
+# Rename variables that we want to select for PKBS
+# Create list of new variable names
 pkbs <- "srm_pkbs"
 num_items <- seq(1:33)
 new_PKBS_names <- paste(pkbs, num_items, sep='_')
 
-#Now make a list of old variable names so that we can replace them with the neww ones
+# Now make a list of old variable names so that we can replace them with the neww ones
 UO_Q407 <- "Q407"
 UO_Q359 <- "Q359"
 UO_Q524 <- "Q524"
@@ -65,99 +65,99 @@ old_UO_PKBS_names4 <- paste(UO_Q817, num_items,sep = "_")
 old_UPMC_PKBS_names <- paste(UPMC_Q16, num_items,sep = "_")
 old_UPMC_PKBS_names2 <- paste(UPMC_Q13, num_items, sep = "_")
 
-#Change UO column names
+# Change UO column names
 setnames(UO_T1_PKBS, old_UO_PKBS_names, new_PKBS_names, skip_absent=FALSE)
 setnames(UO_T2_PKBS, old_UO_PKBS_names2, new_PKBS_names, skip_absent=FALSE)
 setnames(UO_T3_PKBS, old_UO_PKBS_names3, new_PKBS_names, skip_absent=FALSE)
 setnames(UO_T4_PKBS, old_UO_PKBS_names4, new_PKBS_names, skip_absent=FALSE)
 
-#Change UPMC column names
+# Change UPMC column names
 setnames(UPMC_T1_PKBS, old_UPMC_PKBS_names, new_PKBS_names, skip_absent=FALSE)
 setnames(UPMC_T2_PKBS, old_UPMC_PKBS_names2, new_PKBS_names, skip_absent=FALSE)
 setnames(UPMC_T3_PKBS, old_UPMC_PKBS_names2, new_PKBS_names, skip_absent=FALSE)
 setnames(UPMC_T4_PKBS, old_UPMC_PKBS_names, new_PKBS_names, skip_absent=FALSE)
 
-#Edit UO PKBS Times 1-4 to have only PKBS questions and the FamID
+# Edit UO PKBS Times 1-4 to have only PKBS questions and the FamID
 UO_T1_PKBS <- select(UO_T1_PKBS, c(FamID = Q221, contains("pkbs")))
 UO_T2_PKBS <- select(UO_T2_PKBS, c(FamID = Q116, contains("pkbs")))
 UO_T3_PKBS <- select(UO_T3_PKBS, c(FamID = Q174, contains("pkbs")))
 UO_T4_PKBS <- select(UO_T4_PKBS, c(FamID = Q203, contains("pkbs")))
 
-#Edit UPMC PKBS Times 1-4 to have only PKBS questions and the FamID
+# Edit UPMC PKBS Times 1-4 to have only PKBS questions and the FamID
 UPMC_T1_PKBS <- select(UPMC_T1_PKBS, c(FamID = Q1.2, contains("pkbs")))
 UPMC_T2_PKBS <- select(UPMC_T2_PKBS, c(FamID = Q1.2, contains("pkbs")))
 UPMC_T3_PKBS <- select(UPMC_T3_PKBS, c(FamID = Q1.2, contains("pkbs")))
 UPMC_T4_PKBS <- select(UPMC_T4_PKBS, c(FamID = Q1.2, contains("pkbs")))
 
-#Merge UO and UPMC data by Timepoint
+# Merge UO and UPMC data by Timepoint
 PKBS_T1 <- rbind(UO_T1_PKBS, UPMC_T1_PKBS)
 PKBS_T2 <- rbind(UO_T2_PKBS, UPMC_T2_PKBS)
 PKBS_T3 <- rbind(UO_T3_PKBS, UPMC_T3_PKBS)
 PKBS_T4 <- rbind(UO_T4_PKBS, UPMC_T4_PKBS)
 
-#Clean up environment
+# Clean up environment
 rm(UO_T1_PKBS, UO_T2_PKBS, UO_T3_PKBS, UO_T4_PKBS, UPMC_T1_PKBS, UPMC_T2_PKBS, UPMC_T3_PKBS, UPMC_T4_PKBS)
 ```
 
-## Prep Sheet
+# Prep Sheet
 Create prep sheet to begin transferring data into NDA format. Rename relevant GUID information to match NDA specifications. Finally, bind all timepoints into single PKBS Prep Sheet.
 ```{r Prep Sheet}
-#Create the Pedigree table for each timepoint
+# Create the Pedigree table for each timepoint
 Pedigree_T1 <- select(Pedigree, FamID, FamID_Mother, mom_guid, MomGender, Time1Date, MomAge_T1, GroupAssignment)
 Pedigree_T2 <- select(Pedigree, FamID, FamID_Mother, mom_guid, MomGender, Time2Date, MomAge_T2, GroupAssignment)
 Pedigree_T3 <- select(Pedigree, FamID, FamID_Mother, mom_guid, MomGender, Time3Date, MomAge_T3, GroupAssignment)
 Pedigree_T4 <- select(Pedigree, FamID, FamID_Mother, mom_guid, MomGender, Time4Date, MomAge_T4, GroupAssignment)
 
-#Merge Pedigree data to PKBS timepoints
+# Merge Pedigree data to PKBS timepoints
 PKBS_T1 <- merge(Pedigree_T1, PKBS_T1, by = "FamID")
 PKBS_T2 <- merge(Pedigree_T2, PKBS_T2, by = "FamID")
 PKBS_T3 <- merge(Pedigree_T3, PKBS_T3, by = "FamID")
 PKBS_T4 <- merge(Pedigree_T4, PKBS_T4, by = "FamID")
 
-#Clean up environment
+# Clean up environment
 rm(Pedigree, Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4)
 
-#Create new column designating time point for each database
+# Create new column designating time point for each database
 PKBS_T1$Timepoint <- "Time 1"
 PKBS_T2$Timepoint <- "Time 2"
 PKBS_T3$Timepoint <- "Time 3"
 PKBS_T4$Timepoint <- "Time 4"
 
-#Rename each of the Date and Age columns so that they match
+# Rename each of the Date and Age columns so that they match
 PKBS_T1 <- PKBS_T1 %>% rename( interview_date = Time1Date, interview_age = MomAge_T1)
 PKBS_T2 <- PKBS_T2 %>% rename( interview_date = Time2Date, interview_age = MomAge_T2)
 PKBS_T3 <- PKBS_T3 %>% rename( interview_date = Time3Date, interview_age = MomAge_T3)
 PKBS_T4 <- PKBS_T4 %>% rename( interview_date = Time4Date, interview_age = MomAge_T4)
 
-#Merge all timepoints together to create the PKBS prep sheet
+# Merge all timepoints together to create the PKBS prep sheet
 PKBS_Prep <- rbind(PKBS_T1, PKBS_T2, PKBS_T3, PKBS_T4)
 
-#Change gender to F instead of FALSE
+# Change gender to F instead of FALSE
 PKBS_Prep$MomGender <- "F"
 
-#Clean up environment
+# Clean up environment
 rm(PKBS_T1, PKBS_T2, PKBS_T3, PKBS_T4)
 ```
 
-## Re-code and 67% Rule
+# Re-code and 67% Rule
 Convert Likert Scale text input into numerical values then create a dataframe to place ID's that do not have 67% of their data present.
 ```{r Re-code and 67% Rule}
-#Turn Likert Scale from text string to numeric value
+# Turn Likert Scale from text string to numeric value
 PKBS_Prep[PKBS_Prep == "Never (0)"] <- 0; PKBS_Prep[PKBS_Prep == "Rarely (1)"] <- 1;
 PKBS_Prep[PKBS_Prep == "Sometimes (2)"] <- 2; PKBS_Prep[PKBS_Prep == "Often (3)"] <- 3;
 
-#Create NA Check column calculating what portion of the data is present
+# Create NA Check column calculating what portion of the data is present
 PKBS_Prep$NACheck <- rowSums(is.na(select(PKBS_Prep, starts_with("srm_pkbs"))))/ncol(dplyr::select(PKBS_Prep, starts_with("srm_pkbs")))
 
-#Create Drop dataframe for anything less than 0.67; Allow anything over to be used for Prep sheet
+# Create Drop dataframe for anything less than 0.67; Allow anything over to be used for Prep sheet
 PKBS_Drop <- PKBS_Prep[PKBS_Prep$NACheck > 0.67, ]
 PKBS_Prep <- PKBS_Prep[PKBS_Prep$NACheck <= 0.67, ]
 
-#Create dataframe for all ID's that have 100% of their data present
+# Create dataframe for all ID's that have 100% of their data present
 PKBS_100 <- PKBS_Prep[PKBS_Prep$NACheck == 0, ]
 ```
 
-## Calculated Columns
+# Calculated Columns
 Create sums column combining each individual measure. 
 ```{r Calculated Columns}
 # Change number to numeric values and Create Calculated Column 
@@ -169,7 +169,7 @@ PKBS_Prep  <- add_column(PKBS_Prep, pkbs_total = rowSums(PKBS_Prep[, c("srm_pkbs
                                                                        "srm_pkbs_21", "srm_pkbs_22", "srm_pkbs_23", "srm_pkbs_24", "srm_pkbs_25", "srm_pkbs_26", "srm_pkbs_27",
                                                                        "srm_pkbs_28", "srm_pkbs_29", "srm_pkbs_30", "srm_pkbs_31", "srm_pkbs_32", "srm_pkbs_33")]),.after = "srm_pkbs_33")
 
-#100% Table Calculated Columns
+# 100% Table Calculated Columns
 PKBS_100[,8:40] <- sapply(PKBS_Prep[,8:40],as.numeric)
 
 PKBS_100  <- add_column(PKBS_100, pkbs_total = rowSums(PKBS_Prep[, c("srm_pkbs_1", "srm_pkbs_2","srm_pkbs_3","srm_pkbs_4", "srm_pkbs_5", "srm_pkbs_6",
@@ -180,10 +180,10 @@ PKBS_100  <- add_column(PKBS_100, pkbs_total = rowSums(PKBS_Prep[, c("srm_pkbs_1
 
 ```
 
-## NDA Sheet
+# NDA Sheet
 Re-name PKBS Prep Sheet columns to match NDA specifications. 
 ```{r NDA Sheet}
-#Create list of column names for PKBS prep and NDA structure
+# Create list of column names for PKBS prep and NDA structure
 NDA_PKBS_Prep <- select(PKBS_Prep, c(visit = "Timepoint", subjectkey = "mom_guid", src_subject_id = "FamID_Mother", sex = "MomGender", interview_age, GroupAssignment, interview_date, starts_with("srm"), pkbs_total))
 
 
@@ -197,11 +197,11 @@ setnames(NDA_PKBS_Prep, new_PKBS_names, NDA_names, skip_absent = FALSE)
 colnames(NDA_PKBS_Prep)[40] <- "basc_social_raw"
 
 
-#Merge PKBS Prep Sheet into NDA structure
+# Merge PKBS Prep Sheet into NDA structure
 NDA_PKBS[1,] <- NA
 NDA_PKBS <- bind_rows(NDA_PKBS_Prep, NDA_PKBS)
 
-#Recreate the first line of the NDA
+# Recreate the first line of the NDA
 first_line <- matrix("", nrow = 1, ncol = ncol(NDA_PKBS))
 first_line[,1] <- "pkbs"
 first_line[,2] <- "1"
@@ -214,69 +214,69 @@ write.table(first_line, file = "pkbs.csv", sep = ",", append = FALSE, quote = FA
 write.table(NDA_PKBS, file = 'pkbs.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
 ```
 
-## Table
+# Table
 Create descriptive means table.
 ```{r Table}
 library(knitr)
 library(magrittr)
 library(kableExtra)
 
-#Select necessary columns for means table
+# Select necessary columns for means table
 Progress <- select((PKBS_Prep), c(FamID, GroupAssignment, Timepoint, starts_with("srm"), pkbs_total))
 
-#Calculate row mean for each individual
+# Calculate row mean for each individual
 Progress$Row_Mean <- rowMeans(select(PKBS_Prep, c(starts_with("srm"))), na.rm = T)
 
-#Change FamID as character and assign to ID variable
+# Change FamID as character and assign to ID variable
 ID <- c(as.character(Progress$FamID))
 
-#Add Site column to Progress, if ID start with 9 then site is UO, else is UPMC
+# Add Site column to Progress, if ID start with 9 then site is UO, else is UPMC
 Progress$site <- ifelse(startsWith(ID, "9"), "UO", "UPMC")
 
-#Group by GroupAssignment and Timepoint, and calcultae Group Mean
+# Group by GroupAssignment and Timepoint, and calcultae Group Mean
 Progress_Mean <- Progress %>%
   group_by(GroupAssignment, Timepoint, site) %>%
   summarise(GroupMean = mean(pkbs_total, na.rm = T), count = n())
 
-#Select only UO Mean
+# Select only UO Mean
 UO <- Progress_Mean[Progress_Mean$site == "UO",]
-#Select only UPMC Mean
+# Select only UPMC Mean
 UPMC <- Progress_Mean[Progress_Mean$site == "UPMC",]
 
-#Calculate mean from both sites
+# Calculate mean from both sites
 Both_site_Mean <- Progress %>%
   group_by(GroupAssignment, Timepoint) %>%
   summarise(BothSiteMean_PKBS = mean(pkbs_total, na.rm = T), n = sum(count = n()))
 
-#Change GroupMean column names according to site
+# Change GroupMean column names according to site
 colnames(UO)[colnames(UO) == "GroupMean"] = "UO_PKBS"
 colnames(UO)[colnames(UO) == "count"] = "UO_PKBS_Original_N"
 colnames(UPMC)[colnames(UPMC) == "GroupMean"] = "UPMC_PKBS"
 colnames(UPMC)[colnames(UPMC) == "count"] = "UPMC_PKBS_Original_N"
 colnames(Both_site_Mean)[colnames(Both_site_Mean) == "n"] = "BothSite_Original_N"
 
-#Combine UO, UPMC, and Both_Site data 
+# Combine UO, UPMC, and Both_Site data 
 Mean_Table <- data.frame(UO[,c("UO_PKBS","GroupAssignment")],UPMC[,"UPMC_PKBS"],Both_site_Mean[,c("BothSiteMean_PKBS","BothSite_Original_N")])
 
-#Convert Mean_Table, make original column as row
+# Convert Mean_Table, make original column as row
 Mean_Table <- t(Mean_Table)
 
-#Make Mean_Table a data frame
+# Make Mean_Table a data frame
 Mean_Table <- data.frame(Mean_Table)
 
-#Re-order Mean Table
+# Re-order Mean Table
 Mean_Table <- Mean_Table[c(5,6,7,8,9,10,11,12,1,2,3,4)]
 
-#Add Timepoint column
+# Add Timepoint column
 Timepoint_names <- c("T1","T2", "T3", "T4","T1","T2", "T3", "T4","T1","T2", "T3", "T4")
 
-#Rename column name
+# Rename column name
 setnames(Mean_Table, names(Mean_Table), Timepoint_names)
 
-#Add a header
+# Add a header
 install.packages(knitr)
 
-#Create Table
+# Create Table
 kable(Mean_Table) %>%
   kable_styling(bootstrap_options = "striped", full_width = F) %>%
   add_header_above(c(" " = 1, "Controls means" = 4, "FSU means" = 4, "DBT means" = 4)) %>%
@@ -289,65 +289,65 @@ kable(Mean_Table) %>%
 ```
 
 
-#100% Table
+# 100% Table
 Create descriptives table for only ID's that have 100% of their data.
 ```{r 100% Table}
-#Select necessary columns for means table
+# Select necessary columns for means table
 Progress <- select((PKBS_100), c(FamID, GroupAssignment, Timepoint, starts_with("srm"), pkbs_total))
 
-#Calculate row mean for each individual
+# Calculate row mean for each individual
 Progress$Row_Mean <- rowMeans(select(PKBS_Prep, c(starts_with("srm"))), na.rm = T)
 
-#Change FamID as character and assign to ID variable
+# Change FamID as character and assign to ID variable
 ID <- c(as.character(Progress$FamID))
 
-#Add Site column to Progress, if ID start with 9 then site is UO, else is UPMC
+# Add Site column to Progress, if ID start with 9 then site is UO, else is UPMC
 Progress$site <- ifelse(startsWith(ID, "9"), "UO", "UPMC")
 
-#Group by GroupAssignment and Timepoint, and calculate Group Mean
+# Group by GroupAssignment and Timepoint, and calculate Group Mean
 Progress_Mean <- Progress %>%
   group_by(GroupAssignment, Timepoint, site) %>%
   summarise(GroupMean = mean(pkbs_total, na.rm = T), count = n())
 
-#Select only UO Mean
+# Select only UO Mean
 UO100 <- Progress_Mean[Progress_Mean$site == "UO",]
-#Select only UPMC Mean
+# Select only UPMC Mean
 UPMC100 <- Progress_Mean[Progress_Mean$site == "UPMC",]
 
-#Calculate mean from both sites
+# Calculate mean from both sites
 Both_site_Mean100 <- Progress %>%
   group_by(GroupAssignment, Timepoint) %>%
   summarise(BothSiteMean_PKBS = mean(pkbs_total, na.rm = T), n = sum(count = n()))
 
-#Change GroupMean column names according to site
+# Change GroupMean column names according to site
 colnames(UO100)[colnames(UO100) == "GroupMean"] = "UO_PKBS"
 colnames(UO100)[colnames(UO100) == "count"] = "UO_PKBS_100_N"
 colnames(UPMC100)[colnames(UPMC100) == "GroupMean"] = "UPMC_PKBS"
 colnames(UPMC100)[colnames(UPMC100) == "count"] = "UPMC_PKBS_100_N"
 colnames(Both_site_Mean100)[colnames(Both_site_Mean100) == "n"] = "BothSite_PKBS_100_N"
 
-#Combine UO, UPMC, and Both_Site data 
+# Combine UO, UPMC, and Both_Site data 
 Mean_Table <- data.frame(UO100[,c("UO_PKBS","GroupAssignment")],UPMC100[,"UPMC_PKBS"],Both_site_Mean100[,c("BothSiteMean_PKBS","BothSite_PKBS_100_N")])
 
-#Convert Mean_Table, make original column as row
+# Convert Mean_Table, make original column as row
 Mean_Table <- t(Mean_Table)
 
-#Make Mean_Table a data frame
+# Make Mean_Table a data frame
 Mean_Table <- data.frame(Mean_Table)
 
-#Re-order Mean Table
+# Re-order Mean Table
 Mean_Table <- Mean_Table[c(5,6,7,8,9,10,11,12,1,2,3,4)]
 
-#Add Timepoint column
+# Add Timepoint column
 Timepoint_names <- c("T1","T2", "T3", "T4","T1","T2", "T3", "T4","T1","T2", "T3", "T4")
 
-#Rename column name
+# Rename column name
 setnames(Mean_Table, names(Mean_Table), Timepoint_names)
 
-#Add a header
+# Add a header
 install.packages(knitr)
 
-#Create Table
+# Create Table
 kable(Mean_Table) %>%
   kable_styling(bootstrap_options = "striped", full_width = F) %>%
   add_header_above(c(" " = 1, "Controls means" = 4, "FSU means" = 4, "DBT means" = 4)) %>%
@@ -355,10 +355,10 @@ kable(Mean_Table) %>%
   column_spec(c(1,5,9), border_right = T, include_thead = T) %>%
   column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
 ```
-##N Table
+# N Table
 Create table for participant numbers.
 ```{r N Table}
-#Create N table, GroupAssignment and Timepoint are dupliced here, just checking it's align
+# Create N table, GroupAssignment and Timepoint are dupliced here, just checking it's align
 
 N <- data.frame(UO[, c("Timepoint", "UO_PKBS_Original_N", "GroupAssignment")],
                 UO100[, c("Timepoint", "UO_PKBS_100_N", "GroupAssignment")],
@@ -367,29 +367,29 @@ N <- data.frame(UO[, c("Timepoint", "UO_PKBS_Original_N", "GroupAssignment")],
                 Both_site_Mean[,c("Timepoint", "BothSite_Original_N", "GroupAssignment")],
                 Both_site_Mean100[,c("Timepoint", "BothSite_PKBS_100_N", "GroupAssignment")]
                 )
-#Remove dupliced column 
+# Remove dupliced column 
 N <- N[,-c(1,3,4,6,7,9,10,12,13,15,16,18,19,21,22,24,25,27)]
 
 
-#Convert data frame to numeric
+# Convert data frame to numeric
 N <- as.data.frame(sapply(N, as.numeric))
 
-#Transfer N table from Horzontal to Vertical
+# Transfer N table from Horzontal to Vertical
 N <- data.frame(t(N))
 
-#Calculate Total N 
+# Calculate Total N 
 N$T1 <- rowSums(N[,c(1,5,9)])
 N$T2 <- rowSums(N[,c(2,6,10)])
 N$T3 <- rowSums(N[,c(3,7,11)])
 N$T4 <- rowSums(N[,c(4,8,12)])
 
-#Timepoint names 
+# Timepoint names 
 Timepoint_names <- c("T1","T2", "T3", "T4","T1","T2", "T3", "T4","T1","T2", "T3", "T4", "T1","T2", "T3", "T4")
 
-#Rename column name 
+# Rename column name 
 setnames(N, names(N), Timepoint_names)
 
-#Create Table
+# Create Table
 kable(N) %>%
   kable_styling(bootstrap_options = c("striped"), fixed_thead = T) %>%
   add_header_above(c(" " = 1, "DBT Group" = 4, "Control Group" = 4, "FSU Group" = 4, "Totals" = 4)) %>%

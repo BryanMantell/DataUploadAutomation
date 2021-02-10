@@ -17,7 +17,7 @@ library(dplyr)
 # Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 knitr::opts_chunk$set(echo = F, warning = FALSE)
 
-#scientific notation, round up to 3 digits
+# scientific notation, round up to 3 digits
 options(digits = 3)
 ```
 
@@ -98,7 +98,7 @@ for (i in pabq) {
   NDA_Names <- c(NDA_Names, Name)
 }
 ```
-#Prep Sheet
+# Prep Sheet
 Select relevant pedigree information, rename as needed. (Include GroupAssignment for treatment progress calculation.)
 ```{r Prep Sheet}
 # Replace UO column names
@@ -249,7 +249,7 @@ CCNES_Prep <- add_column(CCNES_Prep, CCNES_MR_raw =
 CCNES_Prep$NACheck <- rowSums(is.na(select(CCNES_Prep, starts_with("srm"))))/ncol(dplyr::select(CCNES_Prep, starts_with("srm")))
 ```
 
-#NDA Sheet
+# NDA Sheet
 ```{r NDA Sheet}
 # Create NDA Prep sheet, select all the needed columns from Prep sheet
 NDA_CCNES_Prep <- select(CCNES_Prep, c(subjectkey = mom_guid, src_subject_id = mother_FamID, sex = mother_sex ,interview_age, interview_date, starts_with("srm")))
@@ -457,7 +457,7 @@ Progress_unsupported_Mean100 <- Progress100 %>%
   group_by(GroupAssignment,Timepoint,site) %>%
   summarise(UnsupportedMean100 = mean(Unsupported_Mean,na.rm = T), n = n())
 
-# Joint  Supported and un-supported 
+# Joint Supported and un-supported 
 Progress_Mean100 <- merge(Progress_Supported_Mean100, Progress_unsupported_Mean100)
 
 # Select only UO Mean
