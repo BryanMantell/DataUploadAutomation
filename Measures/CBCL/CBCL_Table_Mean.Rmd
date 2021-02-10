@@ -385,7 +385,7 @@ ID <- c(as.character(Progress$FamID))
 # Add "Site" column to Progress, if an ID start with 9 then the site is UO, otherwise it is UPMC
 Progress$site <- ifelse(startsWith(ID, "9"),"UO","UPMC")
 
-# Group by GroupAssissignment and Timepoint, and calculate the Group Mean
+# Group by GroupAssignment  and Timepoint, and calculate the Group Mean
 # Grouping & calculation for CBCL total
 Progress_Total_Mean <- Progress %>%
   group_by(GroupAssignment,timepoint,site) %>%
@@ -483,7 +483,7 @@ ID <- c(as.character(Progress_67$FamID))
 # Add "Site" column to Progress, if an ID start with 9 then the site is UO, otherwise it is UPMC
 Progress_67$site <- ifelse(startsWith(ID, "9"),"UO","UPMC")
 
-# Group by GroupAssissignment and Timepoint, and calculate the Group Mean
+# Group by GroupAssignment  and Timepoint, and calculate the Group Mean
 # Grouping & calculation for CBCL total
 Progress_67_Total_Mean <- Progress_67 %>%
   group_by(GroupAssignment,timepoint,site) %>%
@@ -583,7 +583,7 @@ ID <- c(as.character(Progress_100$FamID))
 # Add "Site" column to Progress, if an ID start with 9 then the site is UO, otherwise it is UPMC
 Progress_100$site <- ifelse(startsWith(ID, "9"),"UO","UPMC")
 
-# Group by GroupAssissignment and Timepoint, and calculate the Group Mean
+# Group by GroupAssignment  and Timepoint, and calculate the Group Mean
 # Grouping & calculation for CBCL total
 Progress_100_Total_Mean <- Progress_100 %>%
   group_by(GroupAssignment,timepoint,site) %>%

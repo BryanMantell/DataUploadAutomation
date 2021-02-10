@@ -248,12 +248,12 @@ ID <- c(as.character(Progress$FamID))
 Progress$site <- ifelse(startsWith(ID, "9"),"UO","UPMC")
 
 
-# Group by GroupAssissignment and Timepoint, and calculate the Group Mean
+# Group by GroupAssignment and Timepoint, and calculate the Group Mean
 Progress_Mean <- Progress %>%
   group_by(GroupAssignment,Timepoint,site) %>%
   summarise(GroupMean = mean(Row_sum,na.rm = T), N_Ori = n())
 
-# Colculate Both site Mean 
+# Calculate Both site Mean 
 Both_site_Mean <- Progress %>%
   group_by(GroupAssignment, Timepoint) %>%
   summarise(BothSite_DERS_Mean = mean(Row_sum,na.rm = T), BothSite_Original_N = n())
@@ -304,12 +304,12 @@ Drop participant have less than 67% data
 DERS_Drop <- Progress[Progress$NACheck > 0.67, ]
 Progress67 <- Progress[Progress$NACheck <= 0.67, ]
 
-# Group by GroupAssissignment and Timepoint, and calculate the Group Mean
+# Group by GroupAssignment and Timepoint, and calculate the Group Mean
 Progress_Mean_67 <- Progress67 %>%
   group_by(GroupAssignment,Timepoint,site) %>%
   summarise(GroupMean = mean(Row_sum,na.rm = T), N_67 = n())
 
-# Colculate Both site Mean 
+# Calculate Both site Mean 
 Both_site_Mean_67 <- Progress67 %>%
   group_by(GroupAssignment, Timepoint) %>%
   summarise(BothSite_DERS_Mean67 = mean(Row_sum,na.rm = T), BothSite_DERS_67_N = n())
@@ -358,12 +358,12 @@ Drop participant have less than 100% data
 ```{r 100% Responses Table}
 # Data contain 100% data
 Progress100 <- Progress[Progress$NACheck == 0, ]
-# Group by GroupAssissignment and Timepoint, and calculate the Group Mean
+# Group by GroupAssignment and Timepoint, and calculate the Group Mean
 Progress_Mean_100 <- Progress100 %>%
   group_by(GroupAssignment,Timepoint,site) %>%
   summarise(GroupMean = mean(Row_sum,na.rm = T), N_100 = n())
 
-# Colculate Both site Mean 
+# Calculate Both site Mean 
 Both_site_Mean_100 <- Progress100 %>%
   group_by(GroupAssignment, Timepoint) %>%
   summarise(BothSite_DERS_Mean100 = mean(Row_sum,na.rm = T), BothSite_DERS_100_N = n())
@@ -429,7 +429,7 @@ N <- as.data.frame(sapply(N, as.numeric))
 # Transfer N table from Horzontal to Vertical
 N <- data.frame(t(N))
 
-# Colculate Total N 
+# Calculate Total N 
 N$T1 <- rowSums(N[,c(1,5,9)])
 N$T2 <- rowSums(N[,c(2,6,10)])
 N$T3 <- rowSums(N[,c(3,7,11)])

@@ -159,7 +159,7 @@ CCNES_Prep <- CCNES_Prep %>%
                         '1' = 1,
                         '2' = 2,
                         '3' = 3,
-                        '4 - Medium Liklihood' = 4,
+                        '4 - Medium Likelihood' = 4,
                         '4' = 4,
                         '5' = 5,
                         '6' = 6,
@@ -298,7 +298,7 @@ Progress <- select(CCNES_Prep, c(FamID, GroupAssignment, Timepoint, starts_with(
 
 # Calculate row mean for each individual  
 Progress$Supported_Mean <- rowMeans(CCNES_Prep[,c("CCNES_EE_raw","CCNES_EFR_raw", "CCNES_PFR_raw")], na.rm = TRUE)
-Progress$Unsupproted_Mean <- rowMeans(CCNES_Prep[,c("CCNES_DR_raw", "CCNES_PR_raw", "CCNES_MR_raw")], na.rm = TRUE)
+Progress$Unsupported_Mean <- rowMeans(CCNES_Prep[,c("CCNES_DR_raw", "CCNES_PR_raw", "CCNES_MR_raw")], na.rm = TRUE)
 
 # Change FamId as character and assign to ID variable 
 ID <- c(as.character(Progress$FamID))
@@ -306,14 +306,14 @@ ID <- c(as.character(Progress$FamID))
 # Add Site column to Progress, if ID start with 9 then site is UO, else is UPMC
 Progress$site <- ifelse(startsWith(ID, "9"),"UO","UPMC")
 
-# Group by GroupAssissignment and Timepoint, and calculate the Supported_Mean and Unsupproted_Mean
+# Group by GroupAssignment and Timepoint, and calculate the Supported_Mean and Unsupported_Mean
 Progress_Supported_Mean <- Progress %>%
   group_by(GroupAssignment, Timepoint, site) %>%
   summarise(SupportedMean = mean(Supported_Mean,na.rm = T), n = n())
 
 Progress_unsupported_Mean <- Progress %>%
   group_by(GroupAssignment,Timepoint,site) %>%
-  summarise(UnsupprotedMean = mean(Unsupproted_Mean,na.rm = T), n = n())
+  summarise(UnsupportedMean = mean(Unsupported_Mean,na.rm = T), n = n())
 
 # Joint  Supported and un-supported 
 Progress_Mean <- merge(Progress_Supported_Mean, Progress_unsupported_Mean)
@@ -331,7 +331,7 @@ Progress_Supported_Mean_both <- Progress %>%
 # Calculate Both site Mean for unsupported elements
 Progress_unsupported_Mean_both <- Progress %>%
   group_by(GroupAssignment,Timepoint) %>%
-  summarise("BothSite_CCNES_UnsupprotedMean" = mean(Unsupproted_Mean,na.rm = T), n = n())
+  summarise("BothSite_CCNES_UnsupportedMean" = mean(Unsupported_Mean,na.rm = T), n = n())
 
 # merge Supported and unsupported table for both site table 
 Both_site_Mean <- merge(Progress_Supported_Mean_both, Progress_unsupported_Mean_both)
@@ -339,12 +339,12 @@ Both_site_Mean <- merge(Progress_Supported_Mean_both, Progress_unsupported_Mean_
 
 # Change GroupMean Column names according to site
 colnames(UO)[colnames(UO) == "SupportedMean"] = "UO_CCNES_SupportedMean"
-colnames(UO)[colnames(UO) == "UnsupprotedMean"] = "UO_CCNES_UnsupprotedMean"
+colnames(UO)[colnames(UO) == "UnsupportedMean"] = "UO_CCNES_UnsupportedMean"
 colnames(UPMC)[colnames(UPMC) == "SupportedMean"] = "UPMC_CCNES_SupportedMean"
-colnames(UPMC)[colnames(UPMC) == "UnsupprotedMean"] = "UPMC_CCNES_UnsupprotedMean"
+colnames(UPMC)[colnames(UPMC) == "UnsupportedMean"] = "UPMC_CCNES_UnsupportedMean"
 
 # Combine UO,UPMC and both_site data 
-Mean_Table <- data.frame(UO[,c("UO_CCNES_SupportedMean","UO_CCNES_UnsupprotedMean")],UPMC[,c("UPMC_CCNES_SupportedMean","UPMC_CCNES_UnsupprotedMean")],Both_site_Mean[,c("BothSite_CCNES_SupportedMean","BothSite_CCNES_UnsupprotedMean","n","GroupAssignment")])
+Mean_Table <- data.frame(UO[,c("UO_CCNES_SupportedMean","UO_CCNES_UnsupportedMean")],UPMC[,c("UPMC_CCNES_SupportedMean","UPMC_CCNES_UnsupportedMean")],Both_site_Mean[,c("BothSite_CCNES_SupportedMean","BothSite_CCNES_UnsupportedMean","n","GroupAssignment")])
 
 # Convert Mean_Table, make original column as row
 Mean_Table <- t(Mean_Table)
@@ -379,14 +379,14 @@ CCNES_DROP <- Progress[Progress$NACheck > 0.67, ]
 # Data contain 67% data or more
 Progress67 <- Progress[Progress$NACheck <= 0.67, ]
 
-# Group by GroupAssissignment and Timepoint, and calculate the Supported_Mean and Unsupproted_Mean
+# Group by GroupAssignment and Timepoint, and calculate the Supported_Mean and Unsupported_Mean
 Progress_Supported_Mean67 <- Progress67 %>%
   group_by(GroupAssignment,Timepoint,site) %>%
   summarise(SupportedMean67 = mean(Supported_Mean,na.rm = T), n = n())
 
 Progress_unsupported_Mean67 <- Progress67 %>%
   group_by(GroupAssignment,Timepoint,site) %>%
-  summarise(UnsupprotedMean67 = mean(Unsupproted_Mean,na.rm = T), n = n())
+  summarise(UnsupportedMean67 = mean(Unsupported_Mean,na.rm = T), n = n())
 
 # Joint  Supported and un-supported 
 Progress_Mean67 <- merge(Progress_Supported_Mean67, Progress_unsupported_Mean67)
@@ -396,7 +396,7 @@ UO67 <- Progress_Mean67[Progress_Mean67$site == "UO",]
 # Select only UPMC Mean 
 UPMC67 <- Progress_Mean67[Progress_Mean67$site == "UPMC",]
 
-# Colculate Both site Mean 
+# Calculate Both site Mean 
 Progress_Supported_Mean_both67 <- Progress67 %>%
   group_by(GroupAssignment,Timepoint) %>%
   summarise("BothSite_CCNES_SupportedMean67" = mean(Supported_Mean, na.rm = T), n = n())
@@ -404,7 +404,7 @@ Progress_Supported_Mean_both67 <- Progress67 %>%
 # Calculate Both site Mean for unsupported elements
 Progress_unsupported_Mean_both67 <- Progress67 %>%
   group_by(GroupAssignment,Timepoint) %>%
-  summarise("BothSite_CCNES_UnsupprotedMean67" = mean(Unsupproted_Mean,na.rm = T), n = n())
+  summarise("BothSite_CCNES_UnsupportedMean67" = mean(Unsupported_Mean,na.rm = T), n = n())
 
 # merge Supported and unsupported table for both site table 
 Both_site_Mean67 <- merge(Progress_Supported_Mean_both67, Progress_unsupported_Mean_both67)
@@ -412,12 +412,12 @@ Both_site_Mean67 <- merge(Progress_Supported_Mean_both67, Progress_unsupported_M
 
 # Change GroupMean Column names according to site
 colnames(UO67)[colnames(UO67) == "SupportedMean67"] = "UO_CCNES_SupportedMean"
-colnames(UO67)[colnames(UO67) == "UnsupprotedMean67"] = "UO_CCNES_UnsupprotedMean"
+colnames(UO67)[colnames(UO67) == "UnsupportedMean67"] = "UO_CCNES_UnsupportedMean"
 colnames(UPMC67)[colnames(UPMC67) == "SupportedMean67"] = "UPMC_CCNES_SupportedMean"
-colnames(UPMC67)[colnames(UPMC67) == "UnsupprotedMean67"] = "UPMC_CCNES_UnsupprotedMean"
+colnames(UPMC67)[colnames(UPMC67) == "UnsupportedMean67"] = "UPMC_CCNES_UnsupportedMean"
 
 # Combine UO,UPMC and both_site data 
-Mean_Table67 <- data.frame(UO[,c("UO_CCNES_SupportedMean","UO_CCNES_UnsupprotedMean")],UPMC[,c("UPMC_CCNES_SupportedMean","UPMC_CCNES_UnsupprotedMean")],Both_site_Mean67[,c("BothSite_CCNES_SupportedMean67","BothSite_CCNES_UnsupprotedMean67","n","GroupAssignment")])
+Mean_Table67 <- data.frame(UO[,c("UO_CCNES_SupportedMean","UO_CCNES_UnsupportedMean")],UPMC[,c("UPMC_CCNES_SupportedMean","UPMC_CCNES_UnsupportedMean")],Both_site_Mean67[,c("BothSite_CCNES_SupportedMean67","BothSite_CCNES_UnsupportedMean67","n","GroupAssignment")])
 
 # Convert Mean_Table, make original column as row
 Mean_Table67 <- t(Mean_Table67)
@@ -450,14 +450,14 @@ Drop participant have less than 100% data
 # Data contain 100% data
 Progress100 <- Progress[Progress$NACheck == 0, ]
 
-# Group by GroupAssissignment and Timepoint, and calculate the Supported_Mean and Unsupproted_Mean
+# Group by GroupAssignment and Timepoint, and calculate the Supported_Mean and Unsupported_Mean
 Progress_Supported_Mean100 <- Progress100 %>%
   group_by(GroupAssignment,Timepoint,site) %>%
   summarise(SupportedMean100 = mean(Supported_Mean,na.rm = T), n = n())
 
 Progress_unsupported_Mean100 <- Progress100 %>%
   group_by(GroupAssignment,Timepoint,site) %>%
-  summarise(UnsupprotedMean100 = mean(Unsupproted_Mean,na.rm = T), n = n())
+  summarise(UnsupportedMean100 = mean(Unsupported_Mean,na.rm = T), n = n())
 
 # Joint  Supported and un-supported 
 Progress_Mean100 <- merge(Progress_Supported_Mean100, Progress_unsupported_Mean100)
@@ -467,7 +467,7 @@ UO100 <- Progress_Mean100[Progress_Mean100$site == "UO",]
 # Select only UPMC Mean 
 UPMC100 <- Progress_Mean100[Progress_Mean100$site == "UPMC",]
 
-# Colculate Both site Mean 
+# Calculate Both site Mean 
 Progress_Supported_Mean_both100 <- Progress100 %>%
   group_by(GroupAssignment,Timepoint) %>%
   summarise("BothSite_CCNES_SupportedMean100" = mean(Supported_Mean, na.rm = T), n = n())
@@ -475,7 +475,7 @@ Progress_Supported_Mean_both100 <- Progress100 %>%
 # Calculate Both site Mean for unsupported elements
 Progress_unsupported_Mean_both100 <- Progress100 %>%
   group_by(GroupAssignment,Timepoint) %>%
-  summarise("BothSite_CCNES_UnsupprotedMean100" = mean(Unsupproted_Mean,na.rm = T), n = n())
+  summarise("BothSite_CCNES_UnsupportedMean100" = mean(Unsupported_Mean,na.rm = T), n = n())
 
 # merge Supported and unsupported table for both site table 
 Both_site_Mean100 <- merge(Progress_Supported_Mean_both100, Progress_unsupported_Mean_both100)
@@ -483,12 +483,12 @@ Both_site_Mean100 <- merge(Progress_Supported_Mean_both100, Progress_unsupported
 
 # Change GroupMean Column names according to site
 colnames(UO100)[colnames(UO100) == "SupportedMean100"] = "UO_CCNES_SupportedMean"
-colnames(UO100)[colnames(UO100) == "UnsupprotedMean100"] = "UO_CCNES_UnsupprotedMean"
+colnames(UO100)[colnames(UO100) == "UnsupportedMean100"] = "UO_CCNES_UnsupportedMean"
 colnames(UPMC100)[colnames(UPMC100) == "SupportedMean100"] = "UPMC_CCNES_SupportedMean"
-colnames(UPMC100)[colnames(UPMC100) == "UnsupprotedMean100"] = "UPMC_CCNES_UnsupprotedMean"
+colnames(UPMC100)[colnames(UPMC100) == "UnsupportedMean100"] = "UPMC_CCNES_UnsupportedMean"
 
 # Combine UO,UPMC and both_site data 
-Mean_Table100 <- data.frame(UO[,c("UO_CCNES_SupportedMean","UO_CCNES_UnsupprotedMean")],UPMC[,c("UPMC_CCNES_SupportedMean","UPMC_CCNES_UnsupprotedMean")],Both_site_Mean100[,c("BothSite_CCNES_SupportedMean100","BothSite_CCNES_UnsupprotedMean100","n","GroupAssignment")])
+Mean_Table100 <- data.frame(UO[,c("UO_CCNES_SupportedMean","UO_CCNES_UnsupportedMean")],UPMC[,c("UPMC_CCNES_SupportedMean","UPMC_CCNES_UnsupportedMean")],Both_site_Mean100[,c("BothSite_CCNES_SupportedMean100","BothSite_CCNES_UnsupportedMean100","n","GroupAssignment")])
 
 # Convert Mean_Table, make original column as row
 Mean_Table100 <- t(Mean_Table100)

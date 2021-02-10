@@ -83,7 +83,7 @@ DCS_Prep <- DCS_Prep %>%
                         'Assigned Group 1 (DBT)' = "DBT")))
 ```
 
-```{r Colculated Columns}
+```{r Calculated Columns}
 # TODO: apply 67% rule 
 # Check NA percentage   0:100%data     1 0% data 
 DCS_Prep$NACheck <- rowSums(is.na(select(DCS_Prep, starts_with("srm"))))/ncol(dplyr::select(DCS_Prep, starts_with("srm")))
@@ -132,7 +132,7 @@ ID <- c(as.character(Progress$Fam_ID))
 # Add Site column to Progress, if ID start with 9 then site is UO, else is UPMC
 Progress$site <- ifelse(startsWith(ID, "9"),"UO","UPMC")
 
-# Group by GroupAssissignment and Timepoint, and calculate the Group Mean
+# Group by GroupAssignment  and Timepoint, and calculate the Group Mean
 Progress_Mean <- Progress %>%
   group_by(GroupAssignment,Timepoint,site) %>%
   summarise(GroupMean = mean(Row_Mean, na.rm = T),count = n())
@@ -142,7 +142,7 @@ UO <- Progress_Mean[Progress_Mean$site == "UO",]
 # Select only UPMC Mean 
 UPMC <- Progress_Mean[Progress_Mean$site == "UPMC",]
 
-# Colculate Both site Mean 
+# Calculate Both site Mean 
 Both_site_Mean <- Progress %>%
   group_by(GroupAssignment, Timepoint) %>%
   summarise(BothSite_DimensionalCardSort_Mean = mean(Row_Mean,na.rm = T),n = n())
@@ -189,7 +189,7 @@ DCS_DROP <- Progress[Progress$NACheck > 0.67, ]
 # Data contain 67% data or more
 Progress67 <- Progress[Progress$NACheck <= 0.67, ]
 
-# Group by GroupAssissignment and Timepoint, and calculate the Group Mean
+# Group by GroupAssignment  and Timepoint, and calculate the Group Mean
 Progress_Mean67 <- Progress67 %>%
   group_by(GroupAssignment,Timepoint,site) %>%
   summarise(GroupMean67 = mean(Row_Mean, na.rm = T),count = n())
@@ -199,7 +199,7 @@ UO67 <- Progress_Mean67[Progress_Mean67$site == "UO",]
 # Select only UPMC Mean 
 UPMC67 <- Progress_Mean67[Progress_Mean67$site == "UPMC",]
 
-# Colculate Both site Mean 
+# Calculate Both site Mean 
 Both_site_Mean67 <- Progress67 %>%
   group_by(GroupAssignment, Timepoint) %>%
   summarise(BothSite_DimensionalCardSort_Mean67 = mean(Row_Mean,na.rm = T),n = n())
@@ -244,7 +244,7 @@ Drop participant have less than 100% data
 # Data contain 100% data
 Progress100 <- Progress[Progress$NACheck == 0, ]
 
-# Group by GroupAssissignment and Timepoint, and calculate the Group Mean
+# Group by GroupAssignment  and Timepoint, and calculate the Group Mean
 Progress_Mean <- Progress %>%
   group_by(GroupAssignment,Timepoint,site) %>%
   summarise(GroupMean = mean(Row_Mean, na.rm = T),count = n())
@@ -254,7 +254,7 @@ UO <- Progress_Mean[Progress_Mean$site == "UO",]
 # Select only UPMC Mean 
 UPMC <- Progress_Mean[Progress_Mean$site == "UPMC",]
 
-# Colculate Both site Mean 
+# Calculate Both site Mean 
 Both_site_Mean <- Progress %>%
   group_by(GroupAssignment, Timepoint) %>%
   summarise(BothSite_DimensionalCardSort_Mean = mean(Row_Mean,na.rm = T),n = n())
