@@ -7,13 +7,14 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(message = FALSE)
-# Empty Global Environment
-rm(list = ls())
 ```
 
 ## Import
 Import Qualtrics excel files into R
 ```{r Import}
+# Empty Global Environment
+rm(list = ls())
+
 #Install Package, this only need to be done once.
 #install.packages(c("dplyr","tidyverse","data.table","contrib.url","knitr"))
 #install.packages('plyr', repos = "http://cran.us.r-project.org")
@@ -123,7 +124,7 @@ Pedigree_Prep <- rbind(Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4)
 names(Pedigree_Prep)[names(Pedigree_Prep) == "FamID"] <- "Fam_ID"
 
 #Combine the Pedigree information with the RedCap data to output the Prep Sheet
-AffectPT_Prep <- merge(Pedigree_Prep, AffectPT_Data, by = c("timepoint", "Fam_ID"), all = TRUE)
+AffectPT_Prep <- merge(Pedigree_Prep, AffectPT_Data, by = c("timepoint", "Fam_ID"), all.x = TRUE)
 
 #Convert column names to odd numbers to represent participant response
 old_AffectPT_names <- c("oc_apt_01", "oc_apt_02", "oc_apt_03", "oc_apt_04", "oc_apt_05", "oc_apt_06", 
@@ -221,6 +222,13 @@ NDA_AffectPT <- bind_rows(NDA_AffectPT, NDA_AffectPT_Prep)
 first_line <- matrix("", nrow = 1, ncol = ncol(NDA_AffectPT))
 first_line[,1] <- "apt"
 first_line[,2] <- "1"
+
+# Create a new file in folder called pabq.csv, and put first line into this file
+# pabq.csv file will be saved into same folder as current r script
+write.table(first_line, file = "affectpt.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
+
+# Append data in NDA_CCNES into pabq.cav file 
+write.table(NDA_AffectPT, file = 'affectpt.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
 ```
 
 ## Table

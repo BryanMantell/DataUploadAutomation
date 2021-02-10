@@ -6,8 +6,6 @@ date: "5/16/2020"
 # Setup
 Empty environment, loading library, set knitr and scientific notation
 ```{r setup}
-
-
 # Loading library
 library(tidyverse)
 library(data.table)
