@@ -46,23 +46,23 @@ Pedigree <- read.csv("Reference_Pedigree.csv", stringsAsFactors = FALSE)
 # print(result)
 
 # practice
-result <- postForm(
-  uri = 'https://redcap-prod.uoregon.edu/redcap/api/',
-  token = '',
-  content = 'report',
-  format = 'csv',
-  report_id = '71',
-  csvDelimiter = '',
-  rawOrLabel = 'raw',
-  rawOrLabelHeaders = 'raw',
-  exportCheckboxLabel = 'false',
-  returnFormat = 'csv'
-)
-print(result)
-
-# Convert Download Data into data frame
-Result_con <- textConnection(result) 
-Redcap_Data <- read.csv(Result_con)
+# result <- postForm(
+#   uri = 'https://redcap-prod.uoregon.edu/redcap/api/',
+#   token = '',
+#   content = 'report',
+#   format = 'csv',
+#   report_id = '71',
+#   csvDelimiter = '',
+#   rawOrLabel = 'raw',
+#   rawOrLabelHeaders = 'raw',
+#   exportCheckboxLabel = 'false',
+#   returnFormat = 'csv'
+# )
+# print(result)
+# 
+# # Convert Download Data into data frame
+# Result_con <- textConnection(result) 
+# Redcap_Data <- read.csv(Result_con)
 
 
 # *************************************************************************
