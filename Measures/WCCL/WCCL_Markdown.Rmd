@@ -28,63 +28,66 @@ Empty Environment, Import Measurement, Pedigree data and NDA structure
 # Empty global environment
 rm(list = ls())
 
+#source?
+source("Upload Preparation.R")
+
 # Import Pedigree and NDA structure
-Pedigree <- read.csv("Reference_Pedigree.csv")
+##Pedigree <- read.csv("Reference_Pedigree.csv")
 NDA_WCCL <- read.csv("dbt_wccl01_template.csv", skip = 1)
 
 # Import UO and UPMC files 
-UO_T1_WCCL <- read.csv("UO_T1_Qualtrics.csv", stringsAsFactors = FALSE)
-UO_T2_WCCL <- read.csv("UO_T2_Qualtrics.csv", stringsAsFactors = FALSE)
-UO_T3_WCCL <- read.csv("UO_T3_Qualtrics.csv", stringsAsFactors = FALSE)
-UO_T4_WCCL <- read.csv("UO_T4_Qualtrics.csv", stringsAsFactors = FALSE)
+##UO_T1_WCCL <- read.csv("UO_T1_Qualtrics.csv", stringsAsFactors = FALSE)
+##UO_T2_WCCL <- read.csv("UO_T2_Qualtrics.csv", stringsAsFactors = FALSE)
+##UO_T3_WCCL <- read.csv("UO_T3_Qualtrics.csv", stringsAsFactors = FALSE)
+##UO_T4_WCCL <- read.csv("UO_T4_Qualtrics.csv", stringsAsFactors = FALSE)
 
-UPMC_T1_WCCL <- read.csv("UPMC_T1_WCCL.csv", stringsAsFactors = FALSE)
-UPMC_T2_WCCL <- read.csv("UPMC_T2_WCCL.csv", stringsAsFactors = FALSE)
-UPMC_T3_WCCL <- read.csv("UPMC_T3_WCCL.csv", stringsAsFactors = FALSE)
-UPMC_T4_WCCL <- read.csv("UPMC_T4_WCCL.csv", stringsAsFactors = FALSE)
+##UPMC_T1_WCCL <- read.csv("UPMC_T1_WCCL.csv", stringsAsFactors = FALSE)
+##UPMC_T2_WCCL <- read.csv("UPMC_T2_WCCL.csv", stringsAsFactors = FALSE)
+##UPMC_T3_WCCL <- read.csv("UPMC_T3_WCCL.csv", stringsAsFactors = FALSE)
+##UPMC_T4_WCCL <- read.csv("UPMC_T4_WCCL.csv", stringsAsFactors = FALSE)
 ```
 # Rename Columns
 Rename questions numbers to self-report measure scale items. Then, take each scale measure from both sites and combine them by timepoint.
 
-```{r Rename Columns}
+```{r Rename Columns (remove?)}
 # Create new variable names 
-wccl <- "srm_wccl"
-num_items <- seq(1:59)
-new_WCCL_names <- paste(wccl, num_items, sep = "_")
-UO_Q155 <- "Q155"
-old_UO_WCCL_names <- paste(UO_Q155, num_items, sep = "_")
+##wccl <- "srm_wccl"
+##num_items <- seq(1:59)
+##new_WCCL_names <- paste(wccl, num_items, sep = "_")
+##UO_Q155 <- "Q155"
+##old_UO_WCCL_names <- paste(UO_Q155, num_items, sep = "_")
 
 # Replace old UO variable names with newly created names
-setnames(UO_T1_WCCL, old_UO_WCCL_names, new_WCCL_names)
-setnames(UO_T2_WCCL, old_UO_WCCL_names, new_WCCL_names)
-setnames(UO_T3_WCCL, old_UO_WCCL_names, new_WCCL_names)
-setnames(UO_T4_WCCL, old_UO_WCCL_names, new_WCCL_names)
+##setnames(UO_T1_WCCL, old_UO_WCCL_names, new_WCCL_names)
+##setnames(UO_T2_WCCL, old_UO_WCCL_names, new_WCCL_names)
+##setnames(UO_T3_WCCL, old_UO_WCCL_names, new_WCCL_names)
+##setnames(UO_T4_WCCL, old_UO_WCCL_names, new_WCCL_names)
 
 # Replace old UPMC variable names with newly created names
-UPMC_Q5 <- "Q5.1"
-old_UPMC_WCCL_names <- paste(UPMC_Q5, num_items, sep = "_")
-setnames(UPMC_T1_WCCL, old_UPMC_WCCL_names, new_WCCL_names)
-setnames(UPMC_T2_WCCL, old_UPMC_WCCL_names, new_WCCL_names)
-setnames(UPMC_T3_WCCL, old_UPMC_WCCL_names, new_WCCL_names)
-setnames(UPMC_T4_WCCL, old_UPMC_WCCL_names, new_WCCL_names)
+##UPMC_Q5 <- "Q5.1"
+##old_UPMC_WCCL_names <- paste(UPMC_Q5, num_items, sep = "_")
+##setnames(UPMC_T1_WCCL, old_UPMC_WCCL_names, new_WCCL_names)
+##setnames(UPMC_T2_WCCL, old_UPMC_WCCL_names, new_WCCL_names)
+##setnames(UPMC_T3_WCCL, old_UPMC_WCCL_names, new_WCCL_names)
+##setnames(UPMC_T4_WCCL, old_UPMC_WCCL_names, new_WCCL_names)
 
 # edit UO WCCL time 1-4 to have only WCCL questions and fam ID 
-UO_T1_WCCL <- select(UO_T1_WCCL, c(FamID=Q221, contains(wccl)))
-UO_T2_WCCL <- select(UO_T2_WCCL, c(FamID=Q116, contains(wccl)))
-UO_T3_WCCL <- select(UO_T3_WCCL, c(FamID=Q174, contains(wccl)))
-UO_T4_WCCL <- select(UO_T4_WCCL, c(FamID=Q203, contains(wccl)))
+##UO_T1_WCCL <- select(UO_T1_WCCL, c(FamID=Q221, contains(wccl)))
+##UO_T2_WCCL <- select(UO_T2_WCCL, c(FamID=Q116, contains(wccl)))
+##UO_T3_WCCL <- select(UO_T3_WCCL, c(FamID=Q174, contains(wccl)))
+##UO_T4_WCCL <- select(UO_T4_WCCL, c(FamID=Q203, contains(wccl)))
 
 # Edit UPMC T1-4 so only WCCL and FamID are left
-UPMC_T1_WCCL <- select(UPMC_T1_WCCL, c(FamID=Q1.2, contains(wccl)))
-UPMC_T2_WCCL <- select(UPMC_T2_WCCL, c(FamID=Q1.2, contains(wccl)))
-UPMC_T3_WCCL <- select(UPMC_T3_WCCL, c(FamID=Q1.2, contains(wccl)))
-UPMC_T4_WCCL <- select(UPMC_T4_WCCL, c(FamID=Q1.2, contains(wccl)))
+##UPMC_T1_WCCL <- select(UPMC_T1_WCCL, c(FamID=Q1.2, contains(wccl)))
+##UPMC_T2_WCCL <- select(UPMC_T2_WCCL, c(FamID=Q1.2, contains(wccl)))
+##UPMC_T3_WCCL <- select(UPMC_T3_WCCL, c(FamID=Q1.2, contains(wccl)))
+##UPMC_T4_WCCL <- select(UPMC_T4_WCCL, c(FamID=Q1.2, contains(wccl)))
 
 # Binding UPMC And UO by time point
-WCCL_T1 <- rbind(UO_T1_WCCL, UPMC_T1_WCCL)
-WCCL_T2 <- rbind(UO_T2_WCCL, UPMC_T2_WCCL)
-WCCL_T3 <- rbind(UO_T3_WCCL, UPMC_T3_WCCL)
-WCCL_T4 <- rbind(UO_T4_WCCL, UPMC_T4_WCCL)
+##WCCL_T1 <- rbind(UO_T1_WCCL, UPMC_T1_WCCL)
+##WCCL_T2 <- rbind(UO_T2_WCCL, UPMC_T2_WCCL)
+##WCCL_T3 <- rbind(UO_T3_WCCL, UPMC_T3_WCCL)
+##WCCL_T4 <- rbind(UO_T4_WCCL, UPMC_T4_WCCL)
 ```
 # Prep Sheet
 Create prep sheet to begin transferring data into NDA format. Rename relevant GUID information to match NDA specifications. Finally, bind all timepoints into single WCCL Prep Sheet.
