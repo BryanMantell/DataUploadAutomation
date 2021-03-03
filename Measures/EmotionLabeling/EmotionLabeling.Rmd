@@ -8,12 +8,12 @@ output: html_document
 Loading library, set knitr and scientific notation
 ```{r Setup}
 # Loading library
-library(dplyr)
-library(tidyverse)
-library(data.table)
-library(kableExtra)
+##library(dplyr)
+##library(tidyverse)
+##library(data.table)
+##library(kableExtra)
 
-
+source("Upload Preparation.R")
 ```
 # Import 
 Import Measurement, Pedigree data and NDA structure
@@ -22,8 +22,8 @@ Import Measurement, Pedigree data and NDA structure
 # Clear Environment Setup
 rm(list = ls())
 
-Emotion_Labeling_REDCAP <- read.csv("Redcap_Data.csv")
-Pedigree <- read.csv("Reference_Pedigree.csv")
+##Emotion_Labeling_REDCAP <- read.csv("Redcap_Data.csv")
+##Pedigree <- read.csv("Reference_Pedigree.csv")
 Emotion_Labeling_NDA <- read.csv("elt01_template.csv", skip=1)
 
 
@@ -33,27 +33,27 @@ Replace column names with NDA specified names
 
 ```{r Rename Columns}
 # rename elt_exp names
-eltpart1_exp <- "oc_elt_exp"
-num_items <- seq(1:8)
-new_eltpart1_names <- paste(eltpart1_exp, num_items, sep = "_")
+##eltpart1_exp <- "oc_elt_exp"
+##num_items <- seq(1:8)
+##new_eltpart1_names <- paste(eltpart1_exp, num_items, sep = "_")
 
 # rename elt_rec names
-eltpart2_rec <- "oc_elt_rec"
-num_items <- seq (1:4) 
-new_eltpart2_names <- paste(eltpart2_rec, num_items, sep = "_")
+##eltpart2_rec <- "oc_elt_rec"
+##num_items <- seq (1:4) 
+##new_eltpart2_names <- paste(eltpart2_rec, num_items, sep = "_")
 
 # replace old eltpart1 names with new names
-eltpart1_exp <- "eltpart1_exp"
-num_items <- seq (1:8)
-old_eltpart1_names <- paste(eltpart1_exp, num_items, sep = "")
-setnames(Emotion_Labeling_REDCAP, old_eltpart1_names, new_eltpart1_names)
+##eltpart1_exp <- "eltpart1_exp"
+##num_items <- seq (1:8)
+##old_eltpart1_names <- paste(eltpart1_exp, num_items, sep = "")
+##setnames(Emotion_Labeling_REDCAP, old_eltpart1_names, new_eltpart1_names)
 
 # replace old eltpart2 names with new names
-eltpart2_rec <- "eltpart2_rec"
-num_items <- seq (1:4)
-old_eltpart2_names <- paste(eltpart2_rec, num_items, sep = "")
+##eltpart2_rec <- "eltpart2_rec"
+##num_items <- seq (1:4)
+##old_eltpart2_names <- paste(eltpart2_rec, num_items, sep = "")
 
-setnames(Emotion_Labeling_REDCAP, old_eltpart2_names, new_eltpart2_names)
+##setnames(Emotion_Labeling_REDCAP, old_eltpart2_names, new_eltpart2_names)
 ```
 
 ``` {r Prep Sheet}
