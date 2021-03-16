@@ -5,139 +5,36 @@ date: "7/9/2020"
 output: html_document
 ---
 
+# Setup
+Empty environment, loading library, set knitr and scientific notation
 ```{r setup}
-# Loading Library
-library(dplyr)
-library(data.table)
-library(knitr)
-library(kableExtra)
-library(tidyverse)
-
-# Settings for knit the whole document 
-# Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
-knitr::opts_chunk$set(echo = TRUE, include = FALSE)
-
-# scientific notation, round up to 3 digits
-options(digits = 3)
-
-```
-
-# Import
-Import Qualtrics excel files into R
-```{r Import}
 # Empty Global Environment
 rm(list = ls())
 
-# Import Pedigree and NDA Structure
-Pedigree <- read.csv("Reference_Pedigree.csv")
+source("Upload Preparation.R")
 NDA_CBCL <- read.csv("cbcl1_501_template.csv", skip = 1)
-
-# Import UO and UMPC flies, data is kept from being factors so later modifications will work
-UO_T1_CBCL <- read.csv(file = 'UO_T1_Qualtrics.csv', stringsAsFactors = FALSE)
-UO_T2_CBCL <- read.csv(file = 'UO_T2_Qualtrics.csv', stringsAsFactors = FALSE)
-UO_T3_CBCL <- read.csv(file = 'UO_T3_Qualtrics.csv', stringsAsFactors = FALSE)
-UO_T4_CBCL <- read.csv(file = 'UO_T4_Qualtrics.csv', stringsAsFactors = FALSE)
-
-UPMC_T1_CBCL <- read.csv(file = 'UPMC_T1_Qualtrics.csv', stringsAsFactors = FALSE)
-UPMC_T2_CBCL <- read.csv(file = 'UPMC_T2_Qualtrics.csv', stringsAsFactors = FALSE)
-UPMC_T3_CBCL <- read.csv(file = 'UPMC_T3_Qualtrics.csv', stringsAsFactors = FALSE)
-UPMC_T4_CBCL <- read.csv(file = 'UPMC_T4_Qualtrics.csv', stringsAsFactors = FALSE)
-
-```
-
-# Rename Columns
-Rename questions numbers to self-report measure scale items. Then, take each scale measure from both sites and combine them by timepoint.
-```{r Rename Columns}
-# Create list of new variable names for the Prep Sheet
-New_CBCL_Names <- sprintf("srm_cbcl_%03d", seq(1:100))
-
-# Create list of old variable names so we can target them to be replaced with the new ones
-# Since the question names change by timepoint we'll have to make unique lists by timepoint, starting with UO Timepoint 1 and UMPC Timepoint 1 and 4
-Old_UO_CBCL_Names_T1 <- sprintf("Q264_%01d", seq(1:100))
-Old_UPMC_CBCL_Names_T1_T4 <- sprintf("Q15.1_%01d", seq(1:100))
-
-# Old names for UO Timepoint 2, UMPC Timepoints 2 and 3
-Old_UO_CBCL_Names_T2 <- sprintf("Q368_%01d", seq(1:100))
-Old_UPMC_CBCL_Names_T2_T3 <- sprintf("Q12.1_%01d", seq(1:100))
-
-# Old names for UO Timepoint 3
-Old_UO_CBCL_Names_T3 <- sprintf("Q534_%01d", seq(1:100))
-
-# Old names for UO timepoint 4
-Old_UO_CBCL_Names_T4 <- sprintf("Q828_%01d", seq(1:100))
-
-# Replace UO column names (there may be errors from the CBCL TEXT question responses) 
-setnames(UO_T1_CBCL, Old_UO_CBCL_Names_T1, New_CBCL_Names)
-setnames(UO_T2_CBCL, Old_UO_CBCL_Names_T2, New_CBCL_Names)
-setnames(UO_T3_CBCL, Old_UO_CBCL_Names_T3, New_CBCL_Names)
-setnames(UO_T4_CBCL, Old_UO_CBCL_Names_T4, New_CBCL_Names)
-
-# Replace UPMC column names (there may be errors from the CBCL TEXT question responses)
-setnames(UPMC_T1_CBCL, Old_UPMC_CBCL_Names_T1_T4, New_CBCL_Names)
-setnames(UPMC_T2_CBCL, Old_UPMC_CBCL_Names_T2_T3, New_CBCL_Names)
-setnames(UPMC_T3_CBCL, Old_UPMC_CBCL_Names_T2_T3, New_CBCL_Names)
-setnames(UPMC_T4_CBCL, Old_UPMC_CBCL_Names_T1_T4, New_CBCL_Names)
-
+options(digits = 3)
 ```
 
 # Prep Sheet
-Create prep sheet to begin transferring data into NDA format. Rename relevant GUID information to match NDA specifications. Finally, bind all timepoints into single CBCL Prep Sheet.
+Create prep sheet to begin transferring data into NDA format.
 ```{r Prep Sheet}
-# Edit UO CBCL Time 1 - 4 to have only CBCL quesions and the FamID
-UO_T1_CBCL <- select(UO_T1_CBCL, c(FamID = Q221, contains("cbcl")))
-UO_T2_CBCL <- select(UO_T2_CBCL, c(FamID = Q116, contains("cbcl")))
-UO_T3_CBCL <- select(UO_T3_CBCL, c(FamID = Q174, contains("cbcl")))
-UO_T4_CBCL <- select(UO_T4_CBCL, c(FamID = Q203, contains("cbcl")))
+UO_CBCL <- select(UO_Qualtrics, c(Fam_ID, child_guid, child_famID, interview_date, interview_age_child, child_sex, GroupAssignment, Timepoint = Timepoint.x,contains("srm_cbcl")))
+UPMC_CBCL <- select(UPMC_Qualtrics, c(Fam_ID, child_guid, child_famID, interview_date, interview_age_child, child_sex, GroupAssignment, Timepoint = Timepoint.x,contains("srm_cbcl")))
 
-# Edit UPMC CBCL Time 1 - 4 to have only CBCL quesions and the FamID
-UPMC_T1_CBCL <- select(UPMC_T1_CBCL, c(FamID = Q1.2, contains("cbcl")))
-UPMC_T2_CBCL <- select(UPMC_T2_CBCL, c(FamID = Q1.2, contains("cbcl")))
-UPMC_T3_CBCL <- select(UPMC_T3_CBCL, c(FamID = Q1.2, contains("cbcl")))
-UPMC_T4_CBCL <- select(UPMC_T4_CBCL, c(FamID = Q1.2, contains("cbcl")))
+# Bind tw site from two site 
+CBCL_Prep <- bind_rows(UO_CBCL,UPMC_CBCL)
 
-# Bind UO and UPMC CBCL Data By Timepoint
-CBCL_T1 <- rbind(UO_T1_CBCL, UPMC_T1_CBCL)
-CBCL_T2 <- rbind(UO_T2_CBCL, UPMC_T2_CBCL)
-CBCL_T3 <- rbind(UO_T3_CBCL, UPMC_T3_CBCL)
-CBCL_T4 <- rbind(UO_T4_CBCL, UPMC_T4_CBCL)
-
-# Clean  Environment of intermediate calculations for question selection and column renaming
-rm(UO_T1_CBCL, UO_T2_CBCL, UO_T3_CBCL, UO_T4_CBCL, UPMC_T1_CBCL, UPMC_T2_CBCL, UPMC_T3_CBCL, UPMC_T4_CBCL, 
-   Old_UO_CBCL_Names_T1, Old_UO_CBCL_Names_T2, Old_UO_CBCL_Names_T3, Old_UO_CBCL_Names_T4, Old_UPMC_CBCL_Names_T1_T4, Old_UPMC_CBCL_Names_T2_T3)
-
-# Create the Predigree data for each Timepoint
-Pedigree_T1 <- select(Pedigree, FamID, child_guid, child_FamID = FamID_Child, child_sex = ChildGender, interview_age = ChildAge_T1, interview_date = Time1Date, GroupAssignment)
-Pedigree_T2 <- select(Pedigree, FamID, child_guid, child_FamID = FamID_Child, child_sex = ChildGender, interview_age = ChildAge_T2, interview_date = Time2Date, GroupAssignment)
-Pedigree_T3 <- select(Pedigree, FamID, child_guid, child_FamID = FamID_Child, child_sex = ChildGender, interview_age = ChildAge_T3, interview_date = Time3Date, GroupAssignment)
-Pedigree_T4 <- select(Pedigree, FamID, child_guid, child_FamID = FamID_Child, child_sex = ChildGender, interview_age = ChildAge_T4, interview_date = Time4Date, GroupAssignment)
-
-# Merge Pedigree data to CBCL Time Points
-CBCL_T1 <- merge(Pedigree_T1, CBCL_T1, by = 'FamID')
-CBCL_T2 <- merge(Pedigree_T2, CBCL_T2, by = 'FamID')
-CBCL_T3 <- merge(Pedigree_T3, CBCL_T3, by = 'FamID')
-CBCL_T4 <- merge(Pedigree_T4, CBCL_T4, by = 'FamID')
-
-# Clean Environment of intermediate calculations for pedigree data
-rm(Pedigree, Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4)
-
-# Create Time Point coloumn in each CBCL Sheet and populate the cell with time point
-CBCL_T1$timepoint <- "Time 1"
-CBCL_T2$timepoint <- "Time 2"
-CBCL_T3$timepoint <- "Time 3"
-CBCL_T4$timepoint <- "Time 4"
-
-# Bind all cbcl Time Points together creating the CBCL Prep sheet
-CBCL_Prep <- rbind(CBCL_T1, CBCL_T2, CBCL_T3, CBCL_T4)
-
-# Clean Environment of intermediate calculations for Prep sheet binding
-rm(CBCL_T1, CBCL_T2, CBCL_T3, CBCL_T4)
-
+# Clean global Environment
+rm(UO_CBCL, UPMC_CBCL, UO_Qualtrics, UPMC_Qualtrics)
 ```
 
 # Re-code
 Convert Likert Scale text input into numerical values then create a dataframe to place ID's that do not have 67% of their data present.(There's an issue this presents that I will have to deal with later)
 ```{r Re-code and 67% Rule}
 # Recode text responses into numbers so they can be used in calculations
+New_CBCL_Names <- sprintf("srm_cbcl_%03d", seq(1:100))
+
 CBCL_Prep <- CBCL_Prep %>% 
   mutate_at(New_CBCL_Names,
             funs(recode(., "Not True (as far as you know)" = 0, 
@@ -331,7 +228,7 @@ Re-name CBCL Prep Sheet columns to match NDA specifications.
 ```{r NDA Sheet}
 # Create NDA prep sheet
 # Select all the needed columns from CBCL_Prep sheet
-NDA_CBCL_Prep <- select(CBCL_Prep, c(subjectkey = child_guid, src_subject_id = child_FamID, sex = child_sex ,interview_age, interview_date, starts_with("srm")))
+NDA_CBCL_Prep <- select(CBCL_Prep, c(subjectkey = child_guid, src_subject_id = child_famID, sex = child_sex ,interview_age_child, interview_date, starts_with("srm")))
 
 # Create NDA structure column names, they are unique and without a pattern so they must be made manually 
 NDA_CBCL_Names <- paste(c("cbcl56a", "cbcl1", "cbcl_nt", "cbcl_eye", "cbcl8", "cbcl10", "cbcl_out", "cbcl_wait", "cbcl_chew", "cbcl11", "cbcl_help", "cbcl49", "cbcl14", "cbcl15", "cbcl_defiant", "cbcl_dem", "cbcl20", 
@@ -369,15 +266,15 @@ write.table(first_line, file = "cbcl1_5.csv", sep = ",", append = FALSE, quote =
 write.table(NDA_CBCL, file = 'cbcl1_5.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
 
 # Clean environment of intermediate calculations for NDA structure
-rm(NDA_CBCL_Prep, NDA_CBCL_Names, UO, UPMC, first_line, New_CBCL_Names, Timepoint_names)
+rm(NDA_CBCL_Prep, NDA_CBCL_Names, first_line, New_CBCL_Names)
 
 ```
 
-# All Data Table
+# All Data Table (ABANDONED)
 Create descriptive means table. (This all data table no longer functions but isn't used regardless)
 ```{r All Data Table, echo=FALSE}
 # Select needed columns
-Progress <- select(CBCL_Prep, c(FamID, GroupAssignment, timepoint, cbcl_ext, cbcl_int, cbcl_total, starts_with("srm")))
+Progress <- select(CBCL_Prep, c(Fam_ID, GroupAssignment, Timepoint, cbcl_ext, cbcl_int, cbcl_total, starts_with("srm")))
 
 # Change FamId as character and assign it to the ID variable 
 ID <- c(as.character(Progress$FamID))
@@ -475,7 +372,7 @@ rm(Progress, Progress_Ext_Mean, Progress_Ext_Mean_Both, Progress_Int_Mean, Progr
 Create descriptives table for only ID's that have 67% of their data.
 ```{r 67% Data Table, echo=FALSE}
 # Select needed column
-Progress_67 <- select(CBCL_Prep_67, c(FamID, GroupAssignment, timepoint, cbcl_ext, cbcl_int, cbcl_total, starts_with("srm")))
+Progress_67 <- select(CBCL_Prep_67, c(Fam_ID, GroupAssignment, Timepoint, cbcl_ext, cbcl_int, cbcl_total, starts_with("srm")))
 
 # Change FamId as character and assign it to the ID variable  
 ID <- c(as.character(Progress_67$FamID))
@@ -486,17 +383,17 @@ Progress_67$site <- ifelse(startsWith(ID, "9"),"UO","UPMC")
 # Group by GroupAssignment  and Timepoint, and calculate the Group Mean
 # Grouping & calculation for CBCL total
 Progress_67_Total_Mean <- Progress_67 %>%
-  group_by(GroupAssignment,timepoint,site) %>%
+  group_by(GroupAssignment,Timepoint,site) %>%
   summarise(TotalMean = mean(cbcl_total,na.rm = T),count = n())
 
 # Grouping & calculation for CBCL Int
 Progress_67_Int_Mean <- Progress_67 %>%
-  group_by(GroupAssignment,timepoint,site) %>%
+  group_by(GroupAssignment,Timepoint,site) %>%
   summarise(IntMean = mean(cbcl_int,na.rm = T),count = n())
 
 # Grouping & calculation for CBCL Ext
 Progress_67_Ext_Mean <- Progress_67 %>%
-  group_by(GroupAssignment,timepoint,site) %>%
+  group_by(GroupAssignment,Timepoint,site) %>%
   summarise(ExtMean = mean(cbcl_ext,na.rm = T),count = n())
 
 # Merge Total, Int, and Ext calculations
@@ -512,17 +409,17 @@ UPMC <- Progress_67_Mean[Progress_67_Mean$site == "UPMC",]
 # Calculate both site mean between UO and UMPC
 # Grouping & calculation for CBCL total
 Progress_67_Total_Mean_Both <- Progress_67 %>%
-  group_by(GroupAssignment, timepoint) %>%
+  group_by(GroupAssignment, Timepoint) %>%
   summarise("BothSite_CBCL_TotalMean" = mean(cbcl_total,na.rm = T),n = n())
 
 # Grouping & calculation for CBCL Int
 Progress_67_Int_Mean_Both <- Progress_67 %>%
-  group_by(GroupAssignment, timepoint) %>%
+  group_by(GroupAssignment, Timepoint) %>%
   summarise("BothSite_CBCL_IntMean" = mean(cbcl_int,na.rm = T),n = n())
 
 # Grouping & calculation for CBCL Ext
 Progress_67_Ext_Mean_Both <- Progress_67 %>%
-  group_by(GroupAssignment, timepoint) %>%
+  group_by(GroupAssignment, Timepoint) %>%
   summarise("BothSite_CBCL_ExtMean" = mean(cbcl_ext,na.rm = T),n = n())
 
 # Merge both site Total, Ext, and Int calculations
@@ -673,34 +570,5 @@ rm(Progress_100, Progress_100_Ext_Mean_Both, Progress_100_Int_Mean_Both, Progres
 # N Table
 Create table for participant numbers. (Currently unused/unfinished)
 ```{r number table, include = T}
-
-# Ignore all, incomplete
-
-
-# Orig
-ID <- c(as.character(cbcl_Prep$FamID))
-cbcl_Prep$site <- ifelse(startsWith(ID, "9"),"UO","UPMC")
-N_org <- cbcl_Prep %>%
-  group_by(timepoint, site, GroupAssignment) %>% 
-  summarise(n_orig = n())
-
-
-# 67%
-ID <- c(as.character(cbcl_Prep_67$FamID))
-cbcl_Prep_67$site <- ifelse(startsWith(ID, "9"),"UO","UPMC")
-N67 <- cbcl_Prep_67 %>%
-  group_by(timepoint, site, GroupAssignment) %>% 
-  summarise(n_67 = n())
-
-# 100%
-ID <- c(as.character(cbcl_Prep_100$FamID))
-cbcl_Prep_100$site <- ifelse(startsWith(ID, "9"),"UO","UPMC")
-N100 <- cbcl_Prep_100 %>%
-  group_by(timepoint, site, GroupAssignment) %>% 
-  summarise(n_100 = n())
-
-N <- cbind(N_org, N67, N100)
-N <- N[,-c(5,6,7,9, 10, 11)]
-N <- data.frame(t(N))
 
 ```
