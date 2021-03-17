@@ -22,7 +22,7 @@ The current process for doing the data upload is needlessly tedious, time consum
 | [PPVT](#Peabody-Picture-Vocabulary-Test---PPVT) | Austin | In Progress | In Progress |
 | [DERS](#Difficulties-in-Emotion-Regulation-Scale---DERS) | Min | In Progress | In Progress |
 | [CBCL](#Child-Behavior-Checklist---CBCL) | Austin | In Progress | In Progress |
-| [CCNES](#Coping-with-Childrens-Negative-Emotions-Scale---CCNES) | Min | In Progress | In Progress |
+| [CCNES](#Coping-with-Children's-Negative-Emotions-Scale---CCNES) | Min | In Progress | In Progress |
 | [AAQ](#Acceptance-and-Action-Questionnaire---AAQ) | Jake | In Progress | In Progress |
 | [WCCL](#Ways-of-Coping-Checklist---WCCL) | Kyle | In Progress | In Progress |
 | [PKBS](#Preschool-and-Kindergarten-Behavior-Scales---PKBS) | Jake | In Progress | In Progress |
@@ -495,7 +495,7 @@ Now that your prep sheet is complete and contains all the columns as indicated i
 
 ---
 
-# **Coping with Childrens Negative Emotions Scale - CCNES**
+# **Coping with Children's Negative Emotions Scale - CCNES**
 
 The CCNES presents hypothetical scenarios in which a child or adolescent gets upset or angry. Parents or their children are asked to indicate the degree to which the parent responds to each scenario in 6 theoretically meaning ways of coping with children's negative emotions.
 
