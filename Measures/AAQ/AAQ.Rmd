@@ -1,0 +1,119 @@
+---
+title: "AAQ"
+author: "Austin Fisenko"
+date: "3/17/2021"
+output: html_document
+---
+
+# Setup
+Empty environment, loading library, set knitr and scientific notation
+```{r setup}
+# Empty Global Environment
+rm(list = ls())
+
+source("Upload Preparation.R")
+NDA_AAQ <- read.csv("acceptance01_template.csv", skip = 1)
+options(digits = 3)
+```
+
+# Prep Sheet
+Create prep sheet to begin transferring data into NDA format.
+```{r Prep Sheet}
+UO_AAQ <- select(UO_Qualtrics, c(Fam_ID, subjectkey, src_subject_id, interview_date, interview_age_Mom, sex_mother, GroupAssignment, Timepoint = Timepoint.x,contains("srm_aaq")))
+UPMC_AAQ <- select(UPMC_Qualtrics, c(Fam_ID, subjectkey, src_subject_id, interview_date, interview_age_Mom, sex_mother, GroupAssignment, Timepoint = Timepoint.x,contains("srm_aaq")))
+
+# Bind tw site from two site 
+AAQ_Prep <- bind_rows(UO_AAQ,UPMC_AAQ)
+
+# Clean global Environment
+rm(UO_AAQ, UPMC_AAQ, UO_Qualtrics, UPMC_Qualtrics, Pedigree, Redcap_Data, UO_Qualtrics_T1, UO_Qualtrics_T2, UO_Qualtrics_T3, UO_Qualtrics_T4, UO_Qualtrics, UO_Qualtrics_list, UPMC_Qualtrics_T1, UPMC_Qualtrics_T2, UPMC_Qualtrics_T3, UPMC_Qualtrics_T4, UPMC_Qualtrics, UPMC_Qualtrics_list)
+```
+
+# Re-code
+Convert Likert Scale text input into numerical values then create a dataframe to place ID's that do not have 67% of their data present.
+```{r Re-code and 67% Rule}
+# Recode text responses into numbers so they can be used in calculations
+new_AAQ_names <- paste("srm_aaq", seq(1:10), sep = '_')
+
+AAQ_Prep <- AAQ_Prep %>% 
+  mutate_at(new_AAQ_names,
+            funs(recode(., "1 Never True" = 1, 
+                        "2 Very Rarely True" = 2,
+                        "3 Seldom True" = 3,
+                        "4 Sometimes True" = 4,
+                        "5 Often True" = 5,
+                        "6 Almost Always True" = 6,
+                        "7 Always True" = 7,.default = NaN)))
+
+# Recode UPMC Group Assignment names to match UO Group Assignment names
+AAQ_Prep <- AAQ_Prep %>% 
+  mutate_at(c("GroupAssignment"),
+            funs(recode(., "Assigned Group 3 (HC)" = "Healthy", 
+                        'Assigned Group 2 (FSU)' = "NO DBT",
+                        'Assigned Group 1 (DBT)' = "DBT")))
+
+# Check NA percentage
+AAQ_Prep$NACheck <- rowSums(is.na(select(AAQ_Prep, starts_with("srm"))))/ncol(dplyr::select(AAQ_Prep, starts_with("srm")))
+
+# Drop people who are less than 67% & 100%
+AAQ_Drop_67 <- AAQ_Prep[AAQ_Prep$NACheck > 0.67, ]
+AAQ_Prep_67 <- AAQ_Prep[AAQ_Prep$NACheck <= 0.67, ]
+
+AAQ_Drop_100 <- AAQ_Prep[AAQ_Prep$NACheck > 0, ]
+AAQ_Prep_100 <- AAQ_Prep[AAQ_Prep$NACheck <= 0, ]
+
+```
+
+# Calculated Columns
+Create sums column for AAQ total. 
+```{r calculated columns}
+# Create calculated columns for 67% version of the Prep Sheet
+#AAQ_Prep_67 <- add_column(AAQ_Prep_67, aaq_total = rowSums(AAQ_Prep_67[, c("srm_aaq_1", "srm_aaq_2", #"srm_aaq_3", "srm_aaq_4", "srm_aaq_5", "srm_aaq_6", "srm_aaq_7", 
+#                                                                   "srm_aaq_8", "srm_aaq_9", #"srm_aaq_10")]),.after = "srm_aaq_10")
+
+AAQ_Prep <- add_column(AAQ_Prep, aaq_total = rowSums(AAQ_Prep[, c("srm_aaq_1", "srm_aaq_2", "srm_aaq_3", "srm_aaq_4", "srm_aaq_5", "srm_aaq_6", "srm_aaq_7", 
+                                                                   "srm_aaq_8", "srm_aaq_9", "srm_aaq_10")]),.after = "srm_aaq_10")
+
+```
+
+# NDA Sheet
+Re-name AAQ Prep Sheet columns to match NDA specifications. 
+```{r NDA Sheet}
+# Create NDA prep sheet
+# Select all the needed columns from CBCL_Prep sheet
+NDA_AAQ_Prep <- select(AAQ_Prep, c(subjectkey, src_subject_id, interview_date, interview_age = interview_age_Mom, sex = sex_mother, visit = Timepoint,  aaq_score = aaq_total, starts_with("srm")))
+
+# Create NDA structure column names, they are unique and without a pattern so they must be made manually 
+NDA_AAQ_Names <- paste(c("aaq2_1", "aaq_1_16", "aaq2_3", "aaq2_4", "aaq2_5", "aaq32", "aaq2_6", "aaq24", "aaq2_8", "aaq2_9"))
+
+# Change names in the NDA_CBCL_Prep to match the NDA structure column names
+setnames(NDA_AAQ_Prep, new_AAQ_names, NDA_AAQ_Names)
+
+# Make an empty row in the NDA sheet for compatibility (to avoid some potential errors)
+NDA_AAQ[1,] <- NA
+
+# Combine NDA CBCL Prep sheet with the NDA structure
+NDA_AAQ <- bind_rows(NDA_AAQ,NDA_AAQ_Prep)
+
+# Recreate first line in orignial NDA file
+# Make an empty row, with same number of column in NDA_CBCL, as first line of NDA sheet
+# ncol(NDA_CBCL)  is number of columns in NDA_CBCL
+first_line <- matrix("", nrow = 1, ncol = ncol(NDA_AAQ))
+
+# assign the first cell in first_line as acceptance which is the first cell in orignial NDA structure
+first_line[,1] <- "acceptance"
+
+# assign the second cell in first_line as "1"
+first_line[,2] <- "1"
+
+# Create a new file in folder called cbcl1_5.csv, and put first line into this file
+# acceptance01.csv file will be saved into same folder as this current r script
+write.table(first_line, file = "acceptance01.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
+
+# Append data in NDA_AAQ into acceptance01.csv file 
+write.table(NDA_AAQ, file = 'acceptance01.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
+
+# Clean environment of intermediate calculations for NDA structure
+rm(NDA_AAQ_Prep, NDA_AAQ_Names, first_line, New_AAQ_Names)
+
+```
