@@ -48,6 +48,26 @@ Pedigree <- read.csv("Reference_Pedigree.csv", stringsAsFactors = FALSE)
 # Result_con <- textConnection(result)
 # Redcap_Data <- read.csv(Result_con)
 
+# TODO: will be removed Redcap API practices 
+library(RCurl)
+result <- postForm(
+  uri='https://redcap-prod.uoregon.edu/redcap/api/',
+  token='812C21F1A319AF558F267EBA40096511',
+  content='report',
+  format='csv',
+  report_id='71',
+  csvDelimiter='',
+  rawOrLabel='raw',
+  rawOrLabelHeaders='raw',
+  exportCheckboxLabel='false',
+  returnFormat='csv'
+)
+print(result)
+
+
+Result_con <- textConnection(result)
+test <- read.csv(Result_con)
+
 # TODO: will be removed
 Redcap_Data <- read.csv("Redcap_Data.csv")
 
@@ -55,6 +75,7 @@ Redcap_Data <- read.csv("Redcap_Data.csv")
 # *************************************************************************
 # Import Qualtrics Data####
 # *************************************************************************
+# TODO: Will be changed to import using API
 UO_Qualtrics_T1 <- read.csv("UO_T1_Qualtrics.csv", stringsAsFactors = FALSE) %>% 
   rename(Fam_ID = Q221, Timepoint = Q146)
 UO_Qualtrics_T2 <- read.csv("UO_T2_Qualtrics.csv", stringsAsFactors = FALSE) %>% 
@@ -65,7 +86,7 @@ UO_Qualtrics_T4 <- read.csv("UO_T4_Qualtrics.csv", stringsAsFactors = FALSE) %>%
   rename(Fam_ID = Q203, Timepoint = Q206)
 
 # TODO: Read in actual UPMC Qualtrics Data
-UPMC_Qualtrics_T1 <- read.csv("UPMC_T1_Qualtrics.csv", stringsAsFactors = FALSE) %>% 
+UPMC_Qualtrics_T1 <- read.csv("UPMC_T1_Qualtrics.csv", stringsAsFactors  = FALSE) %>% 
   rename(Fam_ID = FQ4id) %>% mutate(Timepoint = "1")
 UPMC_Qualtrics_T2 <- read.csv("UPMC_T2_Qualtrics.csv", stringsAsFactors = FALSE) %>% 
   rename(Fam_ID = FQ4id) %>% mutate(Timepoint = "2")
@@ -88,18 +109,24 @@ Pedigree_T1 <- data.frame(select(Pedigree, Fam_ID = FamID,
                subjectkey = mom_guid, src_subject_id = FamID_Mother, 
                interview_age_Mom = MomAge_T1, sex_mother = MomGender,
                GroupAssignment),Timepoint = 1 )
-Pedigree_T2 <- data.frame(select(Pedigree, Fam_ID = FamID, interview_date = Time1Date, 
-        child_guid, child_famID = FamID_Child, interview_age_child = ChildAge_T2, child_sex = ChildGender,
-        subjectkey = mom_guid, src_subject_id = FamID_Mother, interview_age_Mom = MomAge_T2, sex_mother = MomGender,
-        GroupAssignment), Timepoint = 2 )
-Pedigree_T3 <- data.frame(select(Pedigree, Fam_ID = FamID, interview_date = Time1Date, 
-        child_guid, child_famID = FamID_Child, interview_age_child = ChildAge_T3, child_sex = ChildGender,
-        subjectkey = mom_guid, src_subject_id = FamID_Mother, interview_age_Mom = MomAge_T3, sex_mother = MomGender,
-        GroupAssignment), Timepoint = 3 )
-Pedigree_T4 <- data.frame(select(Pedigree, Fam_ID = FamID, interview_date = Time1Date, 
-        child_guid, child_famID = FamID_Child, interview_age_child = ChildAge_T4, child_sex = ChildGender,
-        subjectkey = mom_guid, src_subject_id = FamID_Mother, interview_age_Mom = MomAge_T4, sex_mother = MomGender,
-        GroupAssignment), Timepoint = 4 )
+Pedigree_T2 <- data.frame(select(Pedigree, Fam_ID = FamID, 
+               interview_date = Time1Date,  child_guid, child_famID = FamID_Child, 
+               interview_age_child = ChildAge_T2, child_sex = ChildGender,
+               subjectkey = mom_guid, src_subject_id = FamID_Mother, 
+               interview_age_Mom = MomAge_T2, sex_mother = MomGender,
+               GroupAssignment), Timepoint = 2 )
+Pedigree_T3 <- data.frame(select(Pedigree, Fam_ID = FamID, 
+               interview_date = Time1Date, child_guid, child_famID = FamID_Child, 
+               interview_age_child = ChildAge_T3, child_sex = ChildGender,
+               subjectkey = mom_guid, src_subject_id = FamID_Mother, 
+               interview_age_Mom = MomAge_T3, sex_mother = MomGender,
+               GroupAssignment), Timepoint = 3 )
+Pedigree_T4 <- data.frame(select(Pedigree, Fam_ID = FamID, 
+               interview_date = Time1Date, child_guid, child_famID = FamID_Child, 
+               interview_age_child = ChildAge_T4, child_sex = ChildGender,
+               subjectkey = mom_guid, src_subject_id = FamID_Mother, 
+               interview_age_Mom = MomAge_T4, sex_mother = MomGender,
+               GroupAssignment), Timepoint = 4 )
 
 # Merge 4 pedigree
 Pedigree <- rbind(Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4)
@@ -111,8 +138,12 @@ rm(Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4)
 # RedCap Preparation ####
 # *************************************************************************
 # Assign Timepoint base on redcap_event_name
-#Redcap_Data$Timepoint = sapply(strsplit(as.character(Redcap_Data$redcap_event_name), split = '_', fixed = T), function(x) (x[2])) 
-#RedCap_Data <- merge(Pedigree_Prep, Redcap_Data_raw, by = c("Timepoint","Fam_ID"), all = TRUE)
+Redcap_Data$Timepoint = sapply(strsplit(as.character(Redcap_Data$redcap_event_name), split = '_', fixed = T), function(x) (x[2])) 
+
+Redcap_Data <- Redcap_Data %>%
+  rename(Fam_ID = fam_id)
+
+Redcap_Data <- merge(Pedigree, Redcap_Data, by = c("Timepoint","Fam_ID"), all = TRUE)
 
 # TODO: Rename RedCap Variable name 
 
@@ -341,6 +372,7 @@ setnames(Redcap_Data, old_eltpart2_names, new_eltpart2_names)
 
 # Clean environment 
 rm(old_eltpart1_names, old_eltpart2_names)
+
 # *************************************************************************
 # Emotion Strategies Rename ####
 # *************************************************************************
@@ -364,28 +396,28 @@ rm(old_ES_names)
 UPMC_Qualtrics <- bind_rows(UPMC_Qualtrics_T1, UPMC_Qualtrics_T2, UPMC_Qualtrics_T3, UPMC_Qualtrics_T4)
 UO_Qualtrics <- bind_rows(UO_Qualtrics_T1, UO_Qualtrics_T2, UO_Qualtrics_T3, UO_Qualtrics_T4)
 
-# Merge CCNES data with pedigree
-# TODO: Doesn't seem right with fake data each Fam_ID appears 10 times 
-UPMC_Qualtrics <- merge(UPMC_Qualtrics, Pedigree, by = "Fam_ID")
-UO_Qualtrics <- merge(UO_Qualtrics, Pedigree, by = "Fam_ID")
-
 #TODO: will be removed 
 UPMC_Qualtrics <- UPMC_Qualtrics %>%
   mutate_all(as.character)
 UO_Qualtrics <- UO_Qualtrics %>%
   mutate_all(as.character)
+# Merge UO and UPMC data 
+Qualtrics <- bind_rows(UO_Qualtrics,UPMC_Qualtrics)  
+
+# Merge Qualtrics data with pedigree
+Qualtrics <- merge(Qualtrics, Pedigree, by = c("Fam_ID","Timepoint"))
 
 # Change gender to F instead of False
-UPMC_Qualtrics$mother_sex <- "F"
-UO_Qualtrics$mother_sex <- "F"
+Qualtrics$mother_sex <- "F"
+
 
 # Clean global Environment
-#rm(UO_Qualtrics_T1, UO_Qualtrics_T2, UO_Qualtrics_T3, UO_Qualtrics_T4, 
-#   UPMC_Qualtrics_T1, UPMC_Qualtrics_T2, UPMC_Qualtrics_T3, UPMC_Qualtrics_T4)
+rm(UO_Qualtrics_T1, UO_Qualtrics_T2, UO_Qualtrics_T3, UO_Qualtrics_T4, UO_Qualtrics,
+   UPMC_Qualtrics_T1, UPMC_Qualtrics_T2, UPMC_Qualtrics_T3, UPMC_Qualtrics_T4, UPMC_Qualtrics, UPMC_Qualtrics_list, UO_Qualtrics_list )
 
 # Note ####
 # *************************************************************************
-print("Output list: Pedigree, UO_Qualtrics, UPMC_Qualtrics, Redcap_Data")
+print("Output list: Pedigree, Qualtrics, Redcap_Data")
 cat("Pedigree column name:", names(Pedigree))
 cat('DERS variable names: new_ders_names')
 cat('CBCL variable names: New_CBCL_Names')

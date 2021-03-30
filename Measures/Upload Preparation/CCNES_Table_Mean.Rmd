@@ -6,6 +6,7 @@ date: "5/16/2020"
 # Setup
 Empty environment, loading library, set knitr and scientific notation
 ```{r setup}
+# import data frame
 source("Upload Preparation.R")
 NDA_CCNES <- read.csv("pabq01_template.csv", skip = 1)
 options(digits = 3)
@@ -23,15 +24,8 @@ for (i in pabq) {
 #Prep Sheet
 Select relevant pedigree information, rename as needed. (Include GroupAssignment for treatment progress calculation.)
 ```{r Prep Sheet}
-UO_CCNES <- select(UO_Qualtrics, c(Fam_ID, child_guid, child_famID, interview_date, interview_age, child_sex, GroupAssignment, Timepoint = Timepoint.x,contains("CCNES")))
-UPMC_CCNES <- select(UPMC_Qualtrics, c(Fam_ID, child_guid, child_famID, interview_date, interview_age, child_sex, GroupAssignment, Timepoint = Timepoint.x,contains("CCNES")))
+CCNES_Prep <- select(Qualtrics, c(Fam_ID, child_guid, child_famID, interview_date, interview_age_child, child_sex, mother_sex,  GroupAssignment, Timepoint, contains("CCNES")))
 
-# Bind tw site from two site 
-CCNES_Prep <- bind_rows(UO_CCNES,UPMC_CCNES)
-
-
-# Clean global Environment
-rm(UO_CCNES, UPMC_CCNES, UO_Qualtrics, UPMC_Qualtrics)
 ```
 
 # Recode and Reverse-Score
@@ -54,6 +48,7 @@ CCNES_Prep <- CCNES_Prep %>%
 Reverse_CCNES_names <- new_CCNES_names
 Reverse_CCNES_names[c(7,39,45,55)] <- paste(new_CCNES_names[c(7,39,45,55)],"r", sep = "")
 setnames(CCNES_Prep, new_CCNES_names, Reverse_CCNES_names)
+
 
 # Reversed Scored
 CCNES_Prep <- CCNES_Prep %>% 
@@ -138,8 +133,8 @@ CCNES_Prep$NACheck <- rowSums(is.na(select(CCNES_Prep, starts_with("srm"))))/nco
 #NDA Sheet
 ```{r NDA Sheet}
 # Create NDA Prep sheet, select all the needed columns from Prep sheet
-# TODO: Need selet subjectkey = mom_guid, src_subject_id = mother_FamID, sex = mother_sex ,interview_age, interview_date for NDA 
-NDA_CCNES_Prep <- CCNES_Prep
+# TODO: Need selet subjectkey = mom_guid, src_subject_id = mother_FamID, sex = mother_sex c interview_date for NDA 
+NDA_CCNES_Prep <- CCNES_Prep %>% mutate(subjectkey = Fam_ID, src_subject_id = Fam_ID, sex = mother_sex, interview_age = interview_age_child)
 
 # Combine NDA and Prep sheet
 # Make sure put original NDA structure at first, because the order of the new sheet will be the order of the first item in bind_rows function
