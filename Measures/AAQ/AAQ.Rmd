@@ -74,6 +74,8 @@ Create sums column for AAQ total.
 AAQ_Prep <- add_column(AAQ_Prep, aaq_total = rowSums(AAQ_Prep[, c("srm_aaq_1", "srm_aaq_2", "srm_aaq_3", "srm_aaq_4", "srm_aaq_5", "srm_aaq_6", "srm_aaq_7", 
                                                                    "srm_aaq_8", "srm_aaq_9", "srm_aaq_10")]),.after = "srm_aaq_10")
 
+AAQ_Prep_100 <- add_column(AAQ_Prep_100, aaq_total = rowSums(AAQ_Prep_100[,c("srm_aaq_1", "srm_aaq_2", "srm_aaq_3", "srm_aaq_4", "srm_aaq_5", "srm_aaq_6", "srm_aaq_7", "srm_aaq_8", "srm_aaq_9", "srm_aaq_10")]),.after = "srm_aaq_10")
+
 ```
 
 # NDA Sheet
@@ -116,4 +118,187 @@ write.table(NDA_AAQ, file = 'acceptance01.csv', sep = ",", append = TRUE, na = "
 # Clean environment of intermediate calculations for NDA structure
 rm(NDA_AAQ_Prep, NDA_AAQ_Names, first_line, New_AAQ_Names)
 
+```
+
+# Table
+Create descriptives means table.
+```{r Table}
+#install.packages("knitr")
+#install.packages("magrittr")
+#install.packages("kableExtra")
+
+library(knitr)
+library(magrittr)
+library(kableExtra)
+
+# Select necessary columns for means table
+Progress <- select((AAQ_Prep), c(Fam_ID, GroupAssignment, Timepoint, starts_with("srm"), aaq_total))
+
+# Calculate row mean for each individual
+Progress$Row_Mean <- rowMeans(select(AAQ_Prep, c(starts_with("srm"))), na.rm = T)
+
+# Change FamID as character and assign to ID variable
+ID <- c(as.character(Progress$Fam_ID))
+
+# Add Site column to Progress, if ID start with 9 then site is UO, else is UPMC
+Progress$site <- ifelse(startsWith(ID, "9"), "UO", "UPMC")
+
+# Group by GroupAssignment and Timepoint, and calcultae Group Mean
+Progress_Mean <- Progress %>%
+  group_by(GroupAssignment, Timepoint, site) %>%
+  summarise(GroupMean = mean(aaq_total, na.rm = T), count = n())
+
+# Select only UO Mean
+UO <- Progress_Mean[Progress_Mean$site == "UO",]
+# Select only UPMC Mean
+UPMC <- Progress_Mean[Progress_Mean$site == "UPMC",]
+
+# Calculate mean from both sites
+Both_Site_Mean <- Progress %>%
+  group_by(GroupAssignment, Timepoint) %>%
+  summarise(BothSiteMean_AAQ = mean(aaq_total, na.rm = T), n = sum(count = n()))
+
+# Change GroupMean column names according to site
+colnames(UO)[colnames(UO) == "GroupMean"] = "UO_AAQ"
+colnames(UO)[colnames(UO) == "count"] = "UO_AAQ_Original_N"
+colnames(UPMC)[colnames(UPMC) == "GroupMean"] = "UPMC_AAQ"
+colnames(UPMC)[colnames(UPMC) == "count"] = "UPMC_AAQ_Original_N"
+colnames(Both_Site_Mean)[colnames(Both_Site_Mean) == "n"] = "BothSite_Original_N"
+
+# Combine UO, UPMC, and Both_Site data 
+Mean_Table <- data.frame(UO[,c("UO_AAQ","GroupAssignment")],UPMC[,"UPMC_AAQ"],Both_Site_Mean[,c("BothSiteMean_AAQ","BothSite_Original_N")])
+
+# Convert Mean_Table, make original column as row
+Mean_Table <- t(Mean_Table)
+
+# Make Mean_Table a data frame
+Mean_Table <- data.frame(Mean_Table)
+
+# Re-order Mean Table
+Mean_Table <- Mean_Table[c(5,6,7,8,9,10,11,12,1,2,3,4)]
+
+# Add Timepoint column
+Timepoint_names <- c("T1","T2", "T3", "T4","T1","T2", "T3", "T4","T1","T2", "T3", "T4")
+
+# Rename column name
+setnames(Mean_Table, names(Mean_Table), Timepoint_names)
+
+# Create Table
+kable(Mean_Table) %>%
+  kable_styling(bootstrap_options = "striped", full_width = F) %>%
+  add_header_above(c(" " = 1, "Controls means" = 4, "FSU means" = 4, "DBT means" = 4)) %>%
+  add_header_above(c("AAQ Table Means (67%)" = 13)) %>%
+  column_spec(c(1,5,9), border_right = T, include_thead = F) %>%
+  column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
+```
+
+# 100% Table
+Create descriptives table for only ID's that have 100% of their data.
+```{r 100% Table}
+# Select necessary columns for means table
+Progress <- select((AAQ_Prep_100), c(Fam_ID, GroupAssignment, Timepoint, starts_with("srm"), aaq_total))
+
+# Calculate row mean for each individual
+Progress$Row_Mean <- rowMeans(select(AAQ_Prep_100, c(starts_with("srm"))), na.rm = T)
+
+# Change FamID as character and assign to ID variable
+ID <- c(as.character(Progress$Fam_ID))
+
+# Add Site column to Progress, if ID start with 9 then site is UO, else is UPMC
+Progress$site <- ifelse(startsWith(ID, "9"), "UO", "UPMC")
+
+# Group by GroupAssignment and Timepoint, and calculate Group Mean
+Progress_Mean <- Progress %>%
+  group_by(GroupAssignment, Timepoint, site) %>%
+  summarise(GroupMean = mean(aaq_total, na.rm = T), count = n())
+
+# Select only UO Mean
+UO100 <- Progress_Mean[Progress_Mean$site == "UO",]
+# Select only UPMC Mean
+UPMC100 <- Progress_Mean[Progress_Mean$site == "UPMC",]
+
+# Calculate mean from both sites
+Both_Site_Mean100 <- Progress %>%
+  group_by(GroupAssignment, Timepoint) %>%
+  summarise(BothSiteMean_AAQ = mean(aaq_total, na.rm = T), n = sum(count = n()))
+
+# Change GroupMean column names according to site
+colnames(UO100)[colnames(UO100) == "GroupMean"] = "UO_AAQ"
+colnames(UO100)[colnames(UO100) == "count"] = "UO_AAQ_100_N"
+colnames(UPMC100)[colnames(UPMC100) == "GroupMean"] = "UPMC_AAQ"
+colnames(UPMC100)[colnames(UPMC100) == "count"] = "UPMC_AAQ_100_N"
+colnames(Both_Site_Mean100)[colnames(Both_Site_Mean100) == "n"] = "BothSite_AAQ_100_N"
+
+# Combine UO, UPMC, and Both_Site data 
+Mean_Table <- data.frame(UO100[,c("UO_AAQ","GroupAssignment")],UPMC100[,"UPMC_AAQ"],Both_Site_Mean100[,c("BothSiteMean_AAQ","BothSite_AAQ_100_N")])
+
+# Convert Mean_Table, make original column as row
+Mean_Table <- t(Mean_Table)
+
+# Make Mean_Table a data frame
+Mean_Table <- data.frame(Mean_Table)
+
+# Re-order Mean Table
+Mean_Table <- Mean_Table[c(5,6,7,8,9,10,11,12,1,2,3,4)]
+
+# Add Timepoint column
+Timepoint_names <- c("T1","T2", "T3", "T4","T1","T2", "T3", "T4","T1","T2", "T3", "T4")
+
+# Rename column name
+setnames(Mean_Table, names(Mean_Table), Timepoint_names)
+
+# Add a header
+install.packages(knitr)
+
+# Create Table
+kable(Mean_Table) %>%
+  kable_styling(bootstrap_options = "striped", full_width = F) %>%
+  add_header_above(c(" " = 1, "Controls means" = 4, "FSU means" = 4, "DBT means" = 4)) %>%
+  add_header_above(c("AAQ Table Means (100%)" = 13)) %>%
+  column_spec(c(1,5,9), border_right = T, include_thead = F) %>%
+  column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
+```
+
+# N Table
+Create table for participant numbers.
+```{r N Table}
+# Create N table, GroupAssignment and Timepoint are dupliced here, just checking it's align
+
+N <- data.frame(UO[, c("Timepoint", "UO_AAQ_Original_N", "GroupAssignment")],
+                UO100[, c("Timepoint", "UO_AAQ_100_N", "GroupAssignment")],
+                UPMC[, c("Timepoint", "UPMC_AAQ_Original_N", "GroupAssignment")],
+                UPMC100[, c("Timepoint", "UPMC_AAQ_100_N", "GroupAssignment")],
+                Both_Site_Mean[,c("Timepoint", "BothSite_Original_N", "GroupAssignment")],
+                Both_Site_Mean100[,c("Timepoint", "BothSite_AAQ_100_N", "GroupAssignment")]
+                )
+# Remove dupliced column 
+N <- N[,-c(1,3,4,6,7,9,10,12,13,15,16,18,19,21,22,24,25,27)]
+
+
+# Convert data frame to numeric
+N <- as.data.frame(sapply(N, as.numeric))
+
+# Transfer N table from Horzontal to Vertical
+N <- data.frame(t(N))
+
+# Calculate Total N 
+N$T1 <- rowSums(N[,c(1,5,9)])
+N$T2 <- rowSums(N[,c(2,6,10)])
+N$T3 <- rowSums(N[,c(3,7,11)])
+N$T4 <- rowSums(N[,c(4,8,12)])
+
+# Timepoint names 
+Timepoint_names <- c("T1","T2", "T3", "T4","T1","T2", "T3", "T4","T1","T2", "T3", "T4", "T1","T2", "T3", "T4")
+
+# Rename column name 
+setnames(N, names(N), Timepoint_names)
+
+# Create Table
+kable(N) %>%
+  kable_styling(bootstrap_options = c("striped"), fixed_thead = T) %>%
+  add_header_above(c(" " = 1, "DBT Group" = 4, "Control Group" = 4, "FSU Group" = 4, "Totals" = 4)) %>%
+  add_header_above(c("Participant Numbers" = 17)) %>%
+  column_spec(c(1,5,9,13), border_right = T, include_thead = F) %>%
+  column_spec(1:16, width_min = "2cm", width_max = "5cm") %>%
+  row_spec(1:6, background = "#d3d3d3")
 ```
