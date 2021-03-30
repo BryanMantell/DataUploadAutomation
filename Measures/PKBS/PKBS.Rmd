@@ -15,8 +15,11 @@ Import Qualtrics excel files into R
 rm(list = ls())
 
 # Install Package, this only need to be done once.
-# install.packages(c("dplyr","tidyverse","data.table","contrib.url","knitr"))
-# install.packages('plyr', repos = "http://cran.us.r-project.org")
+#install.packages("rlang")
+#install.packages("dplyr")
+#install.packages(c("tidyverse","data.table","contrib.url","knitr"))
+#install.packages('plyr', repos = "http://cran.us.r-project.org")
+
 
 # Load packages, this need to be done every time you run this script. 
 library(dplyr)
@@ -24,8 +27,10 @@ library(tidyverse)
 library(data.table)
 library(knitr)
 
+
+
 # Set Working Directory
-setwd("~/Documents/GitHub/DataUploadAutomation/Measures/PKBS/DataUploadAutomation/Measures/PKBS/")
+setwd("~/Documents/GitHub/DataUploadAutomation/DataUploadAutomation/Measures/PKBS/")
 
 # Import Pedigree and NDA Structure
 Pedigree <- read.csv("Reference_Pedigree.csv")
@@ -217,6 +222,10 @@ write.table(NDA_PKBS, file = 'pkbs.csv', sep = ",", append = TRUE, na = "", quot
 # Table
 Create descriptive means table.
 ```{r Table}
+#install.packages("knitr")
+#install.packages("magrittr")
+#install.packages("kableExtra")
+
 library(knitr)
 library(magrittr)
 library(kableExtra)
@@ -273,15 +282,12 @@ Timepoint_names <- c("T1","T2", "T3", "T4","T1","T2", "T3", "T4","T1","T2", "T3"
 # Rename column name
 setnames(Mean_Table, names(Mean_Table), Timepoint_names)
 
-# Add a header
-install.packages(knitr)
-
 # Create Table
 kable(Mean_Table) %>%
   kable_styling(bootstrap_options = "striped", full_width = F) %>%
   add_header_above(c(" " = 1, "Controls means" = 4, "FSU means" = 4, "DBT means" = 4)) %>%
   add_header_above(c("PKBS Table Means (67%)" = 13)) %>%
-  column_spec(c(1,5,9), border_right = T, include_thead = T) %>%
+  column_spec(c(1,5,9), border_right = T, include_thead = F) %>%
   column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
 
 
@@ -352,7 +358,7 @@ kable(Mean_Table) %>%
   kable_styling(bootstrap_options = "striped", full_width = F) %>%
   add_header_above(c(" " = 1, "Controls means" = 4, "FSU means" = 4, "DBT means" = 4)) %>%
   add_header_above(c("PKBS Table Means (100%)" = 13)) %>%
-  column_spec(c(1,5,9), border_right = T, include_thead = T) %>%
+  column_spec(c(1,5,9), border_right = T, include_thead = F) %>%
   column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
 ```
 # N Table
@@ -394,7 +400,7 @@ kable(N) %>%
   kable_styling(bootstrap_options = c("striped"), fixed_thead = T) %>%
   add_header_above(c(" " = 1, "DBT Group" = 4, "Control Group" = 4, "FSU Group" = 4, "Totals" = 4)) %>%
   add_header_above(c("Participant Numbers" = 17)) %>%
-  column_spec(c(1,5,9,13), border_right = T, include_thead = T) %>%
+  column_spec(c(1,5,9,13), border_right = T, include_thead = F) %>%
   column_spec(1:16, width_min = "2cm", width_max = "5cm") %>%
   row_spec(1:6, background = "#d3d3d3")
 ```

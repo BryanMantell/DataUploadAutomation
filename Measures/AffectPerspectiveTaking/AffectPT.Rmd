@@ -26,7 +26,7 @@ library(data.table)
 library(knitr)
 
 # Set Working Directory
-setwd("~/Documents/GitHub/DataUploadAutomation/Measures/PKBS/DataUploadAutomation/Measures/AffectPerspectiveTaking/")
+setwd("~/Documents/GitHub/DataUploadAutomation/DataUploadAutomation/Measures/AffectPerspectiveTaking/")
 
 # Import Pedigree and NDA Structure
 Pedigree <- read.csv("Reference_Pedigree.csv")
@@ -292,7 +292,7 @@ kable(Mean_Table) %>%
   kable_styling(bootstrap_options = "striped", full_width = F) %>%
   add_header_above(c(" " = 1, "Controls means" = 4, "FSU means" = 4, "DBT means" = 4)) %>%
   add_header_above(c("Affect Perspective Taking Table Means" = 13)) %>%
-  column_spec(c(1,5,9), border_right = T, include_thead = T) %>%
+  column_spec(c(1,5,9), border_right = T, include_thead = F) %>%
   column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
 ```
 
@@ -354,7 +354,7 @@ kable(Mean_Table100) %>%
   kable_styling(bootstrap_options = "striped", full_width = F) %>%
   add_header_above(c(" " = 1, "Controls means" = 4, "FSU means" = 4, "DBT means" = 4)) %>%
   add_header_above(c("Affect Perspective Taking Table Means (100%)" = 13)) %>%
-  column_spec(c(1,5,9), border_right = T, include_thead = T) %>%
+  column_spec(c(1,5,9), border_right = T, include_thead = F) %>%
   column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
 ```
 
@@ -396,7 +396,7 @@ kable(N) %>%
   kable_styling(bootstrap_options = c("striped"), fixed_thead = T) %>%
   add_header_above(c(" " = 1, "DBT Group" = 4, "Control Group" = 4, "FSU Group" = 4, "Totals" = 4)) %>%
   add_header_above(c("Participant Numbers" = 17)) %>%
-  column_spec(c(1,5,9,13), border_right = T, include_thead = T) %>%
+  column_spec(c(1,5,9,13), border_right = T, include_thead = F) %>%
   column_spec(1:16, width_min = "2cm", width_max = "5cm") %>%
   row_spec(1:6, background = "#d3d3d3")
 ```

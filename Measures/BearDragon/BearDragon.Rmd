@@ -26,7 +26,7 @@ library(data.table)
 library(knitr)
 
 #Set Working Directory
-setwd("~/Documents/GitHub/DataUploadAutomation/Measures/PKBS/DataUploadAutomation/Measures/BearDragon/")
+setwd("~/Documents/GitHub/DataUploadAutomation/DataUploadAutomation/Measures/BearDragon/")
 
 #Import Pedigree and NDA Structure
 Pedigree <- read.csv("Reference_Pedigree.csv")
@@ -204,7 +204,7 @@ colnames(UPMC)[colnames(UPMC) == "count"] = "UPMC_BearDragon_Original_N"
 colnames(Both_Site_Mean)[colnames(Both_Site_Mean) == "n"] = "BothSite_Original_N"
 
 #Combine UO, UPMC, Both_Site, Bear and Dragon data 
-Mean_Table <- data.frame(UO[,c("UO_BearDragon","GroupAssignment", "UO_Bear", "UO_Dragon")],UPMC[,c("UPMC_BearDragon", "UPMC_Bear", "UPMC_Dragon")],Both_site_Mean[,c("BothSiteMean","BothSite_Original_N")])
+Mean_Table <- data.frame(UO[,c("UO_BearDragon","GroupAssignment", "UO_Bear", "UO_Dragon")],UPMC[,c("UPMC_BearDragon", "UPMC_Bear", "UPMC_Dragon")],Both_Site_Mean[,c("BothSiteMean","BothSite_Original_N")])
 
 #Convert Mean_Table, make original column as row
 Mean_Table <- t(Mean_Table)
@@ -226,7 +226,7 @@ kable(Mean_Table) %>%
   kable_styling(bootstrap_options = "striped", full_width = F) %>%
   add_header_above(c(" " = 1, "Controls means" = 4, "FSU means" = 4, "DBT means" = 4)) %>%
   add_header_above(c("Bear Dragon Table Means" = 13)) %>%
-  column_spec(c(1,5,9), border_right = T, include_thead = T) %>%
+  column_spec(c(1,5,9), border_right = T, include_thead = F) %>%
   column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
 
 ```
@@ -287,7 +287,7 @@ colnames(UPMC100)[colnames(UPMC100) == "count"] = "UPMC_BearDragon_100_N"
 colnames(Both_Site_Mean100)[colnames(Both_Site_Mean100) == "n"] = "BothSite_100_N"
 
 #Combine UO, UPMC, Both_Site, Bear and Dragon data 
-Mean_Table <- data.frame(UO[,c("UO_BearDragon","GroupAssignment", "UO_Bear", "UO_Dragon")],UPMC[,c("UPMC_BearDragon", "UPMC_Bear", "UPMC_Dragon")],Both_site_Mean[,c("BothSiteMean","BothSite_100_N")])
+Mean_Table <- data.frame(UO[,c("UO_BearDragon","GroupAssignment", "UO_Bear", "UO_Dragon")],UPMC[,c("UPMC_BearDragon", "UPMC_Bear", "UPMC_Dragon")],Both_Site_Mean100[,c("BothSiteMean","BothSite_100_N")])
 
 #Convert Mean_Table, make original column as row
 Mean_Table <- t(Mean_Table)
@@ -309,7 +309,7 @@ kable(Mean_Table) %>%
   kable_styling(bootstrap_options = "striped", full_width = F) %>%
   add_header_above(c(" " = 1, "Controls means" = 4, "FSU means" = 4, "DBT means" = 4)) %>%
   add_header_above(c("Bear Dragon Table Means" = 13)) %>%
-  column_spec(c(1,5,9), border_right = T, include_thead = T) %>%
+  column_spec(c(1,5,9), border_right = T, include_thead = F) %>%
   column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
 ```
 
@@ -322,7 +322,7 @@ N <- data.frame(UO[, c("timepoint", "UO_BearDragon_Original_N", "GroupAssignment
                 UPMC[, c("timepoint", "UPMC_BearDragon_Original_N", "GroupAssignment")],
                 UPMC100[, c("timepoint", "UPMC_BearDragon_100_N", "GroupAssignment")],
                 Both_Site_Mean[,c("timepoint", "BothSite_Original_N", "GroupAssignment")],
-                Both_site_Mean100[,c("timepoint", "BothSite_100_N", "GroupAssignment")]
+                Both_Site_Mean100[,c("timepoint", "BothSite_100_N", "GroupAssignment")]
                 )
 
 #Remove dupliced column 
@@ -351,7 +351,7 @@ kable(N) %>%
   kable_styling(bootstrap_options = c("striped"), fixed_thead = T) %>%
   add_header_above(c(" " = 1, "DBT Group" = 4, "Control Group" = 4, "FSU Group" = 4, "Totals" = 4)) %>%
   add_header_above(c("Participant Numbers" = 17)) %>%
-  column_spec(c(1,5,9,13), border_right = T, include_thead = T) %>%
+  column_spec(c(1,5,9,13), border_right = T, include_thead = F) %>%
   column_spec(2:17, width_min = "2cm", width_max = "2cm") %>%
   row_spec(7:9, background = "#d3d3d3")
 ```
