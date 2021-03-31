@@ -14,7 +14,7 @@ The current process for doing the data upload is needlessly tedious, time consum
 
 ## Table of Contents
 
-| Measures               | Assigned To... | Status      | Checked by Bryan |
+| Measures               | Assigned To... | Status      | Checked by Data Manager |
 | ------------------------- | ----------- | ----------- | ----------- |
 | [Pedigree](#Research-Subject-Pedigree) | Bryan       | In Progress | In Progress |
 | [SCID](#Structured-Clinical-Interview-for-DSM-V---SCID) |Bryan|In Progress |In Progress |
