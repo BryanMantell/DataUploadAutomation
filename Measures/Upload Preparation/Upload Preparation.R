@@ -20,11 +20,12 @@ library(dplyr)
 
 # Empty Global Environment
 rm(list = ls())
+setwd("~/Documents/Min/DataUploadAutomation/Measures/Upload Preparation")
 # *************************************************************************
 # Import Pedigree Data####
 # *************************************************************************
 Pedigree <- read.csv("Reference_Pedigree.csv", stringsAsFactors = FALSE)
-
+Pedigree_name <- names(Pedigree)
 
 # *************************************************************************
 # Import RedCap Data####
@@ -62,7 +63,7 @@ result <- postForm(
   exportCheckboxLabel='false',
   returnFormat='csv'
 )
-print(result)
+# print(result)
 
 
 Result_con <- textConnection(result)
@@ -145,8 +146,6 @@ Redcap_Data <- Redcap_Data %>%
 
 Redcap_Data <- merge(Pedigree, Redcap_Data, by = c("Timepoint","Fam_ID"), all = TRUE)
 
-# TODO: Rename RedCap Variable name 
-
 # *************************************************************************
 # Qualtric Preparation ####
 # *************************************************************************
@@ -164,7 +163,6 @@ Redcap_Data <- merge(Pedigree, Redcap_Data, by = c("Timepoint","Fam_ID"), all = 
 # UO_Qualtrics_T4 <- UO_Qualtrics_T4 %>% rename(Fam_ID = Q203, Timepoint = Q206)
 
 # *************************************************************************
-
 # SCIP Rename ####
 # *************************************************************************
 
@@ -417,19 +415,19 @@ rm(UO_Qualtrics_T1, UO_Qualtrics_T2, UO_Qualtrics_T3, UO_Qualtrics_T4, UO_Qualtr
 
 # Note ####
 # *************************************************************************
-print("Output list: Pedigree, Qualtrics, Redcap_Data")
-cat("Pedigree column name:", names(Pedigree))
-cat('DERS variable names: new_ders_names')
-cat('CBCL variable names: New_CBCL_Names')
-cat('CCNES variable names updated: new_CCNES_names')
-cat('AAQ variable names updated: new_AAQ_names')
-cat('WCCL variable names updated: new_WCCL_names')
-cat('PKBS variable names updated: new_PKBS_names')
-cat('Bear Dragon variable names updated:  ')   # TODO
-cat('Affect Perspective Taking variable names updated: new_AffectPT_names')
-cat('Dimensional Card Sort variable names updated: old_DCS_names')
-cat('Emotion Labeling variable names updated: new_eltpart1_names, new_eltpart2_names')
-cat('Emotion Strategies variable names updated: new_ES_names')
+print("Output list: Pedigree, Qualtrics, Redcap_Data") 
+cat("\n Pedigree column name: Pedigree_name")
+cat('\n DERS variable names: new_ders_names')
+cat('\n CBCL variable names: New_CBCL_Names')
+cat('\n CCNES variable names updated: new_CCNES_names')
+cat('\n AAQ variable names updated: new_AAQ_names')
+cat('\n WCCL variable names updated: new_WCCL_names')
+cat('\n PKBS variable names updated: new_PKBS_names')
+cat('\n Bear Dragon variable names updated:  ')   # TODO
+cat('\n Affect Perspective Taking variable names updated: new_AffectPT_names')
+cat('\n Dimensional Card Sort variable names updated: old_DCS_names')
+cat('\n Emotion Labeling variable names updated: new_eltpart1_names, new_eltpart2_names')
+cat('\n Emotion Strategies variable names updated: new_ES_names')
 
 
 
