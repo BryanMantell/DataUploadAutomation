@@ -45,6 +45,39 @@ The current process for doing the data upload is needlessly tedious, time consum
 
 ---
 
+# **Preparation instruction**
+
+This preparation script will edit all related measure and make them ready for individual upload script. 
+
+## Preparation instructions:
+
+### 1) Importing
+#### a) Package 
+- Install all the [packages](#Help-Section) required for the project. You can find what's needed in the [Help Section](#Help-Section). 
+#### b) Qualtrics Data
+- Read in all the Qualtrics CSVs needed. The files you'll need are located in preparation folder. Check the [Help Section](#Help-Section) for example code.
+- We add a column to each data frame called timepoint. Then we creat two lists call *UO_Qualtrics_list* and *UPMC_Qualtrics_list*, which contain name of UO and UPMC dataframe for later use. 
+#### c) RedCap Data
+- We read Redcap data directly from Redcap using API.
+
+### 2) Editing and Renaming 
+#### a) Pedigree 
+- Edit and rename Pedigree data so that it only has the information needed for the NDA structure. Now that we have our 4 files separated by time point we want merge 4 files by *FamID*. See "Example of Merging Pedigree info with the Data Frames" in the [Help Section](#Help-Section) for example code.
+
+  *<u>Relevant Pedigree information: mom guid, mom famID, T1-T4 Mom ages, T1-T4 interview dates, Mom sex, child guid, child famID , T1-T4 child age, child sex, group assigment.</u>*
+
+#### b) Renaming Quatlrics and Redcap data by individual measure 
+- Rename revenlent Qualtrics and Redcap data so that column name consistant across different timepoint. Reference the item matching chart below to see what items you will need to rename. See "Example to Selecting and Renaming UO/UPMC Data in a Measure" in the [Help Section](#Help-Section) for example code. 
+
+#### c) Merge Qualtrics
+Merge 4 timepoint data into one
+- Now that all the needed column for each tim point from both sites have the same column name. We will bind them by *timepoint*. THis will combinning *UPMC_Qualtrics_T1, UPMC_Qualtrics_T2, UPMC_Qualtrics_T3, UPMC_Qualtrics_T4* into *UPMC_Qualtrics* and combinning *UO_Qualtrics_T1, UO_Qualtrics_T2, UO_Qualtrics_T3, UO_Qualtrics_T4* into *UO_Qualtrics* 
+
+- Now we have 2 files separated by site and we want to bind two data set into one and named it *Qualtrics*. We will merge *Qualtrics* with *Pedigree* information by *Fam_ID* and *Timepoiny*. 
+
+
+---
+
 # **Research Subject Pedigree**
 
 The Pedigree is a collection of identifiable information that needs to be appended to every measure. 
