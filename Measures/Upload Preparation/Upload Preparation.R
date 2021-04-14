@@ -20,8 +20,8 @@ library(dplyr)
 
 # Empty Global Environment
 rm(list = ls())
-#setwd("~/Documents/Min/DataUploadAutomation/Measures/Upload Preparation")
-setwd("D:/Austin/Lab Work (D-Drive)/DataUploadAutomation/Measures/Upload Preparation")
+setwd("~/Documents/Min/DataUploadAutomation/Measures/Upload Preparation")
+#setwd("D:/Austin/Lab Work (D-Drive)/DataUploadAutomation/Measures/Upload Preparation")
 # *************************************************************************
 # Import Pedigree Data####
 # *************************************************************************
