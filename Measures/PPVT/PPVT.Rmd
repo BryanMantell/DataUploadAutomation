@@ -36,6 +36,7 @@ Import Qualtrics excel files into R
 Pedigree <- read.csv("Reference_Pedigree.csv", stringsAsFactors = FALSE)
 Redcap_Data <- read.csv("Redcap_Data.csv", stringsAsFactors = FALSE)
 NDA_PPVT <- read.csv("ppvt_4a02_template.csv", skip = 1, stringsAsFactors = FALSE)
+UPMC_PPVT_Data <- read.csv("UPMC_PPVT_Data.csv", stringsAsFactors = FALSE)
 ```
 
 ## Rename Columns
@@ -45,11 +46,11 @@ Rename questions numbers to self-report measure scale items.Then, take each scal
 PPVT_names <- c("om_ppvt_rs", "om_ppvt_ss", "oc_ppvt_rs", "oc_ppvt_ss")
 NDA_PPVT_names <- c("ss_rawscore", "ss_standardscore")
 
-# Replace Column Names
-#setnames(Redcap_Data, old_names, new_names)
-
-# Select needed columns and rename in Redcap_Data
+# Select needed columns and rename in Redcap_Data & UPMC_PPVT_Data, then merge the two timepoints together
 Redcap_Data <- select(Redcap_Data, c(Fam_ID = fam_id, om_ppvt_rs, om_ppvt_ss, oc_ppvt_rs, oc_ppvt_ss))
+UPMC_PPVT_Data <- select(UPMC_PPVT_Data, c(Fam_ID = STEADY.ID., om_ppvt_rs = Parent.PPVT.Raw.Score, om_ppvt_ss = Parent.PPVT.Standard.Score, oc_ppvt_rs = Child.PPVT.Raw.Score, oc_ppvt_ss = Child.PPVT.Standard.Score))
+
+PPVT_BothSite_Data <- bind_rows(Redcap_Data, UPMC_PPVT_Data)
 ```
 
 ## Prep Sheet
@@ -59,10 +60,10 @@ Create prep sheet to begin transferring data into NDA format. Rename relevant GU
 Pedigree_Prep <- data.frame(select(Pedigree, Fam_ID =  FamID, child_guid, mom_guid, child_famID = FamID_Child, mother_FamID = FamID_Mother, interview_date =Time1Date, interview_age = MomAge_T1, child_sex = ChildGender, mother_sex = MomGender, GroupAssignment), Timepoint = 1)
 
 # Merge Predigree and redcap files
-PPVT_PREP <- merge(Pedigree_Prep, Redcap_Data,by = c("Fam_ID"), all = TRUE)
+PPVT_PREP <- merge(Pedigree_Prep, PPVT_BothSite_Data,by = c("Fam_ID"), all = TRUE)
 
 # Clean Environment
-rm(Pedigree, Pedigree_Prep, Redcap_Data)
+rm(Pedigree, Pedigree_Prep, Redcap_Data, PPVT_BothSite_Data, UPMC_PPVT_Data)
 ```
 
 ## NDA Sheet
