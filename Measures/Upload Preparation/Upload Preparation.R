@@ -20,7 +20,8 @@ library(dplyr)
 
 # Empty Global Environment
 rm(list = ls())
-setwd("~/Documents/Min/DataUploadAutomation/Measures/Upload Preparation")
+#setwd("~/Documents/Min/DataUploadAutomation/Measures/Upload Preparation")
+setwd("D:/Austin/Lab Work (D-Drive)/DataUploadAutomation/Measures/Upload Preparation")
 # *************************************************************************
 # Import Pedigree Data####
 # *************************************************************************
@@ -87,13 +88,13 @@ UO_Qualtrics_T4 <- read.csv("UO_T4_Qualtrics.csv", stringsAsFactors = FALSE) %>%
   rename(Fam_ID = Q203, Timepoint = Q206)
 
 # TODO: Read in actual UPMC Qualtrics Data
-UPMC_Qualtrics_T1 <- read.csv("UPMC_T1_Qualtrics.csv", stringsAsFactors  = FALSE) %>% 
+UPMC_Qualtrics_T1 <- read.csv("UPMC_T1_Qualtrics.csv", fileEncoding="UTF-8-BOM", stringsAsFactors = FALSE)%>% 
   rename(Fam_ID = FQ4id) %>% mutate(Timepoint = "1")
-UPMC_Qualtrics_T2 <- read.csv("UPMC_T2_Qualtrics.csv", stringsAsFactors = FALSE) %>% 
+UPMC_Qualtrics_T2 <- read.csv("UPMC_T2_Qualtrics.csv", fileEncoding="UTF-8-BOM", stringsAsFactors = FALSE) %>% 
   rename(Fam_ID = FQ4id) %>% mutate(Timepoint = "2")
-UPMC_Qualtrics_T3 <- read.csv("UPMC_T3_Qualtrics.csv", stringsAsFactors = FALSE) %>% 
+UPMC_Qualtrics_T3 <- read.csv("UPMC_T3_Qualtrics.csv", fileEncoding="UTF-8-BOM", stringsAsFactors = FALSE) %>% 
   rename(Fam_ID = FQ4id) %>% mutate(Timepoint = "3")
-UPMC_Qualtrics_T4 <- read.csv("UPMC_T4_Qualtrics.csv", stringsAsFactors = FALSE) %>% 
+UPMC_Qualtrics_T4 <- read.csv("UPMC_T4_Qualtrics.csv", fileEncoding="UTF-8-BOM", stringsAsFactors = FALSE) %>% 
   rename(Fam_ID = FQ4id) %>% mutate(Timepoint = "4")
 
 UO_Qualtrics_list <- list(UO_Qualtrics_T1, UO_Qualtrics_T2, UO_Qualtrics_T3, UO_Qualtrics_T4)
@@ -175,7 +176,7 @@ Redcap_Data <- merge(Pedigree, Redcap_Data, by = c("Timepoint","Fam_ID"), all = 
 # *************************************************************************
 # PPVT Rename ####
 # *************************************************************************
-# Do need rename for prep sheet 
+# PPVT changes are unnecessary, only bring preparation script pedigree data to PPVT
 
 # *************************************************************************
 # DERS Rename ####
@@ -200,6 +201,7 @@ rm(old_UO_ders_names, old_UPMC_ders_names)
 # *************************************************************************
 # CBCL Rename ####
 # *************************************************************************
+
 # Create list of new variable names for the Prep Sheet
 New_CBCL_Names <- sprintf("srm_cbcl_%03d", seq(1:100))
 
@@ -216,19 +218,17 @@ Old_UO_CBCL_Names_T4 <- sprintf("Q828_%01d", seq(1:100))
 # Old UPMC name 
 Old_UPMC_CBCL_Names <- sprintf("FQ4CBCLB_%01d", seq(1:100))
 
-# rename UO & UPMC CBCL Name
-# Replace UO column names (there may be errors from the CBCL TEXT question responses) 
-setnames(UO_Qualtrics_T1, Old_UO_CBCL_Names_T1, New_CBCL_Names)
-setnames(UO_Qualtrics_T2, Old_UO_CBCL_Names_T2, New_CBCL_Names)
-setnames(UO_Qualtrics_T3, Old_UO_CBCL_Names_T3, New_CBCL_Names)
-setnames(UO_Qualtrics_T4, Old_UO_CBCL_Names_T4, New_CBCL_Names)
+# Replace UO & UMPC column names in list
+lapply(UO_Qualtrics_list[1], setnames, Old_UO_CBCL_Names_T1, New_CBCL_Names)
+lapply(UO_Qualtrics_list[2], setnames, Old_UO_CBCL_Names_T2, New_CBCL_Names)
+lapply(UO_Qualtrics_list[3], setnames, Old_UO_CBCL_Names_T3, New_CBCL_Names)
+lapply(UO_Qualtrics_list[4], setnames, Old_UO_CBCL_Names_T4, New_CBCL_Names)
 
-# Replace UPMC column names
-# TODO: do we need text columns? 
 lapply(UPMC_Qualtrics_list, setnames, Old_UPMC_CBCL_Names, New_CBCL_Names)
 
+
 # Clean environment 
-rm(Old_UO_CBCL_Names_T1, Old_UO_CBCL_Names_T2, Old_UO_CBCL_Names_T3, Old_UO_CBCL_Names_T4,Old_UPMC_CBCL_Names)
+rm(New_CBCL_Names, Old_UO_CBCL_Names_T1, Old_UO_CBCL_Names_T2, Old_UO_CBCL_Names_T3, Old_UO_CBCL_Names_T4,Old_UPMC_CBCL_Names)
 
 # *************************************************************************
 # CCNES Rename ####
@@ -411,7 +411,9 @@ Qualtrics$mother_sex <- "F"
 
 # Clean global Environment
 rm(UO_Qualtrics_T1, UO_Qualtrics_T2, UO_Qualtrics_T3, UO_Qualtrics_T4, UO_Qualtrics,
-   UPMC_Qualtrics_T1, UPMC_Qualtrics_T2, UPMC_Qualtrics_T3, UPMC_Qualtrics_T4, UPMC_Qualtrics, UPMC_Qualtrics_list, UO_Qualtrics_list )
+   UPMC_Qualtrics_T1, UPMC_Qualtrics_T2, UPMC_Qualtrics_T3, UPMC_Qualtrics_T4, UPMC_Qualtrics)
+
+#rm(UPMC_Qualtrics_list, UO_Qualtrics_list )
 
 # Note ####
 # *************************************************************************
