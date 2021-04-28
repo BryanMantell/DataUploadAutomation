@@ -120,6 +120,26 @@ The Peabody Picture Vocabulary Test is an untimed test of receptive vocabulary f
 
 
 
+2) Editing and Renaming
+
+Select and rename data from UPMC and UO Redcap that is necessary 
+
+for the NDA structure. Reference the Item matching chat below to see 
+
+what items you will need to select. 
+
+Bind the data from both sites into a single dataframe.
+
+Select data from the pedigree that that is necessary for the NDA 
+
+structure. Create an extra column for only timepoint 1. 
+
+Merge the pedigree data with the “Both Site” data to create the PPVT 
+
+prep sheet.
+
+
+
 [Back to Table of Contents](#Table-of-Contents)
 
 ---
@@ -302,19 +322,13 @@ The Child Behavior Checklist (CBCL) is a checklist parents complete to detect em
 
 ### 2) Editing and Renaming
 
-- Edit and rename UO and UPMC data so that it only has the information needed for the NDA structure. Reference the Item matching chat below to see what items you will need to select. See "Example of Selecting and Renaming UO/UPMC Data in a Measure" in the [Help Section](#Help-Section) for example code. 
+- Select Qualtrics data from preparation script that is necessary for the 
 
-- Next, now that all the measures for each time point from both sites have the same amount of columns and the same names for those columns, we will bind them together by time point. This will be combining *UO_T1_AAQ* and *UPMC_T1_AAQ* into one data frame called *AAQ_T1*. This will be repeated for each time point. See "Example of Binding UO and UPMC Data Frames by Time Point" in the [Help Section](#Help-Section) for example code.
+  NDA structure to create the CBCL prep sheet. Reference the Item 
 
-- Now that we have our 4 files separated by time point we want merge the relevant Pedigree information into our data frames. Modify the Pedigree information so that it only contains the relevant data for T1 and then merge by *FamID*. See "Example of Merging Pedigree info with the Data Frames" in the [Help Section](#Help-Section) for example code.
+  matching chart below to see what items you will need to select.
 
-  *<u>Relevant Pedigree information: child guid, child famID, T1-T4 child ages, T1-T4 interview dates, child sex.</u>*
-
-- At this step we should have 4 files containing UO and UPMC data separated by time point and all the relevant pedigree information should be merged into all 4 files. But because we merged slighted different information into our sheets the columns names currently do not match so we cannot yet merge all of our data frames into one. So, we'll rename the date and age columns in each data frame so that their columns match. See "Example of Renaming the Date and Age Columns so They Match" in the [Help Section](#Help-Section) for example code.
-
-- Before we do our final bind we will add a column to each data frame called timepoint and we'll give the contents of that column which ever time point that data set represents. See "Example of Adding a New Time Point Column and Adding a Value to it" in the [Help Section](#Help-Section) for example code.
-
-- Now we'll bind all 4 data sets into one the same way that we blinded time points together! This will be the CBCL_prep data frame.
+  
 
 ### 3) Recoding Text to Numbers and Reverse Scoring:
 
