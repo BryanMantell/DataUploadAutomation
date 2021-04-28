@@ -337,11 +337,11 @@ rm(old_UO_PKBS_names, old_UO_PKBS_names2, old_UO_PKBS_names3, old_UO_PKBS_names4
 # *************************************************************************
 # Affect Perspective Taking Rename ####
 # *************************************************************************
-old_AffectPT_names <- c("oc_apt_01", "oc_apt_02", "oc_apt_03", "oc_apt_04", "oc_apt_05", "oc_apt_06", 
-                        "oc_apt_07", "oc_apt_08")
-new_AffectPT_names <- c("oc_apt_01", "oc_apt_03", "oc_apt_05", "oc_apt_07", "oc_apt_09", "oc_apt_11", 
-                        "oc_apt_13", "oc_apt_15")
-setnames(Redcap_Data, old_AffectPT_names, new_AffectPT_names, skip_absent = FALSE)
+#old_AffectPT_names <- c("oc_apt_01", "oc_apt_02", "oc_apt_03", "oc_apt_04", "oc_apt_05", "oc_apt_06", 
+#                        "oc_apt_07", "oc_apt_08")
+#new_AffectPT_names <- c("oc_apt_01", "oc_apt_03", "oc_apt_05", "oc_apt_07", "oc_apt_09", "oc_apt_11", 
+#                        "oc_apt_13", "oc_apt_15")
+#setnames(Redcap_Data, old_AffectPT_names, new_AffectPT_names, skip_absent = FALSE)
 
 # Clean environment 
 rm(old_AffectPT_names)
@@ -355,34 +355,34 @@ old_DCS_names <- sprintf("oc_dcs_%02d", 1:36)
 # Emotion Labeling Rename ####
 # *************************************************************************
 # rename elt_exp names
-new_eltpart1_names <- paste("oc_elt_exp", seq(1:8), sep = "_")
-
+#new_eltpart1_names <- paste("oc_elt_exp", seq(1:8), sep = "_")
+#
 # rename elt_rec names
-new_eltpart2_names <- paste("oc_elt_rec", seq(1:4), sep = "_")
-
+#new_eltpart2_names <- paste("oc_elt_rec", seq(1:4), sep = "_")
+#
 # replace old eltpart1 names with new names
-old_eltpart1_names <- paste("eltpart1_exp", seq(1:8), sep = "")
-setnames(Redcap_Data, old_eltpart1_names, new_eltpart1_names)
-
+#old_eltpart1_names <- paste("eltpart1_exp", seq(1:8), sep = "")
+#setnames(Redcap_Data, old_eltpart1_names, new_eltpart1_names)
+#
 # replace old eltpart2 names with new names
-old_eltpart2_names <- paste("eltpart2_rec", seq(1:4), sep = "")
-setnames(Redcap_Data, old_eltpart2_names, new_eltpart2_names)
-
+#old_eltpart2_names <- paste("eltpart2_rec", seq(1:4), sep = "")
+#setnames(Redcap_Data, old_eltpart2_names, new_eltpart2_names)
+#
 # Clean environment 
-rm(old_eltpart1_names, old_eltpart2_names)
+#rm(old_eltpart1_names, old_eltpart2_names)
 
 # *************************************************************************
 # Emotion Strategies Rename ####
 # *************************************************************************
 # Redcap column names for locating old names to be replaced with Prep names and NDA names
-new_ES_names <- c("oc_es_hapstrat", "oc_es_hap_1", "oc_es_hap_2", "oc_es_hap_3", "oc_es_angstrat", "oc_es_ang_1", "oc_es_ang_2", "oc_es_ang_3", "oc_es_sadstrat", "oc_es_sad_1", "oc_es_sad_2", "oc_es_sad_3")
-old_ES_names <- c("oc_es_hapstrat", "oc_es_h1", "oc_es_h2", "oc_es_h3", "oc_es_angstrat", "oc_es_a1", "oc_es_a2", "oc_es_a3", "oc_es_sadstrat", "oc_es_s1", "oc_es_s2", "oc_es_s3")
-
+#new_ES_names <- c("oc_es_hapstrat", "oc_es_hap_1", "oc_es_hap_2", "oc_es_hap_3", "oc_es_angstrat", "oc_es_ang_1", "oc_es_ang_2", "oc_es_ang_3", "oc_es_sadstrat", "oc_es_sad_1", "oc_es_sad_2", "oc_es_sad_3")
+#old_ES_names <- c("oc_es_hapstrat", "oc_es_h1", "oc_es_h2", "oc_es_h3", "oc_es_angstrat", "oc_es_a1", "oc_es_a2", "oc_es_a3", "oc_es_sadstrat", "oc_es_s1", "oc_es_s2", "oc_es_s3")
+#
 # Replace Column Names
-setnames(Redcap_Data, old_ES_names, new_ES_names)
-
+#setnames(Redcap_Data, old_ES_names, new_ES_names)
+#
 # Clean environment 
-rm(old_ES_names)
+#rm(old_ES_names)
 
 # TODO: merge session
 
@@ -413,7 +413,7 @@ Qualtrics$mother_sex <- "F"
 rm(UO_Qualtrics_T1, UO_Qualtrics_T2, UO_Qualtrics_T3, UO_Qualtrics_T4, UO_Qualtrics,
    UPMC_Qualtrics_T1, UPMC_Qualtrics_T2, UPMC_Qualtrics_T3, UPMC_Qualtrics_T4, UPMC_Qualtrics)
 
-#rm(UPMC_Qualtrics_list, UO_Qualtrics_list )
+#rm(UPMC_Qualtrics_list, UO_Qualtrics_list)
 
 # Note ####
 # *************************************************************************
