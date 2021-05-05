@@ -20,11 +20,13 @@ library(dplyr)
 
 # Empty Global Environment
 rm(list = ls())
+#setwd("~/Documents/Min/DataUploadAutomation/Measures/Upload Preparation")
+#setwd("D:/Austin/Lab Work (D-Drive)/DataUploadAutomation/Measures/Upload Preparation")
 # *************************************************************************
 # Import Pedigree Data####
 # *************************************************************************
 Pedigree <- read.csv("Reference_Pedigree.csv", stringsAsFactors = FALSE)
-
+Pedigree_name <- names(Pedigree)
 
 # *************************************************************************
 # Import RedCap Data####
@@ -48,6 +50,26 @@ Pedigree <- read.csv("Reference_Pedigree.csv", stringsAsFactors = FALSE)
 # Result_con <- textConnection(result)
 # Redcap_Data <- read.csv(Result_con)
 
+# TODO: will be removed Redcap API practices 
+library(RCurl)
+result <- postForm(
+  uri='https://redcap-prod.uoregon.edu/redcap/api/',
+  token='812C21F1A319AF558F267EBA40096511',
+  content='report',
+  format='csv',
+  report_id='71',
+  csvDelimiter='',
+  rawOrLabel='raw',
+  rawOrLabelHeaders='raw',
+  exportCheckboxLabel='false',
+  returnFormat='csv'
+)
+# print(result)
+
+
+Result_con <- textConnection(result)
+test <- read.csv(Result_con)
+
 # TODO: will be removed
 Redcap_Data <- read.csv("Redcap_Data.csv")
 
@@ -55,6 +77,7 @@ Redcap_Data <- read.csv("Redcap_Data.csv")
 # *************************************************************************
 # Import Qualtrics Data####
 # *************************************************************************
+# TODO: Will be changed to import using API
 UO_Qualtrics_T1 <- read.csv("UO_T1_Qualtrics.csv", stringsAsFactors = FALSE) %>% 
   rename(Fam_ID = Q221, Timepoint = Q146)
 UO_Qualtrics_T2 <- read.csv("UO_T2_Qualtrics.csv", stringsAsFactors = FALSE) %>% 
@@ -88,18 +111,24 @@ Pedigree_T1 <- data.frame(select(Pedigree, Fam_ID = FamID,
                subjectkey = mom_guid, src_subject_id = FamID_Mother, 
                interview_age_Mom = MomAge_T1, sex_mother = MomGender,
                GroupAssignment),Timepoint = 1 )
-Pedigree_T2 <- data.frame(select(Pedigree, Fam_ID = FamID, interview_date = Time1Date, 
-        child_guid, child_famID = FamID_Child, interview_age_child = ChildAge_T2, child_sex = ChildGender,
-        subjectkey = mom_guid, src_subject_id = FamID_Mother, interview_age_Mom = MomAge_T2, sex_mother = MomGender,
-        GroupAssignment), Timepoint = 2 )
-Pedigree_T3 <- data.frame(select(Pedigree, Fam_ID = FamID, interview_date = Time1Date, 
-        child_guid, child_famID = FamID_Child, interview_age_child = ChildAge_T3, child_sex = ChildGender,
-        subjectkey = mom_guid, src_subject_id = FamID_Mother, interview_age_Mom = MomAge_T3, sex_mother = MomGender,
-        GroupAssignment), Timepoint = 3 )
-Pedigree_T4 <- data.frame(select(Pedigree, Fam_ID = FamID, interview_date = Time1Date, 
-        child_guid, child_famID = FamID_Child, interview_age_child = ChildAge_T4, child_sex = ChildGender,
-        subjectkey = mom_guid, src_subject_id = FamID_Mother, interview_age_Mom = MomAge_T4, sex_mother = MomGender,
-        GroupAssignment), Timepoint = 4 )
+Pedigree_T2 <- data.frame(select(Pedigree, Fam_ID = FamID, 
+               interview_date = Time1Date,  child_guid, child_famID = FamID_Child, 
+               interview_age_child = ChildAge_T2, child_sex = ChildGender,
+               subjectkey = mom_guid, src_subject_id = FamID_Mother, 
+               interview_age_Mom = MomAge_T2, sex_mother = MomGender,
+               GroupAssignment), Timepoint = 2 )
+Pedigree_T3 <- data.frame(select(Pedigree, Fam_ID = FamID, 
+               interview_date = Time1Date, child_guid, child_famID = FamID_Child, 
+               interview_age_child = ChildAge_T3, child_sex = ChildGender,
+               subjectkey = mom_guid, src_subject_id = FamID_Mother, 
+               interview_age_Mom = MomAge_T3, sex_mother = MomGender,
+               GroupAssignment), Timepoint = 3 )
+Pedigree_T4 <- data.frame(select(Pedigree, Fam_ID = FamID, 
+               interview_date = Time1Date, child_guid, child_famID = FamID_Child, 
+               interview_age_child = ChildAge_T4, child_sex = ChildGender,
+               subjectkey = mom_guid, src_subject_id = FamID_Mother, 
+               interview_age_Mom = MomAge_T4, sex_mother = MomGender,
+               GroupAssignment), Timepoint = 4 )
 
 # Merge 4 pedigree
 Pedigree <- rbind(Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4)
@@ -111,10 +140,12 @@ rm(Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4)
 # RedCap Preparation ####
 # *************************************************************************
 # Assign Timepoint base on redcap_event_name
-#Redcap_Data$Timepoint = sapply(strsplit(as.character(Redcap_Data$redcap_event_name), split = '_', fixed = T), function(x) (x[2])) 
-#RedCap_Data <- merge(Pedigree_Prep, Redcap_Data_raw, by = c("Timepoint","Fam_ID"), all = TRUE)
+Redcap_Data$Timepoint = sapply(strsplit(as.character(Redcap_Data$redcap_event_name), split = '_', fixed = T), function(x) (x[2])) 
 
-# TODO: Rename RedCap Variable name 
+Redcap_Data <- Redcap_Data %>%
+  rename(Fam_ID = fam_id)
+
+Redcap_Data <- merge(Pedigree, Redcap_Data, by = c("Timepoint","Fam_ID"), all = TRUE)
 
 # *************************************************************************
 # Qualtric Preparation ####
@@ -133,7 +164,6 @@ rm(Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4)
 # UO_Qualtrics_T4 <- UO_Qualtrics_T4 %>% rename(Fam_ID = Q203, Timepoint = Q206)
 
 # *************************************************************************
-
 # SCIP Rename ####
 # *************************************************************************
 
@@ -146,7 +176,7 @@ rm(Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4)
 # *************************************************************************
 # PPVT Rename ####
 # *************************************************************************
-# Do need rename for prep sheet 
+# PPVT changes are unnecessary, only bring preparation script pedigree data to PPVT
 
 # *************************************************************************
 # DERS Rename ####
@@ -171,6 +201,7 @@ rm(old_UO_ders_names, old_UPMC_ders_names)
 # *************************************************************************
 # CBCL Rename ####
 # *************************************************************************
+
 # Create list of new variable names for the Prep Sheet
 New_CBCL_Names <- sprintf("srm_cbcl_%03d", seq(1:100))
 
@@ -304,16 +335,16 @@ rm(old_UO_PKBS_names, old_UO_PKBS_names2, old_UO_PKBS_names3, old_UO_PKBS_names4
 # Do not need to be renamed 
 
 # *************************************************************************
-# Affect Perspective Taking Rename #### Does not work and prevents the rest of the script from loadin
+# Affect Perspective Taking Rename ####
 # *************************************************************************
-#old_AffectPT_names <- c("oc_apt_01", "oc_apt_02", "oc_apt_03", "oc_apt_04", "oc_apt_05", "oc_apt_06", 
-#                        "oc_apt_07", "oc_apt_08")
-#new_AffectPT_names <- c("oc_apt_01", "oc_apt_03", "oc_apt_05", "oc_apt_07", "oc_apt_09", "oc_apt_11", 
-#                        "oc_apt_13", "oc_apt_15")
-#setnames(Redcap_Data, old_AffectPT_names, new_AffectPT_names, skip_absent = FALSE)
-#
+old_AffectPT_names <- c("oc_apt_01", "oc_apt_02", "oc_apt_03", "oc_apt_04", "oc_apt_05", "oc_apt_06", 
+                        "oc_apt_07", "oc_apt_08")
+new_AffectPT_names <- c("oc_apt_01", "oc_apt_03", "oc_apt_05", "oc_apt_07", "oc_apt_09", "oc_apt_11", 
+                        "oc_apt_13", "oc_apt_15")
+setnames(Redcap_Data, old_AffectPT_names, new_AffectPT_names, skip_absent = FALSE)
+
 # Clean environment 
-#rm(old_AffectPT_names)
+rm(old_AffectPT_names)
 # *************************************************************************
 # Dimensional Card Sort Rename ####
 # *************************************************************************
@@ -321,36 +352,37 @@ rm(old_UO_PKBS_names, old_UO_PKBS_names2, old_UO_PKBS_names3, old_UO_PKBS_names4
 old_DCS_names <- sprintf("oc_dcs_%02d", 1:36)
 
 # *************************************************************************
-# Emotion Labeling Rename #### Does not work and prevents script from continuing
+# Emotion Labeling Rename ####
 # *************************************************************************
 # rename elt_exp names
-#new_eltpart1_names <- paste("oc_elt_exp", seq(1:8), sep = "_")
+new_eltpart1_names <- paste("oc_elt_exp", seq(1:8), sep = "_")
 
 # rename elt_rec names
-#new_eltpart2_names <- paste("oc_elt_rec", seq(1:4), sep = "_")
+new_eltpart2_names <- paste("oc_elt_rec", seq(1:4), sep = "_")
 
 # replace old eltpart1 names with new names
-#old_eltpart1_names <- paste("eltpart1_exp", seq(1:8), sep = "")
-#setnames(Redcap_Data, old_eltpart1_names, new_eltpart1_names)
+old_eltpart1_names <- paste("eltpart1_exp", seq(1:8), sep = "")
+setnames(Redcap_Data, old_eltpart1_names, new_eltpart1_names)
 
 # replace old eltpart2 names with new names
-#old_eltpart2_names <- paste("eltpart2_rec", seq(1:4), sep = "")
-#setnames(Redcap_Data, old_eltpart2_names, new_eltpart2_names)
+old_eltpart2_names <- paste("eltpart2_rec", seq(1:4), sep = "")
+setnames(Redcap_Data, old_eltpart2_names, new_eltpart2_names)
 
 # Clean environment 
-#rm(old_eltpart1_names, old_eltpart2_names)
+rm(old_eltpart1_names, old_eltpart2_names)
+
 # *************************************************************************
-# Emotion Strategies Rename #### Does not work and prevents script from continuing
+# Emotion Strategies Rename ####
 # *************************************************************************
 # Redcap column names for locating old names to be replaced with Prep names and NDA names
-#new_ES_names <- c("oc_es_hapstrat", "oc_es_hap_1", "oc_es_hap_2", "oc_es_hap_3", "oc_es_angstrat", "oc_es_ang_1", "oc_es_ang_2", "oc_es_ang_3", "oc_es_sadstrat", "oc_es_sad_1", "oc_es_sad_2", "oc_es_sad_3")
-#old_ES_names <- c("oc_es_hapstrat", "oc_es_h1", "oc_es_h2", "oc_es_h3", "oc_es_angstrat", "oc_es_a1", "oc_es_a2", "oc_es_a3", "oc_es_sadstrat", "oc_es_s1", "oc_es_s2", "oc_es_s3")
+new_ES_names <- c("oc_es_hapstrat", "oc_es_hap_1", "oc_es_hap_2", "oc_es_hap_3", "oc_es_angstrat", "oc_es_ang_1", "oc_es_ang_2", "oc_es_ang_3", "oc_es_sadstrat", "oc_es_sad_1", "oc_es_sad_2", "oc_es_sad_3")
+old_ES_names <- c("oc_es_hapstrat", "oc_es_h1", "oc_es_h2", "oc_es_h3", "oc_es_angstrat", "oc_es_a1", "oc_es_a2", "oc_es_a3", "oc_es_sadstrat", "oc_es_s1", "oc_es_s2", "oc_es_s3")
 
 # Replace Column Names
-#setnames(Redcap_Data, old_ES_names, new_ES_names)
+setnames(Redcap_Data, old_ES_names, new_ES_names)
 
 # Clean environment 
-#rm(old_ES_names)
+rm(old_ES_names)
 
 # TODO: merge session
 
@@ -362,40 +394,42 @@ old_DCS_names <- sprintf("oc_dcs_%02d", 1:36)
 UPMC_Qualtrics <- bind_rows(UPMC_Qualtrics_T1, UPMC_Qualtrics_T2, UPMC_Qualtrics_T3, UPMC_Qualtrics_T4)
 UO_Qualtrics <- bind_rows(UO_Qualtrics_T1, UO_Qualtrics_T2, UO_Qualtrics_T3, UO_Qualtrics_T4)
 
-# Merge CCNES data with pedigree
-# TODO: Doesn't seem right with fake data each Fam_ID appears 10 times 
-UPMC_Qualtrics <- merge(UPMC_Qualtrics, Pedigree, by = "Fam_ID")
-UO_Qualtrics <- merge(UO_Qualtrics, Pedigree, by = "Fam_ID")
-
 #TODO: will be removed 
 UPMC_Qualtrics <- UPMC_Qualtrics %>%
   mutate_all(as.character)
 UO_Qualtrics <- UO_Qualtrics %>%
   mutate_all(as.character)
+# Merge UO and UPMC data 
+Qualtrics <- bind_rows(UO_Qualtrics,UPMC_Qualtrics)  
+
+# Merge Qualtrics data with pedigree
+Qualtrics <- merge(Qualtrics, Pedigree, by = c("Fam_ID","Timepoint"))
 
 # Change gender to F instead of False
-UPMC_Qualtrics$mother_sex <- "F"
-UO_Qualtrics$mother_sex <- "F"
+Qualtrics$mother_sex <- "F"
+
 
 # Clean global Environment
-#rm(UO_Qualtrics_T1, UO_Qualtrics_T2, UO_Qualtrics_T3, UO_Qualtrics_T4, 
-#   UPMC_Qualtrics_T1, UPMC_Qualtrics_T2, UPMC_Qualtrics_T3, UPMC_Qualtrics_T4)
+rm(UO_Qualtrics_T1, UO_Qualtrics_T2, UO_Qualtrics_T3, UO_Qualtrics_T4, UO_Qualtrics,
+   UPMC_Qualtrics_T1, UPMC_Qualtrics_T2, UPMC_Qualtrics_T3, UPMC_Qualtrics_T4, UPMC_Qualtrics)
+
+#rm(UPMC_Qualtrics_list, UO_Qualtrics_list )
 
 # Note ####
 # *************************************************************************
-print("Output list: Pedigree, UO_Qualtrics, UPMC_Qualtrics, Redcap_Data")
-cat("Pedigree column name:", names(Pedigree))
-cat('DERS variable names: new_ders_names')
-cat('CBCL variable names: New_CBCL_Names')
-cat('CCNES variable names updated: new_CCNES_names')
-cat('AAQ variable names updated: new_AAQ_names')
-cat('WCCL variable names updated: new_WCCL_names')
-cat('PKBS variable names updated: new_PKBS_names')
-cat('Bear Dragon variable names updated:  ')   # TODO
-cat('Affect Perspective Taking variable names updated: new_AffectPT_names')
-cat('Dimensional Card Sort variable names updated: old_DCS_names')
-cat('Emotion Labeling variable names updated: new_eltpart1_names, new_eltpart2_names')
-cat('Emotion Strategies variable names updated: new_ES_names')
+print("Output list: Pedigree, Qualtrics, Redcap_Data") 
+cat("\n Pedigree column name: Pedigree_name")
+cat('\n DERS variable names: new_ders_names')
+cat('\n CBCL variable names: New_CBCL_Names')
+cat('\n CCNES variable names updated: new_CCNES_names')
+cat('\n AAQ variable names updated: new_AAQ_names')
+cat('\n WCCL variable names updated: new_WCCL_names')
+cat('\n PKBS variable names updated: new_PKBS_names')
+cat('\n Bear Dragon variable names updated:  ')   # TODO
+cat('\n Affect Perspective Taking variable names updated: new_AffectPT_names')
+cat('\n Dimensional Card Sort variable names updated: old_DCS_names')
+cat('\n Emotion Labeling variable names updated: new_eltpart1_names, new_eltpart2_names')
+cat('\n Emotion Strategies variable names updated: new_ES_names')
 
 
 

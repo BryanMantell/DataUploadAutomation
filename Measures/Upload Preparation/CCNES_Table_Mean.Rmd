@@ -10,6 +10,7 @@ Empty environment, loading library, set knitr and scientific notation
 source("Upload Preparation.R")
 NDA_CCNES <- read.csv("pabq01_template.csv", skip = 1)
 options(digits = 3)
+
 ```
 
 ```{r}
