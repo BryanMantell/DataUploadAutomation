@@ -7,129 +7,22 @@ output: pdf_document
 # Setup
 Empty environment, loading library, set knitr and scientific notation
 ```{r setup}
-# Install package
-#install.packages("flextable")
-
-# Load package
-library(dplyr)
-library(data.table)
-library(knitr)
-library(kableExtra)
-library(tidyverse)
-
-# Setting for knit the whole document
-# Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
-knitr::opts_chunk$set(echo = TRUE, include = FALSE)
-
-# scientific notation, round up to 3 digits
-options(digits = 3)
-```
-
-# Import
-Import measurement, Pedigree data and NDA structure
-```{r Import}
-# Empty Global Environment
-rm(list = ls())
-
-# Import File ####
-# Import Pedigree and NDA Structure
-Pedigree <- read.csv("Reference_Pedigree.csv")
+# import data frame
+source("~/Documents/Min/DataUploadAutomation/Measures/Upload Preparation/Upload Preparation.R")
 NDA_ders <- read.csv("ders01_template.csv")
-
-# Import ders Files
-UO_T1_ders <- read.csv(file = 'UO_T1_Qualtrics.csv', stringsAsFactors = FALSE)
-UO_T2_ders <- read.csv(file = 'UO_T2_Qualtrics.csv', stringsAsFactors = FALSE)
-UO_T3_ders <- read.csv(file = 'UO_T3_Qualtrics.csv', stringsAsFactors = FALSE)
-UO_T4_ders <- read.csv(file = 'UO_T4_Qualtrics.csv', stringsAsFactors = FALSE)
-
-UPMC_T1_ders <- read.csv(file = 'UPMC_T1_ders.csv', stringsAsFactors = FALSE)
-UPMC_T2_ders <- read.csv(file = 'UPMC_T2_ders.csv', stringsAsFactors = FALSE)
-UPMC_T3_ders <- read.csv(file = 'UPMC_T3_ders.csv', stringsAsFactors = FALSE)
-UPMC_T4_ders <- read.csv(file = 'UPMC_T4_ders.csv', stringsAsFactors = FALSE)
-```
-
-# Rename Columns
-Create old & new variable names
-New variable name for preparation sheet: srm_ders_1 ~ srm_ders_36
-Old UO name: Q137_1 ~ Q137_36
-Old UPMC name: Q6.1_1 ~ Q5.1_36
-NDA name : ders1 ~ ders 36
-```{r Rename Columns}
-# Create list of new variable names 
-ders <- "srm_ders"
-num_items <- seq(1:36)
-new_ders_names <- paste(ders, num_items, sep = '_')
-
-# Create list of old variable names so we can replace them with the new ones 
-UO_ders_Item <- "Q137"
-UPMC_ders_Item <- "Q6.1"
-old_UO_ders_names <- paste(UO_ders_Item, num_items, sep = "_")
-old_UPMC_ders_names <- paste(UPMC_ders_Item, num_items, sep = "_")
-
-# create list of new header 
-ders <- "ders"
-number_of_survey <- seq(1:36)
-NDA_names <- paste(ders,number_of_survey,sep = '')
-```
-# Prep Sheet
-Select relevant pedigree information, rename as needed. (Include GroupAssignment for treatment progress calculation.)
-```{r Prep Sheet, warning = F}
-# Replace UO column names 
-setnames(UO_T1_ders, old_UO_ders_names, new_ders_names)
-setnames(UO_T2_ders, old_UO_ders_names, new_ders_names)
-setnames(UO_T3_ders, old_UO_ders_names, new_ders_names)
-setnames(UO_T4_ders, old_UO_ders_names, new_ders_names)
-
-# Replace UPMC column names
-setnames(UPMC_T1_ders, old_UPMC_ders_names, new_ders_names)
-setnames(UPMC_T2_ders, old_UPMC_ders_names, new_ders_names)
-setnames(UPMC_T3_ders, old_UPMC_ders_names, new_ders_names)
-setnames(UPMC_T4_ders, old_UPMC_ders_names, new_ders_names)
-
-# Edit UO ders Time 1 - 4 to have only ders quesions and the FamID. 
-UO_T1_ders <- select(UO_T1_ders, c(FamID = Q221, Timepoint = Q146, contains("ders")))
-UO_T2_ders <- select(UO_T2_ders, c(FamID = Q116, Timepoint = Q117, contains("ders")))
-UO_T3_ders <- select(UO_T3_ders, c(FamID = Q174, Timepoint = Q176, contains("ders")))
-UO_T4_ders <- select(UO_T4_ders, c(FamID = Q203, Timepoint = Q206, contains("ders")))
-
-# Edit UPMC ders Time 1 - 4 to have only ders quesions and the FamID.
-UPMC_T1_ders <- data.frame(c(select(UPMC_T1_ders, c(FamID = Q1.2, contains("ders"))), Timepoint = "1"))
-UPMC_T2_ders <- data.frame(c(select(UPMC_T2_ders, c(FamID = Q1.2, contains("ders"))), Timepoint = "2")) 
-UPMC_T3_ders <- data.frame(c(select(UPMC_T3_ders, c(FamID = Q1.2, contains("ders"))), Timepoint = "3"))
-UPMC_T4_ders <- data.frame(c(select(UPMC_T4_ders, c(FamID = Q1.2, contains("ders"))), Timepoint = "4"))
-
-# Bind 4 time points
-DERS_Qualtrics <- bind_rows(UO_T1_ders, UO_T2_ders, UO_T3_ders, UO_T4_ders, UPMC_T1_ders, UPMC_T2_ders, UPMC_T3_ders, UPMC_T4_ders)
-
-# Select revelent pedigree information, rename as needed. (Include GroupAssignment for treatment progross calculation.)
-Pedigree_T1 <- data.frame(c(select(Pedigree, FamID, mother_FamID = FamID_Mother, mom_guid, mother_sex = MomGender, interview_date = Time1Date, interview_age = MomAge_T1, GroupAssignment), Timepoint = "1"))
-Pedigree_T2 <- data.frame(c(select(Pedigree, FamID, mother_FamID = FamID_Mother, mom_guid, mother_sex = MomGender, interview_date = Time2Date, interview_age = MomAge_T2, GroupAssignment), Timepoint = "2"))
-Pedigree_T3 <- data.frame(c(select(Pedigree, FamID, mother_FamID = FamID_Mother, mom_guid, mother_sex = MomGender, interview_date = Time3Date, interview_age = MomAge_T3, GroupAssignment), Timepoint = "3"))
-Pedigree_T4 <- data.frame(c(select(Pedigree, FamID, mother_FamID = FamID_Mother, mom_guid, mother_sex = MomGender, interview_date = Time4Date, interview_age = MomAge_T4, GroupAssignment), Timepoint = "4"))
-
-# Merge 4 pedigree files
-Pedigree_Prep <- bind_rows(Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4)
-
-# Merge Pedigree data to ders Time Points
-DERS_Prep <- merge(DERS_Qualtrics, Pedigree_Prep)
-
-# Change gender to F instead of False
-DERS_Prep$mother_sex <- "F"
-
-# Clean Global Enviorment 
-rm(UO_T1_ders, UO_T2_ders, UO_T3_ders, UO_T4_ders, UPMC_T1_ders, UPMC_T2_ders, UPMC_T3_ders, UPMC_T4_ders, Pedigree, Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4)
+options(digits = 3)
 ```
 
 # Recode and Reverse-Score
 ```{r Re-code and Reverse Score}
 # TODO: Prefer not to answer now as NA?
-DERS_Prep <- DERS_Prep %>% 
+Qualtrics <- Qualtrics %>% 
   mutate_at(new_ders_names,
             funs(recode(., "Almost Never (0-10%)" = 1, 
                         "Sometimes (11%-35%)" = 2,
                         "About half the time (36%-65%)" = 3,
                         "Most of the time (66-90%)" = 4,
-                        "Almost Always (91-100%)" = 5,.default = NaN)))
+                        "Almost Always (91-100%)" = 5)))
 
 # Rename the reverse scored columns 
 Reverse_ders_names <- new_ders_names
@@ -137,13 +30,13 @@ revers_ders_cols <- c("srm_ders_1", "srm_ders_2", "srm_ders_6", "srm_ders_7", "s
                       "srm_ders_17", "srm_ders_20", "srm_ders_22","srm_ders_24", "srm_ders_34")
 revers_ders_cols <- paste(revers_ders_cols, "r", sep = "")
 Reverse_ders_names[c(1,2,6,7,8,10,17,20,22,24,34)] <- revers_ders_cols
-setnames(DERS_Prep, new_ders_names, Reverse_ders_names)
+setnames(Qualtrics, new_ders_names, Reverse_ders_names)
 
 # Reverse score certain items
-DERS_Prep[,revers_ders_cols] = 6 - DERS_Prep[,revers_ders_cols]
+Qualtrics[,revers_ders_cols] = 6 - Qualtrics[,revers_ders_cols]
 
 # Recode UO groupassignment 
-DERS_Prep <- DERS_Prep %>% 
+Qualtrics <- Qualtrics %>% 
   mutate_at(c("GroupAssignment"),
             funs(recode(., "Assigned Group 3 (HC)" = "Healthy", 
                         'Assigned Group 2 (FSU)' = "NO DBT",
@@ -153,63 +46,114 @@ DERS_Prep <- DERS_Prep %>%
 # Calculated Columns
 ```{r Calculated Columns}
 # Calculated awareness
-DERS_Prep <- add_column(DERS_Prep, 
-               DERS_awareness_raw = rowSums(DERS_Prep[, 
+Qualtrics <- add_column(Qualtrics, 
+               DERS_awareness_raw = rowSums(Qualtrics[, 
                c("srm_ders_2r", "srm_ders_6r", "srm_ders_8r", 
                  "srm_ders_10r","srm_ders_17r", "srm_ders_34r")], 
                   na.rm = T), .after = "srm_ders_36")
 
 # Calculated clarity
-DERS_Prep <- add_column(DERS_Prep, 
-               DERS_clarity_raw = rowSums(DERS_Prep[, 
+Qualtrics <- add_column(Qualtrics, 
+               DERS_clarity_raw = rowSums(Qualtrics[, 
                c("srm_ders_1r", "srm_ders_4", "srm_ders_5", 
                  "srm_ders_7r", "srm_ders_9")], na.rm = T), 
                .after = "DERS_awareness_raw")
 
 # Calculated goals 
-DERS_Prep <- add_column(DERS_Prep, 
-               DERS_goals_raw = rowSums(DERS_Prep[, 
+Qualtrics <- add_column(Qualtrics, 
+               DERS_goals_raw = rowSums(Qualtrics[, 
                c("srm_ders_13", "srm_ders_18", "srm_ders_20r", 
                  "srm_ders_26", "srm_ders_33")], na.rm = T),
                .after = "DERS_clarity_raw")
 
 # Calculated impulse 
-DERS_Prep <- add_column(DERS_Prep, 
-               DERS_impulse_raw = rowSums(DERS_Prep[, 
+Qualtrics <- add_column(Qualtrics, 
+               DERS_impulse_raw = rowSums(Qualtrics[, 
                c("srm_ders_3", "srm_ders_14", "srm_ders_19", 
                  "srm_ders_24r", "srm_ders_27", "srm_ders_32")],
                na.rm = T), .after = "DERS_goals_raw")
 
 # Calculated nonacceptance
-DERS_Prep <- add_column(DERS_Prep, 
-               DERS_nonacceptance_raw = rowSums(DERS_Prep[, 
+Qualtrics <- add_column(Qualtrics, 
+               DERS_nonacceptance_raw = rowSums(Qualtrics[, 
                c("srm_ders_11", "srm_ders_12", "srm_ders_21", 
                  "srm_ders_23", "srm_ders_25", "srm_ders_29")],
                na.rm = T), .after = "DERS_impulse_raw")
 
 # Calculated strategies 
-DERS_Prep <- add_column(DERS_Prep, 
-               DERS_strategies_raw = rowSums(DERS_Prep[, 
+Qualtrics <- add_column(Qualtrics, 
+               DERS_strategies_raw = rowSums(Qualtrics[, 
                c("srm_ders_15", "srm_ders_16", "srm_ders_22r", 
                  "srm_ders_28", "srm_ders_30", "srm_ders_31", 
                  "srm_ders_35", "srm_ders_36")], na.rm = T), 
                .after = "DERS_nonacceptance_raw")
 
 # Calculated total 
-DERS_Prep <- add_column(DERS_Prep, DERS_total_raw = rowSums(select(DERS_Prep,c(starts_with("srm"))), na.rm = T), .after = "DERS_strategies_raw")
+Qualtrics <- add_column(Qualtrics, DERS_total_raw = rowSums(select(Qualtrics,c(starts_with("srm_ders"))), na.rm = T), .after = "DERS_strategies_raw")
 # Mean with 67% rule ####
 # Check NA percentage
-DERS_Prep$NACheck <- rowSums(is.na(select(DERS_Prep, starts_with("srm"))))/ncol(dplyr::select(DERS_Prep, starts_with("srm")))
+Qualtrics$NACheck <- rowSums(is.na(select(Qualtrics, starts_with("srm"))))/ncol(dplyr::select(Qualtrics, starts_with("srm")))
+
+# Calculating column with 80% imputation (varScore)
+# Calculated awareness
+Qualtrics <- add_column(Qualtrics, 
+                DERS_awareness_imputation = varScore(Qualtrics,
+                 Forward = c("srm_ders_2r", "srm_ders_6r", "srm_ders_8r", 
+                 "srm_ders_10r","srm_ders_17r", "srm_ders_34r"), MaxMiss = .20),
+                 .after = "DERS_awareness_raw")
+
+
+# Calculated clarity
+Qualtrics <- add_column(Qualtrics, 
+               DERS_clarity_imputation = varScore(Qualtrics, 
+               Forward = c("srm_ders_1r", "srm_ders_4", "srm_ders_5", 
+                 "srm_ders_7r", "srm_ders_9"), MaxMiss = .20),
+               .after = "DERS_clarity_raw")
+
+# Calculated goals 
+Qualtrics <- add_column(Qualtrics, 
+               DERS_goals_imputation = varScore(Qualtrics, 
+               Forward = c("srm_ders_13", "srm_ders_18", "srm_ders_20r", 
+                 "srm_ders_26", "srm_ders_33"), MaxMiss = .20),
+               .after = "DERS_goals_raw")
+
+# Calculated impulse 
+Qualtrics <- add_column(Qualtrics, 
+               DERS_impulse_imputation = varScore(Qualtrics, 
+              Forward =  c("srm_ders_3", "srm_ders_14", "srm_ders_19", 
+                 "srm_ders_24r", "srm_ders_27", "srm_ders_32"), MaxMiss = .20), 
+               .after = "DERS_goals_raw")
+
+# Calculated nonacceptance
+Qualtrics <- add_column(Qualtrics, 
+               DERS_nonacceptance_imputation = varScore(Qualtrics, 
+              Forward =  c("srm_ders_11", "srm_ders_12", "srm_ders_21", 
+                 "srm_ders_23", "srm_ders_25", "srm_ders_29"), MaxMiss = .20),
+               .after = "DERS_nonacceptance_raw")
+
+# Calculated strategies 
+Qualtrics <- add_column(Qualtrics, 
+               DERS_strategies_imputation = varScore(Qualtrics, 
+              Forward =  c("srm_ders_15", "srm_ders_16", "srm_ders_22r", 
+                 "srm_ders_28", "srm_ders_30", "srm_ders_31", 
+                 "srm_ders_35", "srm_ders_36"), MaxMiss = .20), 
+               .after = "DERS_strategies_raw")
+
+
+# Calculated total 
+Qualtrics <- add_column(Qualtrics, DERS_total_imputation = varScore(Qualtrics,
+              Forward = names(select(Qualtrics,c(starts_with("srm_ders")))),
+              MaxMiss = .20), .after = "DERS_total_raw")
 ```
 
 # NDA Sheet
 ```{r NDA Sheet}
 # Create NDA prep sheet, select all the needed columns from prep sheet
-NDA_ders_Prep <- select(DERS_Prep, c(subjectkey = mom_guid, src_subject_id = mother_FamID, sex = mother_sex ,interview_age, interview_date, starts_with("srm")))
+NDA_ders_Prep <- select(Qualtrics, c(subjectkey, src_subject_id,  child_sex  ,interview_age_Mom, interview_date, starts_with("srm_ders")))
                          
 # Combine NDA and prep sheet
 # Make sure put original NDA structure at first, because the order of the new sheet will be the order of the first item in bind_rows function
-setnames(NDA_ders_Prep, Reverse_ders_names, NDA_names)
+setnames(NDA_ders_Prep, Reverse_ders_names, NDA_DERS_names)
 
 # Recreate first line in orignial NDA file
 # Make a empty row, with same number of column in NDA_ders, as first line of NDA sheet
@@ -239,10 +183,10 @@ write.table(NDA_ders, file = 'ders.csv', sep = ",", append = TRUE, na = "", quot
 Mean Table with all data (no drop)
 ```{r All responsees Table}
 # Select needed column
-Progress <- select(DERS_Prep, c(FamID, GroupAssignment, Timepoint, starts_with("srm"), Row_sum = DERS_total_raw, NACheck))
+Progress <- select(Qualtrics, c(Fam_ID, GroupAssignment, Timepoint, starts_with("srm"), Row_sum = DERS_total_raw, NACheck))
 
-# Change FamId as character and assign to ID variable 
-ID <- c(as.character(Progress$FamID))
+# Change Fam_ID as character and assign to ID variable 
+ID <- c(as.character(Progress$Fam_ID))
 
 # Add Site column to Progress, if ID start with 9 then site is UO, else is UPMC
 Progress$site <- ifelse(startsWith(ID, "9"),"UO","UPMC")

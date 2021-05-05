@@ -6,146 +6,8 @@ date: "5/16/2020"
 # Setup
 Empty environment, loading library, set knitr and scientific notation
 ```{r setup}
-# Loading library
-library(tidyverse)
-library(data.table)
-library(knitr)
-library(kableExtra)
-library(dplyr)
-
-# Settings for knit the whole document 
-# Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
-knitr::opts_chunk$set(echo = F, warning = FALSE)
-
-# scientific notation, round up to 3 digits
-options(digits = 3)
-```
-
-# Import
-Import measurement, Pedigree data and NDA structure
-```{r Import}
-# Empty Global Environment
-rm(list = ls())
-
-# Import Pedigree and NDA structure
-Pedigree <- read.csv("Reference_Pedigree.csv")
+source("~/Documents/Min/DataUploadAutomation/Measures/Upload Preparation/Upload Preparation.R")
 NDA_CCNES <- read.csv("pabq01_template.csv", skip = 1)
-
-# Import UO and UPMC files 
-UO_CCNES_T1 <- read.csv("UO_T1_Qualtrics.csv")
-UO_CCNES_T2 <- read.csv("UO_T2_Qualtrics.csv")
-UO_CCNES_T3 <- read.csv("UO_T3_Qualtrics.csv")
-UO_CCNES_T4 <- read.csv("UO_T4_Qualtrics.csv")
-
-UPMC_CCNES_T1 <- read.csv("UPMC_T1_CCNES.csv")
-UPMC_CCNES_T2 <- read.csv("UPMC_T2_CCNES.csv")
-UPMC_CCNES_T3 <- read.csv("UPMC_T3_CCNES.csv")
-UPMC_CCNES_T4 <- read.csv("UPMC_T4_CCNES.csv")
-
-# Remove first two lines 
-UO_CCNES_T1 <- UO_CCNES_T1[-c(1,2),]
-UO_CCNES_T2 <- UO_CCNES_T2[-c(1,2),]
-UO_CCNES_T3 <- UO_CCNES_T3[-c(1,2),]
-UO_CCNES_T4 <- UO_CCNES_T4[-c(1,2),]
-
-UPMC_CCNES_T1 <- UPMC_CCNES_T1[-c(1,2),]
-UPMC_CCNES_T2 <- UPMC_CCNES_T2[-c(1,2),]
-UPMC_CCNES_T3 <- UPMC_CCNES_T3[-c(1,2),]
-UPMC_CCNES_T4 <- UPMC_CCNES_T4[-c(1,2),]
-```
-
-# Rename Columns
-Create old & new variable names
-Old UO name: Q140_1 ~ Q151_3
-Old UPMC (T1, T4) name: Q10.2_1 ~ Q10.13_6
-Old UPMC (T2, T3) name: Q8.2_1 ~ Q8.13_6
-
-New CCNES name: srm_CCNES_01 ~ srm_CCNES_72
-NDA name: pabq1a ~ pabq12f
-```{r Rename Columns}
-# OLD UO CCNES Column Names ####
-# for each item in UO paste number 1 to 6
-# sprintf used to format str
-# I use for loop because My variable names are start from different number
-odd_UO_CCNES_names <- c()
-for (i in sprintf("Q%03d",140:151)) {
-  name <- paste(i, 1:6, sep = "_")
-  odd_UO_CCNES_names <- c(odd_UO_CCNES_names, name)
-}
-
-# OLD UPMC CCNES Column Names ####
-# OLD UPMC CCNES Column Names for T1 & T4
-odd_UPMC_CCNES_names <- c()
-for (i in sprintf("Q10.%d",2:13)) {
-  Name <- paste(i, 1:6, sep = "_")
-  odd_UPMC_CCNES_names <- c(odd_UPMC_CCNES_names, Name)
-}
-# OLD UPMC CCNES Column Names for T2 & T3
-odd_UPMC_CCNES_names2 <- c()
-for (i in sprintf("Q8.%d",2:13)) {
-  Name <- paste(i, 1:6, sep = "_")
-  odd_UPMC_CCNES_names2 <- c(odd_UPMC_CCNES_names2, Name)
-}
-
-# CCNES Prep Column Names ####
-new_CCNES_names <- sprintf("srm_CCNES_%02d",1:72)
-
-# NDA structure Column Names ####
-pabq <- paste("pabq",1:12, sep = "")
-NDA_Names <- c()
-for (i in pabq) {
-  Name <- paste(i, letters[seq(1:6)], sep = "")
-  NDA_Names <- c(NDA_Names, Name)
-}
-```
-# Prep Sheet
-Select relevant pedigree information, rename as needed. (Include GroupAssignment for treatment progress calculation.)
-```{r Prep Sheet}
-# Replace UO column names
-setnames(UO_CCNES_T1, odd_UO_CCNES_names, new_CCNES_names)
-setnames(UO_CCNES_T2, odd_UO_CCNES_names, new_CCNES_names)
-setnames(UO_CCNES_T3, odd_UO_CCNES_names, new_CCNES_names)
-setnames(UO_CCNES_T4, odd_UO_CCNES_names, new_CCNES_names)
-
-# Replace UPMC column names
-setnames(UPMC_CCNES_T1, odd_UPMC_CCNES_names, new_CCNES_names)
-setnames(UPMC_CCNES_T2, odd_UPMC_CCNES_names2, new_CCNES_names)
-setnames(UPMC_CCNES_T3, odd_UPMC_CCNES_names2, new_CCNES_names)
-setnames(UPMC_CCNES_T4, odd_UPMC_CCNES_names, new_CCNES_names)
-
-# Edit UO CCNES Time 1 - 4 to have only CCNES questions
-# FamID and Timepoint. Rename as needed, remove first two lines 
-UO_CCNES_T1 <- select(UO_CCNES_T1, c(FamID = Q221, Timepoint = Q146, contains("CCNES")))
-UO_CCNES_T2 <- select(UO_CCNES_T2, c(FamID = Q116, Timepoint = Q117, contains("CCNES")))
-UO_CCNES_T3 <- select(UO_CCNES_T3, c(FamID = Q174, Timepoint = Q176, contains("CCNES")))
-UO_CCNES_T4 <- select(UO_CCNES_T4, c(FamID = Q203, Timepoint = Q206, contains("CCNES")))
-
-# Edit UPMC CCNES Time 1 - 4 to have only CCNES questions and FamID. Rename as needed
-UPMC_CCNES_T1 <- data.frame(c(select(UPMC_CCNES_T1, c(FamID = Q1.2, contains("CCNES"))), Timepoint = "1"))
-UPMC_CCNES_T2 <- data.frame(c(select(UPMC_CCNES_T2, c(FamID = Q1.2, contains("CCNES"))), Timepoint = "2"))  
-UPMC_CCNES_T3 <- data.frame(c(select(UPMC_CCNES_T3, c(FamID = Q1.2, contains("CCNES"))), Timepoint = "3"))  
-UPMC_CCNES_T4 <- data.frame(c(select(UPMC_CCNES_T4, c(FamID = Q1.2, contains("CCNES"))), Timepoint = "4"))
-
-# Bind 4 time points from two site 
-CCNES_Qualtrics <- bind_rows(UO_CCNES_T1,UO_CCNES_T2,UO_CCNES_T3,UO_CCNES_T4, UPMC_CCNES_T1, UPMC_CCNES_T2, UPMC_CCNES_T3, UPMC_CCNES_T4)
-
-# Select relevant pedigree information, rename as needed. (Include GroupAssignment for treatment progress calculation.)
-Pedigree_T1 <- data.frame(c(select(Pedigree, FamID, mother_FamID = FamID_Mother, mom_guid, mother_sex = MomGender, interview_date = Time1Date, interview_age = MomAge_T1, GroupAssignment), Timepoint = "1"))
-Pedigree_T2 <- data.frame(c(select(Pedigree, FamID, mother_FamID = FamID_Mother, mom_guid, mother_sex = MomGender, interview_date = Time2Date, interview_age = MomAge_T2, GroupAssignment), Timepoint = "2"))
-Pedigree_T3 <- data.frame(c(select(Pedigree, FamID, mother_FamID = FamID_Mother, mom_guid, mother_sex = MomGender, interview_date = Time3Date, interview_age = MomAge_T3, GroupAssignment), Timepoint = "3"))
-Pedigree_T4 <- data.frame(c(select(Pedigree, FamID, mother_FamID = FamID_Mother, mom_guid, mother_sex = MomGender, interview_date = Time4Date, interview_age = MomAge_T4, GroupAssignment), Timepoint = "4"))
-
-# Bind 4 pedigree 
-Pedigree_Prep <- bind_rows(Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4)
-
-# Merge CCNES data with pedigree
-CCNES_Prep <- merge(CCNES_Qualtrics, Pedigree_Prep)
-
-# Change gender to F instead of False
-CCNES_Prep$mother_sex <- "F"
-
-# Clean global Environment
-rm(UO_CCNES_T1, UO_CCNES_T2, UO_CCNES_T3, UO_CCNES_T4, UPMC_CCNES_T1, UPMC_CCNES_T2, UPMC_CCNES_T3, UPMC_CCNES_T4,Pedigree,Pedigree_T1,Pedigree_T2,Pedigree_T3,Pedigree_T4)
 ```
 
 # Recode and Reverse-Score
@@ -157,7 +19,7 @@ CCNES_Prep <- CCNES_Prep %>%
                         '1' = 1,
                         '2' = 2,
                         '3' = 3,
-                        '4 - Medium Likelihood' = 4,
+                        '4 - Medium Liklihood' = 4,
                         '4' = 4,
                         '5' = 5,
                         '6' = 6,
@@ -247,6 +109,43 @@ CCNES_Prep <- add_column(CCNES_Prep, CCNES_MR_raw =
 
 # Check NA percentage   0:100%data     1 0% data 
 CCNES_Prep$NACheck <- rowSums(is.na(select(CCNES_Prep, starts_with("srm"))))/ncol(dplyr::select(CCNES_Prep, starts_with("srm")))
+
+# Calculating column with 80% imputation (varScore)
+CCNES_Prep <- add_column(CCNES_Prep, CCNES_DR_imputation = varScore(CCNES_Prep, Forward = c("srm_CCNES_02", 
+                            "srm_CCNES_07r", "srm_CCNES_13",  "srm_CCNES_22", 
+                            "srm_CCNES_29", "srm_CCNES_33", "srm_CCNES_39r", 
+                            "srm_CCNES_45r", "srm_CCNES_50", "srm_CCNES_55r", 
+                            "srm_CCNES_62", "srm_CCNES_70"), MaxMiss = .20),.after = "CCNES_DR_raw")
+
+CCNES_Prep <- add_column(CCNES_Prep, CCNES_PR_imputation = varScore(CCNES_Prep, Forward = c("srm_CCNES_01",
+                            "srm_CCNES_12", "srm_CCNES_18", "srm_CCNES_19", 
+                            "srm_CCNES_28", "srm_CCNES_34", "srm_CCNES_41", 
+                            "srm_CCNES_47", "srm_CCNES_53", "srm_CCNES_56", 
+                            "srm_CCNES_63", "srm_CCNES_71"), MaxMiss = .20),.after = "CCNES_PR_raw")
+
+CCNES_Prep <- add_column(CCNES_Prep, CCNES_EE_imputation = varScore(CCNES_Prep, Forward = c("srm_CCNES_05", 
+                            "srm_CCNES_11", "srm_CCNES_17", "srm_CCNES_20", 
+                            "srm_CCNES_30", "srm_CCNES_35", "srm_CCNES_42", 
+                            "srm_CCNES_43", "srm_CCNES_49", "srm_CCNES_57", 
+                            "srm_CCNES_66", "srm_CCNES_68"), MaxMiss = .20),.after = "CCNES_EE_raw")
+
+CCNES_Prep <- add_column(CCNES_Prep, CCNES_EFR_imputation = varScore(CCNES_Prep, Forward = C("srm_CCNES_06", 
+                           "srm_CCNES_08", "srm_CCNES_16", "srm_CCNES_23", 
+                           "srm_CCNES_25", "srm_CCNES_31", "srm_CCNES_38", 
+                           "srm_CCNES_48", "srm_CCNES_54", "srm_CCNES_58", 
+                           "srm_CCNES_65", "srm_CCNES_69"), MaxMiss = .20),.after = "CCNES_EFR_raw")
+
+CCNES_Prep <- add_column(CCNES_Prep, CCNES_PFR_imputation = varScore(CCNES_Prep, Forward = c("srm_CCNES_03", 
+                           "srm_CCNES_10", "srm_CCNES_15", "srm_CCNES_24", 
+                           "srm_CCNES_26", "srm_CCNES_36", "srm_CCNES_37", 
+                           "srm_CCNES_44", "srm_CCNES_52", "srm_CCNES_59", 
+                           "srm_CCNES_64", "srm_CCNES_67"), MaxMiss = .20),.after = "CCNES_PFR_raw")
+
+CCNES_Prep <- add_column(CCNES_Prep, CCNES_MR_imputation = varScore(CCNES_Prep, Forward = c("srm_CCNES_04", 
+                           "srm_CCNES_09", "srm_CCNES_14", "srm_CCNES_21", 
+                           "srm_CCNES_27", "srm_CCNES_32",  "srm_CCNES_40", 
+                           "srm_CCNES_46", "srm_CCNES_51",  "srm_CCNES_60", 
+                           "srm_CCNES_61", "srm_CCNES_72"), MaxMiss = .20),.after = "CCNES_MR_raw")
 ```
 
 # NDA Sheet
@@ -256,7 +155,7 @@ NDA_CCNES_Prep <- select(CCNES_Prep, c(subjectkey = mom_guid, src_subject_id = m
                          
 # Combine NDA and Prep sheet
 # Make sure put original NDA structure at first, because the order of the new sheet will be the order of the first item in bind_rows function
-setnames(NDA_CCNES_Prep, Reverse_CCNES_names, NDA_Names)
+setnames(NDA_CCNES_Prep, Reverse_CCNES_names, CCNES_NDA_Names)
 
 # Recreate first line in original NDA file
 # Make a empty row, with same number of column in NDA_CCNES, as first line of NDA sheet

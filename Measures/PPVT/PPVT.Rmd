@@ -12,17 +12,10 @@ Empty environment, loading preparation, scientific notation
 rm(list = ls())
 
 source("Upload Preparation.R")
-NDA_CBCL <- read.csv("ppvt_4a02_template.csv", skip = 1)
-options(digits = 3)
-
-library(lmSupport)
-```
-
-## Import
-Import Qualtrics excel files into R
-```{r Import}
 NDA_PPVT <- read.csv("ppvt_4a02_template.csv", skip = 1, stringsAsFactors = FALSE)
+options(digits = 3)
 UPMC_PPVT_Data <- read.csv("UPMC_PPVT_Data.csv", stringsAsFactors = FALSE)
+
 ```
 
 ## Rename Columns
@@ -65,9 +58,16 @@ NDA_PPVT_Prep_Mom <- na.omit(NDA_PPVT_Prep_Mom, ss_rawscore)
 
 # Bind child and mom data into one data frame and order by ID
 NDA_PPVT_Prep <- rbind(NDA_PPVT_Prep_Child, NDA_PPVT_Prep_Mom)
+
+# Arrange PPVT data so Mother and Child subjectkeys are next to each other for readability. 
 NDA_PPVT_Prep <- arrange(NDA_PPVT_Prep, src_subject_id)
 
-# Recreate first line in orignial NDA file (rbind should be bind_rows?)
+# Solution Testing for error
+#NDA_PPVT <- bind_rows(NDA_PPVT, NDA_PPVT_Prep)
+#NDA_PPVT[, c("subjectkey")] <- sapply(NDA_PPVT[, c("subjectkey")], as.character)
+#NDA_PPVT_Prep[, c("subjectkey")] <- sapply(NDA_PPVT_Prep[, c("subjectkey")], as.character)
+
+# Recreate first line in orignial NDA file (rbind should be bind_rows, temporary fix due to errors)
 NDA_PPVT <- rbind(NDA_PPVT, NDA_PPVT_Prep)
 first_line <- matrix("", nrow = 1, ncol = ncol(NDA_PPVT))
 first_line[,1] <- "ppvt_4a"
