@@ -18,12 +18,14 @@ rm(list = ls())
 #Install Package, this only need to be done once.
 #install.packages(c("dplyr","tidyverse","data.table","knitr"))
 #install.packages('plyr', repos = "http://cran.us.r-project.org")
+#install.packages("lmSupport")
 
 #Load packages, this need to be done every time you run this script. 
 library(dplyr)
 library(tidyverse)
 library(data.table)
 library(knitr)
+library(lmSupport)
 
 #Set Working Directory
 setwd("~/Documents/GitHub/DataUploadAutomation/DataUploadAutomation/Measures/BearDragon/")
@@ -92,6 +94,15 @@ rm(BearDragon_Data, Pedigree_Prep, Pedigree, Pedigree_T1, Pedigree_T2, Pedigree_
 
 ## Calculated Columns
 Create sums column combining each individual measure. 
+```{r Calculated Columns}
+BearDragon_Prep <- add_column(BearDragon_Prep, oc_beardragon_total = varScore(BearDragon_Prep, c("oc_bd_01", "oc_bd_02", "oc_bd_03", "oc_bd_04", "oc_bd_05", "oc_bd_06", "oc_bd_07", "oc_bd_08", "oc_bd_09", "oc_bd_10"), Reverse = NULL, Range = NULL, Prorate = TRUE, MaxMiss = .33))
+
+BearDragon_Prep <- add_column(BearDragon_Prep, oc_bear_total = varScore(BearDragon_Prep, c("oc_bd_01", "oc_bd_03", "oc_bd_05", "oc_bd_07", "oc_bd_09"), Reverse = NULL, Range = NULL, Prorate = TRUE, MaxMiss = .33))
+
+BearDragon_Prep <- add_column(BearDragon_Prep, oc_dragon_total = varScore(BearDragon_Prep, c("oc_bd_02", "oc_bd_04", "oc_bd_06", "oc_bd_08", "oc_bd_10"), Reverse = NULL, Range = NULL, Prorate = TRUE, MaxMiss = .33))
+```
+
+
 ```{r Calculated Columns}
 #Add total column for all data
 BearDragon_Prep <- add_column(BearDragon_Prep, oc_beardragon_total = rowSums(BearDragon_Prep[, c("oc_bd_01", "oc_bd_02", "oc_bd_03", "oc_bd_04", "oc_bd_05", "oc_bd_06", "oc_bd_07", "oc_bd_08", "oc_bd_09", "oc_bd_10")]))
