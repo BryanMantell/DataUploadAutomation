@@ -1,9 +1,6 @@
 # title: "PKBS Upload Script
 # author:  Jacob Mulleavey
 
-# Empty Global Environment
-#rm(list = ls())
-
 # Scientific Notation
 options(digits = 3)
 
@@ -23,7 +20,9 @@ library(knitr)
 library(lmSupport)
 
 # Source data, templates and create NDA dataframe
-source("~/Documents/GitHub/DataUploadAutomation/DataUploadAutomation/Upload and Tables/Data/Upload Preparation.R")
+setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
+#source("~/GitHub/DataUploadAutomation/Upload and Tables/Data/Upload Preparation.R")
+
 NDA_PKBS <- read.csv("pkbs01_template.csv", skip = 1)
 
 # Select the relevant sets of information from Qualtrics necessary for the PKBS
@@ -34,9 +33,6 @@ PKBS_Prep <- select(Qualtrics)
 # Turn Likert Scale from text string to numeric value
 PKBS_Prep[PKBS_Prep == "Never (0)"] <- 0; PKBS_Prep[PKBS_Prep == "Rarely (1)"] <- 1;
 PKBS_Prep[PKBS_Prep == "Sometimes (2)"] <- 2; PKBS_Prep[PKBS_Prep == "Often (3)"] <- 3;
-
-# Create NA Check column calculating what portion of the data is present
-PKBS_Prep$NACheck <- rowSums(is.na(select(PKBS_Prep, starts_with("srm_pkbs"))))/ncol(dplyr::select(PKBS_Prep, starts_with("srm_pkbs")))
 
 # Create Drop dataframe for anything less than 0.67; Allow anything over to be used for Prep sheet
 PKBS_Drop <- PKBS_Prep[PKBS_Prep$NACheck > 0.67, ]

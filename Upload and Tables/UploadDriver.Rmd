@@ -1,0 +1,21 @@
+---
+title: "UploadDriver"
+author: "Bryan"
+date: "5/12/2021"
+output: html_document
+---
+```{r Prep Script}
+source("~/GitHub/DataUploadAutomation/Upload and Tables/Data/Upload Preparation.R")
+
+```
+
+```{r CBCL}
+source("~/GitHub/DataUploadAutomation/Upload and Tables/Scripts/CBCL_Upload_Script.R")
+
+```
+
+```{r CCNES}
+source("~/GitHub/DataUploadAutomation/Upload and Tables/Scripts/CCNES_Upload_Script.R")
+
+```
+

@@ -5,7 +5,8 @@
 #rm(list = ls())
 
 # Loading library, scientific notation, and upload preparation
-source("D:/Austin/Lab Work (D-Drive)/DataUploadAutomation/Measures/CBCL/Upload Preparation.R")
+setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
+#source("~/GitHub/DataUploadAutomation/Upload and Tables/Data/Upload Preparation.R")
 NDA_CBCL <- read.csv("cbcl1_501_template.csv", skip = 1)
 options(digits = 3)
 library(lmSupport)

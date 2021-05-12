@@ -3,12 +3,11 @@
 # Setup
 Empty environment, loading library, set knitr and scientific notation
 ```{r setup}
-# Empty Global Environment
-rm(list = ls())
 
 # import data frame
 
-source("Upload Preparation.R")
+setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
+#source("~/GitHub/DataUploadAutomation/Upload and Tables/Data/Upload Preparation.R")
 
 NDA_WCCL <- read.csv("dbt_wccl01_template.csv", skip = 1)
 options(digits = 3)
@@ -23,7 +22,7 @@ Create prep sheet to begin transferring data into NDA format. Rename relevant GU
 WCCL_Prep <- select(Qualtrics, c(Fam_ID,mother_sex, interview_date, interview_age_Mom, GroupAssignment, contains("srm_wccl")))
 ```
 # Re-code and 67% Rule
-Convert Likert Scale text input into numerical values then create a dataframe to place ID's that do not have 67% of their data present.
+Convert Likert Scale text input into numerical values then create a dataframe to place IDs that do not have 67% of their data present.
 
 ```{r Recode}
 #Change Numbers to Numeric values

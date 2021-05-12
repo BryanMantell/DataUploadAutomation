@@ -4,10 +4,10 @@
 
 # Setup ####
 # Empty environment, loading library, set knitr and scientific notation
-
-source("~/Documents/Min/DataUploadAutomation/Upload and Tables/Data/Upload Preparation.R")
+setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
+#source("~/Documents/Min/DataUploadAutomation/Upload and Tables/Data/Upload Preparation.R")
 NDA_CCNES <- read.csv("pabq01_template.csv", skip = 1)
-setwd("~/Documents/Min/DataUploadAutomation/Upload and Tables/Output for NDA")
+#setwd("~/Documents/Min/DataUploadAutomation/Upload and Tables/Output for NDA")
 
 
 CCNES_Prep <- Qualtrics
