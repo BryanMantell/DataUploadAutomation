@@ -56,7 +56,7 @@ PKBS_Prep <- add_column(PKBS_Prep, pkbs_total = varScore(PKBS_Prep, c("srm_pkbs_
                                                                       "srm_pkbs_14", "srm_pkbs_15", "srm_pkbs_16", "srm_pkbs_17", "srm_pkbs_18", "srm_pkbs_19", "srm_pkbs_20",
                                                                       "srm_pkbs_21", "srm_pkbs_22", "srm_pkbs_23", "srm_pkbs_24", "srm_pkbs_25", "srm_pkbs_26", "srm_pkbs_27",
                                                                       "srm_pkbs_28", "srm_pkbs_29", "srm_pkbs_30", "srm_pkbs_31", "srm_pkbs_32", "srm_pkbs_33"), 
-                                                         Reverse = NULL, Range = NULL, Prorate = TRUE, MaxMiss = .33)))
+                                                         Reverse = NULL, Range = NULL, Prorate = TRUE, MaxMiss = .33))
 
 # 100% Table Calculated Columns
 PKBS_100[,8:40] <- sapply(PKBS_Prep[,8:40],as.numeric)
@@ -66,7 +66,7 @@ PKBS_100 <- add_column(PKBS_100, pkbs_total = varScore(PKBS_Prep, c("srm_pkbs_1"
                                                                       "srm_pkbs_14", "srm_pkbs_15", "srm_pkbs_16", "srm_pkbs_17", "srm_pkbs_18", "srm_pkbs_19", "srm_pkbs_20",
                                                                       "srm_pkbs_21", "srm_pkbs_22", "srm_pkbs_23", "srm_pkbs_24", "srm_pkbs_25", "srm_pkbs_26", "srm_pkbs_27",
                                                                       "srm_pkbs_28", "srm_pkbs_29", "srm_pkbs_30", "srm_pkbs_31", "srm_pkbs_32", "srm_pkbs_33"), 
-                                                         Reverse = NULL, Range = NULL, Prorate = TRUE, MaxMiss = .33)))
+                                                         Reverse = NULL, Range = NULL, Prorate = TRUE, MaxMiss = .33))
 #----------------------------------------------------------------------------------------------------------------------------------------
 
 # NDA Sheet
