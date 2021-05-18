@@ -5,10 +5,9 @@
 #rm(list = ls())
 
 # Load necessary data from CBCL upload script, set source to where your CBCL script is on your computer, set working directory to where your measures/CBCL folder
-source("D:/Austin/Lab Work (D-Drive)/DataUploadAutomation/Upload and Tables/Scripts/CBCL_Upload_Script.R")
+source("~/GitHub/DataUploadAutomation/Upload and Tables/Scripts/CBCL_Upload_Script.R")
 
-# Select needed columns
-Progress <- select(CBCL_Prep, c(Fam_ID, GroupAssignment, Timepoint, cbcl_ext, cbcl_int, cbcl_total, starts_with("srm")))
+Progress <- select(CBCL_Prep, c(Fam_ID, GroupAssignment, Timepoint, CBCL_TOT_t, CBCL_INT_t, CBCL_EXT_t, starts_with("srm")))
 
 # Change FamId as character and assign it to the ID variable 
 ID <- c(as.character(Progress$FamID))
@@ -20,17 +19,17 @@ Progress$site <- ifelse(startsWith(ID, "9"),"UO","UPMC")
 # Grouping & calculation for CBCL total
 Progress_Total_Mean <- Progress %>%
   group_by(GroupAssignment,timepoint,site) %>%
-  summarise(TotalMean = mean(cbcl_total,na.rm = T),count = n())
+  summarise(TotalMean = mean(CBCL_TOT_t,na.rm = T),count = n())
 
 # Grouping & calculation for CBCL Int
 Progress_Int_Mean <- Progress %>%
   group_by(GroupAssignment,timepoint,site) %>%
-  summarise(IntMean = mean(cbcl_int,na.rm = T),count = n())
+  summarise(IntMean = mean(CBCL_INT_t,na.rm = T),count = n())
 
 # Grouping & calculation for CBCL Ext
 Progress_Ext_Mean <- Progress %>%
   group_by(GroupAssignment,timepoint,site) %>%
-  summarise(ExtMean = mean(cbcl_ext,na.rm = T),count = n())
+  summarise(ExtMean = mean(CBCL_EXT_t,na.rm = T),count = n())
 
 # Merge Total, Int, and Ext calculations
 Progress_Mean <- merge(Progress_Int_Mean, Progress_Ext_Mean)
@@ -46,17 +45,17 @@ UPMC <- Progress_Mean[Progress_Mean$site == "UPMC",]
 # Grouping & calculation for CBCL total
 Progress_Total_Mean_Both <- Progress %>%
   group_by(GroupAssignment, timepoint) %>%
-  summarise("BothSite_CBCL_TotalMean" = mean(cbcl_total,na.rm = T),n = n())
+  summarise("BothSite_CBCL_TotalMean" = mean(CBCL_TOT_t,na.rm = T),n = n())
 
 # Grouping & calculation for CBCL Int
 Progress_Int_Mean_Both <- Progress %>%
   group_by(GroupAssignment, timepoint) %>%
-  summarise("BothSite_CBCL_IntMean" = mean(cbcl_int,na.rm = T),n = n())
+  summarise("BothSite_CBCL_IntMean" = mean(CBCL_INT_t,na.rm = T),n = n())
 
 # Grouping & calculation for CBCL Ext
 Progress_Ext_Mean_Both <- Progress %>%
   group_by(GroupAssignment, timepoint) %>%
-  summarise("BothSite_CBCL_ExtMean" = mean(cbcl_ext,na.rm = T),n = n())
+  summarise("BothSite_CBCL_ExtMean" = mean(CBCL_EXT_t,na.rm = T),n = n())
 
 # Merge both site Total, Int, and Ext calculations 
 Both_Site_Mean <- merge(Progress_Int_Mean_Both, Progress_Ext_Mean_Both)
@@ -93,7 +92,7 @@ setnames(Mean_Table, names(Mean_Table), Timepoint_names)
 kable(Mean_Table) %>%
   kable_styling(bootstrap_options = "striped", full_width = T) %>%
   add_header_above(c(" " = 1, "Controls Group means" = 4, "FSU Group means" = 4, "DBT Group means" = 4)) %>%
-  add_header_above(c("CBCL Mean Table" = 13)) %>%
+  add_header_above(c("CBCL Mean Table (t-Scores" = 13)) %>%
   column_spec(c(1,5,9), border_right = T, include_thead = T) %>%
   column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
 

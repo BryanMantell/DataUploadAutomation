@@ -16,15 +16,20 @@ library(data.table)
 library(knitr)
 library(kableExtra)
 library(dplyr)
+library(lmSupport)
 #library(redcapAPI)
 
 # Empty Global Environment
 rm(list = ls())
-#setwd("~/Documents/Min/DataUploadAutomation/Measures/Upload Preparation")
+# scientific notation, round up to 3 digits
+options(digits = 3)
+#setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
+#path <- path.expand("~/Documents/Min/DataUploadAutomation/Upload and Tables/Data")
 #setwd("D:/Austin/Lab Work (D-Drive)/DataUploadAutomation/Measures/Upload Preparation")
 # *************************************************************************
 # Import Pedigree Data####
 # *************************************************************************
+
 Pedigree <- read.csv("Reference_Pedigree.csv", stringsAsFactors = FALSE)
 Pedigree_name <- names(Pedigree)
 
@@ -50,25 +55,6 @@ Pedigree_name <- names(Pedigree)
 # Result_con <- textConnection(result)
 # Redcap_Data <- read.csv(Result_con)
 
-# TODO: will be removed Redcap API practices 
-library(RCurl)
-result <- postForm(
-  uri='https://redcap-prod.uoregon.edu/redcap/api/',
-  token='812C21F1A319AF558F267EBA40096511',
-  content='report',
-  format='csv',
-  report_id='71',
-  csvDelimiter='',
-  rawOrLabel='raw',
-  rawOrLabelHeaders='raw',
-  exportCheckboxLabel='false',
-  returnFormat='csv'
-)
-# print(result)
-
-
-Result_con <- textConnection(result)
-test <- read.csv(Result_con)
 
 # TODO: will be removed
 Redcap_Data <- read.csv("Redcap_Data.csv")
@@ -203,7 +189,7 @@ rm(old_UO_ders_names, old_UPMC_ders_names)
 # *************************************************************************
 
 # Create list of new variable names for the Prep Sheet
-New_CBCL_Names <- sprintf("srm_cbcl_%03d", seq(1:100))
+New_CBCL_Names <- sprintf("srm_CBCL_%03d", seq(1:100))
 
 # Create list of old variable names so we can target them to be replaced with the new ones
 # Since the question names change by timepoint we'll have to make unique lists by timepoint, starting with UO Timepoint 1 and UMPC Timepoint 1 and 4
@@ -264,6 +250,13 @@ new_CCNES_names <- sprintf("srm_CCNES_%02d",1:72)
 lapply(UPMC_Qualtrics_list, setnames, old_UPMC_CCNES_names, new_CCNES_names)
 lapply(UO_Qualtrics_list, setnames, old_UO_CCNES_names, new_CCNES_names)
 
+# NDA structure Column Names ####
+pabq <- paste("pabq",1:12, sep = "")
+CCNES_NDA_Names <- c()
+for (i in pabq) {
+  Name <- paste(i, letters[seq(1:6)], sep = "")
+  CCNES_NDA_Names <- c(CCNES_NDA_Names, Name)
+}
 # Clean environment 
 rm(old_UO_CCNES_names, i, n, old_UPMC_CCNES_names, ccnes_name, ccnes_name_1)
 
@@ -337,11 +330,11 @@ rm(old_UO_PKBS_names, old_UO_PKBS_names2, old_UO_PKBS_names3, old_UO_PKBS_names4
 # *************************************************************************
 # Affect Perspective Taking Rename ####
 # *************************************************************************
-#old_AffectPT_names <- c("oc_apt_01", "oc_apt_02", "oc_apt_03", "oc_apt_04", "oc_apt_05", "oc_apt_06", 
-#                        "oc_apt_07", "oc_apt_08")
-#new_AffectPT_names <- c("oc_apt_01", "oc_apt_03", "oc_apt_05", "oc_apt_07", "oc_apt_09", "oc_apt_11", 
-#                        "oc_apt_13", "oc_apt_15")
-#setnames(Redcap_Data, old_AffectPT_names, new_AffectPT_names, skip_absent = FALSE)
+old_AffectPT_names <- c("oc_apt_01", "oc_apt_02", "oc_apt_03", "oc_apt_04", "oc_apt_05", "oc_apt_06", 
+                        "oc_apt_07", "oc_apt_08")
+new_AffectPT_names <- c("oc_apt_01", "oc_apt_03", "oc_apt_05", "oc_apt_07", "oc_apt_09", "oc_apt_11", 
+                        "oc_apt_13", "oc_apt_15")
+setnames(Redcap_Data, old_AffectPT_names, new_AffectPT_names, skip_absent = FALSE)
 
 # Clean environment 
 rm(old_AffectPT_names)
@@ -355,34 +348,34 @@ old_DCS_names <- sprintf("oc_dcs_%02d", 1:36)
 # Emotion Labeling Rename ####
 # *************************************************************************
 # rename elt_exp names
-#new_eltpart1_names <- paste("oc_elt_exp", seq(1:8), sep = "_")
-#
+new_eltpart1_names <- paste("oc_elt_exp", seq(1:8), sep = "_")
+
 # rename elt_rec names
-#new_eltpart2_names <- paste("oc_elt_rec", seq(1:4), sep = "_")
-#
+new_eltpart2_names <- paste("oc_elt_rec", seq(1:4), sep = "_")
+
 # replace old eltpart1 names with new names
-#old_eltpart1_names <- paste("eltpart1_exp", seq(1:8), sep = "")
-#setnames(Redcap_Data, old_eltpart1_names, new_eltpart1_names)
-#
+old_eltpart1_names <- paste("eltpart1_exp", seq(1:8), sep = "")
+setnames(Redcap_Data, old_eltpart1_names, new_eltpart1_names)
+
 # replace old eltpart2 names with new names
-#old_eltpart2_names <- paste("eltpart2_rec", seq(1:4), sep = "")
-#setnames(Redcap_Data, old_eltpart2_names, new_eltpart2_names)
-#
+old_eltpart2_names <- paste("eltpart2_rec", seq(1:4), sep = "")
+setnames(Redcap_Data, old_eltpart2_names, new_eltpart2_names)
+
 # Clean environment 
-#rm(old_eltpart1_names, old_eltpart2_names)
+rm(old_eltpart1_names, old_eltpart2_names)
 
 # *************************************************************************
 # Emotion Strategies Rename ####
 # *************************************************************************
 # Redcap column names for locating old names to be replaced with Prep names and NDA names
-#new_ES_names <- c("oc_es_hapstrat", "oc_es_hap_1", "oc_es_hap_2", "oc_es_hap_3", "oc_es_angstrat", "oc_es_ang_1", "oc_es_ang_2", "oc_es_ang_3", "oc_es_sadstrat", "oc_es_sad_1", "oc_es_sad_2", "oc_es_sad_3")
-#old_ES_names <- c("oc_es_hapstrat", "oc_es_h1", "oc_es_h2", "oc_es_h3", "oc_es_angstrat", "oc_es_a1", "oc_es_a2", "oc_es_a3", "oc_es_sadstrat", "oc_es_s1", "oc_es_s2", "oc_es_s3")
-#
+new_ES_names <- c("oc_es_hapstrat", "oc_es_hap_1", "oc_es_hap_2", "oc_es_hap_3", "oc_es_angstrat", "oc_es_ang_1", "oc_es_ang_2", "oc_es_ang_3", "oc_es_sadstrat", "oc_es_sad_1", "oc_es_sad_2", "oc_es_sad_3")
+old_ES_names <- c("oc_es_hapstrat", "oc_es_h1", "oc_es_h2", "oc_es_h3", "oc_es_angstrat", "oc_es_a1", "oc_es_a2", "oc_es_a3", "oc_es_sadstrat", "oc_es_s1", "oc_es_s2", "oc_es_s3")
+
 # Replace Column Names
-#setnames(Redcap_Data, old_ES_names, new_ES_names)
-#
+setnames(Redcap_Data, old_ES_names, new_ES_names)
+
 # Clean environment 
-#rm(old_ES_names)
+rm(old_ES_names)
 
 # TODO: merge session
 
@@ -413,7 +406,7 @@ Qualtrics$mother_sex <- "F"
 rm(UO_Qualtrics_T1, UO_Qualtrics_T2, UO_Qualtrics_T3, UO_Qualtrics_T4, UO_Qualtrics,
    UPMC_Qualtrics_T1, UPMC_Qualtrics_T2, UPMC_Qualtrics_T3, UPMC_Qualtrics_T4, UPMC_Qualtrics)
 
-#rm(UPMC_Qualtrics_list, UO_Qualtrics_list)
+#rm(UPMC_Qualtrics_list, UO_Qualtrics_list )
 
 # Note ####
 # *************************************************************************

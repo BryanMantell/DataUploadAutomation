@@ -9,20 +9,19 @@ output: html_document
 Empty environment, loading preparation, scientific notation
 ```{r setup}
 # Empty Global Environment
-rm(list = ls())
+#rm(list = ls())
 
 source("Upload Preparation.R")
+#source("~/GitHub/DataUploadAutomation/Upload and Tables/Data/Upload Preparation.R")
 NDA_CBCL <- read.csv("cbcl1_501_template.csv", skip = 1)
 options(digits = 3)
-
-library(lmSupport)
 ```
 
 # Prep Sheet
 Create prep sheet to begin transferring data into NDA format.
 ```{r Prep Sheet}
 # Select necessary items from qualtrics to import into CBCL
-CBCL_Prep <- select(Qualtrics, c(Fam_ID, child_guid, child_famID, interview_date, interview_age_child, child_sex, GroupAssignment, Timepoint = Timepoint, contains("srm_cbcl")))
+CBCL_Prep <- select(Qualtrics, c(Fam_ID, child_guid, child_famID, interview_date, interview_age_child, child_sex, GroupAssignment, Timepoint, contains("srm_CBCL")))
 
 ```
 
@@ -30,7 +29,7 @@ CBCL_Prep <- select(Qualtrics, c(Fam_ID, child_guid, child_famID, interview_date
 Convert Likert Scale text input into numerical values then create a dataframe to place ID's that do not have 67% of their data present.
 ```{r Re-code and 67% Rule}
 # Create a list of names to be targeted
-New_CBCL_Names <- sprintf("srm_cbcl_%03d", seq(1:100))
+New_CBCL_Names <- sprintf("srm_CBCL_%03d", seq(1:100))
 
 # Recode text responses into numbers so they can be used in calculations
 CBCL_Prep <- CBCL_Prep %>% 
@@ -52,82 +51,144 @@ CBCL_Prep <- CBCL_Prep %>%
 Create sums column combining each individual subscale.
 ```{r Calculated Columns}
 
-# Creating calculated columns for "cbcl_er"
-CBCL_Prep <- add_column(CBCL_Prep, cbcl_er = varScore(CBCL_Prep, Forward = c("srm_cbcl_021", "srm_cbcl_046", "srm_cbcl_051", "srm_cbcl_079", "srm_cbcl_082", "srm_cbcl_083", "srm_cbcl_092", 
-                                                                   "srm_cbcl_097", "srm_cbcl_099"), MaxMiss = .20),.after = "srm_cbcl_100")
+# Creating calculated columns for "CBCL_ER"
+CBCL_Prep <- add_column(CBCL_Prep, CBCL_ER_r = varScore(CBCL_Prep, Forward = c("srm_CBCL_021", "srm_CBCL_046", "srm_CBCL_051", "srm_CBCL_079", "srm_CBCL_082", "srm_CBCL_083", "srm_CBCL_092", 
+                                                                   "srm_CBCL_097", "srm_CBCL_099"), MaxMiss = .20),.after = "srm_CBCL_100")
 
 
-# Creating calculated columns for "cbcl_ad"
-CBCL_Prep <- add_column(CBCL_Prep, cbcl_ad = varScore(CBCL_Prep, Forward = c("srm_cbcl_010", "srm_cbcl_033", "srm_cbcl_037", "srm_cbcl_043", "srm_cbcl_047", "srm_cbcl_068", "srm_cbcl_087", 
-                                                                   "srm_cbcl_090"), MaxMiss = .20),.after = "cbcl_er")
+# Creating calculated columns for "CBCL_AD"
+CBCL_Prep <- add_column(CBCL_Prep, CBCL_AD_r = varScore(CBCL_Prep, Forward = c("srm_CBCL_010", "srm_CBCL_033", "srm_CBCL_037", "srm_CBCL_043", "srm_CBCL_047", "srm_CBCL_068", "srm_CBCL_087", 
+                                                                   "srm_CBCL_090"), MaxMiss = .20),.after = "CBCL_ER_r")
 
 
-# Creating calculated columns for "cbcl_sc"
-CBCL_Prep <- add_column(CBCL_Prep, cbcl_sc = varScore(CBCL_Prep, Forward = c("srm_cbcl_001", "srm_cbcl_007", "srm_cbcl_012", "srm_cbcl_019", "srm_cbcl_024", "srm_cbcl_039", "srm_cbcl_045", 
-                                                                   "srm_cbcl_052", "srm_cbcl_078", "srm_cbcl_086", "srm_cbcl_093"), MaxMiss = .20),.after = "cbcl_ad")
+# Creating calculated columns for "CBCL_SC"
+CBCL_Prep <- add_column(CBCL_Prep, CBCL_SC_r = varScore(CBCL_Prep, Forward = c("srm_CBCL_001", "srm_CBCL_007", "srm_CBCL_012", "srm_CBCL_019", "srm_CBCL_024", "srm_CBCL_039", "srm_CBCL_045", 
+                                                                   "srm_CBCL_052", "srm_CBCL_078", "srm_CBCL_086", "srm_CBCL_093"), MaxMiss = .20),.after = "CBCL_AD_r")
 
 
-# Creating calculated columns for "cbcl_w"
-CBCL_Prep <- add_column(CBCL_Prep, cbcl_w = varScore(CBCL_Prep, Forward = c("srm_cbcl_002", "srm_cbcl_004", "srm_cbcl_023", "srm_cbcl_062", "srm_cbcl_067", "srm_cbcl_070", "srm_cbcl_071", 
-                                                                  "srm_cbcl_098"), MaxMiss = .20),.after = "cbcl_sc")
+# Creating calculated columns for "CBCL_W"
+CBCL_Prep <- add_column(CBCL_Prep, CBCL_W_r = varScore(CBCL_Prep, Forward = c("srm_CBCL_002", "srm_CBCL_004", "srm_CBCL_023", "srm_CBCL_062", "srm_CBCL_067", "srm_CBCL_070", "srm_CBCL_071", 
+                                                                  "srm_CBCL_098"), MaxMiss = .20),.after = "CBCL_SC_r")
 
 
-# Creating calculated columns for "cbcl_sp"
-CBCL_Prep <- add_column(CBCL_Prep, cbcl_sp = varScore(CBCL_Prep, Forward = c("srm_cbcl_022", "srm_cbcl_038", "srm_cbcl_048", "srm_cbcl_064", "srm_cbcl_074",
-                                                                   "srm_cbcl_084", "srm_cbcl_094"), MaxMiss = .20),.after = "cbcl_w")
+# Creating calculated columns for "CBCL_SP"
+CBCL_Prep <- add_column(CBCL_Prep, CBCL_SP_r = varScore(CBCL_Prep, Forward = c("srm_CBCL_022", "srm_CBCL_038", "srm_CBCL_048", "srm_CBCL_064", "srm_CBCL_074",
+                                                                   "srm_CBCL_084", "srm_CBCL_094"), MaxMiss = .20),.after = "CBCL_W_r")
 
 
-# Creating calculated columns for "cbcl_ap"
-CBCL_Prep <- add_column(CBCL_Prep, cbcl_ap = varScore(CBCL_Prep, Forward = c("srm_cbcl_005", "srm_cbcl_006", "srm_cbcl_056", "srm_cbcl_059",
-                                                                   "srm_cbcl_095"), MaxMiss = .20),.after = "cbcl_sp")
+# Creating calculated columns for "CBCL_AP"
+CBCL_Prep <- add_column(CBCL_Prep, CBCL_AP_r = varScore(CBCL_Prep, Forward = c("srm_CBCL_005", "srm_CBCL_006", "srm_CBCL_056", "srm_CBCL_059",
+                                                                   "srm_CBCL_095"), MaxMiss = .20),.after = "CBCL_SP_r")
 
 
-# Creating calculated columns for "cbcl_ab"
-CBCL_Prep <- add_column(CBCL_Prep, cbcl_ab = varScore(CBCL_Prep, Forward = c("srm_cbcl_008", "srm_cbcl_015", "srm_cbcl_016", "srm_cbcl_018", "srm_cbcl_020", "srm_cbcl_027", "srm_cbcl_029", 
-                                                                   "srm_cbcl_035", "srm_cbcl_040", "srm_cbcl_042", "srm_cbcl_044", "srm_cbcl_053", "srm_cbcl_058", "srm_cbcl_066", 
-                                                                   "srm_cbcl_069", "srm_cbcl_081", "srm_cbcl_085", "srm_cbcl_088", "srm_cbcl_096"), MaxMiss = .20),.after = "cbcl_ap")
+# Creating calculated columns for "CBCL_AB"
+CBCL_Prep <- add_column(CBCL_Prep, CBCL_AB_r = varScore(CBCL_Prep, Forward = c("srm_CBCL_008", "srm_CBCL_015", "srm_CBCL_016", "srm_CBCL_018", "srm_CBCL_020", "srm_CBCL_027", "srm_CBCL_029", 
+                                                                   "srm_CBCL_035", "srm_CBCL_040", "srm_CBCL_042", "srm_CBCL_044", "srm_CBCL_053", "srm_CBCL_058", "srm_CBCL_066", 
+                                                                   "srm_CBCL_069", "srm_CBCL_081", "srm_CBCL_085", "srm_CBCL_088", "srm_CBCL_096"), MaxMiss = .20),.after = "CBCL_AP_r")
 
 
-# Creating calculated columns for "cbcl_op"
-CBCL_Prep <- add_column(CBCL_Prep, cbcl_op = varScore(CBCL_Prep, Forward = c("srm_cbcl_003", "srm_cbcl_009", "srm_cbcl_011", "srm_cbcl_013", "srm_cbcl_014", "srm_cbcl_017", "srm_cbcl_025", 
-                                                                   "srm_cbcl_026", "srm_cbcl_028", "srm_cbcl_030", "srm_cbcl_031", "srm_cbcl_032", "srm_cbcl_034", "srm_cbcl_036", 
-                                                                   "srm_cbcl_041", "srm_cbcl_049", "srm_cbcl_050", "srm_cbcl_054", "srm_cbcl_055", "srm_cbcl_057", "srm_cbcl_060",
-                                                                   "srm_cbcl_061", "srm_cbcl_063", "srm_cbcl_065", "srm_cbcl_072", "srm_cbcl_073", "srm_cbcl_075", "srm_cbcl_076",
-                                                                   "srm_cbcl_077", "srm_cbcl_080", "srm_cbcl_089", "srm_cbcl_091", "srm_cbcl_100"), MaxMiss = .20),.after = "cbcl_ab")
+# Creating calculated columns for "CBCL_OP"
+CBCL_Prep <- add_column(CBCL_Prep, CBCL_OP_r = varScore(CBCL_Prep, Forward = c("srm_CBCL_003", "srm_CBCL_009", "srm_CBCL_011", "srm_CBCL_013", "srm_CBCL_014", "srm_CBCL_017", "srm_CBCL_025", 
+                                                                   "srm_CBCL_026", "srm_CBCL_028", "srm_CBCL_030", "srm_CBCL_031", "srm_CBCL_032", "srm_CBCL_034", "srm_CBCL_036", 
+                                                                   "srm_CBCL_041", "srm_CBCL_049", "srm_CBCL_050", "srm_CBCL_054", "srm_CBCL_055", "srm_CBCL_057", "srm_CBCL_060",
+                                                                   "srm_CBCL_061", "srm_CBCL_063", "srm_CBCL_065", "srm_CBCL_072", "srm_CBCL_073", "srm_CBCL_075", "srm_CBCL_076",
+                                                                   "srm_CBCL_077", "srm_CBCL_080", "srm_CBCL_089", "srm_CBCL_091", "srm_CBCL_100"), MaxMiss = .20),.after = "CBCL_AB_r")
 
 
-# Creating calculated columns for "cbcl_int"
-CBCL_Prep <- add_column(CBCL_Prep, cbcl_int = varScore(CBCL_Prep, Forward = c("srm_cbcl_021", "srm_cbcl_046", "srm_cbcl_051", "srm_cbcl_079", "srm_cbcl_082", "srm_cbcl_083", "srm_cbcl_092", 
-                                                                    "srm_cbcl_097", "srm_cbcl_099", "srm_cbcl_010", "srm_cbcl_033", "srm_cbcl_037", "srm_cbcl_043", "srm_cbcl_047", 
-                                                                    "srm_cbcl_068", "srm_cbcl_087", "srm_cbcl_090", "srm_cbcl_001", "srm_cbcl_007", "srm_cbcl_012", "srm_cbcl_019",
-                                                                    "srm_cbcl_024", "srm_cbcl_039", "srm_cbcl_045", "srm_cbcl_052", "srm_cbcl_078", "srm_cbcl_086", "srm_cbcl_093", 
-                                                                    "srm_cbcl_002", "srm_cbcl_004", "srm_cbcl_023", "srm_cbcl_062", "srm_cbcl_067", "srm_cbcl_070", "srm_cbcl_071",
-                                                                    "srm_cbcl_098"), MaxMiss = .20),.after = "cbcl_op")
+# Creating calculated columns for "CBCL_INT"
+CBCL_Prep <- add_column(CBCL_Prep, CBCL_INT_r = varScore(CBCL_Prep, Forward = c("srm_CBCL_021", "srm_CBCL_046", "srm_CBCL_051", "srm_CBCL_079", "srm_CBCL_082", "srm_CBCL_083", "srm_CBCL_092", 
+                                                                    "srm_CBCL_097", "srm_CBCL_099", "srm_CBCL_010", "srm_CBCL_033", "srm_CBCL_037", "srm_CBCL_043", "srm_CBCL_047", 
+                                                                    "srm_CBCL_068", "srm_CBCL_087", "srm_CBCL_090", "srm_CBCL_001", "srm_CBCL_007", "srm_CBCL_012", "srm_CBCL_019",
+                                                                    "srm_CBCL_024", "srm_CBCL_039", "srm_CBCL_045", "srm_CBCL_052", "srm_CBCL_078", "srm_CBCL_086", "srm_CBCL_093", 
+                                                                    "srm_CBCL_002", "srm_CBCL_004", "srm_CBCL_023", "srm_CBCL_062", "srm_CBCL_067", "srm_CBCL_070", "srm_CBCL_071",
+                                                                    "srm_CBCL_098"), MaxMiss = .20),.after = "CBCL_OP_r")
 
 
-# Creating calculated columns for "cbcl_ext"
-CBCL_Prep <- add_column(CBCL_Prep, cbcl_ext = varScore(CBCL_Prep, Forward = c("srm_cbcl_005", "srm_cbcl_006", "srm_cbcl_056", "srm_cbcl_059", "srm_cbcl_095", "srm_cbcl_008", "srm_cbcl_015",
-                                                                    "srm_cbcl_016", "srm_cbcl_018", "srm_cbcl_020", "srm_cbcl_027", "srm_cbcl_029", "srm_cbcl_035", "srm_cbcl_040",
-                                                                    "srm_cbcl_042", "srm_cbcl_044", "srm_cbcl_053", "srm_cbcl_058", "srm_cbcl_066", "srm_cbcl_069", "srm_cbcl_081",
-                                                                    "srm_cbcl_085", "srm_cbcl_088", "srm_cbcl_096"), MaxMiss = .20),.after = "cbcl_int")
+# Creating calculated columns for "CBCL_EXT"
+CBCL_Prep <- add_column(CBCL_Prep, CBCL_EXT_r = varScore(CBCL_Prep, Forward = c("srm_CBCL_005", "srm_CBCL_006", "srm_CBCL_056", "srm_CBCL_059", "srm_CBCL_095", "srm_CBCL_008", "srm_CBCL_015",
+                                                                    "srm_CBCL_016", "srm_CBCL_018", "srm_CBCL_020", "srm_CBCL_027", "srm_CBCL_029", "srm_CBCL_035", "srm_CBCL_040",
+                                                                    "srm_CBCL_042", "srm_CBCL_044", "srm_CBCL_053", "srm_CBCL_058", "srm_CBCL_066", "srm_CBCL_069", "srm_CBCL_081",
+                                                                    "srm_CBCL_085", "srm_CBCL_088", "srm_CBCL_096"), MaxMiss = .20),.after = "CBCL_INT_r")
 
 
-# Creating calculated columns for "cbcl_total"
-CBCL_Prep <- add_column(CBCL_Prep, cbcl_total = varScore(CBCL_Prep, Forward = c("srm_cbcl_001", "srm_cbcl_002", "srm_cbcl_003", "srm_cbcl_004", "srm_cbcl_005", "srm_cbcl_006", "srm_cbcl_007",
-                                                                      "srm_cbcl_008", "srm_cbcl_009", "srm_cbcl_010", "srm_cbcl_011", "srm_cbcl_012", "srm_cbcl_013", "srm_cbcl_014",
-                                                                      "srm_cbcl_015", "srm_cbcl_016", "srm_cbcl_017", "srm_cbcl_018", "srm_cbcl_019", "srm_cbcl_020", "srm_cbcl_021",
-                                                                      "srm_cbcl_022", "srm_cbcl_023", "srm_cbcl_024", "srm_cbcl_025", "srm_cbcl_026", "srm_cbcl_027", "srm_cbcl_028",
-                                                                      "srm_cbcl_029", "srm_cbcl_030", "srm_cbcl_031", "srm_cbcl_032", "srm_cbcl_033", "srm_cbcl_034", "srm_cbcl_035",
-                                                                      "srm_cbcl_036", "srm_cbcl_037", "srm_cbcl_038", "srm_cbcl_039", "srm_cbcl_040", "srm_cbcl_041", "srm_cbcl_042",
-                                                                      "srm_cbcl_043", "srm_cbcl_044", "srm_cbcl_045", "srm_cbcl_046", "srm_cbcl_047", "srm_cbcl_048", "srm_cbcl_049",
-                                                                      "srm_cbcl_050", "srm_cbcl_051", "srm_cbcl_052", "srm_cbcl_053", "srm_cbcl_054", "srm_cbcl_055", "srm_cbcl_056",
-                                                                      "srm_cbcl_057", "srm_cbcl_058", "srm_cbcl_059", "srm_cbcl_060", "srm_cbcl_061", "srm_cbcl_062", "srm_cbcl_063",
-                                                                      "srm_cbcl_064", "srm_cbcl_065", "srm_cbcl_066", "srm_cbcl_067", "srm_cbcl_068", "srm_cbcl_069", "srm_cbcl_070",
-                                                                      "srm_cbcl_071", "srm_cbcl_072", "srm_cbcl_073", "srm_cbcl_074", "srm_cbcl_075", "srm_cbcl_076", "srm_cbcl_077",
-                                                                      "srm_cbcl_078", "srm_cbcl_079", "srm_cbcl_080", "srm_cbcl_081", "srm_cbcl_082", "srm_cbcl_083", "srm_cbcl_084",
-                                                                      "srm_cbcl_085", "srm_cbcl_086", "srm_cbcl_087", "srm_cbcl_088", "srm_cbcl_089", "srm_cbcl_090", "srm_cbcl_091",
-                                                                      "srm_cbcl_092", "srm_cbcl_093", "srm_cbcl_094", "srm_cbcl_095", "srm_cbcl_096", "srm_cbcl_097", "srm_cbcl_098",
-                                                                      "srm_cbcl_099", "srm_cbcl_100"), MaxMiss = .20),.after = "cbcl_ext")
+# Creating calculated columns for "CBCL_TOT"
+CBCL_Prep <- add_column(CBCL_Prep, CBCL_TOT_r = varScore(CBCL_Prep, Forward = c("srm_CBCL_001", "srm_CBCL_002", "srm_CBCL_003", "srm_CBCL_004", "srm_CBCL_005", "srm_CBCL_006", "srm_CBCL_007",
+                                                                      "srm_CBCL_008", "srm_CBCL_009", "srm_CBCL_010", "srm_CBCL_011", "srm_CBCL_012", "srm_CBCL_013", "srm_CBCL_014",
+                                                                      "srm_CBCL_015", "srm_CBCL_016", "srm_CBCL_017", "srm_CBCL_018", "srm_CBCL_019", "srm_CBCL_020", "srm_CBCL_021",
+                                                                      "srm_CBCL_022", "srm_CBCL_023", "srm_CBCL_024", "srm_CBCL_025", "srm_CBCL_026", "srm_CBCL_027", "srm_CBCL_028",
+                                                                      "srm_CBCL_029", "srm_CBCL_030", "srm_CBCL_031", "srm_CBCL_032", "srm_CBCL_033", "srm_CBCL_034", "srm_CBCL_035",
+                                                                      "srm_CBCL_036", "srm_CBCL_037", "srm_CBCL_038", "srm_CBCL_039", "srm_CBCL_040", "srm_CBCL_041", "srm_CBCL_042",
+                                                                      "srm_CBCL_043", "srm_CBCL_044", "srm_CBCL_045", "srm_CBCL_046", "srm_CBCL_047", "srm_CBCL_048", "srm_CBCL_049",
+                                                                      "srm_CBCL_050", "srm_CBCL_051", "srm_CBCL_052", "srm_CBCL_053", "srm_CBCL_054", "srm_CBCL_055", "srm_CBCL_056",
+                                                                      "srm_CBCL_057", "srm_CBCL_058", "srm_CBCL_059", "srm_CBCL_060", "srm_CBCL_061", "srm_CBCL_062", "srm_CBCL_063",
+                                                                      "srm_CBCL_064", "srm_CBCL_065", "srm_CBCL_066", "srm_CBCL_067", "srm_CBCL_068", "srm_CBCL_069", "srm_CBCL_070",
+                                                                      "srm_CBCL_071", "srm_CBCL_072", "srm_CBCL_073", "srm_CBCL_074", "srm_CBCL_075", "srm_CBCL_076", "srm_CBCL_077",
+                                                                      "srm_CBCL_078", "srm_CBCL_079", "srm_CBCL_080", "srm_CBCL_081", "srm_CBCL_082", "srm_CBCL_083", "srm_CBCL_084",
+                                                                      "srm_CBCL_085", "srm_CBCL_086", "srm_CBCL_087", "srm_CBCL_088", "srm_CBCL_089", "srm_CBCL_090", "srm_CBCL_091",
+                                                                      "srm_CBCL_092", "srm_CBCL_093", "srm_CBCL_094", "srm_CBCL_095", "srm_CBCL_096", "srm_CBCL_097", "srm_CBCL_098",
+                                                                      "srm_CBCL_099", "srm_CBCL_100"), MaxMiss = .20),.after = "CBCL_EXT_r")
+
+```
+
+# t-Score Conversion
+Convert CBCL subscales into t-scores.
+```{r t-Scores}
+# Import CBCL's t-Scores to be referenced in conversion
+CBCL_Codebook <- read.csv("CBCL_Codebook.csv")
+
+# Separate the codebook into individual subscales
+ER_Tscores <- select(CBCL_Codebook, CBCL_ER_r, CBCL_ER_t)
+ER_Tscores <- ER_Tscores[-c(20:201), ]
+
+AD_Tscores <- select(CBCL_Codebook, CBCL_AD_r, CBCL_AD_t)
+AD_Tscores <- AD_Tscores[-c(18:201), ]
+
+SC_Tscores <- select(CBCL_Codebook, CBCL_SC_r, CBCL_SC_t)
+SC_Tscores <- SC_Tscores[-c(24:201), ]
+
+W_Tscores <- select(CBCL_Codebook, CBCL_W_r, CBCL_W_t)
+W_Tscores <- W_Tscores[-c(18:201), ]
+
+SP_Tscores <- select(CBCL_Codebook, CBCL_SP_r, CBCL_SP_t)
+SP_Tscores <- SP_Tscores[-c(16:201), ]
+
+AP_Tscores <- select(CBCL_Codebook, CBCL_AP_r, CBCL_AP_t)
+AP_Tscores <- AP_Tscores[-c(12:201), ]
+
+AB_Tscores <- select(CBCL_Codebook, CBCL_AB_r, CBCL_AB_t)
+AB_Tscores <- AB_Tscores[-c(40:201), ]
+
+#OP_Tscores <- select(CBCL_Codebook, CBCL_OP_r, CBCL_OP_t)
+#OP_Tscores <- OP_Tscores[-c(16:201), ]
+
+INT_Tscores <- select(CBCL_Codebook, CBCL_INT_r, CBCL_INT_t)
+INT_Tscores <- INT_Tscores[-c(74:201), ]
+
+EXT_Tscores <- select(CBCL_Codebook, CBCL_EXT_r, CBCL_EXT_t)
+EXT_Tscores <- EXT_Tscores[-c(50:201), ]
+
+TOT_Tscores <- select(CBCL_Codebook, CBCL_TOT_r, CBCL_TOT_t)
+
+# Merge T scores with next to raw scores
+CBCL_Prep <- merge(CBCL_Prep, ER_Tscores, by = "CBCL_ER_r", all.x = TRUE)
+CBCL_Prep <- merge(CBCL_Prep, AD_Tscores, by = "CBCL_AD_r", all.x = TRUE)
+CBCL_Prep <- merge(CBCL_Prep, SC_Tscores, by = "CBCL_SC_r", all.x = TRUE)
+CBCL_Prep <- merge(CBCL_Prep, W_Tscores, by = "CBCL_W_r", all.x = TRUE)
+CBCL_Prep <- merge(CBCL_Prep, SP_Tscores, by = "CBCL_SP_r", all.x = TRUE)
+CBCL_Prep <- merge(CBCL_Prep, AP_Tscores, by = "CBCL_AP_r", all.x = TRUE)
+CBCL_Prep <- merge(CBCL_Prep, AB_Tscores, by = "CBCL_AB_r", all.x = TRUE)
+#CBCL_Prep <- merge(CBCL_Prep, OP_Tscores, by = "CBCL_OP_r", all.x = TRUE)
+CBCL_Prep <- merge(CBCL_Prep, INT_Tscores, by = "CBCL_INT_r", all.x = TRUE)
+CBCL_Prep <- merge(CBCL_Prep, EXT_Tscores, by = "CBCL_EXT_r", all.x = TRUE)
+CBCL_Prep <- merge(CBCL_Prep, TOT_Tscores, by = "CBCL_TOT_r", all.x = TRUE)
+
+# Reorder CBCL Prep to fix disarrangement from previous code
+CBCL_Column_Order <- c("Fam_ID", "child_guid", "child_famID", "interview_date", "interview_age_child", "child_sex", "GroupAssignment", "Timepoint", "srm_CBCL_001", "srm_CBCL_002", "srm_CBCL_003", "srm_CBCL_004", "srm_CBCL_005", "srm_CBCL_006", "srm_CBCL_007", "srm_CBCL_008", "srm_CBCL_009", "srm_CBCL_010", "srm_CBCL_011", "srm_CBCL_012", "srm_CBCL_013", "srm_CBCL_014", "srm_CBCL_015", "srm_CBCL_016", "srm_CBCL_017", "srm_CBCL_018", "srm_CBCL_019", "srm_CBCL_020", "srm_CBCL_021", "srm_CBCL_022", "srm_CBCL_023", "srm_CBCL_024", "srm_CBCL_025", "srm_CBCL_026", "srm_CBCL_027", "srm_CBCL_028", "srm_CBCL_029", "srm_CBCL_030", "srm_CBCL_031", "srm_CBCL_032", "srm_CBCL_033", "srm_CBCL_034", "srm_CBCL_035", "srm_CBCL_036", "srm_CBCL_037", "srm_CBCL_038", "srm_CBCL_039", "srm_CBCL_040", "srm_CBCL_041", "srm_CBCL_042", "srm_CBCL_043", "srm_CBCL_044", "srm_CBCL_045", "srm_CBCL_046", "srm_CBCL_047", "srm_CBCL_048", "srm_CBCL_049", "srm_CBCL_050", "srm_CBCL_051", "srm_CBCL_052", "srm_CBCL_053", "srm_CBCL_054", "srm_CBCL_055", "srm_CBCL_056", "srm_CBCL_057", "srm_CBCL_058", "srm_CBCL_059", "srm_CBCL_060", "srm_CBCL_061", "srm_CBCL_062", "srm_CBCL_063", "srm_CBCL_064", "srm_CBCL_065", "srm_CBCL_066", "srm_CBCL_067", "srm_CBCL_068", "srm_CBCL_069", "srm_CBCL_070", "srm_CBCL_071", "srm_CBCL_072", "srm_CBCL_073", "srm_CBCL_074", "srm_CBCL_075", "srm_CBCL_076", "srm_CBCL_077", "srm_CBCL_078", "srm_CBCL_079", "srm_CBCL_080", "srm_CBCL_081", "srm_CBCL_082", "srm_CBCL_083", "srm_CBCL_084", "srm_CBCL_085", "srm_CBCL_086", "srm_CBCL_087", "srm_CBCL_088", "srm_CBCL_089", "srm_CBCL_090", "srm_CBCL_091", "srm_CBCL_092", "srm_CBCL_093", "srm_CBCL_094", "srm_CBCL_095", "srm_CBCL_096", "srm_CBCL_097", "srm_CBCL_098", "srm_CBCL_099", "srm_CBCL_100", "CBCL_ER_r", "CBCL_ER_t", "CBCL_AD_r", "CBCL_AD_t", "CBCL_SC_r", "CBCL_SC_t", "CBCL_W_r", "CBCL_W_t", "CBCL_SP_r", "CBCL_SP_t", "CBCL_AP_r", "CBCL_AP_t", "CBCL_AB_r", "CBCL_AB_t", "CBCL_INT_r", "CBCL_INT_t", "CBCL_EXT_r", "CBCL_EXT_t", "CBCL_TOT_r", "CBCL_TOT_t")
+
+CBCL_Prep <- CBCL_Prep[, CBCL_Column_Order]
+CBCL_Prep <- arrange(CBCL_Prep, Fam_ID)
+
+rm(ER_Tscores, AD_Tscores, SC_Tscores, W_Tscores, SP_Tscores, AP_Tscores, AB_Tscores, INT_Tscores, EXT_Tscores, TOT_Tscores, CBCL_Column_Order)
 
 ```
 
@@ -182,7 +243,7 @@ rm(NDA_CBCL_Prep, NDA_CBCL_Names, first_line, New_CBCL_Names)
 Create descriptive means table.
 ```{r All Data Table, eval=FALSE, include=FALSE}
 # Select needed columns
-Progress <- select(CBCL_Prep, c(Fam_ID, GroupAssignment, Timepoint, cbcl_ext, cbcl_int, cbcl_total, starts_with("srm")))
+Progress <- select(CBCL_Prep, c(Fam_ID, GroupAssignment, Timepoint, CBCL_TOT_t, CBCL_INT_t, CBCL_EXT_t, starts_with("srm")))
 
 # Change FamId as character and assign it to the ID variable 
 ID <- c(as.character(Progress$FamID))
@@ -194,17 +255,17 @@ Progress$site <- ifelse(startsWith(ID, "9"),"UO","UPMC")
 # Grouping & calculation for CBCL total
 Progress_Total_Mean <- Progress %>%
   group_by(GroupAssignment,timepoint,site) %>%
-  summarise(TotalMean = mean(cbcl_total,na.rm = T),count = n())
+  summarise(TotalMean = mean(CBCL_TOT_t,na.rm = T),count = n())
 
 # Grouping & calculation for CBCL Int
 Progress_Int_Mean <- Progress %>%
   group_by(GroupAssignment,timepoint,site) %>%
-  summarise(IntMean = mean(cbcl_int,na.rm = T),count = n())
+  summarise(IntMean = mean(CBCL_INT_t,na.rm = T),count = n())
 
 # Grouping & calculation for CBCL Ext
 Progress_Ext_Mean <- Progress %>%
   group_by(GroupAssignment,timepoint,site) %>%
-  summarise(ExtMean = mean(cbcl_ext,na.rm = T),count = n())
+  summarise(ExtMean = mean(CBCL_EXT_t,na.rm = T),count = n())
 
 # Merge Total, Int, and Ext calculations
 Progress_Mean <- merge(Progress_Int_Mean, Progress_Ext_Mean)
@@ -220,17 +281,17 @@ UPMC <- Progress_Mean[Progress_Mean$site == "UPMC",]
 # Grouping & calculation for CBCL total
 Progress_Total_Mean_Both <- Progress %>%
   group_by(GroupAssignment, timepoint) %>%
-  summarise("BothSite_CBCL_TotalMean" = mean(cbcl_total,na.rm = T),n = n())
+  summarise("BothSite_CBCL_TotalMean" = mean(CBCL_TOT_t,na.rm = T),n = n())
 
 # Grouping & calculation for CBCL Int
 Progress_Int_Mean_Both <- Progress %>%
   group_by(GroupAssignment, timepoint) %>%
-  summarise("BothSite_CBCL_IntMean" = mean(cbcl_int,na.rm = T),n = n())
+  summarise("BothSite_CBCL_IntMean" = mean(CBCL_INT_t,na.rm = T),n = n())
 
 # Grouping & calculation for CBCL Ext
 Progress_Ext_Mean_Both <- Progress %>%
   group_by(GroupAssignment, timepoint) %>%
-  summarise("BothSite_CBCL_ExtMean" = mean(cbcl_ext,na.rm = T),n = n())
+  summarise("BothSite_CBCL_ExtMean" = mean(CBCL_EXT_t,na.rm = T),n = n())
 
 # Merge both site Total, Int, and Ext calculations 
 Both_Site_Mean <- merge(Progress_Int_Mean_Both, Progress_Ext_Mean_Both)
@@ -267,17 +328,11 @@ setnames(Mean_Table, names(Mean_Table), Timepoint_names)
 kable(Mean_Table) %>%
   kable_styling(bootstrap_options = "striped", full_width = T) %>%
   add_header_above(c(" " = 1, "Controls Group means" = 4, "FSU Group means" = 4, "DBT Group means" = 4)) %>%
-  add_header_above(c("CBCL Mean Table" = 13)) %>%
+  add_header_above(c("CBCL Mean Table (t-Scores" = 13)) %>%
   column_spec(c(1,5,9), border_right = T, include_thead = T) %>%
   column_spec(c(2,3,4,5,6,7,8,9,10,11,12,13), width_min = "2cm", width_max = "2cm")
 
 # Clean Environment of intermediate calculations for "all data" table.
 rm(Progress, Progress_Ext_Mean, Progress_Ext_Mean_Both, Progress_Int_Mean, Progress_Int_Mean_Both, Progress_Mean, Progress_Total_Mean, Progress_Total_Mean_Both, Both_Site_Mean)
-
-```
-
-# N Table
-Create table for participant numbers. (Currently unused/unfinished)
-```{r number table, include = T}
 
 ```

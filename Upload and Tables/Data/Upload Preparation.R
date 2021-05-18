@@ -188,7 +188,7 @@ rm(old_UO_ders_names, old_UPMC_ders_names)
 # *************************************************************************
 
 # Create list of new variable names for the Prep Sheet
-New_CBCL_Names <- sprintf("srm_cbcl_%03d", seq(1:100))
+New_CBCL_Names <- sprintf("srm_CBCL_%03d", seq(1:100))
 
 # Create list of old variable names so we can target them to be replaced with the new ones
 # Since the question names change by timepoint we'll have to make unique lists by timepoint, starting with UO Timepoint 1 and UMPC Timepoint 1 and 4
@@ -403,9 +403,7 @@ Qualtrics$mother_sex <- "F"
 
 # Clean global Environment
 rm(UO_Qualtrics_T1, UO_Qualtrics_T2, UO_Qualtrics_T3, UO_Qualtrics_T4, UO_Qualtrics,
-   UPMC_Qualtrics_T1, UPMC_Qualtrics_T2, UPMC_Qualtrics_T3, UPMC_Qualtrics_T4, UPMC_Qualtrics)
-
-#rm(UPMC_Qualtrics_list, UO_Qualtrics_list )
+   UPMC_Qualtrics_T1, UPMC_Qualtrics_T2, UPMC_Qualtrics_T3, UPMC_Qualtrics_T4, UPMC_Qualtrics, UPMC_Qualtrics_list, UO_Qualtrics_list)
 
 # Note ####
 # *************************************************************************
