@@ -1,39 +1,25 @@
----
-title: "PPVT"
-author: "Austin Fisenko"
-date: "12/7/2020"
-output: html_document
----
+# title: "PPVT Upload Script"
+# author: "Austin Fisenko"
 
-# Setup
-Empty environment, loading preparation, scientific notation
-```{r setup}
 # Empty Global Environment
-rm(list = ls())
+#rm(list = ls())
 
-source("Upload Preparation.R")
+# Load preparation script and NDA templates
+setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
+#source("~/GitHub/DataUploadAutomation/Upload and Tables/Data/Upload Preparation.R")
 NDA_PPVT <- read.csv("ppvt_4a02_template.csv", skip = 1, stringsAsFactors = FALSE)
 UPMC_PPVT_Data <- read.csv("UPMC_PPVT_Data.csv", stringsAsFactors = FALSE)
 
-```
-
-## Rename Columns
-Rename questions numbers to self-report measure scale items.Then, take each scale measure from both sites and combine them by timepoint.
-```{r Rename Columns}
 # Redcap column names for locating old names to be replaced with Prep names and NDA names
 PPVT_names <- c("om_ppvt_rs", "om_ppvt_ss", "oc_ppvt_rs", "oc_ppvt_ss")
 NDA_PPVT_names <- c("ss_rawscore", "ss_standardscore")
 
 # Select needed columns and rename in Redcap_Data & UPMC_PPVT_Data, then merge the two timepoints together
-Redcap_Data <- select(Redcap_Data, c(Fam_ID, om_ppvt_rs, om_ppvt_ss, oc_ppvt_rs, oc_ppvt_ss))
+Redcap_Data_PPVT <- select(Redcap_Data, c(Fam_ID, om_ppvt_rs, om_ppvt_ss, oc_ppvt_rs, oc_ppvt_ss))
 UPMC_PPVT_Data <- select(UPMC_PPVT_Data, c(Fam_ID = STEADY.ID., om_ppvt_rs = Parent.PPVT.Raw.Score, om_ppvt_ss = Parent.PPVT.Standard.Score, oc_ppvt_rs = Child.PPVT.Raw.Score, oc_ppvt_ss = Child.PPVT.Standard.Score))
 
-PPVT_BothSite_Data <- rbind(Redcap_Data, UPMC_PPVT_Data)
-```
+PPVT_BothSite_Data <- rbind(Redcap_Data_PPVT, UPMC_PPVT_Data)
 
-## Prep Sheet
-Create prep sheet to begin transferring data into NDA format. Rename relevant GUID information to match NDA specifications. Finally, bind all timepoints into single PPVT Prep Sheet.
-```{r Prep Sheet}
 # Select revelent pedigree information, rename as needed.
 Pedigree_Prep <- data.frame(select(Pedigree, Fam_ID, child_guid, subjectkey, child_famID, src_subject_id, interview_date, interview_age_Mom, interview_age_child, child_sex, sex_mother, GroupAssignment), Timepoint = 1)
 
@@ -41,12 +27,8 @@ Pedigree_Prep <- data.frame(select(Pedigree, Fam_ID, child_guid, subjectkey, chi
 PPVT_PREP <- merge(Pedigree_Prep, PPVT_BothSite_Data,by = c("Fam_ID"), all = TRUE)
 
 # Clean Environment
-rm(Pedigree, Pedigree_Prep, Redcap_Data, PPVT_BothSite_Data, UPMC_PPVT_Data)
-```
+rm(Pedigree_Prep, Redcap_Data_PPVT, PPVT_BothSite_Data, UPMC_PPVT_Data)
 
-## NDA Sheet
-Re-name PPVT Prep Sheet columns to match NDA specifications. 
-```{r NDA Sheet}
 # Create NDA prep sheet for mom and child data, select all the needed columns from prep sheet
 NDA_PPVT_Prep_Child <- select(PPVT_PREP, c(subjectkey = child_guid, src_subject_id = child_famID, interview_date, interview_age = interview_age_child, sex = child_sex, ss_rawscore = oc_ppvt_rs, ss_standardscore = oc_ppvt_ss, visit = Timepoint))
 NDA_PPVT_Prep_Mom <- select(PPVT_PREP, c(subjectkey, src_subject_id, interview_date, interview_age = interview_age_Mom, sex = sex_mother, ss_rawscore = om_ppvt_rs, ss_standardscore = om_ppvt_ss, visit = Timepoint))
@@ -61,7 +43,7 @@ NDA_PPVT_Prep <- rbind(NDA_PPVT_Prep_Child, NDA_PPVT_Prep_Mom)
 # Arrange PPVT data so Mother and Child subjectkeys are next to each other for readability. 
 NDA_PPVT_Prep <- arrange(NDA_PPVT_Prep, src_subject_id)
 
-# Recreate first line in orignial NDA file
+# Recreate first line in orignial NDA file 
 NDA_PPVT <- rbind(NDA_PPVT, NDA_PPVT_Prep)
 first_line <- matrix("", nrow = 1, ncol = ncol(NDA_PPVT))
 first_line[,1] <- "ppvt_4a"
@@ -78,4 +60,3 @@ write.table(NDA_PPVT, file = 'ppvt_4a.csv', sep = ",", append = TRUE, na = "", q
 
 #Clean Global Environment
 rm(first_line)
-```
