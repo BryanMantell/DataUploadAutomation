@@ -14,7 +14,6 @@ Empty environment, loading preparation, scientific notation
 source("Upload Preparation.R")
 #source("~/GitHub/DataUploadAutomation/Upload and Tables/Data/Upload Preparation.R")
 NDA_CBCL <- read.csv("cbcl1_501_template.csv", skip = 1)
-options(digits = 3)
 ```
 
 # Prep Sheet
