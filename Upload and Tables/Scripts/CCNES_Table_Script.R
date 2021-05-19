@@ -1,8 +1,8 @@
 # title: "CCNES Mean Table"
 # author: "Min Zhang"
 
-source("~/Documents/Min/DataUploadAutomation/Upload and Tables/Scripts/CCNES_Upload_Script.R")
-setwd("~/Documents/Min/DataUploadAutomation/Upload and Tables/Output for NDA")
+source("~/Documents/GitHub/DataUploadAutomation/Upload and Tables/Scripts/CCNES_Upload_Script.R")
+
 
 # Mean Tables ####
 # All responsees Table ####
