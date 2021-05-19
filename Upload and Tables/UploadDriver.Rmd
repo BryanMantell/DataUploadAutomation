@@ -19,3 +19,28 @@ source("~/GitHub/DataUploadAutomation/Upload and Tables/Scripts/CCNES_Upload_Scr
 
 ```
 
+```{r DERS}
+source("~/GitHub/DataUploadAutomation/Upload and Tables/Scripts/DERS_Upload_Script.R")
+
+```
+
+```{r PPVT}
+source("~/GitHub/DataUploadAutomation/Upload and Tables/Scripts/PPVT_Upload_Script.R")
+
+```
+
+```{r ES}
+source("~/GitHub/DataUploadAutomation/Upload and Tables/Scripts/ES_Upload_Script.R")
+
+```
+
+```{r PKBS}
+source("~/GitHub/DataUploadAutomation/Upload and Tables/Scripts/PKBS_Upload_Script.R")
+
+```
+
+```{r WCCL}
+source("~/GitHub/DataUploadAutomation/Upload and Tables/Scripts/WCCL_Upload_Script.R")
+
+```
+

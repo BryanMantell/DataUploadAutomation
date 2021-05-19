@@ -1,8 +1,7 @@
 # Title: WCCL Upload Script
 
 # Setup
-Empty environment, loading library, set knitr and scientific notation
-```{r setup}
+
 
 # import data frame
 

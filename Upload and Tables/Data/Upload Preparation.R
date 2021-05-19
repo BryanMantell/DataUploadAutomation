@@ -16,13 +16,14 @@ library(data.table)
 library(knitr)
 library(kableExtra)
 library(dplyr)
+library(lmSupport)
 #library(redcapAPI)
 
 # Empty Global Environment
 rm(list = ls())
 # scientific notation, round up to 3 digits
 options(digits = 3)
-setwd("~/Documents/GitHub/DataUploadAutomation/Upload and Tables/Data")
+setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
 #path <- path.expand("~/Documents/Min/DataUploadAutomation/Upload and Tables/Data")
 #setwd("D:/Austin/Lab Work (D-Drive)/DataUploadAutomation/Measures/Upload Preparation")
 # *************************************************************************

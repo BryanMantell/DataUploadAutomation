@@ -13,7 +13,7 @@ NDA_CBCL <- read.csv("cbcl1_501_template.csv", skip = 1)
 CBCL_Prep <- select(Qualtrics, c(Fam_ID, child_guid, child_famID, interview_date, interview_age_child, child_sex, GroupAssignment, Timepoint = Timepoint, contains("srm_cbcl")))
 
 # Create a list of names to be targeted
-New_CBCL_Names <- sprintf("srm_cbcl_%03d", seq(1:100))
+New_CBCL_Names <- sprintf("srm_CBCL_%03d", seq(1:100))
 
 # Recode text responses into numbers so they can be used in calculations
 CBCL_Prep <- CBCL_Prep %>% 
@@ -176,7 +176,7 @@ NDA_CBCL_Names <- paste(c("cbcl56a", "cbcl1", "cbcl_nt", "cbcl_eye", "cbcl8", "c
                           "cbcl_uncoop", "cbcl102", "cbcl103", "cbcl104", "cbcl_people", "cbcl56g", "cbcl_wake", "cbcl_wand", "cbcl19", "cbcl109", "cbcl_withdr", "cbcl112", "cbcl113a"))
 
 # Change names in the NDA_CBCL_Prep to match the NDA structure column names
-New_CBCL_Names <- sprintf("srm_cbcl_%03d", seq(1:100))
+New_CBCL_Names <- sprintf("srm_CBCL_%03d", seq(1:100))
 setnames(NDA_CBCL_Prep, New_CBCL_Names, NDA_CBCL_Names)
 
 # Make an empty row in the NDA sheet for compatibility (to avoid some potential errors)

@@ -4,7 +4,7 @@
 
 # Setup ####
 # Empty environment, loading library, set knitr and scientific notation
-#setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
+setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
 NDA_CCNES <- read.csv("pabq01_template.csv", skip = 1)
 #setwd("~/Documents/Min/DataUploadAutomation/Upload and Tables/Output for NDA")
 
@@ -73,23 +73,23 @@ CCNES_Prep <- add_column(CCNES_Prep, CCNES_EE_imputation = varScore(CCNES_Prep, 
                                                                                             "srm_CCNES_43", "srm_CCNES_49", "srm_CCNES_57", 
                                                                                             "srm_CCNES_66", "srm_CCNES_68"), MaxMiss = .20),.after = "CCNES_PR_imputation")
 # Calculating ccnes_efr
-CCNES_Prep <- add_column(CCNES_Prep, CCNES_EFR_imputation = varScore(CCNES_Prep, Forward = C("srm_CCNES_06", 
+CCNES_Prep <- add_column(CCNES_Prep, CCNES_EFR_imputation = varScore(CCNES_Prep, Forward = c("srm_CCNES_06", 
                                                                                              "srm_CCNES_08", "srm_CCNES_16", "srm_CCNES_23", 
                                                                                              "srm_CCNES_25", "srm_CCNES_31", "srm_CCNES_38", 
                                                                                              "srm_CCNES_48", "srm_CCNES_54", "srm_CCNES_58", 
-                                                                                             "srm_CCNES_65", "srm_CCNES_69"), MaxMiss = .20),.after = "CCNES_EFR_imputation")
+                                                                                             "srm_CCNES_65", "srm_CCNES_69"), MaxMiss = .20),.after = "CCNES_EE_imputation")
 # Calculating ccnes_pfr
 CCNES_Prep <- add_column(CCNES_Prep, CCNES_PFR_imputation = varScore(CCNES_Prep, Forward = c("srm_CCNES_03", 
                                                                                              "srm_CCNES_10", "srm_CCNES_15", "srm_CCNES_24", 
                                                                                              "srm_CCNES_26", "srm_CCNES_36", "srm_CCNES_37", 
                                                                                              "srm_CCNES_44", "srm_CCNES_52", "srm_CCNES_59", 
-                                                                                             "srm_CCNES_64", "srm_CCNES_67"), MaxMiss = .20),.after = "CCNES_PFR_imputation")
+                                                                                             "srm_CCNES_64", "srm_CCNES_67"), MaxMiss = .20),.after = "CCNES_EFR_imputation")
 # Calculating ccnes_mr
 CCNES_Prep <- add_column(CCNES_Prep, CCNES_MR_imputation = varScore(CCNES_Prep, Forward = c("srm_CCNES_04", 
                                                                                             "srm_CCNES_09", "srm_CCNES_14", "srm_CCNES_21", 
                                                                                             "srm_CCNES_27", "srm_CCNES_32",  "srm_CCNES_40", 
                                                                                             "srm_CCNES_46", "srm_CCNES_51",  "srm_CCNES_60", 
-                                                                                            "srm_CCNES_61", "srm_CCNES_72"), MaxMiss = .20),.after = "CCNES_MR_imputation")
+                                                                                            "srm_CCNES_61", "srm_CCNES_72"), MaxMiss = .20),.after = "CCNES_PFR_imputation")
 
 
 # NDA Sheet ####

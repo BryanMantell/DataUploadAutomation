@@ -2,7 +2,7 @@
 # author: "Min Zhang, Bayan"
 # date: "5/19/2021"
 
-source("~/Documents/GitHub/DataUploadAutomation/Upload and Tables/Data/Upload Preparation.R")
+setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
 
 #NDA_ders <- read.csv("ders01_template.csv")
 
