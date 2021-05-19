@@ -5,82 +5,42 @@ date: "7/30/2020"
 output: html_document
 ---
 
+# Setup
+Empty environment, loading preparation, scientific notation
 ```{r setup}
-
-# install.packages("flextable")
-library(dplyr)
-library(data.table)
-library(knitr)
-library(kableExtra)
-library(tidyverse)
-
-# Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
-knitr::opts_chunk$set(echo = TRUE, include = FALSE)
-
-# Set the working directory ---------
-# for Bryan
-#setwd("C:/Users/bryan/Documents/GitHub/DataUploadAutomation/Measures/EmotionStrategies")
-#setwd("D:/Austin/College (D-Drive)/DataUploadAutomation/Measures/EmotionStrategies")
-
-# scientific notation, round up to 3 digits
-options(digits = 3)
-```
-
-# Import
-Import Qualtrics excel files into R
-```{r Import}
 # Empty Global Environment
 rm(list = ls())
 
-Pedigree <- read.csv("Reference_Pedigree.csv", stringsAsFactors = FALSE)
-Redcap_Data <- read.csv("Redcap_Data.csv", stringsAsFactors = FALSE)
+source("Upload Preparation.R")
+#source("~GitHub/DataUploadAutomation/Upload and Tables/Data/Upload Preparation.R")
 NDA_ES <- read.csv("ers01_template.csv", skip = 1, stringsAsFactors = FALSE)
-
-# Not sure why this was in the code I was referencing but I'll keep it here jst in case. 
-#Pedigree <- read.csv("Reference_Pedigree.csv")
-#Redcap_Data <- read.csv("Redcap_Data.csv")
-#NDA_DCCS <- read.csv("dccs01_template.csv", skip=1)
 ```
 
 # Rename Columns
 Rename questions numbers to self-report measure scale items.Then, take each scale measure from both sites and combine them by timepoint.
 ```{r Rename Columns}
 # Redcap column names for locating old names to be replaced with Prep names and NDA names
-new_ES_names <- c("oc_es_hapstrat", "oc_es_hap_1", "oc_es_hap_2", "oc_es_hap_3", "oc_es_angstrat", "oc_es_ang_1", "oc_es_ang_2", "oc_es_ang_3", "oc_es_sadstrat", "oc_es_sad_1", "oc_es_sad_2", "oc_es_sad_3")
-old_ES_names <- c("oc_es_hapstrat", "oc_es_h1", "oc_es_h2", "oc_es_h3", "oc_es_angstrat", "oc_es_a1", "oc_es_a2", "oc_es_a3", "oc_es_sadstrat", "oc_es_s1", "oc_es_s2", "oc_es_s3")
 NDA_ES_names <- sprintf("es_%01d", 1:12)
 
-# Replace Column Names
-setnames(Redcap_Data, old_ES_names, new_ES_names)
-
-# Assign timepoint base on redcap_event_name
-Redcap_Data$timepoint = sapply(strsplit(as.character(Redcap_Data$redcap_event_name), split = '_', fixed = T), function(x) (x[2])) 
-
-# Select needed columns and rename in Redcap_Data
-Redcap_Data <- select(Redcap_Data, c(Fam_ID = fam_id,  timepoint, starts_with("oc_es_")))
-Redcap_Data <- select(Redcap_Data, -c(oc_es_notes, oc_es_hgen, oc_es_agen, oc_es_sgen, oc_es_intblue, oc_es_intgreen, oc_es_intmom))
+# Select needed columns and rename in Redcap_Data, rename to a different dataframe to avoid interference with other measures
+Redcap_Data_ES <- select(Redcap_Data, c(Fam_ID,  Timepoint, starts_with("oc_es_")))
+Redcap_Data_ES <- select(Redcap_Data_ES, -c(oc_es_notes, oc_es_hgen, oc_es_agen, oc_es_sgen, oc_es_intblue, oc_es_intgreen, oc_es_intmom))
 ```
 
 # Prep Sheet
 Create prep sheet to begin transferring data into NDA format. Rename relevant GUID information to match NDA specifications. Finally, bind all timepoints into single Emotion Strategies Prep Sheet.
 ```{r Prep Sheet}
 # Select revelent pedigree information, rename as needed. (Include GroupAssignment for treatment progress calculation).
-Pedigree_T1 <- data.frame(select(Pedigree, Fam_ID =  FamID, child_guid, child_famID = FamID_Child, interview_date = Time1Date, interview_age = MomAge_T1, child_sex = ChildGender, GroupAssignment), timepoint = 1 )
-Pedigree_T2 <- data.frame(select(Pedigree, Fam_ID =  FamID, child_guid, child_famID = FamID_Child, interview_date = Time2Date, interview_age = MomAge_T2, child_sex = ChildGender, GroupAssignment), timepoint = 2 )
-Pedigree_T3 <- data.frame(select(Pedigree, Fam_ID =  FamID, child_guid, child_famID = FamID_Child, interview_date = Time3Date, interview_age = MomAge_T3, child_sex = ChildGender, GroupAssignment), timepoint = 3 )
-Pedigree_T4 <- data.frame(select(Pedigree, Fam_ID =  FamID, child_guid, child_famID = FamID_Child, interview_date = Time4Date, interview_age = MomAge_T4, child_sex = ChildGender, GroupAssignment), timepoint = 4 )
-
-# N's issue is with pedigree prep
-Pedigree_Prep <- rbind(Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4)
+Pedigree_Prep <- data.frame(select(Pedigree, Fam_ID, child_guid, child_famID, interview_date, interview_age_Mom, interview_age_child, child_sex, GroupAssignment, Timepoint))
 
 # Exchange commas out of Prep Sheet to avoid CSV issues. Personal selection was a "/" but you can change it here to preference. 
-Redcap_Data <- sapply(Redcap_Data, gsub, pattern = ",", replacement= "/")
+Redcap_Data_ES <- sapply(Redcap_Data_ES, gsub, pattern = ",", replacement= "/")
 
 # Merge Predigree and redcap files
-ES_PREP <- merge(Pedigree_Prep, Redcap_Data,by = c("timepoint","Fam_ID"), all = TRUE)
+ES_PREP <- merge(Pedigree_Prep, Redcap_Data_ES,by = c("Timepoint","Fam_ID"), all = TRUE)
 
 # Clean Environment
-rm(Pedigree, Pedigree_Prep, Pedigree_T1, Pedigree_T2, Pedigree_T3, Pedigree_T4, Redcap_Data)
+rm(Pedigree_Prep, Redcap_Data_ES)
 ```
 
 # Calculated Columns
@@ -104,18 +64,17 @@ ES_PREP <- add_column(ES_PREP, oc_es_total = rowSums(ES_PREP[, c("oc_es_hap_1", 
 Re-name Emotion Strategies Prep Sheet columns to match NDA specifications. 
 ```{r NDA Sheet}
 # Create NDA prep sheet, select all the needed columns from prep sheet
-NDA_ES_Prep <- select(ES_PREP, c(subjectkey = child_guid, src_subject_id = child_famID, interview_date, interview_age, sex = child_sex, visit = timepoint, starts_with("oc_es_") ))
+NDA_ES_Prep <- select(ES_PREP, c(subjectkey = child_guid, src_subject_id = child_famID, interview_date, interview_age = interview_age_Mom, sex = child_sex, visit = Timepoint, starts_with("oc_es_") ))
 
 # Replace columns name 
 setnames(NDA_ES_Prep, new_ES_names, NDA_ES_names)
 
 # Recreate first line in orignial NDA file
-NDA_ES <- bind_rows(NDA_ES, NDA_ES_Prep)
+NDA_ES <- rbind(NDA_ES, NDA_ES_Prep)
 first_line <- matrix("", nrow = 1, ncol = ncol(NDA_ES))
 first_line[,1] <- "ers"
 # assign the second cell in first_line as 1
 first_line[,2] <- "1"
-
 
 
 # NDA output ---------
@@ -127,13 +86,7 @@ write.table(first_line, file = "ers01.csv", sep = ",", append = FALSE, quote = F
 write.table(NDA_ES, file = 'ers01.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
 
 #Clean Global Environment
-rm(first_line, NDA_ES, NDA_ES_Prep, NDA_ES_names, new_ES_names, old_ES_names)
-```
-
-# NA Percentage Drop
-Currently not used
-```{r NA Percentage Drop}
-
+rm(first_line, NDA_ES, NDA_ES_Prep, NDA_ES_names, new_ES_names)
 ```
 
 # All Data Table
@@ -141,7 +94,7 @@ Create descriptive means table. (This table reports an incorrect N value since i
 ```{r Table, echo=FALSE}
 # Treatment Progress sheet
 # Select needed column
-Progress <- select(ES_PREP, c(Fam_ID, GroupAssignment, timepoint, oc_es_hap_total, oc_es_ang_total, oc_es_sad_total, oc_es_total,))
+Progress <- select(ES_PREP, c(Fam_ID, GroupAssignment, Timepoint, oc_es_hap_total, oc_es_ang_total, oc_es_sad_total, oc_es_total,))
 
 # Calculate row mean for each individual  
 Progress$Row_Mean_Hap <- rowMeans(select(ES_PREP,c(oc_es_hap_total)), na.rm = TRUE)
@@ -157,19 +110,19 @@ Progress$site <- ifelse(startsWith(ID, "9"),"UO","UPMC")
 
 # Group by GroupAssignmentand Timepoint, and calculate the Group Mean
 Progress_Hap_Mean <- Progress %>%
-  group_by(GroupAssignment,timepoint,site) %>%
+  group_by(GroupAssignment,Timepoint,site) %>%
   summarise(HapMean = mean(Row_Mean_Hap,na.rm = T),count = n())
 
 Progress_Ang_Mean <- Progress %>%
-  group_by(GroupAssignment,timepoint,site) %>%
+  group_by(GroupAssignment,Timepoint,site) %>%
   summarise(AngMean = mean(Row_Mean_Ang,na.rm = T),count = n())
 
 Progress_Sad_Mean <- Progress %>%
-  group_by(GroupAssignment,timepoint,site) %>%
+  group_by(GroupAssignment,Timepoint,site) %>%
   summarise(SadMean = mean(Row_Mean_Sad,na.rm = T),count = n())
 
 Progress_Total_Mean <- Progress %>%
-  group_by(GroupAssignment,timepoint,site) %>%
+  group_by(GroupAssignment,Timepoint,site) %>%
   summarise(TotalMean = mean(Row_Mean_Total,na.rm = T),count = n())
 
 # Join happy, angry, sad, and total
@@ -184,19 +137,19 @@ UPMC <- Progress_Mean[Progress_Mean$site == "UPMC",]
 
 # Calculate Both site Mean 
 Progress_Hap_Mean_Both <- Progress %>%
-  group_by(GroupAssignment, timepoint) %>%
+  group_by(GroupAssignment, Timepoint) %>%
   summarise("BothSite_ES_HappyMean" = mean(Row_Mean_Hap,na.rm = T),n = n())
 
 Progress_Ang_Mean_Both <- Progress %>%
-  group_by(GroupAssignment, timepoint) %>%
+  group_by(GroupAssignment, Timepoint) %>%
   summarise("BothSite_ES_AngryMean" = mean(Row_Mean_Ang,na.rm = T),n = n())
 
 Progress_Sad_Mean_Both <- Progress %>%
-  group_by(GroupAssignment, timepoint) %>%
+  group_by(GroupAssignment, Timepoint) %>%
   summarise("BothSite_ES_SadMean" = mean(Row_Mean_Sad,na.rm = T),n = n())
 
 Progress_Total_Mean_Both <- Progress %>%
-  group_by(GroupAssignment, timepoint) %>%
+  group_by(GroupAssignment, Timepoint) %>%
   summarise("BothSite_ES_TotalMean" = mean(Row_Mean_Total,na.rm = T),n = n())
 
 Both_Site_Mean <- merge(Progress_Hap_Mean_Both, Progress_Ang_Mean_Both)
