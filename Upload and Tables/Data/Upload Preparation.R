@@ -22,7 +22,7 @@ library(dplyr)
 rm(list = ls())
 # scientific notation, round up to 3 digits
 options(digits = 3)
-setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
+setwd("~/Documents/GitHub/DataUploadAutomation/Upload and Tables/Data")
 #path <- path.expand("~/Documents/Min/DataUploadAutomation/Upload and Tables/Data")
 #setwd("D:/Austin/Lab Work (D-Drive)/DataUploadAutomation/Measures/Upload Preparation")
 # *************************************************************************
@@ -175,12 +175,17 @@ old_UPMC_ders_names <- paste("FQ4DERS", seq(1:36), sep = "_")
 # New variable name for preparation sheet: srm_ders_1 ~ srm_ders_36
 new_ders_names <- paste("srm_ders", seq(1:36), sep = '_')
 
+# NDA ders name
+ders <- "ders"
+number_of_survey <- seq(1:36)
+NDA_DERS_names <- paste(ders,number_of_survey,sep = '')
+
 # rename UO & UPMC Ders Name
 lapply(UO_Qualtrics_list, setnames, old_UO_ders_names, new_ders_names)
 lapply(UPMC_Qualtrics_list, setnames, old_UPMC_ders_names, new_ders_names)
 
 # Clean global Environment
-rm(old_UO_ders_names, old_UPMC_ders_names)
+rm(old_UO_ders_names, old_UPMC_ders_names, number_of_survey)
 
 
 # *************************************************************************
