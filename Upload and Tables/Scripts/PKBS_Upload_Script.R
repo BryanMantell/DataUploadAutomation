@@ -26,7 +26,7 @@ setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
 NDA_PKBS <- read.csv("pkbs01_template.csv", skip = 1)
 
 # Select the relevant sets of information from Qualtrics necessary for the PKBS
-PKBS_Prep <- select(Qualtrics)
+PKBS_Prep <- select(Qualtrics, c(Fam_ID, child_guid, child_famID, interview_date, interview_age_child, child_sex, GroupAssignment, Timepoint = Timepoint, contains("srm_pkbs")))
 
 # Re-code and 67% Rule
 #----------------------------------------------------------------------------------------------------------------------------------------
@@ -38,19 +38,9 @@ PKBS_Prep[PKBS_Prep == "Sometimes (2)"] <- 2; PKBS_Prep[PKBS_Prep == "Often (3)"
 # Calculated Columns
 #----------------------------------------------------------------------------------------------------------------------------------------
 # Change number to numeric values and Create Calculated Column 
-PKBS_Prep[,9:41] <- sapply(PKBS_Prep[,8:40],as.numeric)
+PKBS_Prep[,9:41] <- sapply(PKBS_Prep[,9:41],as.numeric)
 
 PKBS_Prep <- add_column(PKBS_Prep, pkbs_total = varScore(PKBS_Prep, c("srm_pkbs_1", "srm_pkbs_2","srm_pkbs_3","srm_pkbs_4", "srm_pkbs_5", "srm_pkbs_6",
-                                                                      "srm_pkbs_7", "srm_pkbs_8", "srm_pkbs_9", "srm_pkbs_10", "srm_pkbs_11", "srm_pkbs_12", "srm_pkbs_13",
-                                                                      "srm_pkbs_14", "srm_pkbs_15", "srm_pkbs_16", "srm_pkbs_17", "srm_pkbs_18", "srm_pkbs_19", "srm_pkbs_20",
-                                                                      "srm_pkbs_21", "srm_pkbs_22", "srm_pkbs_23", "srm_pkbs_24", "srm_pkbs_25", "srm_pkbs_26", "srm_pkbs_27",
-                                                                      "srm_pkbs_28", "srm_pkbs_29", "srm_pkbs_30", "srm_pkbs_31", "srm_pkbs_32", "srm_pkbs_33"), 
-                                                         Reverse = NULL, Range = NULL, Prorate = TRUE, MaxMiss = .33))
-
-# 100% Table Calculated Columns
-PKBS_100[,8:40] <- sapply(PKBS_Prep[,8:40],as.numeric)
-
-PKBS_100 <- add_column(PKBS_100, pkbs_total = varScore(PKBS_Prep, c("srm_pkbs_1", "srm_pkbs_2","srm_pkbs_3","srm_pkbs_4", "srm_pkbs_5", "srm_pkbs_6",
                                                                       "srm_pkbs_7", "srm_pkbs_8", "srm_pkbs_9", "srm_pkbs_10", "srm_pkbs_11", "srm_pkbs_12", "srm_pkbs_13",
                                                                       "srm_pkbs_14", "srm_pkbs_15", "srm_pkbs_16", "srm_pkbs_17", "srm_pkbs_18", "srm_pkbs_19", "srm_pkbs_20",
                                                                       "srm_pkbs_21", "srm_pkbs_22", "srm_pkbs_23", "srm_pkbs_24", "srm_pkbs_25", "srm_pkbs_26", "srm_pkbs_27",
