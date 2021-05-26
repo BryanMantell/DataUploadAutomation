@@ -33,13 +33,6 @@ PKBS_Prep <- select(Qualtrics)
 # Turn Likert Scale from text string to numeric value
 PKBS_Prep[PKBS_Prep == "Never (0)"] <- 0; PKBS_Prep[PKBS_Prep == "Rarely (1)"] <- 1;
 PKBS_Prep[PKBS_Prep == "Sometimes (2)"] <- 2; PKBS_Prep[PKBS_Prep == "Often (3)"] <- 3;
-
-# Create Drop dataframe for anything less than 0.67; Allow anything over to be used for Prep sheet
-PKBS_Drop <- PKBS_Prep[PKBS_Prep$NACheck > 0.67, ]
-PKBS_Prep <- PKBS_Prep[PKBS_Prep$NACheck <= 0.67, ]
-
-# Create dataframe for all ID's that have 100% of their data present
-PKBS_100 <- PKBS_Prep[PKBS_Prep$NACheck == 0, ]
 #----------------------------------------------------------------------------------------------------------------------------------------
 
 # Calculated Columns
