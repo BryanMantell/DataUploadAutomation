@@ -83,7 +83,7 @@ colnames(NDA_PKBS_Prep)[40] <- "basc_social_raw"
 
 # Merge PKBS Prep Sheet into NDA structure
 NDA_PKBS[1,] <- NA
-NDA_PKBS <- bind_rows(NDA_PKBS_Prep, NDA_PKBS)
+NDA_PKBS <- rbind(NDA_PKBS_Prep, NDA_PKBS)
 
 # Recreate the first line of the NDA
 first_line <- matrix("", nrow = 1, ncol = ncol(NDA_PKBS))
