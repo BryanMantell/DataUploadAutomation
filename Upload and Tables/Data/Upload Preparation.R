@@ -94,25 +94,25 @@ UPMC_Qualtrics_list <- list(UPMC_Qualtrics_T1, UPMC_Qualtrics_T2, UPMC_Qualtrics
 Pedigree_T1 <- data.frame(select(Pedigree, Fam_ID = FamID, 
                interview_date = Time1Date, child_guid, child_famID = FamID_Child, 
                interview_age_child = ChildAge_T1, child_sex = ChildGender,
-               subjectkey = mom_guid, src_subject_id = FamID_Mother, 
+               mom_guid, FamID_Mother, 
                interview_age_Mom = MomAge_T1, sex_mother = MomGender,
                GroupAssignment),Timepoint = 1 )
 Pedigree_T2 <- data.frame(select(Pedigree, Fam_ID = FamID, 
                interview_date = Time1Date,  child_guid, child_famID = FamID_Child, 
                interview_age_child = ChildAge_T2, child_sex = ChildGender,
-               subjectkey = mom_guid, src_subject_id = FamID_Mother, 
+               mom_guid, FamID_Mother, 
                interview_age_Mom = MomAge_T2, sex_mother = MomGender,
                GroupAssignment), Timepoint = 2 )
 Pedigree_T3 <- data.frame(select(Pedigree, Fam_ID = FamID, 
                interview_date = Time1Date, child_guid, child_famID = FamID_Child, 
                interview_age_child = ChildAge_T3, child_sex = ChildGender,
-               subjectkey = mom_guid, src_subject_id = FamID_Mother, 
+               mom_guid, FamID_Mother, 
                interview_age_Mom = MomAge_T3, sex_mother = MomGender,
                GroupAssignment), Timepoint = 3 )
 Pedigree_T4 <- data.frame(select(Pedigree, Fam_ID = FamID, 
                interview_date = Time1Date, child_guid, child_famID = FamID_Child, 
                interview_age_child = ChildAge_T4, child_sex = ChildGender,
-               subjectkey = mom_guid, src_subject_id = FamID_Mother, 
+               mom_guid, FamID_Mother, 
                interview_age_Mom = MomAge_T4, sex_mother = MomGender,
                GroupAssignment), Timepoint = 4 )
 
