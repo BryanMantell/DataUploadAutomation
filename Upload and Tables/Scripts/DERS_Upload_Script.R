@@ -4,7 +4,7 @@
 
 setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
 
-#NDA_ders <- read.csv("ders01_template.csv")
+NDA_ders <- read.csv("ders01_template.csv")
 
 Qualtrics <- select(Qualtrics, c(Fam_ID, child_guid, child_famID, interview_date, interview_age_child, child_sex, GroupAssignment, Timepoint = Timepoint, contains("srm_ders")))
 
@@ -93,10 +93,18 @@ setnames(NDA_ders_Prep, Reverse_ders_names, NDA_DERS_names)
 
 # Recreate first line in orignial NDA file
 # Make a empty row, with same number of column in NDA_ders, as first line of NDA sheet
-NDA_ders[1,] <- NA
+#NDA_ders[1,] <- NA
 # ncol(NDA_ders)  is number of columns in NDA_ders
 NDA_ders <- bind_rows(NDA_ders,NDA_ders_Prep)
 
+# Assign required column but with data missing 999
+NDA_ders$ders_awareness <- 999
+NDA_ders$ders_clarity <- 999
+NDA_ders$ders_goals <- 999
+NDA_ders$ders_impulse <- 999
+NDA_ders$ders_nonacceptance <- 999 
+NDA_ders$ders_strategies <- 999
+NDA_ders$ders_total <- 999
 # Recreate first line in orignial NDA file
 # Make a empty row, with same number of column in NDA_ders, as first line of NDA sheet
 # ncol(NDA_ders)  is number of columns in NDA_ders
