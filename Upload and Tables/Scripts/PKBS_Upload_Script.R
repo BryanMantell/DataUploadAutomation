@@ -26,7 +26,7 @@ setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
 NDA_PKBS <- read.csv("pkbs01_template.csv", skip = 1)
 
 # Select the relevant sets of information from Qualtrics necessary for the PKBS
-PKBS_Prep <- select(Qualtrics)
+PKBS_Prep <- select(Qualtrics, c(Fam_ID, child_guid, child_famID, interview_date, interview_age_child, child_sex, GroupAssignment, Timepoint = Timepoint, contains("srm_pkbs")))
 
 # Re-code and 67% Rule
 #----------------------------------------------------------------------------------------------------------------------------------------
