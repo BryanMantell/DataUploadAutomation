@@ -38,7 +38,7 @@ PKBS_Prep[PKBS_Prep == "Sometimes (2)"] <- 2; PKBS_Prep[PKBS_Prep == "Often (3)"
 # Calculated Columns
 #----------------------------------------------------------------------------------------------------------------------------------------
 # Change number to numeric values and Create Calculated Column 
-PKBS_Prep[,8:40] <- sapply(PKBS_Prep[,8:40],as.numeric)
+PKBS_Prep[,9:41] <- sapply(PKBS_Prep[,8:40],as.numeric)
 
 PKBS_Prep <- add_column(PKBS_Prep, pkbs_total = varScore(PKBS_Prep, c("srm_pkbs_1", "srm_pkbs_2","srm_pkbs_3","srm_pkbs_4", "srm_pkbs_5", "srm_pkbs_6",
                                                                       "srm_pkbs_7", "srm_pkbs_8", "srm_pkbs_9", "srm_pkbs_10", "srm_pkbs_11", "srm_pkbs_12", "srm_pkbs_13",
@@ -61,7 +61,7 @@ PKBS_100 <- add_column(PKBS_100, pkbs_total = varScore(PKBS_Prep, c("srm_pkbs_1"
 # NDA Sheet
 #----------------------------------------------------------------------------------------------------------------------------------------
 # Create list of column names for PKBS prep and NDA structure
-NDA_PKBS_Prep <- select(PKBS_Prep, c(visit = "Timepoint", subjectkey = "mom_guid", src_subject_id = "FamID_Mother", sex = "MomGender", interview_age, GroupAssignment, interview_date, starts_with("srm"), pkbs_total))
+NDA_PKBS_Prep <- select(PKBS_Prep, c(visit = "Timepoint", mom_guid = "subjectkey", FamID_Mother = "src_subject_id", sex = "MomGender", interview_age, GroupAssignment, interview_date, starts_with("srm"), pkbs_total))
 
 
 NDA_names <- c("Social2", "Social7", "Social10", "Social12", "Social16", "Social22", "Social23", "Social25", 
