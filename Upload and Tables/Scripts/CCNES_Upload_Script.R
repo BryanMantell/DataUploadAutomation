@@ -103,7 +103,7 @@ setnames(NDA_CCNES_Prep, Reverse_CCNES_names, CCNES_NDA_Names)
 
 # Recreate first line in original NDA file
 # Make a empty row, with same number of column in NDA_CCNES, as first line of NDA sheet
-NDA_CCNES[1,] <- NA
+# NDA_CCNES[1,] <- NA
 
 # ncol(NDA_CCNES)  is number of columns in NDA_CCNES
 NDA_CCNES <- bind_rows(NDA_CCNES,NDA_CCNES_Prep)
