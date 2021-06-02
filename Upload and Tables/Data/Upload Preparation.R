@@ -23,8 +23,8 @@ library(lmSupport)
 rm(list = ls())
 # scientific notation, round up to 3 digits
 options(digits = 3)
-#setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
-setwd("/Users/jmulleavey/Documents/GitHub/DataUploadAutomation/Upload and Tables/Data")
+setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
+#setwd("/Users/jmulleavey/Documents/GitHub/DataUploadAutomation/Upload and Tables/Data")
 #path <- path.expand("~/Documents/Min/DataUploadAutomation/Upload and Tables/Data")
 #setwd("D:/Austin/Lab Work (D-Drive)/DataUploadAutomation/Measures/Upload Preparation")
 # *************************************************************************
@@ -75,7 +75,7 @@ UO_Qualtrics_T4 <- read.csv("UO_T4_Qualtrics.csv", stringsAsFactors = FALSE) %>%
   rename(Fam_ID = Q203, Timepoint = Q206)
 
 # TODO: Read in actual UPMC Qualtrics Data
-UPMC_Qualtrics_T1 <- read.csv("UPMC_T1_Qualtrics.csv", fileEncoding="UTF-8-BOM", stringsAsFactors = FALSE)%>% 
+UPMC_Qualtrics_T1 <- read.csv("UPMC_T1_Qualtrics.csv", fileEncoding="UTF-8-BOM", stringsAsFactors = FALSE) %>% 
   rename(Fam_ID = FQ4id) %>% mutate(Timepoint = "1")
 UPMC_Qualtrics_T2 <- read.csv("UPMC_T2_Qualtrics.csv", fileEncoding="UTF-8-BOM", stringsAsFactors = FALSE) %>% 
   rename(Fam_ID = FQ4id) %>% mutate(Timepoint = "2")
@@ -338,8 +338,8 @@ rm(old_UO_PKBS_names, old_UO_PKBS_names2, old_UO_PKBS_names3, old_UO_PKBS_names4
 # *************************************************************************
 old_AffectPT_names <- c("oc_apt_01", "oc_apt_02", "oc_apt_03", "oc_apt_04", "oc_apt_05", "oc_apt_06", 
                         "oc_apt_07", "oc_apt_08")
-new_AffectPT_names <- c("oc_apt_01", "oc_apt_03", "oc_apt_05", "oc_apt_07", "oc_apt_09", "oc_apt_11", 
-                        "oc_apt_13", "oc_apt_15")
+new_AffectPT_names <- c("oc_apt_01", "oc_apt_02", "oc_apt_03", "oc_apt_04", "oc_apt_05", "oc_apt_06", 
+                        "oc_apt_07", "oc_apt_08")
 setnames(Redcap_Data, old_AffectPT_names, new_AffectPT_names, skip_absent = FALSE)
 
 # Clean environment 
