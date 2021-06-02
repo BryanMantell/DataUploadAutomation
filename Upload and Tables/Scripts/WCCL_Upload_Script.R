@@ -5,7 +5,7 @@
 
 # import data frame
 
-setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
+#setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
 source("~/GitHub/DataUploadAutomation/Upload and Tables/Data/Upload Preparation.R")
 
 WCCL_NDA <- read.csv("dbt_wccl01_template.csv", skip = 1)
@@ -52,7 +52,7 @@ NDA_Names <- c(dbt_wccl)
 
 # NDA Sheet ####
 # Create NDA Prep sheet, select all the needed columns from Prep sheet
-WCCL_NDA_Prep <- select(WCCL_Prep, c(Timepoint, subjectkey = mom_guid, src_subject_id = FamID_Mother, sex = mother_sex, interview_date, interview_age_Mom, contains("srm_wccl")))
+WCCL_NDA_Prep <- select(WCCL_Prep, c(Timepoint, subjectkey = mom_guid, src_subject_id = FamID_Mother, sex = mother_sex, interview_date, interview_age_Mom, dbt_wccl_su = WCCL_SU_imputation, dbt_wccl_gdc = WCCL_GSC_imputation, dbt_wccl_bo = WCCL_BO_imputation, contains("srm_wccl")))
 
 # Combine NDA and Prep sheet
 # Make sure put original NDA structure at first, because the order of the new sheet will be the order of the first item in bind_rows function
