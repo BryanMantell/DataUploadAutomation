@@ -23,7 +23,8 @@ library(lmSupport)
 rm(list = ls())
 # scientific notation, round up to 3 digits
 options(digits = 3)
-setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
+#setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
+setwd("/Users/jmulleavey/Documents/GitHub/DataUploadAutomation/Upload and Tables/Data")
 #path <- path.expand("~/Documents/Min/DataUploadAutomation/Upload and Tables/Data")
 #setwd("D:/Austin/Lab Work (D-Drive)/DataUploadAutomation/Measures/Upload Preparation")
 # *************************************************************************

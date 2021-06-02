@@ -6,7 +6,7 @@ output: html_document
 ---
 ```{r Prep Script}
 source("~/GitHub/DataUploadAutomation/Upload and Tables/Data/Upload Preparation.R")
-
+getwd()
 ```
 
 ```{r CBCL}
@@ -41,6 +41,11 @@ source("~/GitHub/DataUploadAutomation/Upload and Tables/Scripts/PKBS_Upload_Scri
 
 ```{r WCCL}
 source("~/GitHub/DataUploadAutomation/Upload and Tables/Scripts/WCCL_Upload_Script.R")
+
+```
+
+```{r Bear Dragon}
+source("~/GitHub/DataUploadAutomation/Upload and Tables/Scripts/BearDragon_Upload_Script.R")
 
 ```
 
