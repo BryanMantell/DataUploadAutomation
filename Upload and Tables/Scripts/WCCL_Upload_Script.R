@@ -11,7 +11,8 @@ source("~/GitHub/DataUploadAutomation/Upload and Tables/Data/Upload Preparation.
 NDA_WCCL <- read.csv("dbt_wccl01_template.csv", skip = 1)
 options(digits = 3)
 
-library(lmSupport)
+library(lmSupport) 
+library(plyr)
 
 
 # Prep Sheet
@@ -22,9 +23,15 @@ WCCL_Prep <- select(Qualtrics, c(Timepoint, mom_guid, FamID_Mother, mother_sex, 
 
 #r Recode
 #Change Numbers to Numeric values
+WCCL_Prep[WCCL_Prep == "0 Never Used"] <- 0
+WCCL_Prep[WCCL_Prep == "1 Rarely Used"] <- 1
+WCCL_Prep[WCCL_Prep == "2 Sometimes Used"] <- 2
+WCCL_Prep[WCCL_Prep == "3 Regularly Used"] <- 3
+
+
 WCCL_Prep[,6:65] <- sapply(WCCL_Prep[,6:65],as.numeric)
 
-WCCL_Prep <- WCCL_Prep %>% mutate_at(new_WCCL_names,funs(recode(., '0 Never Used' = 0, '1 Rarely Used' = 1, '2 Sometimes Used' = 2, '3 Regularly Used' = 3,.default = NaN)))
+#mutate_at(new_WCCL_names,funs(recode(., '0 Never Used' = 0, '1 Rarely Used' = 1, '2 Sometimes Used' = 2, '3 Regularly Used' = 3,.default = NaN)))
 
 
 
@@ -38,14 +45,14 @@ WCCL_Prep <- add_column(WCCL_Prep, WCCL_GSC_imputation = varScore(WCCL_Prep, For
 
 WCCL_Prep <- add_column(WCCL_Prep, WCCL_BO_imputation = varScore(WCCL_Prep, Forward = c("srm_wccl_7", "srm_wccl_15", "srm_wccl_24", "srm_wccl_28", "srm_wccl_30", "srm_wccl_48"), MaxMiss = .20),.after = "srm_wccl_59")
 
-#r NDA Sheet (unneeded?)
+#r NDA Sheet 
 # Create NDA structure column names
 dbt_wccl <- paste("dbt_wccl", 1:59, sep = "")
 NDA_Names <- c(dbt_wccl)
 
 # NDA Sheet ####
 # Create NDA Prep sheet, select all the needed columns from Prep sheet
-NDA_WCCL_Prep <- select(WCCL_Prep, c(Timepoint, mom_guid, FamID_Mother, mother_sex, interview_date, interview_age_Mom, contains("srm_wccl")))
+NDA_WCCL_Prep <- select(WCCL_Prep, c(Timepoint, subjectkey = mom_guid, src_subject_id = FamID_Mother, sex = mother_sex, interview_date, interview_age_Mom, contains("srm_wccl")))
 
 # Combine NDA and Prep sheet
 # Make sure put original NDA structure at first, because the order of the new sheet will be the order of the first item in bind_rows function
@@ -57,7 +64,9 @@ setnames(NDA_WCCL_Prep, new_WCCL_names, NDA_Names)
 # NDA_WCCL[1,] <- NA
 
 # ncol(NDA_WCCL)  is number of columns in NDA_WCCL
-NDA_WCCL <- bind_rows(NDA_WCCL,NDA_WCCL_Prep)
+#NDA_WCCL <- bind_rows(NDA_WCCL,NDA_WCCL_Prep)
+#NDA_WCCL <- rbind.fill(NDA_WCCL, NDA_WCCL_Prep)
+NDA_WCCL <- bind_rows(mutate_all(NDA_WCCL, as.character), mutate_all(NDA_WCCL_Prep, as.character))
 
 # Recreate first line in original NDA file
 # Make a empty row, with same number of column in NDA_WCCL, as first line of NDA sheet
