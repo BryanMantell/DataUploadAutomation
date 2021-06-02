@@ -8,7 +8,7 @@
 setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
 source("~/GitHub/DataUploadAutomation/Upload and Tables/Data/Upload Preparation.R")
 
-NDA_WCCL <- read.csv("dbt_wccl01_template.csv", skip = 1)
+WCCL_NDA <- read.csv("dbt_wccl01_template.csv", skip = 1)
 options(digits = 3)
 
 library(lmSupport) 
@@ -52,26 +52,26 @@ NDA_Names <- c(dbt_wccl)
 
 # NDA Sheet ####
 # Create NDA Prep sheet, select all the needed columns from Prep sheet
-NDA_WCCL_Prep <- select(WCCL_Prep, c(Timepoint, subjectkey = mom_guid, src_subject_id = FamID_Mother, sex = mother_sex, interview_date, interview_age_Mom, contains("srm_wccl")))
+WCCL_NDA_Prep <- select(WCCL_Prep, c(Timepoint, subjectkey = mom_guid, src_subject_id = FamID_Mother, sex = mother_sex, interview_date, interview_age_Mom, contains("srm_wccl")))
 
 # Combine NDA and Prep sheet
 # Make sure put original NDA structure at first, because the order of the new sheet will be the order of the first item in bind_rows function
-setnames(NDA_WCCL_Prep, new_WCCL_names, NDA_Names)
+setnames(WCCL_NDA_Prep, new_WCCL_names, NDA_Names)
 
 
 # Recreate first line in original NDA file
-# Make a empty row, with same number of column in NDA_WCCL, as first line of NDA sheet
-# NDA_WCCL[1,] <- NA
+# Make a empty row, with same number of column in WCCL_NDA, as first line of NDA sheet
+# WCCL_NDA[1,] <- NA
 
-# ncol(NDA_WCCL)  is number of columns in NDA_WCCL
-#NDA_WCCL <- bind_rows(NDA_WCCL,NDA_WCCL_Prep)
-#NDA_WCCL <- rbind.fill(NDA_WCCL, NDA_WCCL_Prep)
-NDA_WCCL <- bind_rows(mutate_all(NDA_WCCL, as.character), mutate_all(NDA_WCCL_Prep, as.character))
+# ncol(WCCL_NDA)  is number of columns in WCCL_NDA
+#WCCL_NDA <- bind_rows(WCCL_NDA,WCCL_NDA_Prep)
+#WCCL_NDA <- rbind.fill(WCCL_NDA, WCCL_NDA_Prep)
+WCCL_NDA <- bind_rows(mutate_all(WCCL_NDA, as.character), mutate_all(WCCL_NDA_Prep, as.character))
 
 # Recreate first line in original NDA file
-# Make a empty row, with same number of column in NDA_WCCL, as first line of NDA sheet
-# ncol(NDA_WCCL)  is number of columns in NDA_WCCL
-first_line <- matrix("", nrow = 1, ncol = ncol(NDA_WCCL))
+# Make a empty row, with same number of column in WCCL_NDA, as first line of NDA sheet
+# ncol(WCCL_NDA)  is number of columns in WCCL_NDA
+first_line <- matrix("", nrow = 1, ncol = ncol(WCCL_NDA))
 
 # assign the first cell in first_line as dbt_wccl which is the first cell in original NDA structure
 first_line[,1] <- "dbt_wccl"
@@ -84,8 +84,9 @@ first_line[,2] <- "1"
 # dbt_wccl.csv file will be saved into same folder as current r script
 write.table(first_line, file = "dbt_wccl.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
 
-# Append data in NDA_WCCL into dbt_wccl.cav file 
-write.table(NDA_WCCL, file = 'dbt_wccl.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
+# Append data in WCCL_NDA into dbt_wccl.cav file 
+write.table(WCCL_NDA, file = 'dbt_wccl.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
 
 # Clean Global Environment 
 rm(first_line)
+rm(WCCL_NDA_Prep, Redcap_Data, Qualtrics, Pedigree)
