@@ -4,12 +4,13 @@
 
 # Setup ####
 # Empty environment, loading library, set knitr and scientific notation
-setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
-NDA_CCNES <- read.csv("pabq01_template.csv", skip = 1)
+#setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
+setwd("C:/Users/mzhang8/Downloads/Upload and Tables/Data")
+CCNES_NDA <- read.csv("pabq01_template.csv", skip = 1)
 #setwd("~/Documents/Min/DataUploadAutomation/Upload and Tables/Output for NDA")
 
 
-CCNES_Prep <- select(Qualtrics, c(Fam_ID, child_guid, child_famID, interview_date, interview_age_child, child_sex, GroupAssignment, Timepoint = Timepoint, contains("srm_ccnes")))
+CCNES_Prep <- select(Qualtrics, c(Fam_ID, child_guid, child_famID, interview_date, interview_age_Mom, child_sex, GroupAssignment, Timepoint = Timepoint, contains("srm_ccnes")))
 # Recode and Reverse-Score ####
 # Re-code the strings of text to numbers 
 CCNES_Prep <- CCNES_Prep %>% 
@@ -54,26 +55,26 @@ CCNES_Prep <- CCNES_Prep %>%
 #CCNES_Prep$NACheck <- rowSums(is.na(select(CCNES_Prep, starts_with("srm"))))/ncol(dplyr::select(CCNES_Prep, starts_with("srm")))
 
 # Calculating column with 80% imputation (varScore)
-CCNES_Prep <- add_column(CCNES_Prep, CCNES_DR_imputation = varScore(CCNES_Prep, Forward = c("srm_CCNES_02", 
+CCNES_Prep <- add_column(CCNES_Prep, CCNES_DR = varScore(CCNES_Prep, Forward = c("srm_CCNES_02", 
                                                                                             "srm_CCNES_07r", "srm_CCNES_13",  "srm_CCNES_22", 
                                                                                             "srm_CCNES_29", "srm_CCNES_33", "srm_CCNES_39r", 
                                                                                             "srm_CCNES_45r", "srm_CCNES_50", "srm_CCNES_55r", 
                                                                                             "srm_CCNES_62", "srm_CCNES_70"), MaxMiss = .20),.after = "srm_CCNES_72")
 
 # Calculating ccnes_pr
-CCNES_Prep <- add_column(CCNES_Prep, CCNES_PR_imputation = varScore(CCNES_Prep, Forward = c("srm_CCNES_01",
+CCNES_Prep <- add_column(CCNES_Prep, CCNES_PR = varScore(CCNES_Prep, Forward = c("srm_CCNES_01",
                                                                                             "srm_CCNES_12", "srm_CCNES_18", "srm_CCNES_19", 
                                                                                             "srm_CCNES_28", "srm_CCNES_34", "srm_CCNES_41", 
                                                                                             "srm_CCNES_47", "srm_CCNES_53", "srm_CCNES_56", 
                                                                                             "srm_CCNES_63", "srm_CCNES_71"), MaxMiss = .20),.after = "CCNES_DR_imputation")
 # Calculating ccnes_ee
-CCNES_Prep <- add_column(CCNES_Prep, CCNES_EE_imputation = varScore(CCNES_Prep, Forward = c("srm_CCNES_05", 
+CCNES_Prep <- add_column(CCNES_Prep, CCNES_EE = varScore(CCNES_Prep, Forward = c("srm_CCNES_05", 
                                                                                             "srm_CCNES_11", "srm_CCNES_17", "srm_CCNES_20", 
                                                                                             "srm_CCNES_30", "srm_CCNES_35", "srm_CCNES_42", 
                                                                                             "srm_CCNES_43", "srm_CCNES_49", "srm_CCNES_57", 
                                                                                             "srm_CCNES_66", "srm_CCNES_68"), MaxMiss = .20),.after = "CCNES_PR_imputation")
 # Calculating ccnes_efr
-CCNES_Prep <- add_column(CCNES_Prep, CCNES_EFR_imputation = varScore(CCNES_Prep, Forward = c("srm_CCNES_06", 
+CCNES_Prep <- add_column(CCNES_Prep, CCNES_EFR = varScore(CCNES_Prep, Forward = c("srm_CCNES_06", 
                                                                                              "srm_CCNES_08", "srm_CCNES_16", "srm_CCNES_23", 
                                                                                              "srm_CCNES_25", "srm_CCNES_31", "srm_CCNES_38", 
                                                                                              "srm_CCNES_48", "srm_CCNES_54", "srm_CCNES_58", 
@@ -85,7 +86,7 @@ CCNES_Prep <- add_column(CCNES_Prep, CCNES_PFR_imputation = varScore(CCNES_Prep,
                                                                                              "srm_CCNES_44", "srm_CCNES_52", "srm_CCNES_59", 
                                                                                              "srm_CCNES_64", "srm_CCNES_67"), MaxMiss = .20),.after = "CCNES_EFR_imputation")
 # Calculating ccnes_mr
-CCNES_Prep <- add_column(CCNES_Prep, CCNES_MR_imputation = varScore(CCNES_Prep, Forward = c("srm_CCNES_04", 
+CCNES_Prep <- add_column(CCNES_Prep, CCNES_MR = varScore(CCNES_Prep, Forward = c("srm_CCNES_04", 
                                                                                             "srm_CCNES_09", "srm_CCNES_14", "srm_CCNES_21", 
                                                                                             "srm_CCNES_27", "srm_CCNES_32",  "srm_CCNES_40", 
                                                                                             "srm_CCNES_46", "srm_CCNES_51",  "srm_CCNES_60", 
@@ -94,24 +95,38 @@ CCNES_Prep <- add_column(CCNES_Prep, CCNES_MR_imputation = varScore(CCNES_Prep, 
 
 # NDA Sheet ####
 # Create NDA Prep sheet, select all the needed columns from Prep sheet
-NDA_CCNES_Prep <- select(CCNES_Prep, c(subjectkey = child_guid, src_subject_id = child_famID, sex = child_sex ,interview_age_child, interview_date, starts_with("srm_CCNES")))
+CCNES_NDA_Prep <- select(CCNES_Prep, c(subjectkey = child_guid, src_subject_id = child_famID, sex = child_sex, interview_age = interview_age_Mom, interview_date, visit = Timepoint,starts_with("srm_CCNES")))
 
 # Combine NDA and Prep sheet
 # Make sure put original NDA structure at first, because the order of the new sheet will be the order of the first item in bind_rows function
-setnames(NDA_CCNES_Prep, Reverse_CCNES_names, CCNES_NDA_Names)
+setnames(CCNES_NDA_Prep, Reverse_CCNES_names, CCNES_NDA_Names)
 
 
 # Recreate first line in original NDA file
-# Make a empty row, with same number of column in NDA_CCNES, as first line of NDA sheet
-# NDA_CCNES[1,] <- NA
+# Make a empty row, with same number of column in CCNES_NDA, as first line of NDA sheet
+# CCNES_NDA[1,] <- NA
 
-# ncol(NDA_CCNES)  is number of columns in NDA_CCNES
-NDA_CCNES <- bind_rows(NDA_CCNES,NDA_CCNES_Prep)
+# ncol(CCNES_NDA)  is number of columns in CCNES_NDA
+CCNES_NDA <- CCNES_NDA %>% mutate_all(as.character)
+CCNES_NDA_Prep <- CCNES_NDA_Prep %>% mutate_all(as.character)
+CCNES_NDA <- bind_rows(CCNES_NDA,CCNES_NDA_Prep)
 
+# Fill missing data with "999"
+CCNES_NDA[,c( "distress_reactions",       
+              "punitive_reactions","expressive_encouragement","emotion_focused_reactions", "problem_focused_reactions", "minimization_reactions","ccnes_1a",                 
+              "ccnes_1b","ccnes_1c","ccnes_1d","ccnes_1e","ccnes_1f","ccnes_2a", "ccnes_2b","ccnes_2c","ccnes_2d","ccnes_2e","ccnes_2f","ccnes_3a",                 
+              "ccnes_3b","ccnes_3c","ccnes_3d","ccnes_3e","ccnes_3f","ccnes_4a",
+              "ccnes_4b","ccnes_4c","ccnes_4d","ccnes_4e","ccnes_4f","ccnes_5a",             
+              "ccnes_5b","ccnes_5c","ccnes_5d","ccnes_5e","ccnes_5f","ccnes_6a",                 
+              "ccnes_6b","ccnes_6s","ccnes_6d","ccnes_6e","ccnes_6f","ccnes_7a",                 
+              "ccnes_7b","ccnes_7c","ccnes_7d","ccnes_7e","ccnes_7f","ccnes_8a",                 
+              "ccnes_8b","ccnes_8c","ccnes_8d","ccnes_8e","ccnes_8f","ccnes_9a",                 
+              "ccnes_9b","ccnes_9c","ccnes_9d","ccnes_9e","ccnes_9f","ccnes_n",                  
+              "ccnes_p","quest_instruct","respond","subjectkey_mother","subjectkey_father")]<-"999"
 # Recreate first line in original NDA file
-# Make a empty row, with same number of column in NDA_CCNES, as first line of NDA sheet
-# ncol(NDA_CCNES)  is number of columns in NDA_CCNES
-first_line <- matrix("", nrow = 1, ncol = ncol(NDA_CCNES))
+# Make a empty row, with same number of column in CCNES_NDA, as first line of NDA sheet
+# ncol(CCNES_NDA)  is number of columns in CCNES_NDA
+first_line <- matrix("", nrow = 1, ncol = ncol(CCNES_NDA))
 
 # assign the first cell in first_line as pabq which is the first cell in original NDA structure
 first_line[,1] <- "pabq"
@@ -124,8 +139,8 @@ first_line[,2] <- "1"
 # pabq.csv file will be saved into same folder as current r script
 write.table(first_line, file = "pabq.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
 
-# Append data in NDA_CCNES into pabq.cav file 
-write.table(NDA_CCNES, file = 'pabq.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
+# Append data in CCNES_NDA into pabq.cav file 
+write.table(CCNES_NDA, file = 'pabq.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
 
 # Clean Global Environment 
 rm(first_line)
