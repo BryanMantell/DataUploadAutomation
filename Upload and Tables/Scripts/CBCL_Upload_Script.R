@@ -7,10 +7,10 @@
 # Loading library, scientific notation, and upload preparation
 setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
 #source("~/GitHub/DataUploadAutomation/Upload and Tables/Data/Upload Preparation.R")
-NDA_CBCL <- read.csv("cbcl1_501_template.csv", skip = 1)
+CBCL_NDA <- read.csv("cbcl1_501_template.csv", skip = 1)
 
 # Select necessary items from qualtrics to import into CBCL
-CBCL_Prep <- select(Qualtrics, c(Fam_ID, child_guid, child_famID, interview_date, interview_age_child, child_sex, GroupAssignment, Timepoint = Timepoint, contains("srm_cbcl")))
+CBCL_Prep <- select(Qualtrics, c(Fam_ID, child_guid, child_famID, interview_date, interview_age_child, child_sex, GroupAssignment, Timepoint, contains("srm_cbcl")))
 
 # Create a list of names to be targeted
 New_CBCL_Names <- sprintf("srm_CBCL_%03d", seq(1:100))
@@ -165,7 +165,7 @@ rm(ER_Tscores, AD_Tscores, SC_Tscores, W_Tscores, SP_Tscores, AP_Tscores, AB_Tsc
 
 # Create NDA prep sheet
 # Select all the needed columns from CBCL_Prep sheet
-NDA_CBCL_Prep <- select(CBCL_Prep, c(subjectkey = child_guid, src_subject_id = child_famID, sex = child_sex ,interview_age_child, interview_date, starts_with("srm")))
+NDA_CBCL_Prep <- select(CBCL_Prep, c(subjectkey = child_guid, src_subject_id = child_famID, sex = child_sex ,interview_age = interview_age_child, interview_date, starts_with("srm")))
 
 # Create NDA structure column names, they are unique and without a pattern so they must be made manually 
 NDA_CBCL_Names <- paste(c("cbcl56a", "cbcl1", "cbcl_nt", "cbcl_eye", "cbcl8", "cbcl10", "cbcl_out", "cbcl_wait", "cbcl_chew", "cbcl11", "cbcl_help", "cbcl49", "cbcl14", "cbcl15", "cbcl_defiant", "cbcl_dem", "cbcl20", 
@@ -179,16 +179,21 @@ NDA_CBCL_Names <- paste(c("cbcl56a", "cbcl1", "cbcl_nt", "cbcl_eye", "cbcl8", "c
 New_CBCL_Names <- sprintf("srm_CBCL_%03d", seq(1:100))
 setnames(NDA_CBCL_Prep, New_CBCL_Names, NDA_CBCL_Names)
 
-# Make an empty row in the NDA sheet for compatibility (to avoid some potential errors)
-NDA_CBCL[1,] <- NA
-
 # Combine NDA CBCL Prep sheet with the NDA structure
-NDA_CBCL <- bind_rows(NDA_CBCL,NDA_CBCL_Prep)
+# Solution 1
+#library(plyr)
+#CBCL_NDA <- rbind.fill(CBCL_NDA,NDA_CBCL_Prep)
+
+# Solution 2
+CBCL_NDA <- bind_rows(mutate_all(CBCL_NDA, as.character), mutate_all(NDA_CBCL_Prep, as.character))
+
+# Fill necessary NDA missing columns with 999 as on the NDA website
+#CBCL_NDA[,"cbcl_emotional_raw, cbcl_emotional, cbcl_anxious_raw, cbcl_anxious, cbcl_somatic_c_raw, cbcl_somatic_c, cbcl_withdrawn_raw, cbcl_withdrawn, cbcl_sleep_raw, cbcl_sleep, cbcl_attention_raw, cbcl_attention, cbcl_aggressive_raw, cbcl_aggressive, cbcl_internal_raw, cbcl_internal, cbcl_external_raw, cbcl_external, cbcl_total_raw, cbcl_total, cbcl_affective_raw, cbcl_affective, cbcl_anxiety_raw, cbcl_anxiety, cbcl_pervasive_raw, cbcl_pervasive, cbcl_adhd_raw, cbcl_adhd, cbcl_oppositional_raw, cbcl_oppositional, phenotype, cbcl_depresspr_raw, cbcl_depresspr"] <- 999
 
 # Recreate first line in orignial NDA file
-# Make an empty row, with same number of column in NDA_CBCL, as first line of NDA sheet
-# ncol(NDA_CBCL)  is number of columns in NDA_CBCL
-first_line <- matrix("", nrow = 1, ncol = ncol(NDA_CBCL))
+# Make an empty row, with same number of column in CBCL_NDA, as first line of NDA sheet
+# ncol(CBCL_NDA)  is number of columns in CBCL_NDA
+first_line <- matrix("", nrow = 1, ncol = ncol(CBCL_NDA))
 
 # assign the first cell in first_line as cbcl1_5 which is the first cell in orignial NDA structure
 first_line[,1] <- "cbcl1_5"
@@ -200,8 +205,8 @@ first_line[,2] <- "1"
 # cbcl1_5.csv file will be saved into same folder as this current r script
 write.table(first_line, file = "cbcl1_5.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
 
-# Append data in NDA_CBCL into cbcl1_5.csv file 
-write.table(NDA_CBCL, file = 'cbcl1_5.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
+# Append data in CBCL_NDA into cbcl1_5.csv file 
+write.table(CBCL_NDA, file = 'cbcl1_5.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
 
 # Clean environment of intermediate calculations for NDA structure
 rm(NDA_CBCL_Prep, NDA_CBCL_Names, first_line, New_CBCL_Names)
