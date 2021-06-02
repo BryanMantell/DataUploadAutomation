@@ -20,7 +20,7 @@ library(lmSupport)
 Create prep sheet to begin transferring data into NDA format. Rename relevant GUID information to match NDA specifications. Finally, bind all timepoints into single WCCL Prep Sheet.
 
 ```{r Prep Sheet}
-WCCL_Prep <- select(Qualtrics, c(Fam_ID, mom_guid, mother_sex, interview_date, interview_age, contains("srm_wccl")))
+WCCL_Prep <- select(Qualtrics, c(subjectkey, src_subject_id, mother_sex, interview_date, interview_age_Mom, contains("srm_wccl")))
 ```
 # Re-code and 67% Rule
 Convert Likert Scale text input into numerical values then create a dataframe to place ID's that do not have 67% of their data present.
