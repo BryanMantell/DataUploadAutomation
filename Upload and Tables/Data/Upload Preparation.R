@@ -23,8 +23,8 @@ library(lmSupport)
 rm(list = ls())
 # scientific notation, round up to 3 digits
 options(digits = 3)
-setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
-#setwd("/Users/jmulleavey/Documents/GitHub/DataUploadAutomation/Upload and Tables/Data")
+#setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
+setwd("~/Documents/GitHub/DataUploadAutomation/Upload and Tables/Data")
 #path <- path.expand("~/Documents/Min/DataUploadAutomation/Upload and Tables/Data")
 #setwd("D:/Austin/Lab Work (D-Drive)/DataUploadAutomation/Measures/Upload Preparation")
 # *************************************************************************
@@ -336,10 +336,52 @@ rm(old_UO_PKBS_names, old_UO_PKBS_names2, old_UO_PKBS_names3, old_UO_PKBS_names4
 # *************************************************************************
 # Affect Perspective Taking Rename ####
 # *************************************************************************
+# Convert each columns different child ratings into master recode
+Redcap_Data$oc_apt_01[which(Redcap_Data$oc_apt_01 == "2")] = 1
+Redcap_Data$oc_apt_01[which(Redcap_Data$oc_apt_01 == "4")] = 2
+Redcap_Data$oc_apt_01[which(Redcap_Data$oc_apt_01 == "5")] = 3
+Redcap_Data$oc_apt_01[which(Redcap_Data$oc_apt_01 == "6")] = 4
+
+Redcap_Data$oc_apt_02[which(Redcap_Data$oc_apt_02 == "4")] = 1
+Redcap_Data$oc_apt_02[which(Redcap_Data$oc_apt_02 == "2")] = 2
+Redcap_Data$oc_apt_02[which(Redcap_Data$oc_apt_02 == "7")] = 3
+Redcap_Data$oc_apt_02[which(Redcap_Data$oc_apt_02 == "8")] = 4
+
+Redcap_Data$oc_apt_03[which(Redcap_Data$oc_apt_03 == "4")] = 1
+Redcap_Data$oc_apt_03[which(Redcap_Data$oc_apt_03 == "7")] = 2
+Redcap_Data$oc_apt_03[which(Redcap_Data$oc_apt_03 == "2")] = 3
+Redcap_Data$oc_apt_03[which(Redcap_Data$oc_apt_03 == "8")] = 4
+
+Redcap_Data$oc_apt_04[which(Redcap_Data$oc_apt_04 == "4")] = 1
+Redcap_Data$oc_apt_04[which(Redcap_Data$oc_apt_04 == "7")] = 2
+Redcap_Data$oc_apt_04[which(Redcap_Data$oc_apt_04 == "8")] = 3
+Redcap_Data$oc_apt_04[which(Redcap_Data$oc_apt_04 == "2")] = 4
+
+Redcap_Data$oc_apt_05[which(Redcap_Data$oc_apt_05 == "2")] = 1
+Redcap_Data$oc_apt_05[which(Redcap_Data$oc_apt_05 == "4")] = 2
+Redcap_Data$oc_apt_05[which(Redcap_Data$oc_apt_05 == "5")] = 3
+Redcap_Data$oc_apt_05[which(Redcap_Data$oc_apt_05 == "6")] = 4
+
+Redcap_Data$oc_apt_06[which(Redcap_Data$oc_apt_06 == "4")] = 1
+Redcap_Data$oc_apt_06[which(Redcap_Data$oc_apt_06 == "2")] = 2
+Redcap_Data$oc_apt_06[which(Redcap_Data$oc_apt_06 == "7")] = 3
+Redcap_Data$oc_apt_06[which(Redcap_Data$oc_apt_06 == "8")] = 4
+
+Redcap_Data$oc_apt_07[which(Redcap_Data$oc_apt_07 == "4")] = 1
+Redcap_Data$oc_apt_07[which(Redcap_Data$oc_apt_07 == "7")] = 2
+Redcap_Data$oc_apt_07[which(Redcap_Data$oc_apt_07 == "8")] = 3
+Redcap_Data$oc_apt_07[which(Redcap_Data$oc_apt_07 == "2")] = 4
+
+Redcap_Data$oc_apt_08[which(Redcap_Data$oc_apt_08 == "4")] = 1
+Redcap_Data$oc_apt_08[which(Redcap_Data$oc_apt_08 == "7")] = 2
+Redcap_Data$oc_apt_08[which(Redcap_Data$oc_apt_08 == "2")] = 3
+Redcap_Data$oc_apt_08[which(Redcap_Data$oc_apt_08 == "8")] = 4
+
+# Convert column names to odd numbers to represent participant response
 old_AffectPT_names <- c("oc_apt_01", "oc_apt_02", "oc_apt_03", "oc_apt_04", "oc_apt_05", "oc_apt_06", 
                         "oc_apt_07", "oc_apt_08")
-new_AffectPT_names <- c("oc_apt_01", "oc_apt_02", "oc_apt_03", "oc_apt_04", "oc_apt_05", "oc_apt_06", 
-                        "oc_apt_07", "oc_apt_08")
+new_AffectPT_names <- c("oc_apt_01", "oc_apt_03", "oc_apt_05", "oc_apt_07", "oc_apt_09", "oc_apt_11", 
+                        "oc_apt_13", "oc_apt_15")
 setnames(Redcap_Data, old_AffectPT_names, new_AffectPT_names, skip_absent = FALSE)
 
 # Clean environment 

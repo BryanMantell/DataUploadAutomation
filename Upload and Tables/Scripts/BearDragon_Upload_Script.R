@@ -47,7 +47,7 @@ BearDragon_Prep <- add_column(BearDragon_Prep, oc_dragon_total = varScore(BearDr
 
 # NDA Sheet
 #----------------------------------------------------------------------------------------------------------------------------------------
-# Create list of column names for PKBS prep and NDA structure
+# Create list of column names for BearDragon prep and NDA structure
 NDA_BearDragon_Prep <- select(BearDragon_Prep, subjectkey = "child_guid", src_subject_id = "child_famID", interview_date, interview_age = "interview_age_child", sex = "child_sex", visit = "Timepoint", contains("oc_bd"))
 
 #Match Prep Sheet column names to required NDA names

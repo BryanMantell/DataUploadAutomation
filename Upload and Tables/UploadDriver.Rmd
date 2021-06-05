@@ -5,8 +5,9 @@ date: "5/12/2021"
 output: html_document
 ---
 ```{r Prep Script}
-source("~/GitHub/DataUploadAutomation/Upload and Tables/Data/Upload Preparation.R")
-getwd()
+source("~/Documents/GitHub/DataUploadAutomation/Upload and Tables/Data/Upload Preparation.R")
+#getwd()
+#setwd("~/Documents/GitHub/DataUploadAutomation/Upload and Tables/Data")
 ```
 
 ```{r CBCL}
@@ -46,6 +47,11 @@ source("~/GitHub/DataUploadAutomation/Upload and Tables/Scripts/WCCL_Upload_Scri
 
 ```{r Bear Dragon}
 source("~/GitHub/DataUploadAutomation/Upload and Tables/Scripts/BearDragon_Upload_Script.R")
+
+```
+
+```{r Affect Perspective Taking}
+source("~/Documents/GitHub/DataUploadAutomation/Upload and Tables/Scripts/AffectPT_Upload_Script.R")
 
 ```
 
