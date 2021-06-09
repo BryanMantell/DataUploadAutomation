@@ -6,7 +6,7 @@ setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
 #setwd("C:/Users/mzhang8/Downloads/Upload and Tables/Data")
 
 # Read in NDA template
-NDA_ders <- read.csv("ders01_template.csv")
+DERS_NDA <- read.csv("ders01_template.csv")
 
 # Select needed column and name new frame as DERS_Prep
 DERS_Prep <- select(Qualtrics, c(Fam_ID, child_guid, child_famID, interview_date, interview_age_child, child_sex, GroupAssignment, Timepoint = Timepoint, contains("srm_ders")))
@@ -51,26 +51,26 @@ DERS_Prep <- add_column(DERS_Prep,
                         DERS_clarity = varScore(DERS_Prep, Forward =  
                                                              c("srm_ders_1r", "srm_ders_4", "srm_ders_5", 
                                                                "srm_ders_7r", "srm_ders_9"),MaxMiss = .02),
-                        .after = "DERS_awareness_imputation")
+                        .after = "DERS_awareness")
 
 # Calculated goals 
 DERS_Prep <- add_column(DERS_Prep, 
                         DERS_goals = varScore(DERS_Prep, Forward =  
                                                            c("srm_ders_13", "srm_ders_18", "srm_ders_20r", 
                                                              "srm_ders_26", "srm_ders_33"),MaxMiss = .02),
-                        .after = "DERS_clarity_imputation")
+                        .after = "DERS_clarity")
 
 # Calculated impulse 
 DERS_Prep <- add_column(DERS_Prep, 
                         DERS_impulse = varScore(DERS_Prep, Forward =  
                                                              c("srm_ders_3", "srm_ders_14", "srm_ders_19", 
-                                                               "srm_ders_24r", "srm_ders_27", "srm_ders_32"),MaxMiss = .02), .after = "DERS_goals_imputation")
+                                                               "srm_ders_24r", "srm_ders_27", "srm_ders_32"),MaxMiss = .02), .after = "DERS_goals")
 
 # Calculated nonacceptance
 DERS_Prep <- add_column(DERS_Prep, 
                         DERS_nonacceptance = varScore(DERS_Prep, Forward =  
                                                                    c("srm_ders_11", "srm_ders_12", "srm_ders_21", 
-                                                                     "srm_ders_23", "srm_ders_25", "srm_ders_29"),MaxMiss = .02), .after = "DERS_impulse_imputation")
+                                                                     "srm_ders_23", "srm_ders_25", "srm_ders_29"),MaxMiss = .02), .after = "DERS_impulse")
 
 # Calculated strategies 
 DERS_Prep <- add_column(DERS_Prep, 
@@ -78,11 +78,11 @@ DERS_Prep <- add_column(DERS_Prep,
                                                                 c("srm_ders_15", "srm_ders_16", "srm_ders_22r", 
                                                                   "srm_ders_28", "srm_ders_30", "srm_ders_31", 
                                                                   "srm_ders_35", "srm_ders_36"),MaxMiss = .02),
-                        .after = "DERS_nonacceptance_imputation")
+                        .after = "DERS_nonacceptance")
 
 # Calculated total 
 ders<-select(DERS_Prep, c(starts_with("srm_ders")))
-DERS_Prep <- add_column(DERS_Prep, DERS_total_imputation = varScore(DERS_Prep, Forward =  names(ders),MaxMiss = .02), .after = "DERS_strategies_imputation")
+DERS_Prep <- add_column(DERS_Prep, DERS_total = varScore(DERS_Prep, Forward =  names(ders),MaxMiss = .02), .after = "DERS_strategies")
 rm(ders)
 # Mean with 67% rule ####
 # Check NA percentage
@@ -91,31 +91,31 @@ rm(ders)
 
 # NDA Sheet
 # Create NDA prep sheet, select all the needed columns from prep sheet
-NDA_ders_Prep <- select(DERS_Prep, c(subjectkey= child_guid, src_subject_id= child_famID,  sex = child_sex  ,interview_age_child, interview_date, timpt = Timepoint, starts_with("srm_ders")))
+DERS_NDA_Prep <- select(DERS_Prep, c(subjectkey= child_guid, src_subject_id= child_famID,  sex = child_sex  ,interview_age_child, interview_date, timpt = Timepoint, starts_with("srm_ders")))
 
 # Combine NDA and prep sheet
 # Make sure put original NDA structure at first, because the order of the new sheet will be the order of the first item in bind_rows function
-setnames(NDA_ders_Prep, Reverse_ders_names, NDA_DERS_names)
+setnames(DERS_NDA_Prep, Reverse_ders_names, DERS_NDA_names)
 
 # Recreate first line in original NDA file
-# Make a empty row, with same number of column in NDA_ders, as first line of NDA sheet
-#NDA_ders[1,] <- NA
-# ncol(NDA_ders)  is number of columns in NDA_ders
-NDA_ders_Prep <- NDA_ders_Prep %>%
+# Make a empty row, with same number of column in DERS_NDA, as first line of NDA sheet
+#DERS_NDA[1,] <- NA
+# ncol(DERS_NDA)  is number of columns in DERS_NDA
+DERS_NDA_Prep <- DERS_NDA_Prep %>%
   mutate_all(as.character)
-NDA_ders <- NDA_ders %>%
+DERS_NDA <- DERS_NDA %>%
   mutate_all(as.character)
 
-test1 <- bind_rows(NDA_ders_Prep, NDA_ders)
+DERS_NDA <- bind_rows(DERS_NDA_Prep, DERS_NDA)
 
 # Assign required column but with data missing 999
-NDA_ders[,c( "ders_awareness","ders_clarity","ders_goals","ders_impulse","ders_nonacceptance", "ders_strategies","ders_total",         
-             "der2","der36","der_11","der_13","der_18","timept","version_form",       
-              "visit","timepoint_label")]<-"999"
+DERS_NDA[,c("ders_awareness","ders_clarity","ders_goals","ders_impulse","ders_nonacceptance", "ders_strategies",
+            "ders_total", "der2","der36","der_11","der_13","der_18","timept","version_form",       
+            "visit","timepoint_label")] <- "999"
 # Recreate first line in original NDA file
-# Make a empty row, with same number of column in NDA_ders, as first line of NDA sheet
-# ncol(NDA_ders)  is number of columns in NDA_ders
-first_line <- matrix("", nrow = 1, ncol = ncol(NDA_ders))
+# Make a empty row, with same number of column in DERS_NDA, as first line of NDA sheet
+# ncol(DERS_NDA)  is number of columns in DERS_NDA
+first_line <- matrix("", nrow = 1, ncol = ncol(DERS_NDA))
 # assign the first cell in first_line as ders which is the first cell in original NDA structure
 first_line[,1] <- "ders"
 # assign the second cell in first_line as ders
@@ -126,6 +126,7 @@ first_line[,2] <- "1"
 # ders.csv file will be saved into same folder as current r script
 write.table(first_line, file = "ders.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
 
-# Append data in NDA_ders into ders.cav file 
-write.table(NDA_ders, file = 'ders.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
+# Append data in DERS_NDA into ders.cav file 
+write.table(DERS_NDA, file = 'ders.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
 
+rm(first_line, DERS_NDA_Prep)
