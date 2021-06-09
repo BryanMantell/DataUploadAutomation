@@ -188,7 +188,10 @@ setnames(NDA_CBCL_Prep, New_CBCL_Names, NDA_CBCL_Names)
 CBCL_NDA <- bind_rows(mutate_all(CBCL_NDA, as.character), mutate_all(NDA_CBCL_Prep, as.character))
 
 # Fill necessary NDA missing columns with 999 as on the NDA website
-#CBCL_NDA[,"cbcl_emotional_raw, cbcl_emotional, cbcl_anxious_raw, cbcl_anxious, cbcl_somatic_c_raw, cbcl_somatic_c, cbcl_withdrawn_raw, cbcl_withdrawn, cbcl_sleep_raw, cbcl_sleep, cbcl_attention_raw, cbcl_attention, cbcl_aggressive_raw, cbcl_aggressive, cbcl_internal_raw, cbcl_internal, cbcl_external_raw, cbcl_external, cbcl_total_raw, cbcl_total, cbcl_affective_raw, cbcl_affective, cbcl_anxiety_raw, cbcl_anxiety, cbcl_pervasive_raw, cbcl_pervasive, cbcl_adhd_raw, cbcl_adhd, cbcl_oppositional_raw, cbcl_oppositional, phenotype, cbcl_depresspr_raw, cbcl_depresspr"] <- 999
+CBCL_NDA[,c("cbcl_emotional_raw", "cbcl_emotional", "cbcl_anxious_raw", "cbcl_anxious", "cbcl_somatic_c_raw", "cbcl_somatic_c", "cbcl_withdrawn_raw", "cbcl_withdrawn", "cbcl_sleep_raw", "cbcl_sleep", "cbcl_attention_raw", "cbcl_attention", "cbcl_aggressive_raw", "cbcl_aggressive", "cbcl_internal_raw", "cbcl_internal", "cbcl_external_raw", "cbcl_external", "cbcl_total_raw", "cbcl_total", "cbcl_affective_raw", "cbcl_affective", "cbcl_anxiety_raw", "cbcl_anxiety", "cbcl_pervasive_raw", "cbcl_pervasive", "cbcl_adhd_raw", "cbcl_adhd", "cbcl_oppositional_raw", "cbcl_oppositional", "phenotype", "cbcl_depresspr_raw", "cbcl_depresspr")] <- "999"
+
+# Fill out relationship column with "1" since the mother is filling out the form for the child
+CBCL_NDA$relationship <- "1"
 
 # Recreate first line in orignial NDA file
 # Make an empty row, with same number of column in CBCL_NDA, as first line of NDA sheet

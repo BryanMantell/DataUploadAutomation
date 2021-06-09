@@ -13,20 +13,21 @@ ES_NDA <- read.csv("ers01_template.csv", skip = 1, stringsAsFactors = FALSE)
 NDA_ES_names <- sprintf("es_%01d", 1:12)
 
 # Select needed columns and rename in Redcap_Data, rename to a different dataframe to avoid interference with other measures
-Redcap_Data_ES <- select(Redcap_Data, c(Timepoint, starts_with("oc_es_")))
-Redcap_Data_ES <- select(Redcap_Data_ES, -c(oc_es_notes, oc_es_hgen, oc_es_agen, oc_es_sgen, oc_es_intblue, oc_es_intgreen, oc_es_intmom))
+ES_PREP <- select(Redcap_Data, c(child_guid, child_famID, interview_date, interview_age_Mom, interview_age_child, child_sex, GroupAssignment, Timepoint, starts_with("oc_es_")))
+ES_PREP <- select(ES_PREP, -c(oc_es_notes, oc_es_hgen, oc_es_agen, oc_es_sgen, oc_es_intblue, oc_es_intgreen, oc_es_intmom))
 
 # Select revelent pedigree information, rename as needed. (Include GroupAssignment for treatment progress calculation).
-Pedigree_Prep <- data.frame(select(Pedigree, child_guid, child_famID, interview_date, interview_age_Mom, interview_age_child, child_sex, GroupAssignment, Timepoint))
+#Pedigree_Prep <- data.frame(select(Pedigree, child_guid, child_famID, interview_date, interview_age_Mom, interview_age_child, child_sex, GroupAssignment, Timepoint))
 
+### Problem is here ###
 # Exchange commas out of Prep Sheet to avoid CSV issues. Personal selection was a "/" but you can change it here to preference. 
-Redcap_Data_ES <- sapply(Redcap_Data_ES, gsub, pattern = ",", replacement= "/")
+ES_PREP <- lapply(ES_PREP, gsub, pattern = ",", replacement= "/")
 
 # Merge Predigree and redcap files
-ES_PREP <- merge(Pedigree_Prep, Redcap_Data_ES,by = c("Timepoint"), all = TRUE)
+#ES_PREP <- merge(Pedigree_Prep, Redcap_Data_ES,by = c("Timepoint"), all = TRUE)
 
 # Clean Environment
-rm(Pedigree_Prep, Redcap_Data_ES)
+#rm(Pedigree_Prep, Redcap_Data_ES)
 
 # Set neccessary data to numeric so they can be used in calculations
 ES_PREP[, c("oc_es_hap_1", "oc_es_hap_2", "oc_es_hap_3", "oc_es_ang_1", "oc_es_ang_2", "oc_es_ang_3", "oc_es_sad_1", "oc_es_sad_2", "oc_es_sad_3")] <- sapply(ES_PREP[, c("oc_es_hap_1", "oc_es_hap_2", "oc_es_hap_3", "oc_es_ang_1", "oc_es_ang_2", "oc_es_ang_3", "oc_es_sad_1", "oc_es_sad_2", "oc_es_sad_3")], as.numeric)
