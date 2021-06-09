@@ -66,31 +66,31 @@ CCNES_Prep <- add_column(CCNES_Prep, CCNES_PR = varScore(CCNES_Prep, Forward = c
                                                                                             "srm_CCNES_12", "srm_CCNES_18", "srm_CCNES_19", 
                                                                                             "srm_CCNES_28", "srm_CCNES_34", "srm_CCNES_41", 
                                                                                             "srm_CCNES_47", "srm_CCNES_53", "srm_CCNES_56", 
-                                                                                            "srm_CCNES_63", "srm_CCNES_71"), MaxMiss = .20),.after = "CCNES_DR_imputation")
+                                                                                            "srm_CCNES_63", "srm_CCNES_71"), MaxMiss = .20),.after = "CCNES_DR")
 # Calculating ccnes_ee
 CCNES_Prep <- add_column(CCNES_Prep, CCNES_EE = varScore(CCNES_Prep, Forward = c("srm_CCNES_05", 
                                                                                             "srm_CCNES_11", "srm_CCNES_17", "srm_CCNES_20", 
                                                                                             "srm_CCNES_30", "srm_CCNES_35", "srm_CCNES_42", 
                                                                                             "srm_CCNES_43", "srm_CCNES_49", "srm_CCNES_57", 
-                                                                                            "srm_CCNES_66", "srm_CCNES_68"), MaxMiss = .20),.after = "CCNES_PR_imputation")
+                                                                                            "srm_CCNES_66", "srm_CCNES_68"), MaxMiss = .20),.after = "CCNES_PR")
 # Calculating ccnes_efr
 CCNES_Prep <- add_column(CCNES_Prep, CCNES_EFR = varScore(CCNES_Prep, Forward = c("srm_CCNES_06", 
                                                                                              "srm_CCNES_08", "srm_CCNES_16", "srm_CCNES_23", 
                                                                                              "srm_CCNES_25", "srm_CCNES_31", "srm_CCNES_38", 
                                                                                              "srm_CCNES_48", "srm_CCNES_54", "srm_CCNES_58", 
-                                                                                             "srm_CCNES_65", "srm_CCNES_69"), MaxMiss = .20),.after = "CCNES_EE_imputation")
+                                                                                             "srm_CCNES_65", "srm_CCNES_69"), MaxMiss = .20),.after = "CCNES_EE")
 # Calculating ccnes_pfr
-CCNES_Prep <- add_column(CCNES_Prep, CCNES_PFR_imputation = varScore(CCNES_Prep, Forward = c("srm_CCNES_03", 
+CCNES_Prep <- add_column(CCNES_Prep, CCNES_PFR = varScore(CCNES_Prep, Forward = c("srm_CCNES_03", 
                                                                                              "srm_CCNES_10", "srm_CCNES_15", "srm_CCNES_24", 
                                                                                              "srm_CCNES_26", "srm_CCNES_36", "srm_CCNES_37", 
                                                                                              "srm_CCNES_44", "srm_CCNES_52", "srm_CCNES_59", 
-                                                                                             "srm_CCNES_64", "srm_CCNES_67"), MaxMiss = .20),.after = "CCNES_EFR_imputation")
+                                                                                             "srm_CCNES_64", "srm_CCNES_67"), MaxMiss = .20),.after = "CCNES_EFR")
 # Calculating ccnes_mr
 CCNES_Prep <- add_column(CCNES_Prep, CCNES_MR = varScore(CCNES_Prep, Forward = c("srm_CCNES_04", 
                                                                                             "srm_CCNES_09", "srm_CCNES_14", "srm_CCNES_21", 
                                                                                             "srm_CCNES_27", "srm_CCNES_32",  "srm_CCNES_40", 
                                                                                             "srm_CCNES_46", "srm_CCNES_51",  "srm_CCNES_60", 
-                                                                                            "srm_CCNES_61", "srm_CCNES_72"), MaxMiss = .20),.after = "CCNES_PFR_imputation")
+                                                                                            "srm_CCNES_61", "srm_CCNES_72"), MaxMiss = .20),.after = "CCNES_PFR")
 
 
 # NDA Sheet ####
@@ -122,7 +122,7 @@ CCNES_NDA[,c( "distress_reactions",
               "ccnes_7b","ccnes_7c","ccnes_7d","ccnes_7e","ccnes_7f","ccnes_8a",                 
               "ccnes_8b","ccnes_8c","ccnes_8d","ccnes_8e","ccnes_8f","ccnes_9a",                 
               "ccnes_9b","ccnes_9c","ccnes_9d","ccnes_9e","ccnes_9f","ccnes_n",                  
-              "ccnes_p","quest_instruct","respond","subjectkey_mother","subjectkey_father")]<-"999"
+              "ccnes_p","quest_instruct","respond","subjectkey_mother","subjectkey_father")] <- "999"
 # Recreate first line in original NDA file
 # Make a empty row, with same number of column in CCNES_NDA, as first line of NDA sheet
 # ncol(CCNES_NDA)  is number of columns in CCNES_NDA
@@ -143,4 +143,4 @@ write.table(first_line, file = "pabq.csv", sep = ",", append = FALSE, quote = FA
 write.table(CCNES_NDA, file = 'pabq.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
 
 # Clean Global Environment 
-rm(first_line)
+rm(first_line, CCNES_NDA_Prep)
