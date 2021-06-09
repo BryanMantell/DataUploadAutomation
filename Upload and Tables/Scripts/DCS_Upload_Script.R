@@ -22,8 +22,9 @@ DCS_NDA_names <- sprintf("dcs%02d", 1:36)
 # Assign Timepoint base on redcap_event_name
 Redcap_Data$Timepoint = sapply(strsplit(as.character(Redcap_Data$redcap_event_name), split = '_', fixed = T), function(x) (x[2])) 
 
+Pedigree_Name <- names(Pedigree)
 # Select needed columns and rename in Redcap_Data
-DCS_Prep <- select(Redcap_Data, c(Fam_ID,  Timepoint, starts_with("oc_dcs_")))
+DCS_Prep <- select(Redcap_Data, c(Pedigree_Name,starts_with("oc_dcs_")))
 DCS_Prep <- select(DCS_Prep, -c(oc_dcs_notes))
 
 
