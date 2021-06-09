@@ -95,7 +95,7 @@ DERS_NDA_Prep <- select(DERS_Prep, c(subjectkey= child_guid, src_subject_id= chi
 
 # Combine NDA and prep sheet
 # Make sure put original NDA structure at first, because the order of the new sheet will be the order of the first item in bind_rows function
-setnames(DERS_NDA_Prep, Reverse_ders_names, DERS_NDA_names)
+setnames(DERS_NDA_Prep, Reverse_ders_names, NDA_DERS_names)
 
 # Recreate first line in original NDA file
 # Make a empty row, with same number of column in DERS_NDA, as first line of NDA sheet
