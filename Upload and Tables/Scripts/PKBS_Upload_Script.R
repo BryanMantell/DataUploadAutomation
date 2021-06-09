@@ -20,12 +20,10 @@ library(knitr)
 library(lmSupport)
 
 # Source data, templates and create NDA dataframe
-setwd("/Users/jmulleavey/Documents/GitHub/DataUploadAutomation/Upload and Tables/Data")
-getwd()
-#setwd("~/Documents/GitHub/DataUploadAutomation/Upload and Tables/Data")
-#source("~/GitHub/DataUploadAutomation/Upload and Tables/Data/Upload Preparation.R")
+setwd("~/Documents/GitHub/DataUploadAutomation/Upload and Tables/Data")
+#getwd()
 
-NDA_PKBS <- read.csv("pkbs01_template.csv", skip = 1)
+PKBS_NDA <- read.csv("pkbs01_template.csv", skip = 1)
 
 # Select the relevant sets of information from Qualtrics necessary for the PKBS
 PKBS_Prep <- select(Qualtrics, c(Timepoint, mom_guid, FamID_Mother, interview_date, interview_age_Mom, mother_sex, contains("srm_pkbs")))
@@ -53,7 +51,7 @@ PKBS_Prep <- add_column(PKBS_Prep, pkbs_total = varScore(PKBS_Prep, c("srm_pkbs_
 # NDA Sheet
 #----------------------------------------------------------------------------------------------------------------------------------------
 # Create list of column names for PKBS prep and NDA structure
-NDA_PKBS_Prep <- select(PKBS_Prep, c(subjectkey = "mom_guid", src_subject_id = "FamID_Mother", interview_age = "interview_age_Mom", interview_date, sex = "mother_sex", visit = "Timepoint",starts_with("srm"), pkbs_total))       
+PKBS_NDA_Prep <- select(PKBS_Prep, c(subjectkey = "mom_guid", src_subject_id = "FamID_Mother", interview_age = "interview_age_Mom", interview_date, sex = "mother_sex", visit = "Timepoint",starts_with("srm"), pkbs_total))       
 
 
 NDA_names <- c("Social2", "Social7", "Social10", "Social12", "Social16", "Social22", "Social23", "Social25", 
@@ -62,23 +60,27 @@ NDA_names <- c("Social2", "Social7", "Social10", "Social12", "Social16", "Social
                "Social3", "Social6", "Social8", "P_soc_23_ft", "Social11", "Social13", "Social18", "Social26", 
                "Social31")
 
-setnames(NDA_PKBS_Prep, new_PKBS_names, NDA_names, skip_absent = FALSE)
-colnames(NDA_PKBS_Prep)[40] <- "basc_social_raw"
+setnames(PKBS_NDA_Prep, new_PKBS_names, NDA_names, skip_absent = FALSE)
+colnames(PKBS_NDA_Prep)[40] <- "basc_social_raw"
 
 
 # Merge PKBS Prep Sheet into NDA structure
-#NDA_PKBS[1,] <- NA
-NDA_PKBS <- rbind(NDA_PKBS_Prep, NDA_PKBS)
+#PKBS_NDA[1,] <- NA
+PKBS_NDA <- rbind(PKBS_NDA_Prep, PKBS_NDA)
 
 # Recreate the first line of the NDA
-first_line <- matrix("", nrow = 1, ncol = ncol(NDA_PKBS))
+first_line <- matrix("", nrow = 1, ncol = ncol(PKBS_NDA))
 first_line[,1] <- "pkbs"
 first_line[,2] <- "1"
 
 # Create a new file in folder called pabq.csv, and put first line into this file
-# pabq.csv file will be saved into same folder as current r script
+# pkbs.csv file will be saved into same folder as current r script
 write.table(first_line, file = "pkbs.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
 
-# Append data in NDA_CCNES into pabq.cav file 
-write.table(NDA_PKBS, file = 'pkbs.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
+# Append data in PKBS_NDA into pkbs.cav file 
+write.table(PKBS_NDA, file = 'pkbs.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
+
+#Remove any unnecessary dataframes for the NDA upload
+rm(PKBS_NDA_Prep)
+#rm(Pedigree, Qualtrics, Redcap_Data)
 #----------------------------------------------------------------------------------------------------------------------------------------

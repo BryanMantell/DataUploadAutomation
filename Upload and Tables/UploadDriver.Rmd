@@ -7,7 +7,7 @@ output: html_document
 ```{r Prep Script}
 source("~/Documents/GitHub/DataUploadAutomation/Upload and Tables/Data/Upload Preparation.R")
 #getwd()
-#setwd("~/Documents/GitHub/DataUploadAutomation/Upload and Tables/Data")
+setwd("~/Documents/GitHub/DataUploadAutomation/Upload and Tables/Data")
 ```
 
 ```{r CBCL}
@@ -36,7 +36,7 @@ source("~/GitHub/DataUploadAutomation/Upload and Tables/Scripts/ES_Upload_Script
 ```
 
 ```{r PKBS}
-source("~/GitHub/DataUploadAutomation/Upload and Tables/Scripts/PKBS_Upload_Script.R")
+source("~/Documents/GitHub/DataUploadAutomation/Upload and Tables/Scripts/PKBS_Upload_Script.R")
 
 ```
 
@@ -46,12 +46,17 @@ source("~/GitHub/DataUploadAutomation/Upload and Tables/Scripts/WCCL_Upload_Scri
 ```
 
 ```{r Bear Dragon}
-source("~/GitHub/DataUploadAutomation/Upload and Tables/Scripts/BearDragon_Upload_Script.R")
+source("~/Documents/GitHub/DataUploadAutomation/Upload and Tables/Scripts/BearDragon_Upload_Script.R")
 
 ```
 
 ```{r Affect Perspective Taking}
 source("~/Documents/GitHub/DataUploadAutomation/Upload and Tables/Scripts/AffectPT_Upload_Script.R")
+
+```
+
+```{r Acceptance and Action Questionnaire}
+source("~/Documents/GitHub/DataUploadAutomation/Upload and Tables/Scripts/AAQ_Upload_Script.R")
 
 ```
 

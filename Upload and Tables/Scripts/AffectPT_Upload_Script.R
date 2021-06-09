@@ -21,11 +21,9 @@ library(lmSupport)
 
 # Source data, templates and create NDA dataframe
 setwd("~/Documents/GitHub/DataUploadAutomation/Upload and Tables/Data")
-getwd()
-#setwd("~/Documents/GitHub/DataUploadAutomation/Upload and Tables/Data")
-#source("~/GitHub/DataUploadAutomation/Upload and Tables/Data/Upload Preparation.R")
+#getwd()
 
-NDA_AffectPT <- read.csv("apt01_template.csv", skip = 1)
+AffectPT_NDA <- read.csv("apt01_template.csv", skip = 1)
 
 # Select the relevant sets of information from RedCap necessary for the AffectPT
 AffectPT_Prep <- select(Redcap_Data, c(child_guid, child_famID, interview_date, interview_age_child, child_sex, Timepoint, contains("oc_apt_")))
@@ -36,7 +34,7 @@ AffectPT_Prep <- select(Redcap_Data, c(child_guid, child_famID, interview_date, 
 AffectPT_Prep[, c("oc_apt_02", "oc_apt_04", "oc_apt_06", "oc_apt_08", "oc_apt_10", "oc_apt_12", 
                   "oc_apt_14", "oc_apt_16")] <- NA
 
-#Remove total column from the prep script because it will be based on recoded columns in coming lines of code
+# Remove total column from the prep script because it will be based on recoded columns in coming lines of code
 AffectPT_Prep <- select(AffectPT_Prep, -c("oc_apt_total"))
 
 # Reorder scoring columns with existing child response columns
@@ -82,35 +80,36 @@ AffectPT_Prep <- add_column(AffectPT_Prep, oc_apt_total = rowSums(AffectPT_Prep[
 # NDA Sheet
 #----------------------------------------------------------------------------------------------------------------------------------------
 # Create list of column names for AffectPT prep and NDA structure
-NDA_AffectPT_Prep <- select(AffectPT_Prep, subjectkey = "child_guid", src_subject_id = "child_famID", interview_date, interview_age = "interview_age_child", gender = "child_sex", visit = "Timepoint", contains("oc_apt"))
-
-#Remove Prep Sheet
-rm(AffectPT_Prep)
+AffectPT_NDA_Prep <- select(AffectPT_Prep, subjectkey = "child_guid", src_subject_id = "child_famID", interview_date, interview_age = "interview_age_child", gender = "child_sex", visit = "Timepoint", contains("oc_apt"))
 
 # Match Prep Sheet column names to required NDA names
-nda_names <- c(paste("apt", 1:16, sep = ""))
+NDA_names <- c(paste("apt", 1:16, sep = ""))
 prep_names <- c("oc_apt_01", "oc_apt_02", "oc_apt_03", "oc_apt_04", 
                 "oc_apt_05", "oc_apt_06", "oc_apt_07", "oc_apt_08", "oc_apt_09", "oc_apt_10", "oc_apt_11", 
                 "oc_apt_12", "oc_apt_13", "oc_apt_14", "oc_apt_15", "oc_apt_16")
-setnames(NDA_AffectPT_Prep, prep_names, nda_names, skip_absent = FALSE)
+setnames(AffectPT_NDA_Prep, prep_names, NDA_names, skip_absent = FALSE)
 
 # Drop total column
-NDA_AffectPT_Prep <- NDA_AffectPT_Prep[-c(23)]
+AffectPT_NDA_Prep <- AffectPT_NDA_Prep[-c(23)]
 
 # Combine NDA Template with NDA Structure
-NDA_AffectPT[1,] <- NA
-NDA_AffectPT <- bind_rows(NDA_AffectPT, NDA_AffectPT_Prep)
+AffectPT_NDA[1,] <- NA
+AffectPT_NDA <- bind_rows(AffectPT_NDA, AffectPT_NDA_Prep)
 
-first_line <- matrix("", nrow = 1, ncol = ncol(NDA_AffectPT))
+first_line <- matrix("", nrow = 1, ncol = ncol(AffectPT_NDA))
 first_line[,1] <- "apt"
 first_line[,2] <- "1"
 
-# Create a new file in folder called pabq.csv, and put first line into this file
+# Create a new file in folder called affectpt.csv, and put first line into this file
 # pabq.csv file will be saved into same folder as current r script
 write.table(first_line, file = "affectpt.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
 
-# Append data in NDA_CCNES into pabq.cav file 
-write.table(NDA_AffectPT, file = 'affectpt.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
+# Append data in AffectPT_NDA into affectpt.cav file 
+write.table(AffectPT_NDA, file = 'affectpt.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
 
+#Remove any unnecessary dataframes for the NDA upload
+rm(AffectPT_NDA_Prep)
+#rm(Pedigree, Qualtrics, Redcap_Data)
+#----------------------------------------------------------------------------------------------------------------------------------------
 
 
