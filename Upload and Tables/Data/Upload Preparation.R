@@ -24,7 +24,7 @@ rm(list = ls())
 # scientific notation, round up to 3 digits
 options(digits = 3)
 #setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
-setwd("~/Documents/GitHub/DataUploadAutomation/Upload and Tables/Data")
+setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
 #path <- path.expand("~/Documents/Min/DataUploadAutomation/Upload and Tables/Data")
 #setwd("D:/Austin/Lab Work (D-Drive)/DataUploadAutomation/Measures/Upload Preparation")
 # *************************************************************************
@@ -392,6 +392,8 @@ rm(old_AffectPT_names)
 # Redcap column name: oc_dcs_1:36
 old_DCS_names <- sprintf("oc_dcs_%02d", 1:36)
 
+# DCCS NDA Columns Name 
+NDA_DCS_names <- sprintf("dcs%02d", 1:36)
 # *************************************************************************
 # Emotion Labeling Rename ####
 # *************************************************************************
