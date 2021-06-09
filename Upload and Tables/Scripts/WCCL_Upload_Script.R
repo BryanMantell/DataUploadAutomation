@@ -1,11 +1,11 @@
 # Title: WCCL Upload Script
 
-# Setup
+# Setup("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
 
 
 # import data frame
 
-#setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
+#setwd
 source("~/GitHub/DataUploadAutomation/Upload and Tables/Data/Upload Preparation.R")
 
 WCCL_NDA <- read.csv("dbt_wccl01_template.csv", skip = 1)
