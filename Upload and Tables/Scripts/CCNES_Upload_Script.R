@@ -113,7 +113,8 @@ CCNES_NDA <- bind_rows(CCNES_NDA,CCNES_NDA_Prep)
 
 # Fill missing data with "999"
 CCNES_NDA[,c( "distress_reactions",       
-              "punitive_reactions","expressive_encouragement","emotion_focused_reactions", "problem_focused_reactions",                   "minimization_reactions","ccnes_1a",                 
+              "punitive_reactions","expressive_encouragement","emotion_focused_reactions", "problem_focused_reactions",
+              "minimization_reactions","ccnes_1a",                 
               "ccnes_1b","ccnes_1c","ccnes_1d","ccnes_1e","ccnes_1f","ccnes_2a", "ccnes_2b","ccnes_2c","ccnes_2d",
               "ccnes_2e","ccnes_2f","ccnes_3a",                 
               "ccnes_3b","ccnes_3c","ccnes_3d","ccnes_3e","ccnes_3f","ccnes_4a",
