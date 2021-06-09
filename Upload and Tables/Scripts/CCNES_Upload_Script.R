@@ -4,8 +4,8 @@
 
 # Setup ####
 # Empty environment, loading library, set knitr and scientific notation
-#setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
-setwd("C:/Users/mzhang8/Downloads/Upload and Tables/Data")
+setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
+#setwd("C:/Users/mzhang8/Downloads/Upload and Tables/Data")
 CCNES_NDA <- read.csv("pabq01_template.csv", skip = 1)
 #setwd("~/Documents/Min/DataUploadAutomation/Upload and Tables/Output for NDA")
 
@@ -113,8 +113,9 @@ CCNES_NDA <- bind_rows(CCNES_NDA,CCNES_NDA_Prep)
 
 # Fill missing data with "999"
 CCNES_NDA[,c( "distress_reactions",       
-              "punitive_reactions","expressive_encouragement","emotion_focused_reactions", "problem_focused_reactions", "minimization_reactions","ccnes_1a",                 
-              "ccnes_1b","ccnes_1c","ccnes_1d","ccnes_1e","ccnes_1f","ccnes_2a", "ccnes_2b","ccnes_2c","ccnes_2d","ccnes_2e","ccnes_2f","ccnes_3a",                 
+              "punitive_reactions","expressive_encouragement","emotion_focused_reactions", "problem_focused_reactions",                   "minimization_reactions","ccnes_1a",                 
+              "ccnes_1b","ccnes_1c","ccnes_1d","ccnes_1e","ccnes_1f","ccnes_2a", "ccnes_2b","ccnes_2c","ccnes_2d",
+              "ccnes_2e","ccnes_2f","ccnes_3a",                 
               "ccnes_3b","ccnes_3c","ccnes_3d","ccnes_3e","ccnes_3f","ccnes_4a",
               "ccnes_4b","ccnes_4c","ccnes_4d","ccnes_4e","ccnes_4f","ccnes_5a",             
               "ccnes_5b","ccnes_5c","ccnes_5d","ccnes_5e","ccnes_5f","ccnes_6a",                 
