@@ -29,7 +29,7 @@ DCS_Prep <- select(DCS_Prep, -c(oc_dcs_notes))
 
 
 # Merge Pedigree and redcap files
-DCS_Prep <- merge(Pedigree, DCS_Prep,by = c("Timepoint","Fam_ID"), all = TRUE)
+#DCS_Prep <- merge(Pedigree, DCS_Prep,by = c("Timepoint","Fam_ID"), all = TRUE)
 
 # Recode
 # Re=-code UO Groupassignment 
