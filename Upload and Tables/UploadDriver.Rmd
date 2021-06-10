@@ -4,59 +4,67 @@ author: "Bryan"
 date: "5/12/2021"
 output: html_document
 ---
-```{r Prep Script}
-source("~/Documents/GitHub/DataUploadAutomation/Upload and Tables/Data/Upload Preparation.R")
-#getwd()
-setwd("~/Documents/GitHub/DataUploadAutomation/Upload and Tables/Data")
+```{r Prep Script, warning=FALSE, message=FALSE}
+source("~/GitHub/DataUploadAutomation/Upload and Tables/Data/Upload Preparation.R")
+
 ```
 
-```{r CBCL}
+```{r CBCL, warning=FALSE, message=FALSE}
 source("~/GitHub/DataUploadAutomation/Upload and Tables/Scripts/CBCL_Upload_Script.R")
 
 ```
 
-```{r CCNES}
+```{r CCNES, warning=FALSE, message=FALSE}
 source("~/GitHub/DataUploadAutomation/Upload and Tables/Scripts/CCNES_Upload_Script.R")
 
 ```
 
-```{r DERS}
+```{r DERS, warning=FALSE, message=FALSE}
 source("~/GitHub/DataUploadAutomation/Upload and Tables/Scripts/DERS_Upload_Script.R")
 
 ```
 
-```{r PPVT}
+```{r PPVT, warning=FALSE, message=FALSE}
 source("~/GitHub/DataUploadAutomation/Upload and Tables/Scripts/PPVT_Upload_Script.R")
 
 ```
 
-```{r ES}
+```{r ES, warning=FALSE, message=FALSE}
 source("~/GitHub/DataUploadAutomation/Upload and Tables/Scripts/ES_Upload_Script.R")
 
 ```
 
-```{r PKBS}
-source("~/Documents/GitHub/DataUploadAutomation/Upload and Tables/Scripts/PKBS_Upload_Script.R")
+```{r PKBS, warning=FALSE, message=FALSE}
+source("~/GitHub/DataUploadAutomation/Upload and Tables/Scripts/PKBS_Upload_Script.R")
 
 ```
 
-```{r WCCL}
+```{r WCCL, warning=FALSE, message=FALSE}
 source("~/GitHub/DataUploadAutomation/Upload and Tables/Scripts/WCCL_Upload_Script.R")
 
 ```
 
-```{r Bear Dragon}
-source("~/Documents/GitHub/DataUploadAutomation/Upload and Tables/Scripts/BearDragon_Upload_Script.R")
+```{r Bear Dragon, warning=FALSE, message=FALSE}
+source("~/GitHub/DataUploadAutomation/Upload and Tables/Scripts/BearDragon_Upload_Script.R")
 
 ```
 
-```{r Affect Perspective Taking}
-source("~/Documents/GitHub/DataUploadAutomation/Upload and Tables/Scripts/AffectPT_Upload_Script.R")
+```{r Affect Perspective Taking, warning=FALSE, message=FALSE}
+source("~/GitHub/DataUploadAutomation/Upload and Tables/Scripts/AffectPT_Upload_Script.R")
 
 ```
 
-```{r Acceptance and Action Questionnaire}
-source("~/Documents/GitHub/DataUploadAutomation/Upload and Tables/Scripts/AAQ_Upload_Script.R")
+```{r Acceptance and Action Questionnaire, warning=FALSE, message=FALSE}
+source("~/GitHub/DataUploadAutomation/Upload and Tables/Scripts/AAQ_Upload_Script.R")
 
 ```
 
+```{r EL_Upload_Table, warning=FALSE, message=FALSE}
+source("~/GitHub/DataUploadAutomation/Upload and Tables/Scripts/EL_Upload_Table.R") 
+
+```
+
+```{r DCS_Upload_Script, warning=FALSE, message=FALSE}
+source("~/GitHub/DataUploadAutomation/Upload and Tables/Scripts/DCS_Upload_Script.R")
+
+```
