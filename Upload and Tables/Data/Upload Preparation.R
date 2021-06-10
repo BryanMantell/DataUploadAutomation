@@ -32,7 +32,7 @@ setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
 # *************************************************************************
 
 Pedigree <- read.csv("Reference_Pedigree.csv", stringsAsFactors = FALSE)
-Pedigree_name <- names(Pedigree)
+
 
 # *************************************************************************
 # Import RedCap Data####
@@ -75,13 +75,13 @@ UO_Qualtrics_T4 <- read.csv("UO_T4_Qualtrics.csv", stringsAsFactors = FALSE) %>%
   rename(Fam_ID = Q203, Timepoint = Q206)
 
 # TODO: Read in actual UPMC Qualtrics Data
-UPMC_Qualtrics_T1 <- read.csv("UPMC_T1_Qualtrics.csv", fileEncoding="UTF-8-BOM", stringsAsFactors = FALSE) %>% 
+UPMC_Qualtrics_T1 <- read.csv("UPMC_T1_Qualtrics.csv",  stringsAsFactors = FALSE) %>% 
   rename(Fam_ID = FQ4id) %>% mutate(Timepoint = "1")
-UPMC_Qualtrics_T2 <- read.csv("UPMC_T2_Qualtrics.csv", fileEncoding="UTF-8-BOM", stringsAsFactors = FALSE) %>% 
+UPMC_Qualtrics_T2 <- read.csv("UPMC_T2_Qualtrics.csv",  stringsAsFactors = FALSE) %>% 
   rename(Fam_ID = FQ4id) %>% mutate(Timepoint = "2")
-UPMC_Qualtrics_T3 <- read.csv("UPMC_T3_Qualtrics.csv", fileEncoding="UTF-8-BOM", stringsAsFactors = FALSE) %>% 
+UPMC_Qualtrics_T3 <- read.csv("UPMC_T3_Qualtrics.csv",  stringsAsFactors = FALSE) %>% 
   rename(Fam_ID = FQ4id) %>% mutate(Timepoint = "3")
-UPMC_Qualtrics_T4 <- read.csv("UPMC_T4_Qualtrics.csv", fileEncoding="UTF-8-BOM", stringsAsFactors = FALSE) %>% 
+UPMC_Qualtrics_T4 <- read.csv("UPMC_T4_Qualtrics.csv",  stringsAsFactors = FALSE) %>% 
   rename(Fam_ID = FQ4id) %>% mutate(Timepoint = "4")
 
 UO_Qualtrics_list <- list(UO_Qualtrics_T1, UO_Qualtrics_T2, UO_Qualtrics_T3, UO_Qualtrics_T4)
