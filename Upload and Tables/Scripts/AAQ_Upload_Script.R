@@ -4,23 +4,8 @@
 # Scientific Notation
 options(digits = 3)
 
-# Install Package, this only need to be done once.
-#install.packages("rlang")
-#install.packages("dplyr")
-#install.packages(c("tidyverse","data.table","contrib.url","knitr"))
-#install.packages('plyr', repos = "http://cran.us.r-project.org")
-#install.packages("lmSupport")
-
-
-# Load packages, this need to be done every time you run this script. 
-library(dplyr)
-library(tidyverse)
-library(data.table)
-library(knitr)
-library(lmSupport)
-
 # Source data, templates and create NDA dataframe
-setwd("~/Documents/GitHub/DataUploadAutomation/Upload and Tables/Data")
+setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
 #getwd()
 
 AAQ_NDA <- read.csv("acceptance01_template.csv", skip = 1)
@@ -53,7 +38,7 @@ colnames(AAQ_NDA_Prep)[17] <- "aaq_score"
 
 # Merge AAQ Prep Sheet into NDA structure
 #AAQ_NDA[1,] <- NA
-AAQ_NDA <- rbind(AAQ_NDA_Prep, AAQ_NDA)
+AAQ_NDA <- bind_rows(mutate_all(AAQ_NDA, as.character), mutate_all(AAQ_NDA_Prep, as.character))
 
 # Recreate the first line of the NDA
 first_line <- matrix("", nrow = 1, ncol = ncol(AAQ_NDA))
@@ -68,7 +53,7 @@ write.table(first_line, file = "aaq.csv", sep = ",", append = FALSE, quote = FAL
 write.table(AAQ_NDA, file = 'aaq.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
 
 #Remove any unnecessary dataframes for the NDA upload
-rm(AAQ_NDA_Prep)
+rm(AAQ_NDA_Prep, first_line)
 #rm(Pedigree, Qualtrics, Redcap_Data)
 #----------------------------------------------------------------------------------------------------------------------------------------
 

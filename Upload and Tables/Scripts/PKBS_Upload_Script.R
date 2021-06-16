@@ -4,23 +4,8 @@
 # Scientific Notation
 options(digits = 3)
 
-# Install Package, this only need to be done once.
-#install.packages("rlang")
-#install.packages("dplyr")
-#install.packages(c("tidyverse","data.table","contrib.url","knitr"))
-#install.packages('plyr', repos = "http://cran.us.r-project.org")
-#install.packages("lmSupport")
-
-
-# Load packages, this need to be done every time you run this script. 
-library(dplyr)
-library(tidyverse)
-library(data.table)
-library(knitr)
-library(lmSupport)
-
 # Source data, templates and create NDA dataframe
-setwd("~/Documents/GitHub/DataUploadAutomation/Upload and Tables/Data")
+setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
 #getwd()
 
 PKBS_NDA <- read.csv("pkbs01_template.csv", skip = 1)
@@ -81,6 +66,6 @@ write.table(first_line, file = "pkbs.csv", sep = ",", append = FALSE, quote = FA
 write.table(PKBS_NDA, file = 'pkbs.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
 
 #Remove any unnecessary dataframes for the NDA upload
-rm(PKBS_NDA_Prep)
+rm(PKBS_NDA_Prep, first_line)
 #rm(Pedigree, Qualtrics, Redcap_Data)
 #----------------------------------------------------------------------------------------------------------------------------------------
