@@ -4,7 +4,7 @@
 
 
 # import data frame
-setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
+#setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
 source("~/GitHub/DataUploadAutomation/Upload and Tables/Data/Upload Preparation.R")
 
 
@@ -15,8 +15,7 @@ options(digits = 3)
 library(lmSupport) 
 library(plyr)
 
-Emotion_Labeling_REDCAP <- select(Emotion_Labeling_REDCAP, c(Fam_ID = fam_id,  timepoint, starts_with("oc_elt_")))
-Emotion_Labeling_REDCAP <- select(Emotion_Labeling_REDCAP, -c(oc_elt_notes))
+
 
 exp <- colnames(select(EL_PREP, c("oc_elt_exp_2", "oc_elt_exp_4", "oc_elt_exp_6", "oc_elt_exp_8")))
 
