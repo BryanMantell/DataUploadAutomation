@@ -12,11 +12,31 @@ Emotion_Labeling_NDA <- read.csv("elt01_template.csv", skip=1)
 
 options(digits = 3)
 
-library(lmSupport) 
-library(plyr)
+#rename elt_exp names
+eltpart1_exp <- "oc_elt_exp"
+num_items <- seq(1:8)
+new_eltpart1_names <- paste(eltpart1_exp, num_items, sep = "_")
 
+#rename elt_rec names
+eltpart2_rec <- "oc_elt_rec"
+num_items <- seq (1:4) 
+new_eltpart2_names <- paste(eltpart2_rec, num_items, sep = "_")
 
+#replace old eltpart1 names with new names
+eltpart1_exp <- "eltpart1_exp"
+num_items <- seq (1:8)
+old_eltpart1_names <- paste(eltpart1_exp, num_items, sep = "")
+setnames(Redcap_Data, old_eltpart1_names, new_eltpart1_names)
 
+#replace old eltpart2 names with new names
+eltpart2_rec <- "eltpart2_rec"
+num_items <- seq (1:4)
+old_eltpart2_names <- paste(eltpart2_rec, num_items, sep = "")
+
+setnames(Redcap_Data, old_eltpart2_names, new_eltpart2_names)
+
+#EL_PREP <- select(Redcap_Data, c(child_guid, child_famID, interview_date, interview_age_child, child_sex, GroupAssignment, Timepoint, starts_with("oc_elt_")))
+EL_PREP <- select(Redcap_Data, c(starts_with("oc_elt_")))
 exp <- colnames(select(EL_PREP, c("oc_elt_exp_2", "oc_elt_exp_4", "oc_elt_exp_6", "oc_elt_exp_8")))
 
 rec <- colnames(select(EL_PREP, c("oc_elt_rec_1", "oc_elt_rec_2", "oc_elt_rec_3", "oc_elt_rec_4")))

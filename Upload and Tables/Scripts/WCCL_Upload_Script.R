@@ -11,9 +11,6 @@ source("~/GitHub/DataUploadAutomation/Upload and Tables/Data/Upload Preparation.
 WCCL_NDA <- read.csv("dbt_wccl01_template.csv", skip = 1)
 options(digits = 3)
 
-library(lmSupport) 
-library(plyr)
-
 
 # Prep Sheet
 #Create prep sheet to begin transferring data into NDA format. Rename relevant GUID information to match NDA specifications. Finally, bind all timepoints into single WCCL Prep Sheet.
