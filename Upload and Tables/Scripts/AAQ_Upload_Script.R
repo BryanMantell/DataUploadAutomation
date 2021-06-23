@@ -50,10 +50,10 @@ AAQ_NDA <- AAQ_NDA[-c(90)]
 
 # Create a new file in folder called acceptance01.csv, and put first line into this file
 # acceptance01.csv file will be saved into same folder as current r script
-write.table(first_line, file = "acceptance01.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
+write.table(first_line, file = "NDA Upload/acceptance01.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
 
 # Append data in AAQ_NDA into acceptance01.csv file 
-write.table(AAQ_NDA, file = 'acceptance01.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
+write.table(AAQ_NDA, file = 'NDA Upload/acceptance01.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
 
 #Remove any unnecessary dataframes for the NDA upload
 rm(AAQ_NDA_Prep, first_line)

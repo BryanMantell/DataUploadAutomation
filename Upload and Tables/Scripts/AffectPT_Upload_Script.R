@@ -93,10 +93,10 @@ na_if(AffectPT_NDA, -9999)
 
 # Create a new file in folder called apt01.csv, and put first line into this file
 # apt01.csv file will be saved into same folder as current r script
-write.table(first_line, file = "apt01.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
+write.table(first_line, file = "NDA Upload/apt01.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
 
 # Append data in AffectPT_NDA into apt01.csv file 
-write.table(AffectPT_NDA, file = 'apt01.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
+write.table(AffectPT_NDA, file = 'NDA Upload/apt01.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
 
 #Remove any unnecessary dataframes for the NDA upload
 rm(AffectPT_NDA_Prep, first_line)

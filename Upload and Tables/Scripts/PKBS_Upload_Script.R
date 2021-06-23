@@ -60,10 +60,10 @@ first_line[,2] <- "1"
 
 # Create a new file in folder called pkbs01.csv, and put first line into this file
 # pkbs01.csv file will be saved into same folder as current r script
-write.table(first_line, file = "pkbs01.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
+write.table(first_line, file = "NDA Upload/pkbs01.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
 
 # Append data in PKBS_NDA into pkbs01.cav file 
-write.table(PKBS_NDA, file = 'pkbs01.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
+write.table(PKBS_NDA, file = 'NDA Upload/pkbs01.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
 
 #Remove any unnecessary dataframes for the NDA upload
 rm(PKBS_NDA_Prep, first_line)

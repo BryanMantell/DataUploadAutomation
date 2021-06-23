@@ -52,10 +52,10 @@ first_line[,2] <- "1"
 
 # Create a new file in folder called beardragon01.csv, and put first line into this file
 # beardragon01.csv file will be saved into same folder as current r script
-write.table(first_line, file = "beardragon01.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
+write.table(first_line, file = "NDA Upload/beardragon01.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
 
 # Append data in BearDragon_NDA into beardragon.cav file 
-write.table(BearDragon_NDA, file = 'beardragon01.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
+write.table(BearDragon_NDA, file = 'NDA Upload/beardragon01.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
 
 #Remove any unnecessary dataframes for the NDA upload
 rm(BearDragon_NDA_Prep, first_line)
