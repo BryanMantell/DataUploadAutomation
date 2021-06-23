@@ -1,6 +1,6 @@
 # Title: WCCL Upload Script
 
-# Setup("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
+# Setup
 
 
 # import data frame
@@ -10,9 +10,6 @@ source("~/GitHub/DataUploadAutomation/Upload and Tables/Data/Upload Preparation.
 
 WCCL_NDA <- read.csv("dbt_wccl01_template.csv", skip = 1)
 options(digits = 3)
-
-library(lmSupport) 
-library(plyr)
 
 
 # Prep Sheet
@@ -89,4 +86,4 @@ write.table(WCCL_NDA, file = 'dbt_wccl.csv', sep = ",", append = TRUE, na = "", 
 
 # Clean Global Environment 
 rm(first_line)
-rm(WCCL_NDA_Prep, Redcap_Data, Qualtrics, Pedigree)
+rm(WCCL_NDA_Prep)
