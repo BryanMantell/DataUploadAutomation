@@ -42,7 +42,7 @@ AAQ_NDA <- bind_rows(mutate_all(AAQ_NDA, as.character), mutate_all(AAQ_NDA_Prep,
 
 # Recreate the first line of the NDA
 first_line <- matrix("", nrow = 1, ncol = ncol(AAQ_NDA))
-first_line[,1] <- "pkbs"
+first_line[,1] <- "acceptance"
 #^change this to match the acceptance01 template
 first_line[,2] <- "1"
 
