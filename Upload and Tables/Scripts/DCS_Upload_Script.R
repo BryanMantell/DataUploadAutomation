@@ -52,8 +52,6 @@ DCS_NDA_Prep <- select(DCS_Prep, c(subjectkey = child_guid, src_subject_id = chi
 # Replace columns name 
 setnames(DCS_NDA_Prep, old_DCS_names, DCS_NDA_names)
 
-# Add empty line in original NDA file for merge
-DCS_NDA[1,] <- NA
 # Recreate first line in original NDA file
 DCS_NDA <- bind_rows(DCS_NDA, DCS_NDA_Prep)
 first_line <- matrix("", nrow = 1, ncol = ncol(DCS_NDA))
@@ -64,10 +62,10 @@ first_line[,2] <- "1"
 # NDA output ####
 # Create a new file in folder called dccs.csv, and put first line into this file
 # dccs.csv file will be saved into same folder as current r script
-write.table(first_line, file = "dccs01.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
+write.table(first_line, file = "NDA Upload/dccs01.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
 
 # Append data in NDA_DCCS into dccs.csv file 
-write.table(DCS_NDA, file = 'dccs01.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
+write.table(DCS_NDA, file = 'NDA Upload/dccs01.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
 
 
 # clean envirment 
