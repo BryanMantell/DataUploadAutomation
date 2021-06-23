@@ -3,6 +3,7 @@
 # date: "5/19/2021"
 
 setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
+#setwd("~/Documents/GitHub/DataUploadAutomation/Upload and Tables/Data")
 #setwd("C:/Users/mzhang8/Downloads/Upload and Tables/Data")
 
 # Read in NDA template
@@ -91,7 +92,7 @@ rm(ders)
 
 # NDA Sheet
 # Create NDA prep sheet, select all the needed columns from prep sheet
-DERS_NDA_Prep <- select(DERS_Prep, c(subjectkey= child_guid, src_subject_id= child_famID,  sex = child_sex  ,interview_age_child, interview_date, timpt = Timepoint, starts_with("srm_ders")))
+DERS_NDA_Prep <- select(DERS_Prep, c(subjectkey= child_guid, src_subject_id= child_famID,  sex = child_sex  , interview_age = interview_age_child, interview_date, timept = Timepoint, starts_with("srm_ders")))
 
 # Combine NDA and prep sheet
 # Make sure put original NDA structure at first, because the order of the new sheet will be the order of the first item in bind_rows function
@@ -106,12 +107,10 @@ DERS_NDA_Prep <- DERS_NDA_Prep %>%
 DERS_NDA <- DERS_NDA %>%
   mutate_all(as.character)
 
-DERS_NDA <- bind_rows(DERS_NDA_Prep, DERS_NDA)
+DERS_NDA <- bind_rows(DERS_NDA, DERS_NDA_Prep)
 
 # Assign required column but with data missing 999
-DERS_NDA[,c("ders_awareness","ders_clarity","ders_goals","ders_impulse","ders_nonacceptance", "ders_strategies",
-            "ders_total", "der2","der36","der_11","der_13","der_18","timept","version_form",       
-            "visit","timepoint_label")] <- "999"
+DERS_NDA[,c("ders_awareness","ders_clarity","ders_goals","ders_impulse","ders_nonacceptance", "ders_strategies", "ders_total")] <- "999"
 # Recreate first line in original NDA file
 # Make a empty row, with same number of column in DERS_NDA, as first line of NDA sheet
 # ncol(DERS_NDA)  is number of columns in DERS_NDA
@@ -124,9 +123,9 @@ first_line[,2] <- "1"
 # NDA output ####
 # Create a new file in folder called ders.csv, and put first line into this file
 # ders.csv file will be saved into same folder as current r script
-write.table(first_line, file = "ders.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
+write.table(first_line, file = "NDA Upload/ders01.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
 
 # Append data in DERS_NDA into ders.cav file 
-write.table(DERS_NDA, file = 'ders.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
+write.table(DERS_NDA, file = 'NDA Upload/ders01.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
 
 rm(first_line, DERS_NDA_Prep)
