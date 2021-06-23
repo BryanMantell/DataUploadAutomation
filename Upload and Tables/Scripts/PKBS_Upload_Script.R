@@ -39,11 +39,11 @@ PKBS_Prep <- add_column(PKBS_Prep, pkbs_total = varScore(PKBS_Prep, c("srm_pkbs_
 PKBS_NDA_Prep <- select(PKBS_Prep, c(subjectkey = "mom_guid", src_subject_id = "FamID_Mother", interview_age = "interview_age_Mom", interview_date, sex = "mother_sex", visit = "Timepoint",starts_with("srm"), pkbs_total))       
 
 
-NDA_names <- c("Social2", "Social7", "Social10", "Social12", "Social16", "Social22", "Social23", "Social25", 
-               "Social28", "Social29", "Social30", "Social32", "Social5", "Social14", "Social15", "Social17", 
-               "Social19", "Social20", "Social21", "Social24", "Social27", "Social33", "Social34", "Social1", 
-               "Social3", "Social6", "Social8", "P_soc_23_ft", "Social11", "Social13", "Social18", "Social26", 
-               "Social31")
+NDA_names <- c("PKBS_Social2", "PKBS_Social7", "PKBS_Social10", "PKBS_Social12", "PKBS_Social16", "PKBS_Social22", "PKBS_Social23", "PKBS_Social25", 
+               "PKBS_Social28", "PKBS_Social29", "PKBS_Social30", "PKBS_Social32", "PKBS_Social5", "PKBS_Social14", "PKBS_Social15", "PKBS_Social17", 
+               "PKBS_Social19", "PKBS_Social20", "PKBS_Social21", "PKBS_Social24", "PKBS_Social27", "PKBS_Social33", "PKBS_Social34", "PKBS_Social1", 
+               "PKBS_Social3", "PKBS_Social6", "PKBS_Social8", "ssis_p_soc_23_0ft", "PKBS_Social11", "PKBS_Social13", "PKBS_Social18", "PKBS_Social26", 
+               "PKBS_Social31")
 
 setnames(PKBS_NDA_Prep, new_PKBS_names, NDA_names, skip_absent = FALSE)
 colnames(PKBS_NDA_Prep)[40] <- "basc_social_raw"
@@ -51,19 +51,19 @@ colnames(PKBS_NDA_Prep)[40] <- "basc_social_raw"
 
 # Merge PKBS Prep Sheet into NDA structure
 #PKBS_NDA[1,] <- NA
-PKBS_NDA <- rbind(PKBS_NDA_Prep, PKBS_NDA)
+PKBS_NDA <- bind_rows(mutate_all(PKBS_NDA, as.character), mutate_all(PKBS_NDA_Prep, as.character))
 
 # Recreate the first line of the NDA
 first_line <- matrix("", nrow = 1, ncol = ncol(PKBS_NDA))
 first_line[,1] <- "pkbs"
 first_line[,2] <- "1"
 
-# Create a new file in folder called pabq.csv, and put first line into this file
-# pkbs.csv file will be saved into same folder as current r script
-write.table(first_line, file = "pkbs.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
+# Create a new file in folder called pkbs01.csv, and put first line into this file
+# pkbs01.csv file will be saved into same folder as current r script
+write.table(first_line, file = "pkbs01.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
 
-# Append data in PKBS_NDA into pkbs.cav file 
-write.table(PKBS_NDA, file = 'pkbs.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
+# Append data in PKBS_NDA into pkbs01.cav file 
+write.table(PKBS_NDA, file = 'pkbs01.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
 
 #Remove any unnecessary dataframes for the NDA upload
 rm(PKBS_NDA_Prep, first_line)
