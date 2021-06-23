@@ -5,6 +5,7 @@
 # Setup ####
 # Empty environment, loading library, set knitr and scientific notation
 setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
+#setwd("~/Documents/GitHub/DataUploadAutomation/Upload and Tables/Data")
 #setwd("C:/Users/mzhang8/Downloads/Upload and Tables/Data")
 CCNES_NDA <- read.csv("pabq01_template.csv", skip = 1)
 #setwd("~/Documents/Min/DataUploadAutomation/Upload and Tables/Output for NDA")
@@ -40,7 +41,8 @@ CCNES_Prep <- CCNES_Prep %>%
                         '4' = 4,
                         '5' = 3,
                         '6' = 2,
-                        '7' = 1, defaut = NaN)))
+                        '7' = 1, 
+                        '8' = "999")))
 
 # Recode Group Assignment
 CCNES_Prep <- CCNES_Prep %>% 
@@ -111,20 +113,7 @@ CCNES_NDA <- CCNES_NDA %>% mutate_all(as.character)
 CCNES_NDA_Prep <- CCNES_NDA_Prep %>% mutate_all(as.character)
 CCNES_NDA <- bind_rows(CCNES_NDA,CCNES_NDA_Prep)
 
-# Fill missing data with "999"
-CCNES_NDA[,c( "distress_reactions",       
-              "punitive_reactions","expressive_encouragement","emotion_focused_reactions", "problem_focused_reactions",
-              "minimization_reactions","ccnes_1a",                 
-              "ccnes_1b","ccnes_1c","ccnes_1d","ccnes_1e","ccnes_1f","ccnes_2a", "ccnes_2b","ccnes_2c","ccnes_2d",
-              "ccnes_2e","ccnes_2f","ccnes_3a",                 
-              "ccnes_3b","ccnes_3c","ccnes_3d","ccnes_3e","ccnes_3f","ccnes_4a",
-              "ccnes_4b","ccnes_4c","ccnes_4d","ccnes_4e","ccnes_4f","ccnes_5a",             
-              "ccnes_5b","ccnes_5c","ccnes_5d","ccnes_5e","ccnes_5f","ccnes_6a",                 
-              "ccnes_6b","ccnes_6s","ccnes_6d","ccnes_6e","ccnes_6f","ccnes_7a",                 
-              "ccnes_7b","ccnes_7c","ccnes_7d","ccnes_7e","ccnes_7f","ccnes_8a",                 
-              "ccnes_8b","ccnes_8c","ccnes_8d","ccnes_8e","ccnes_8f","ccnes_9a",                 
-              "ccnes_9b","ccnes_9c","ccnes_9d","ccnes_9e","ccnes_9f","ccnes_n",                  
-              "ccnes_p","quest_instruct","respond","subjectkey_mother","subjectkey_father")] <- "999"
+
 # Recreate first line in original NDA file
 # Make a empty row, with same number of column in CCNES_NDA, as first line of NDA sheet
 # ncol(CCNES_NDA)  is number of columns in CCNES_NDA
@@ -139,10 +128,10 @@ first_line[,2] <- "1"
 # NDA output ####
 # Create a new file in folder called pabq.csv, and put first line into this file
 # pabq.csv file will be saved into same folder as current r script
-write.table(first_line, file = "pabq.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
+write.table(first_line, file = "NDA Upload/pabq01.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
 
 # Append data in CCNES_NDA into pabq.cav file 
-write.table(CCNES_NDA, file = 'pabq.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
+write.table(CCNES_NDA, file = 'NDA Upload/pabq01.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
 
 # Clean Global Environment 
 rm(first_line, CCNES_NDA_Prep)
