@@ -39,11 +39,11 @@ PKBS_Prep <- add_column(PKBS_Prep, pkbs_total = varScore(PKBS_Prep, c("srm_pkbs_
 PKBS_NDA_Prep <- select(PKBS_Prep, c(subjectkey = "mom_guid", src_subject_id = "FamID_Mother", interview_age = "interview_age_Mom", interview_date, sex = "mother_sex", visit = "Timepoint",starts_with("srm"), pkbs_total))       
 
 
-NDA_names <- c("PKBS_Social2", "PKBS_Social7", "PKBS_Social10", "PKBS_Social12", "PKBS_Social16", "PKBS_Social22", "PKBS_Social23", "PKBS_Social25", 
-               "PKBS_Social28", "PKBS_Social29", "PKBS_Social30", "PKBS_Social32", "PKBS_Social5", "PKBS_Social14", "PKBS_Social15", "PKBS_Social17", 
-               "PKBS_Social19", "PKBS_Social20", "PKBS_Social21", "PKBS_Social24", "PKBS_Social27", "PKBS_Social33", "PKBS_Social34", "PKBS_Social1", 
-               "PKBS_Social3", "PKBS_Social6", "PKBS_Social8", "ssis_p_soc_23_0ft", "PKBS_Social11", "PKBS_Social13", "PKBS_Social18", "PKBS_Social26", 
-               "PKBS_Social31")
+NDA_names <- c("pkbs_social2", "pkbs_social7", "pkbs_social10", "pkbs_social12", "pkbs_social16", "pkbs_social22", "pkbs_social23", "pkbs_social25", 
+               "pkbs_social28", "pkbs_social29", "pkbs_social30", "pkbs_social32", "pkbs_social5", "pkbs_social14", "pkbs_social15", "pkbs_social17", 
+               "pkbs_social19", "pkbs_social20", "pkbs_social21", "pkbs_social24", "pkbs_social27", "pkbs_social33", "pkbs_social34", "pkbs_social1", 
+               "pkbs_social3", "pkbs_social6", "pkbs_social8", "ssis_p_soc_23_0ft", "pkbs_social11", "pkbs_social13", "pkbs_social18", "pkbs_social26", 
+               "pkbs_social31")
 
 setnames(PKBS_NDA_Prep, new_PKBS_names, NDA_names, skip_absent = FALSE)
 colnames(PKBS_NDA_Prep)[40] <- "basc_social_raw"

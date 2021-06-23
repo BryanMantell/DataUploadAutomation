@@ -89,7 +89,7 @@ first_line[,2] <- "1"
 AffectPT_NDA <- AffectPT_NDA[-c(1),]
 
 #Turn any -9999 response to NA
-na_if(AffectPT_NDA, "-9999")
+na_if(AffectPT_NDA, -9999)
 
 # Create a new file in folder called apt01.csv, and put first line into this file
 # apt01.csv file will be saved into same folder as current r script
