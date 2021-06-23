@@ -4,6 +4,8 @@
 
 
 # import data frame
+#setwd("C:/GitHub")
+#setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
 #setwd("c:/GitHub/DataUploadAutomation/Upload and Tables/Data")
 #source("~/GitHub/DataUploadAutomation/Upload and Tables/Data/Upload Preparation.R")
 source("~/GitHub/DataUploadAutomation/Upload and Tables/Data/Upload Preparation.R")

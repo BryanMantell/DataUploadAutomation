@@ -1,6 +1,6 @@
 # Title: WCCL Upload Script
 
-# Setup("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
+# Setup
 
 
 # import data frame
@@ -86,4 +86,4 @@ write.table(WCCL_NDA, file = 'dbt_wccl.csv', sep = ",", append = TRUE, na = "", 
 
 # Clean Global Environment 
 rm(first_line)
-rm(WCCL_NDA_Prep, Redcap_Data, Qualtrics, Pedigree)
+rm(WCCL_NDA_Prep)
