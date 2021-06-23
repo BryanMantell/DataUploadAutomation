@@ -4,9 +4,9 @@
 
 
 # import data frame
-#setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
+#setwd("c:/GitHub/DataUploadAutomation/Upload and Tables/Data")
+#source("~/GitHub/DataUploadAutomation/Upload and Tables/Data/Upload Preparation.R")
 source("~/GitHub/DataUploadAutomation/Upload and Tables/Data/Upload Preparation.R")
-
 
 Emotion_Labeling_NDA <- read.csv("elt01_template.csv", skip=1)
 
@@ -36,7 +36,7 @@ old_eltpart2_names <- paste(eltpart2_rec, num_items, sep = "")
 setnames(Redcap_Data, old_eltpart2_names, new_eltpart2_names)
 
 #EL_PREP <- select(Redcap_Data, c(child_guid, child_famID, interview_date, interview_age_child, child_sex, GroupAssignment, Timepoint, starts_with("oc_elt_")))
-EL_PREP <- select(Redcap_Data, c(starts_with("oc_elt_")))
+EL_PREP <- select(Redcap_Data, c(child_guid, child_famID, interview_date, interview_age, child_sex, timepoint, starts_with("oc_elt_")))
 exp <- colnames(select(EL_PREP, c("oc_elt_exp_2", "oc_elt_exp_4", "oc_elt_exp_6", "oc_elt_exp_8")))
 
 rec <- colnames(select(EL_PREP, c("oc_elt_rec_1", "oc_elt_rec_2", "oc_elt_rec_3", "oc_elt_rec_4")))
