@@ -43,14 +43,18 @@ AAQ_NDA <- bind_rows(mutate_all(AAQ_NDA, as.character), mutate_all(AAQ_NDA_Prep,
 # Recreate the first line of the NDA
 first_line <- matrix("", nrow = 1, ncol = ncol(AAQ_NDA))
 first_line[,1] <- "pkbs"
+#^change this to match the acceptance01 template
 first_line[,2] <- "1"
 
-# Create a new file in folder called aaq.csv, and put first line into this file
-# aaq.csv file will be saved into same folder as current r script
-write.table(first_line, file = "aaq.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
+#Remove Column X
+AAQ_NDA <- AAQ_NDA[-c(90)]
 
-# Append data in AAQ_NDA into aaq.csv file 
-write.table(AAQ_NDA, file = 'aaq.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
+# Create a new file in folder called acceptance01.csv, and put first line into this file
+# acceptance01.csv file will be saved into same folder as current r script
+write.table(first_line, file = "acceptance01.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
+
+# Append data in AAQ_NDA into acceptance01.csv file 
+write.table(AAQ_NDA, file = 'acceptance01.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
 
 #Remove any unnecessary dataframes for the NDA upload
 rm(AAQ_NDA_Prep, first_line)

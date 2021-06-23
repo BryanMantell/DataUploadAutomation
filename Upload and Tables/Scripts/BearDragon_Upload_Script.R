@@ -16,6 +16,9 @@ BearDragon_Prep <- select(Redcap_Data, c(child_guid, child_famID, interview_date
 
 # Calculated Columns
 #----------------------------------------------------------------------------------------------------------------------------------------
+#Change columns to numeric
+BearDragon_Prep[,7:16] <- sapply(BearDragon_Prep[,7:16],as.numeric)
+
 # Change number to numeric values and Create Calculated Column 
 BearDragon_Prep <- add_column(BearDragon_Prep, oc_beardragon_total = varScore(BearDragon_Prep, 
                                                c("oc_bd_01", "oc_bd_02", "oc_bd_03", "oc_bd_04", "oc_bd_05", 
@@ -40,19 +43,19 @@ setnames(BearDragon_NDA_Prep, prep_names, NDA_names, skip_absent = TRUE)
 
 # Merge BearDragon Prep Sheet into NDA structure
 #BearDragon_NDA[1,] <- NA
-BearDragon_NDA <- rbind(BearDragon_NDA_Prep, BearDragon_NDA)
+BearDragon_NDA <- bind_rows(mutate_all(BearDragon_NDA, as.character), mutate_all(BearDragon_NDA_Prep, as.character))
 
 # Recreate the first line of the NDA
 first_line <- matrix("", nrow = 1, ncol = ncol(BearDragon_NDA))
 first_line[,1] <- "beardragon"
 first_line[,2] <- "1"
 
-# Create a new file in folder called beardragon.csv, and put first line into this file
-# beardragon.csv file will be saved into same folder as current r script
-write.table(first_line, file = "beardragon.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
+# Create a new file in folder called beardragon01.csv, and put first line into this file
+# beardragon01.csv file will be saved into same folder as current r script
+write.table(first_line, file = "beardragon01.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
 
 # Append data in BearDragon_NDA into beardragon.cav file 
-write.table(BearDragon_NDA, file = 'beardragon.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
+write.table(BearDragon_NDA, file = 'beardragon01.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
 
 #Remove any unnecessary dataframes for the NDA upload
 rm(BearDragon_NDA_Prep, first_line)

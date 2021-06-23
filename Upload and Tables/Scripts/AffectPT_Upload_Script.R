@@ -65,7 +65,7 @@ AffectPT_Prep <- add_column(AffectPT_Prep, oc_apt_total = rowSums(AffectPT_Prep[
 # NDA Sheet
 #----------------------------------------------------------------------------------------------------------------------------------------
 # Create list of column names for AffectPT prep and NDA structure
-AffectPT_NDA_Prep <- select(AffectPT_Prep, subjectkey = "child_guid", src_subject_id = "child_famID", interview_date, interview_age = "interview_age_child", gender = "child_sex", visit = "Timepoint", contains("oc_apt"))
+AffectPT_NDA_Prep <- select(AffectPT_Prep, subjectkey = "child_guid", src_subject_id = "child_famID", interview_date, interview_age = "interview_age_child", sex = "child_sex", visit = "Timepoint", contains("oc_apt"))
 
 # Match Prep Sheet column names to required NDA names
 NDA_names <- c(paste("apt", 1:16, sep = ""))
@@ -85,12 +85,18 @@ first_line <- matrix("", nrow = 1, ncol = ncol(AffectPT_NDA))
 first_line[,1] <- "apt"
 first_line[,2] <- "1"
 
-# Create a new file in folder called affectpt.csv, and put first line into this file
-# pabq.csv file will be saved into same folder as current r script
-write.table(first_line, file = "affectpt.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
+# Remove empty row
+AffectPT_NDA <- AffectPT_NDA[-c(1),]
 
-# Append data in AffectPT_NDA into affectpt.cav file 
-write.table(AffectPT_NDA, file = 'affectpt.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
+#Turn any -9999 response to NA
+na_if(AffectPT_NDA, "-9999")
+
+# Create a new file in folder called apt01.csv, and put first line into this file
+# apt01.csv file will be saved into same folder as current r script
+write.table(first_line, file = "apt01.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
+
+# Append data in AffectPT_NDA into apt01.csv file 
+write.table(AffectPT_NDA, file = 'apt01.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
 
 #Remove any unnecessary dataframes for the NDA upload
 rm(AffectPT_NDA_Prep, first_line)
