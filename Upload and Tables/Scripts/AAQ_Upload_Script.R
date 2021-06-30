@@ -15,6 +15,15 @@ AAQ_Prep <- select(Qualtrics, c(mom_guid, FamID_Mother, interview_date, intervie
 
 # Calculated Columns
 #----------------------------------------------------------------------------------------------------------------------------------------
+#Recode columns
+AAQ_Prep[AAQ_Prep == "1 Never True"] <- 1
+AAQ_Prep[AAQ_Prep == "2 Very Rarely True"] <- 2
+AAQ_Prep[AAQ_Prep == "3 Seldom True"] <- 3
+AAQ_Prep[AAQ_Prep == "4 Sometimes True"] <- 4
+AAQ_Prep[AAQ_Prep == "5 Often True"] <- 5
+AAQ_Prep[AAQ_Prep == "6 Almost Always True"] <- 6
+AAQ_Prep[AAQ_Prep == "7 Always True"] <- 7
+
 # Change number to numeric values and Create Calculated Column 
 AAQ_Prep[,7:16] <- sapply(AAQ_Prep[,7:16],as.numeric)
 
