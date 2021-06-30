@@ -53,10 +53,10 @@ first_line[,2] <- "2"
 # NDA output ---------
 # Create a new file in folder called ppvt_4a.csv, and put first line into this file
 # ppvt_4a.csv file will be saved into same folder as current r script
-write.table(first_line, file = "ppvt_4a.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
+write.table(first_line, file = "NDA Upload/ppvt_4a.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
 
 # Append data in NDA_DCCS into dccs.cav file 
-write.table(PPVT_NDA, file = 'ppvt_4a.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
+write.table(PPVT_NDA, file = 'NDA Upload/ppvt_4a.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
 
 #Clean Global Environment
 rm(first_line, PPVT_names)
