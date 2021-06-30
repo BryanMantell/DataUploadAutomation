@@ -20,7 +20,10 @@ CBCL_Prep <- CBCL_Prep %>%
   mutate_at(New_CBCL_Names,
             funs(recode(., "Not True (as far as you know)" = 0, 
                         "Somewhat or Sometimes True" = 1,
-                        "Very True or Often True" = 2,.default = NaN)))
+                        "Very True or Often True" = 2,
+                        '0' = 0,
+                        '1' = 1,
+                        '2' = 2,.default = NaN)))
 
 # Recode UPMC Group Assignment names to match UO Group Assignment names
 CBCL_Prep <- CBCL_Prep %>% 
@@ -179,11 +182,6 @@ NDA_CBCL_Names <- paste(c("cbcl56a", "cbcl1", "cbcl_nt", "cbcl_eye", "cbcl8", "c
 New_CBCL_Names <- sprintf("srm_CBCL_%03d", seq(1:100))
 setnames(NDA_CBCL_Prep, New_CBCL_Names, NDA_CBCL_Names)
 
-# Combine NDA CBCL Prep sheet with the NDA structure
-# Solution 1
-#library(plyr)
-#CBCL_NDA <- rbind.fill(CBCL_NDA,NDA_CBCL_Prep)
-
 # Solution 2
 CBCL_NDA <- bind_rows(mutate_all(CBCL_NDA, as.character), mutate_all(NDA_CBCL_Prep, as.character))
 
@@ -206,10 +204,10 @@ first_line[,2] <- "1"
 
 # Create a new file in folder called cbcl1_5.csv, and put first line into this file
 # cbcl1_5.csv file will be saved into same folder as this current r script
-write.table(first_line, file = "cbcl1_5.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
+write.table(first_line, file = "NDA Upload/cbcl1_5.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
 
 # Append data in CBCL_NDA into cbcl1_5.csv file 
-write.table(CBCL_NDA, file = 'cbcl1_5.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
+write.table(CBCL_NDA, file = 'NDA Upload/cbcl1_5.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
 
 # Clean environment of intermediate calculations for NDA structure
 rm(NDA_CBCL_Prep, NDA_CBCL_Names, first_line, New_CBCL_Names)
