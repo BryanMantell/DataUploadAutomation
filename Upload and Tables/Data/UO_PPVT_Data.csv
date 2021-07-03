@@ -1,0 +1,10 @@
+fam_id,redcap_event_name,interview_date_ppvt_mother,om_ppvt_rs,om_ppvt_ss,om_ppvt_notes,peabody_picture_vocabulary_test_mother_complete,interview_date_ppvt,oc_ppvt_rs,oc_ppvt_ss,oc_ppvt_notes,peabody_picture_vocabulary_test_child_complete
+90002,clinical_intake_arm_1,,,,,0,,,,,
+90001,clinical_intake_arm_1,11/20/2020,199,94,,2,,,,,
+90001,time_1_arm_1,,,,,,12/7/2020,126,151,,2
+90003,clinical_intake_arm_1,5/24/2019,208,99,,2,,,,,
+90003,time_1_arm_1,,,,,,6/30/2019,45,99,,2
+90004,clinical_intake_arm_1,5/23/2019,220,120,,2,,,,,
+90004,time_1_arm_1,,,,,,6/4/2019,112,137,,2
+90005,clinical_intake_arm_1,11/18/2019,208,97,,2,,,,,
+90005,time_1_arm_1,,,,,,,,,,2

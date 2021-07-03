@@ -5,7 +5,7 @@ date: "5/12/2021"
 output: html_document
 ---
 ```{r Prep Script, warning=FALSE, message=FALSE}
-source("~/GitHub/DataUploadAutomation/Upload and Tables/Data/Upload Preparation.R")
+source("~/GitHub/DataUploadAutomation/Upload and Tables/Scripts/Upload Preparation.R")
 
 ```
 
