@@ -1,13 +1,7 @@
 # Title: EL Upload Script
 
-# Setup
-
-
-# import data frame
-#setwd("C:/GitHub")
-#setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
-#setwd("c:/GitHub/DataUploadAutomation/Upload and Tables/Data")
-#source("~/GitHub/DataUploadAutomation/Upload and Tables/Data/Upload Preparation.R")
+#Setup
+#Setwd
 source("~/GitHub/DataUploadAutomation/Upload and Tables/Data/Upload Preparation.R")
 
 Emotion_Labeling_NDA <- read.csv("elt01_template.csv", skip=1)
@@ -60,10 +54,10 @@ first_line[,2] <- "1"
 # NDA output ---------
 # Create a new file in folder called el.csv, and put first line into this file
 # el.csv file will be saved into same folder as current r script
-write.table(first_line, file = "el01.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
+write.table(first_line, file = "NDA Upload/el01.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
 
 # Append data in Emotion_Ladeling_NDA into el.csv file 
-write.table(Emotion_Labeling_NDA, file = 'el01.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
+write.table(Emotion_Labeling_NDA, file = 'NDA Upload/el01.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
 
 
 
