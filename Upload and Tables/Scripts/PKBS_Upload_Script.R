@@ -42,7 +42,7 @@ PKBS_NDA_Prep <- select(PKBS_Prep, c(subjectkey = "mom_guid", src_subject_id = "
 NDA_names <- c("pkbs_social2", "pkbs_social7", "pkbs_social10", "pkbs_social12", "pkbs_social16", "pkbs_social22", "pkbs_social23", "pkbs_social25", 
                "pkbs_social28", "pkbs_social29", "pkbs_social30", "pkbs_social32", "pkbs_social5", "pkbs_social14", "pkbs_social15", "pkbs_social17", 
                "pkbs_social19", "pkbs_social20", "pkbs_social21", "pkbs_social24", "pkbs_social27", "pkbs_social33", "pkbs_social34", "pkbs_social1", 
-               "pkbs_social3", "pkbs_social6", "pkbs_social8", "ssis_p_soc_23_0ft", "pkbs_social11", "pkbs_social13", "pkbs_social18", "pkbs_social26", 
+               "pkbs_social3", "pkbs_social6", "pkbs_social8", "ssis_p_soc_23_oft", "pkbs_social11", "pkbs_social13", "pkbs_social18", "pkbs_social26", 
                "pkbs_social31")
 
 setnames(PKBS_NDA_Prep, new_PKBS_names, NDA_names, skip_absent = FALSE)

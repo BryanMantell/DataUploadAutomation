@@ -14,6 +14,10 @@ BearDragon_NDA <- read.csv("beardragon01_template.csv")
 BearDragon_Prep <- select(Redcap_Data, c(child_guid, child_famID, interview_date, interview_age_child, child_sex, Timepoint, 
                                          oc_bd_01, oc_bd_02, oc_bd_03, oc_bd_04, oc_bd_05, oc_bd_06, oc_bd_07, oc_bd_08, oc_bd_09, oc_bd_10))    
 
+# Replace M/F response values from child_sex column to male/female
+BearDragon_Prep$child_sex[BearDragon_Prep$child_sex == "M"] <- "male"
+BearDragon_Prep$child_sex[BearDragon_Prep$child_sex == "F"] <- "female"
+
 # Calculated Columns
 #----------------------------------------------------------------------------------------------------------------------------------------
 #Change columns to numeric
@@ -29,6 +33,9 @@ BearDragon_Prep <- add_column(BearDragon_Prep, oc_bear_total = varScore(BearDrag
 
 BearDragon_Prep <- add_column(BearDragon_Prep, oc_dragon_total = varScore(BearDragon_Prep, 
                                                c("oc_bd_02", "oc_bd_04", "oc_bd_06", "oc_bd_08", "oc_bd_10"), Reverse = NULL, Range = NULL, Prorate = TRUE, MaxMiss = .33))
+#Change any -9999 values to Na
+AffectPT_Prep[AffectPT_Prep == -9999] <- NA
+
 #----------------------------------------------------------------------------------------------------------------------------------------
 
 # NDA Sheet
