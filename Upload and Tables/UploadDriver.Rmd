@@ -59,8 +59,8 @@ source("~/GitHub/DataUploadAutomation/Upload and Tables/Scripts/AAQ_Upload_Scrip
 
 ```
 
-```{r EL_Upload_Table, warning=FALSE, message=FALSE}
-source("~/GitHub/DataUploadAutomation/Upload and Tables/Scripts/EL_Upload_Table.R") 
+```{r Emotion Labeling, warning=FALSE, message=FALSE}
+source("~/GitHub/DataUploadAutomation/Upload and Tables/Scripts/EL_Upload_Script.R") 
 
 ```
 
