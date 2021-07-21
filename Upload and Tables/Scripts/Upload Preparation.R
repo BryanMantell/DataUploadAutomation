@@ -23,8 +23,8 @@ library(lmSupport)
 rm(list = ls())
 # scientific notation, round up to 3 digits
 options(digits = 3)
-#setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
 setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
+#setwd("~/Documents/GitHub/DataUploadAutomation/Upload and Tables/Data")
 #path <- path.expand("~/Documents/Min/DataUploadAutomation/Upload and Tables/Data")
 #setwd("D:/Austin/Lab Work (D-Drive)/DataUploadAutomation/Measures/Upload Preparation")
 # *************************************************************************
@@ -329,7 +329,55 @@ rm(old_UO_PKBS_names, old_UO_PKBS_names2, old_UO_PKBS_names3, old_UO_PKBS_names4
 # *************************************************************************
 # Bear Dragon Rename ####
 # *************************************************************************
-# Do not need to be renamed 
+Redcap_Data$oc_bd_01[which(Redcap_Data$oc_bd_01 == "0")] = 0
+Redcap_Data$oc_bd_01[which(Redcap_Data$oc_bd_01 == "1")] = 0
+Redcap_Data$oc_bd_01[which(Redcap_Data$oc_bd_01 == "2")] = 0
+Redcap_Data$oc_bd_01[which(Redcap_Data$oc_bd_01 == "3")] = 1
+
+Redcap_Data$oc_bd_02[which(Redcap_Data$oc_bd_02 == "0")] = 0
+Redcap_Data$oc_bd_02[which(Redcap_Data$oc_bd_02 == "1")] = 0
+Redcap_Data$oc_bd_02[which(Redcap_Data$oc_bd_02 == "2")] = 0
+Redcap_Data$oc_bd_02[which(Redcap_Data$oc_bd_02 == "3")] = 1
+
+Redcap_Data$oc_bd_03[which(Redcap_Data$oc_bd_03 == "0")] = 0
+Redcap_Data$oc_bd_03[which(Redcap_Data$oc_bd_03 == "1")] = 0
+Redcap_Data$oc_bd_03[which(Redcap_Data$oc_bd_03 == "2")] = 0
+Redcap_Data$oc_bd_03[which(Redcap_Data$oc_bd_03 == "3")] = 1
+
+Redcap_Data$oc_bd_04[which(Redcap_Data$oc_bd_04 == "0")] = 0
+Redcap_Data$oc_bd_04[which(Redcap_Data$oc_bd_04 == "1")] = 0
+Redcap_Data$oc_bd_04[which(Redcap_Data$oc_bd_04 == "2")] = 0
+Redcap_Data$oc_bd_04[which(Redcap_Data$oc_bd_04 == "3")] = 1
+
+Redcap_Data$oc_bd_05[which(Redcap_Data$oc_bd_05 == "0")] = 0
+Redcap_Data$oc_bd_05[which(Redcap_Data$oc_bd_05 == "1")] = 0
+Redcap_Data$oc_bd_05[which(Redcap_Data$oc_bd_05 == "2")] = 0
+Redcap_Data$oc_bd_05[which(Redcap_Data$oc_bd_05 == "3")] = 1
+
+Redcap_Data$oc_bd_06[which(Redcap_Data$oc_bd_06 == "0")] = 0
+Redcap_Data$oc_bd_06[which(Redcap_Data$oc_bd_06 == "1")] = 0
+Redcap_Data$oc_bd_06[which(Redcap_Data$oc_bd_06 == "2")] = 0
+Redcap_Data$oc_bd_06[which(Redcap_Data$oc_bd_06 == "3")] = 1
+
+Redcap_Data$oc_bd_07[which(Redcap_Data$oc_bd_07 == "0")] = 0
+Redcap_Data$oc_bd_07[which(Redcap_Data$oc_bd_07 == "1")] = 0
+Redcap_Data$oc_bd_07[which(Redcap_Data$oc_bd_07 == "2")] = 0
+Redcap_Data$oc_bd_07[which(Redcap_Data$oc_bd_07 == "3")] = 1
+
+Redcap_Data$oc_bd_08[which(Redcap_Data$oc_bd_08 == "0")] = 0
+Redcap_Data$oc_bd_08[which(Redcap_Data$oc_bd_08 == "1")] = 0
+Redcap_Data$oc_bd_08[which(Redcap_Data$oc_bd_08 == "2")] = 0
+Redcap_Data$oc_bd_08[which(Redcap_Data$oc_bd_08 == "3")] = 1
+
+Redcap_Data$oc_bd_09[which(Redcap_Data$oc_bd_09 == "0")] = 0
+Redcap_Data$oc_bd_09[which(Redcap_Data$oc_bd_09 == "1")] = 0
+Redcap_Data$oc_bd_09[which(Redcap_Data$oc_bd_09 == "2")] = 0
+Redcap_Data$oc_bd_09[which(Redcap_Data$oc_bd_09 == "3")] = 1
+
+Redcap_Data$oc_bd_10[which(Redcap_Data$oc_bd_10 == "0")] = 0
+Redcap_Data$oc_bd_10[which(Redcap_Data$oc_bd_10 == "1")] = 0
+Redcap_Data$oc_bd_10[which(Redcap_Data$oc_bd_10 == "2")] = 0
+Redcap_Data$oc_bd_10[which(Redcap_Data$oc_bd_10 == "3")] = 1
 
 # *************************************************************************
 # Affect Perspective Taking Rename ####

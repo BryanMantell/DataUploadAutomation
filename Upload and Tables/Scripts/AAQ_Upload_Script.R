@@ -5,7 +5,7 @@
 options(digits = 3)
 
 # Source data, templates and create NDA dataframe
-setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
+setwd("~/Documents/GitHub/DataUploadAutomation/Upload and Tables/Data")
 #getwd()
 
 AAQ_NDA <- read.csv("acceptance01_template.csv", skip = 1)

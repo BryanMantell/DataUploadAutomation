@@ -8,10 +8,14 @@ options(digits = 3)
 setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
 #getwd()
 
-AffectPT_NDA <- read.csv("apt01_template.csv", skip = 1)
+AffectPT_NDA <- read.csv("apt01_template.csv", na.strings = -9999, skip = 1)
 
 # Select the relevant sets of information from RedCap necessary for the AffectPT
 AffectPT_Prep <- select(Redcap_Data, c(child_guid, child_famID, interview_date, interview_age_child, child_sex, Timepoint, contains("oc_apt_")))
+
+# Replace M/F response values from child_sex column to male/female
+AffectPT_Prep$child_sex[AffectPT_Prep$child_sex == "M"] <- "male"
+AffectPT_Prep$child_sex[AffectPT_Prep$child_sex == "F"] <- "female"
 
 # Calculated Columns
 #----------------------------------------------------------------------------------------------------------------------------------------
@@ -61,6 +65,8 @@ AffectPT_Prep$oc_apt_16 <- ifelse(AffectPT_Prep$oc_apt_15 == 3, 2,
 # Add aggregate total column for all the scoring columns
 AffectPT_Prep <- add_column(AffectPT_Prep, oc_apt_total = rowSums(AffectPT_Prep[, c("oc_apt_02", "oc_apt_04", "oc_apt_06", "oc_apt_08",
                                                                                     "oc_apt_10", "oc_apt_12", "oc_apt_14", "oc_apt_16")]))
+#Change any -9999 values to Na
+AffectPT_Prep[AffectPT_Prep == -9999] <- NA
 
 # NDA Sheet
 #----------------------------------------------------------------------------------------------------------------------------------------
