@@ -88,6 +88,12 @@ UPMC_Qualtrics_list <- list(UPMC_Qualtrics_T1, UPMC_Qualtrics_T2, UPMC_Qualtrics
 # *************************************************************************
 # Pedigree Preparation ####
 # *************************************************************************
+# Change Mom and Child Sex to F and M
+Pedigree$ChildGender[Pedigree$ChildGender == "Female"] <- "F"
+Pedigree$ChildGender[Pedigree$ChildGender == "Male"] <- "M"
+Pedigree$MomGender[Pedigree$MomGender == "Female"] <- "F"
+Pedigree$MomGender[Pedigree$MomGender == "Male"] <- "M"
+
 # Select relevant pedigree information, rename as needed. (Include GroupAssignment for treatment progress calculation.)
 # TODO: Double check this include all the column everyone need 
 Pedigree_T1 <- data.frame(select(Pedigree, Fam_ID = FamID, 
