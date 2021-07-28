@@ -25,7 +25,7 @@ CCNES_Prep <- CCNES_Prep %>%
                         '5' = 5,
                         '6' = 6,
                         '7' = 7,
-                        '7 - Very Likely' = 7,.default = NaN)))
+                        '7 - Very Likely' = 7)))
 
 # Adding r at end of variable which needed to be reversed
 Reverse_CCNES_names <- new_CCNES_names
@@ -42,7 +42,7 @@ CCNES_Prep <- CCNES_Prep %>%
                         '5' = 3,
                         '6' = 2,
                         '7' = 1, 
-                        '8' = "999")))
+                        '8' = 999)))
 
 # Recode Group Assignment
 CCNES_Prep <- CCNES_Prep %>% 
