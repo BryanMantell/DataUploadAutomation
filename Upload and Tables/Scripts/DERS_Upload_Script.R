@@ -19,7 +19,12 @@ DERS_Prep <- DERS_Prep %>%
                         "Sometimes (11%-35%)" = 2,
                         "About half the time (36%-65%)" = 3,
                         "Most of the time (66-90%)" = 4,
-                        "Almost Always (91-100%)" = 5)))
+                        "Almost Always (91-100%)" = 5,
+                        "1" = 1,
+                        "2" = 2,
+                        "3" = 3,
+                        "4" = 4,
+                        "5" = 5)))
 
 # Rename the reverse scored columns 
 Reverse_ders_names <- new_ders_names
