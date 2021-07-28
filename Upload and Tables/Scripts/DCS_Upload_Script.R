@@ -27,6 +27,8 @@ Pedigree_Name <- names(Pedigree)
 DCS_Prep <- select(Redcap_Data, c(Pedigree_Name,starts_with("oc_dcs_")))
 DCS_Prep <- select(DCS_Prep, -c(oc_dcs_notes))
 
+# Turn -9999s to NA
+DCS_Prep[DCS_Prep == -9999] <- NA
 
 # Merge Pedigree and redcap files
 #DCS_Prep <- merge(Pedigree, DCS_Prep,by = c("Timepoint","Fam_ID"), all = TRUE)
@@ -42,18 +44,30 @@ DCS_Prep <- DCS_Prep %>%
 
 # TODO: apply 67% rule 
 # Check NA percentage   0:100%data     1 0% data 
-DCS_Prep$NACheck <- rowSums(is.na(select(DCS_Prep, starts_with("srm"))))/ncol(dplyr::select(DCS_Prep, starts_with("srm")))
+DCS_Prep$NACheck <- rowSums(is.na(select(DCS_Prep, starts_with("oc_cds_"))))/ncol(dplyr::select(DCS_Prep, starts_with("srm")))
+DCS_Prep <- add_column(DCS_Prep, total = varScore(DCS_Prep, Forward = c("oc_dcs_01", "oc_dcs_02", "oc_dcs_03",
+                                                                        "oc_dcs_04", "oc_dcs_05", "oc_dcs_06",
+                                                                        "oc_dcs_07", "oc_dcs_08", "oc_dcs_09", 
+                                                                        "oc_dcs_10", "oc_dcs_11", "oc_dcs_12", 
+                                                                        "oc_dcs_13", "oc_dcs_14", "oc_dcs_15", 
+                                                                        "oc_dcs_16", "oc_dcs_17", "oc_dcs_18",
+                                                                        "oc_dcs_19", "oc_dcs_20", "oc_dcs_21", 
+                                                                        "oc_dcs_22", "oc_dcs_23", "oc_dcs_24",
+                                                                        "oc_dcs_25", "oc_dcs_26", "oc_dcs_27",
+                                                                        "oc_dcs_28", "oc_dcs_29", "oc_dcs_30", 
+                                                                        "oc_dcs_31", "oc_dcs_32", "oc_dcs_33",
+                                                                        "oc_dcs_34", "oc_dcs_35", "oc_dcs_36"), MaxMiss = .20))
 
 
 # NDA Sheet
 # Create NDA Prep sheet, select all the needed columns from Prep sheet
-DCS_NDA_Prep <- select(DCS_Prep, c(subjectkey = child_guid, src_subject_id = child_famID, interview_date, interview_age = interview_age_child, sex = child_sex, visit = Timepoint, starts_with("oc_dcs_") ))
+DCS_NDA_Prep <- select(DCS_Prep, c(subjectkey = child_guid, src_subject_id = child_famID, interview_date, interview_age = interview_age_child, sex = child_sex, visit = Timepoint, starts_with("oc_dcs_"), nih_dccs_raw = Total))
 
 # Replace columns name 
 setnames(DCS_NDA_Prep, old_DCS_names, DCS_NDA_names)
 
 # Recreate first line in original NDA file
-DCS_NDA <- bind_rows(DCS_NDA, DCS_NDA_Prep)
+DCS_NDA <- bind_rows(mutate_all(DCS_NDA, as.character), mutate_all(DCS_NDA_Prep, as.character))
 first_line <- matrix("", nrow = 1, ncol = ncol(DCS_NDA))
 first_line[,1] <- "dccs"
 # assign the second cell in first_line as dccs
