@@ -6,8 +6,8 @@
 
 # Loading library, scientific notation, and upload preparation
 setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
-#source("~/GitHub/DataUploadAutomation/Upload and Tables/Data/Upload Preparation.R")
-CBCL_NDA <- read.csv("cbcl1_501_template.csv", skip = 1)
+#source("D:/Austin/GitHub/DataUploadAutomation/Upload and Tables/Scripts/Upload Preparation.R")
+CBCL_NDA <- read.csv("cbcl1_501_template.csv", na.strings = -9999, skip = 1)
 
 # Select necessary items from qualtrics to import into CBCL
 CBCL_Prep <- select(Qualtrics, c(Fam_ID, child_guid, child_famID, interview_date, interview_age_child, child_sex, GroupAssignment, Timepoint, contains("srm_cbcl")))
@@ -168,7 +168,7 @@ rm(ER_Tscores, AD_Tscores, SC_Tscores, W_Tscores, SP_Tscores, AP_Tscores, AB_Tsc
 
 # Create NDA prep sheet
 # Select all the needed columns from CBCL_Prep sheet
-NDA_CBCL_Prep <- select(CBCL_Prep, c(subjectkey = child_guid, src_subject_id = child_famID, sex = child_sex ,interview_age = interview_age_child, interview_date, starts_with("srm")))
+NDA_CBCL_Prep <- select(CBCL_Prep, c(subjectkey = child_guid, src_subject_id = child_famID, sex = child_sex ,interview_age = interview_age_child, interview_date, visit = Timepoint, starts_with("srm")))
 
 # Create NDA structure column names, they are unique and without a pattern so they must be made manually 
 NDA_CBCL_Names <- paste(c("cbcl56a", "cbcl1", "cbcl_nt", "cbcl_eye", "cbcl8", "cbcl10", "cbcl_out", "cbcl_wait", "cbcl_chew", "cbcl11", "cbcl_help", "cbcl49", "cbcl14", "cbcl15", "cbcl_defiant", "cbcl_dem", "cbcl20", 
@@ -182,11 +182,21 @@ NDA_CBCL_Names <- paste(c("cbcl56a", "cbcl1", "cbcl_nt", "cbcl_eye", "cbcl8", "c
 New_CBCL_Names <- sprintf("srm_CBCL_%03d", seq(1:100))
 setnames(NDA_CBCL_Prep, New_CBCL_Names, NDA_CBCL_Names)
 
-# Solution 2
+# Bind rows so data combines with full NDA column set
 CBCL_NDA <- bind_rows(mutate_all(CBCL_NDA, as.character), mutate_all(NDA_CBCL_Prep, as.character))
 
-# Fill necessary NDA missing columns with 999 as on the NDA website
-CBCL_NDA[,c("cbcl_emotional_raw", "cbcl_emotional", "cbcl_anxious_raw", "cbcl_anxious", "cbcl_somatic_c_raw", "cbcl_somatic_c", "cbcl_withdrawn_raw", "cbcl_withdrawn", "cbcl_sleep_raw", "cbcl_sleep", "cbcl_attention_raw", "cbcl_attention", "cbcl_aggressive_raw", "cbcl_aggressive", "cbcl_internal_raw", "cbcl_internal", "cbcl_external_raw", "cbcl_external", "cbcl_total_raw", "cbcl_total", "cbcl_affective_raw", "cbcl_affective", "cbcl_anxiety_raw", "cbcl_anxiety", "cbcl_pervasive_raw", "cbcl_pervasive", "cbcl_adhd_raw", "cbcl_adhd", "cbcl_oppositional_raw", "cbcl_oppositional", "phenotype", "cbcl_depresspr_raw", "cbcl_depresspr")] <- "999"
+# Turn any -9999 response to NA
+na_if(CBCL_NDA, -9999)
+
+# Filter out entries that don't have actual data
+CBCL_NDA <- filter(CBCL_NDA, !interview_date == "")
+
+# Turn NAs into 999 to satisfy NDA required columns
+#CBCL_NDA[is.nan(CBCL_NDA)] <- 999
+CBCL_NDA[is.na(CBCL_NDA)] <- 999
+
+# Turn 999's back into NAs for non-required columns which have no data
+CBCL_NDA[,c("ycbcl_borderline", "ycbcl_clinical", "form_completed", "cbcl113c", "cbcl113b", "cbcl5yf_asd_percent", "cbcl5yf_asd_t", "cbcl5yf_asd_raw", "cbcl5yf_stress_percent", "cbcl5yf_stress_t", "cbcl5yf_stress_raw", "cbcl_accident", "trf_best", "adis_concern_what", "cbp_4", "site", "study", "vi_y_worried_lang_develop", "vi_worried_lang_development", "viii_y_combine_2_words", "language_spoken", "comments_misc", "cbcl_deprpr_perc", "cbcl92b_text", "cbcl74b_text", "cbcl65b_text", "cbcl57b_text", "cbcl31b_text", "cbcl24b_text", "cbcl13_6_text", "cbcl13_1_text", "cbcl10_1_text", "cbcl7_3_text", "cbcl5_2_text", "cbcl_perc30_35", "cbcl_tot_words30_35", "cbcl_voc_score30_35", "cbcl_perc24_29", "cbcl_tot_words24_29", "cbcl_voc_score24_29", "cbcl_perc18_23", "cbcl_tot_words18_23", "cbcl_voc_score18_23", "cbcl_lenght_av2_perc", "cbcl_lenght_av2", "cbcl_lenght30_35", "cbcl_lenght_av1_perc", "cbcl_lenght_av1", "cbcl_lenght24_29", "cbcl_voc_score", "cbcl_lenght", "cbcl_combwords", "cbcl_sponwords", "othmem_speechdelay", "speech_fam", "nonenglish", "ear_infection", "birth_weight_lbs", "premature_weeks", "birth_premature", "cbcl_oppositional_perc", "cbcl_adhd_perc", "cbcl_pervasive_perc", "cbcl_anxiety_perc", "cbcl_affective_perc", "cbcl_total_perc", "cbcl_external_perc", "cbcl_internal_perc", "cbcl_aggressive_perc", "cbcl_attention_perc", "cbcl_sleep_perc", "cbcl_withdrawn_perc", "cbcl_somatic_c_perc", "cbcl_anxious_perc", "cbcl_emotional_perc", "cbcl113c_des", "cbcl113b_des", "cbcl113a_des")] <- NA
 
 # Fill out relationship column with "1" since the mother is filling out the form for the child
 CBCL_NDA$relationship <- "1"
@@ -203,7 +213,7 @@ first_line[,1] <- "cbcl1_5"
 first_line[,2] <- "1"
 
 # Create a new file in folder called cbcl1_5.csv, and put first line into this file
-# cbcl1_5.csv file will be saved into same folder as this current r script
+# cbcl1_5.csv file will be saved into NDA upload folder
 write.table(first_line, file = "NDA Upload/cbcl1_5.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
 
 # Append data in CBCL_NDA into cbcl1_5.csv file 

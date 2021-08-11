@@ -16,18 +16,13 @@ NDA_ES_names <- sprintf("es_%01d", 1:12)
 ES_PREP <- select(Redcap_Data, c(child_guid, child_famID, interview_date, interview_age_Mom, interview_age_child, child_sex, GroupAssignment, Timepoint, starts_with("oc_es_")))
 ES_PREP <- select(ES_PREP, -c(oc_es_notes, oc_es_hgen, oc_es_agen, oc_es_sgen, oc_es_intblue, oc_es_intgreen, oc_es_intmom))
 
-# Select revelent pedigree information, rename as needed. (Include GroupAssignment for treatment progress calculation).
-#Pedigree_Prep <- data.frame(select(Pedigree, child_guid, child_famID, interview_date, interview_age_Mom, interview_age_child, child_sex, GroupAssignment, Timepoint))
-
-### Problem is here ###
 # Exchange commas out of Prep Sheet to avoid CSV issues. Personal selection was a "/" but you can change it here to preference. 
-ES_PREP <- lapply(ES_PREP, gsub, pattern = ",", replacement= "/")
+#ES_PREP <- lapply(ES_PREP, gsub, pattern = ",", replacement= "/")
+ES_PREP$oc_es_hapstrat <- as.character(gsub(",","/",ES_PREP$oc_es_hapstrat))
 
-# Merge Predigree and redcap files
-#ES_PREP <- merge(Pedigree_Prep, Redcap_Data_ES,by = c("Timepoint"), all = TRUE)
+ES_PREP$oc_es_angstrat <- as.character(gsub(",","/",ES_PREP$oc_es_angstrat))
 
-# Clean Environment
-#rm(Pedigree_Prep, Redcap_Data_ES)
+ES_PREP$oc_es_sadstrat <- as.character(gsub(",","/",ES_PREP$oc_es_sadstrat))
 
 # Set neccessary data to numeric so they can be used in calculations
 ES_PREP[, c("oc_es_hap_1", "oc_es_hap_2", "oc_es_hap_3", "oc_es_ang_1", "oc_es_ang_2", "oc_es_ang_3", "oc_es_sad_1", "oc_es_sad_2", "oc_es_sad_3")] <- sapply(ES_PREP[, c("oc_es_hap_1", "oc_es_hap_2", "oc_es_hap_3", "oc_es_ang_1", "oc_es_ang_2", "oc_es_ang_3", "oc_es_sad_1", "oc_es_sad_2", "oc_es_sad_3")], as.numeric)
@@ -50,6 +45,14 @@ setnames(NDA_ES_Prep, new_ES_names, NDA_ES_names)
 
 # Recreate first line in orignial NDA file (visit is meant to be at the end)
 ES_NDA <- bind_rows(mutate_all(ES_NDA, as.character), mutate_all(NDA_ES_Prep, as.character))
+
+# Remove -9999 from data
+na_if(ES_NDA, -9999)
+
+# Filter out entries that don't have actual data
+ES_NDA <- filter(ES_NDA, !interview_date == "")
+
+# Recreate first line for NDA reading
 first_line <- matrix("", nrow = 1, ncol = ncol(ES_NDA))
 first_line[,1] <- "ers"
 # assign the second cell in first_line as 1

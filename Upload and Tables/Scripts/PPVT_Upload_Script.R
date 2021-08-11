@@ -73,6 +73,14 @@ NDA_PPVT_Prep <- rbind(NDA_PPVT_Prep_Child, NDA_PPVT_Prep_Mom)
 
 # Recreate first line in original NDA file 
 PPVT_NDA <- bind_rows(mutate_all(PPVT_NDA, as.character), mutate_all(NDA_PPVT_Prep, as.character))
+
+# Remove -9999 from data
+na_if(PPVT_NDA, -9999)
+
+# Filter out entries that don't have actual data
+PPVT_NDA <- filter(PPVT_NDA, !interview_date == "")
+
+# Recreate first line for NDA reading
 first_line <- matrix("", nrow = 1, ncol = ncol(PPVT_NDA))
 first_line[,1] <- "ppvt_4a"
 # assign the second cell in first_line as 2
