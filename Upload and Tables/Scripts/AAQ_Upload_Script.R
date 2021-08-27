@@ -14,7 +14,7 @@ AAQ_NDA <- read.csv("acceptance01_template.csv", skip = 1)
 AAQ_Prep <- select(Qualtrics, c(mom_guid, FamID_Mother, interview_date, interview_age_Mom, mother_sex, Timepoint, contains("srm_aaq")))          
 
 # Calculated Columns
-#----------------------------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------
 #Recode columns
 AAQ_Prep[AAQ_Prep == "1 Never True"] <- 1
 AAQ_Prep[AAQ_Prep == "2 Very Rarely True"] <- 2
@@ -28,22 +28,22 @@ AAQ_Prep[AAQ_Prep == "7 Always True"] <- 7
 AAQ_Prep[,7:16] <- sapply(AAQ_Prep[,7:16],as.numeric)
 
 # Create Sums column
-AAQ_Prep <- add_column(AAQ_Prep, aaq_total = varScore(AAQ_Prep, c("srm_aaq_1", "srm_aaq_2", "srm_aaq_3", "srm_aaq_4", "srm_aaq_5", 
-                                                                   "srm_aaq_6", "srm_aaq_7", "srm_aaq_8", "srm_aaq_9", "srm_aaq_10"), 
-                                                         Reverse = NULL, Range = NULL, Prorate = TRUE, MaxMiss = .33))
-#----------------------------------------------------------------------------------------------------------------------------------------
+AAQ_Prep <- add_column(AAQ_Prep, aaq_total = varScore(AAQ_Prep, c("srm_aaq_1", "srm_aaq_2", "srm_aaq_3", "srm_aaq_4", "srm_aaq_5", "srm_aaq_6", "srm_aaq_7", "srm_aaq_8", "srm_aaq_9", "srm_aaq_10"),  Reverse = NULL, Range = NULL, Prorate = TRUE, MaxMiss = .33))
+#-------------------------------------------------------------------------------------------------
 
 # NDA Sheet
-#----------------------------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------
 # Retrieve and rename relevant columns from AAQ Prep Sheet for NDA structure
-AAQ_NDA_Prep <- select(AAQ_Prep, c(subjectkey = "mom_guid", src_subject_id = "FamID_Mother", interview_age = "interview_age_Mom", interview_date, 
-                                   sex = "mother_sex", visit = "Timepoint",starts_with("srm"), aaq_total))       
+AAQ_NDA_Prep <- select(AAQ_Prep, c(subjectkey = "mom_guid", src_subject_id = "FamID_Mother", interview_age = "interview_age_Mom", interview_date, sex = "mother_sex", visit = "Timepoint",starts_with("srm"), aaq_total))       
 
 # Create columns names to match the existing NDA template
 NDA_names <- c("aaq2_1", "aaq_1_16", "aaq2_3", "aaq2_4", "aaq2_5", "aaq32", "aaq2_6", "aaq24", "aaq2_8", "aaq2_9")
 
 setnames(AAQ_NDA_Prep, new_AAQ_names, NDA_names, skip_absent = FALSE)
 colnames(AAQ_NDA_Prep)[17] <- "aaq_score"
+
+# Round off the totals column aaq_score
+AAQ_NDA_Prep$aaq_score <- round(AAQ_NDA_Prep$aaq_score)
 
 # Merge AAQ Prep Sheet into NDA structure
 #AAQ_NDA[1,] <- NA
@@ -67,6 +67,6 @@ write.table(AAQ_NDA, file = 'NDA Upload/acceptance01.csv', sep = ",", append = T
 #Remove any unnecessary dataframes for the NDA upload
 rm(AAQ_NDA_Prep, first_line)
 #rm(Pedigree, Qualtrics, Redcap_Data)
-#----------------------------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------
 
 

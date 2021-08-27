@@ -11,35 +11,26 @@ setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
 BearDragon_NDA <- read.csv("beardragon01_template.csv")
 
 # Select the relevant sets of information from RedCap necessary for the BearDragon
-BearDragon_Prep <- select(Redcap_Data, c(child_guid, child_famID, interview_date, interview_age_child, child_sex, Timepoint, 
-                                         oc_bd_01, oc_bd_02, oc_bd_03, oc_bd_04, oc_bd_05, oc_bd_06, oc_bd_07, oc_bd_08, oc_bd_09, oc_bd_10))    
-
-# Replace M/F response values from child_sex column to male/female
-BearDragon_Prep$child_sex[BearDragon_Prep$child_sex == "M"] <- "male"
-BearDragon_Prep$child_sex[BearDragon_Prep$child_sex == "F"] <- "female"
+BearDragon_Prep <- select(Redcap_Data, c(child_guid, child_famID, interview_date, interview_age_child, child_sex, Timepoint, oc_bd_01, oc_bd_02, oc_bd_03, oc_bd_04, oc_bd_05, oc_bd_06, oc_bd_07, oc_bd_08, oc_bd_09, oc_bd_10))    
 
 # Calculated Columns
-#----------------------------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------
 #Change columns to numeric
 BearDragon_Prep[,7:16] <- sapply(BearDragon_Prep[,7:16],as.numeric)
 
 # Change number to numeric values and Create Calculated Column 
-BearDragon_Prep <- add_column(BearDragon_Prep, oc_beardragon_total = varScore(BearDragon_Prep, 
-                                               c("oc_bd_01", "oc_bd_02", "oc_bd_03", "oc_bd_04", "oc_bd_05", 
-                                                 "oc_bd_06", "oc_bd_07", "oc_bd_08", "oc_bd_09", "oc_bd_10"), Reverse = NULL, Range = NULL, Prorate = TRUE, MaxMiss = .33))
+BearDragon_Prep <- add_column(BearDragon_Prep, oc_beardragon_total = varScore(BearDragon_Prep, c("oc_bd_01", "oc_bd_02", "oc_bd_03", "oc_bd_04", "oc_bd_05", "oc_bd_06", "oc_bd_07", "oc_bd_08", "oc_bd_09", "oc_bd_10"), Reverse = NULL, Range = NULL, Prorate = TRUE, MaxMiss = .33))
 
-BearDragon_Prep <- add_column(BearDragon_Prep, oc_bear_total = varScore(BearDragon_Prep, 
-                                               c("oc_bd_01", "oc_bd_03", "oc_bd_05", "oc_bd_07", "oc_bd_09"), Reverse = NULL, Range = NULL, Prorate = TRUE, MaxMiss = .33))
+BearDragon_Prep <- add_column(BearDragon_Prep, oc_bear_total = varScore(BearDragon_Prep, c("oc_bd_01", "oc_bd_03", "oc_bd_05", "oc_bd_07", "oc_bd_09"), Reverse = NULL, Range = NULL, Prorate = TRUE, MaxMiss = .33))
 
-BearDragon_Prep <- add_column(BearDragon_Prep, oc_dragon_total = varScore(BearDragon_Prep, 
-                                               c("oc_bd_02", "oc_bd_04", "oc_bd_06", "oc_bd_08", "oc_bd_10"), Reverse = NULL, Range = NULL, Prorate = TRUE, MaxMiss = .33))
+BearDragon_Prep <- add_column(BearDragon_Prep, oc_dragon_total = varScore(BearDragon_Prep, c("oc_bd_02", "oc_bd_04", "oc_bd_06", "oc_bd_08", "oc_bd_10"), Reverse = NULL, Range = NULL, Prorate = TRUE, MaxMiss = .33))
+
 #Change any -9999 values to Na
-AffectPT_Prep[AffectPT_Prep == -9999] <- NA
-
-#----------------------------------------------------------------------------------------------------------------------------------------
+BearDragon_Prep[BearDragon_Prep == -9999] <- NA
+#-------------------------------------------------------------------------------------------------
 
 # NDA Sheet
-#----------------------------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------
 # Create list of column names for BearDragon prep and NDA structure
 BearDragon_NDA_Prep <- select(BearDragon_Prep, subjectkey = "child_guid", src_subject_id = "child_famID", interview_date, interview_age = "interview_age_child", sex = "child_sex", visit = "Timepoint", contains("oc_bd"))
 
@@ -67,4 +58,4 @@ write.table(BearDragon_NDA, file = 'NDA Upload/beardragon01.csv', sep = ",", app
 #Remove any unnecessary dataframes for the NDA upload
 rm(BearDragon_NDA_Prep, first_line)
 #rm(Pedigree, Qualtrics, Redcap_Data)
-#----------------------------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------

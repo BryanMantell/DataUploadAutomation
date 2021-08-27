@@ -13,23 +13,17 @@ AffectPT_NDA <- read.csv("apt01_template.csv", na.strings = -9999, skip = 1)
 # Select the relevant sets of information from RedCap necessary for the AffectPT
 AffectPT_Prep <- select(Redcap_Data, c(child_guid, child_famID, interview_date, interview_age_child, child_sex, Timepoint, contains("oc_apt_")))
 
-# Replace M/F response values from child_sex column to male/female
-AffectPT_Prep$child_sex[AffectPT_Prep$child_sex == "M"] <- "male"
-AffectPT_Prep$child_sex[AffectPT_Prep$child_sex == "F"] <- "female"
 
 # Calculated Columns
-#----------------------------------------------------------------------------------------------------------------------------------------
+#------------------------------------------------------------------------------------------------
 # Add empty scoring column to the existing data frame
-AffectPT_Prep[, c("oc_apt_02", "oc_apt_04", "oc_apt_06", "oc_apt_08", "oc_apt_10", "oc_apt_12", 
-                  "oc_apt_14", "oc_apt_16")] <- NA
+AffectPT_Prep[, c("oc_apt_02", "oc_apt_04", "oc_apt_06", "oc_apt_08", "oc_apt_10", "oc_apt_12", "oc_apt_14", "oc_apt_16")] <- NA
 
 # Remove total column from the prep script because it will be based on recoded columns in coming lines of code
 AffectPT_Prep <- select(AffectPT_Prep, -c("oc_apt_total"))
 
 # Reorder scoring columns with existing child response columns
-col_order <- c("child_guid", "child_famID", "interview_date", "interview_age_child", "child_sex", "Timepoint", "oc_apt_01", "oc_apt_02", "oc_apt_03", "oc_apt_04", 
-               "oc_apt_05", "oc_apt_06", "oc_apt_07", "oc_apt_08", "oc_apt_09", "oc_apt_10", "oc_apt_11", 
-               "oc_apt_12", "oc_apt_13", "oc_apt_14", "oc_apt_15", "oc_apt_16")
+col_order <- c("child_guid", "child_famID", "interview_date", "interview_age_child", "child_sex", "Timepoint", "oc_apt_01", "oc_apt_02", "oc_apt_03", "oc_apt_04", "oc_apt_05", "oc_apt_06", "oc_apt_07", "oc_apt_08", "oc_apt_09", "oc_apt_10", "oc_apt_11", "oc_apt_12", "oc_apt_13", "oc_apt_14", "oc_apt_15", "oc_apt_16")
 
 AffectPT_Prep <- AffectPT_Prep[, col_order]
 
@@ -63,21 +57,20 @@ AffectPT_Prep$oc_apt_16 <- ifelse(AffectPT_Prep$oc_apt_15 == 3, 2,
                                          ifelse(AffectPT_Prep$oc_apt_15 == 4, 1, 0)))
 
 # Add aggregate total column for all the scoring columns
-AffectPT_Prep <- add_column(AffectPT_Prep, oc_apt_total = rowSums(AffectPT_Prep[, c("oc_apt_02", "oc_apt_04", "oc_apt_06", "oc_apt_08",
-                                                                                    "oc_apt_10", "oc_apt_12", "oc_apt_14", "oc_apt_16")]))
+AffectPT_Prep <- add_column(AffectPT_Prep, oc_apt_total = rowSums(AffectPT_Prep[, c("oc_apt_02", "oc_apt_04", "oc_apt_06", "oc_apt_08","oc_apt_10", "oc_apt_12", "oc_apt_14", "oc_apt_16")]))
+
 #Change any -9999 values to Na
 AffectPT_Prep[AffectPT_Prep == -9999] <- NA
+#------------------------------------------------------------------------------------------------
 
 # NDA Sheet
-#----------------------------------------------------------------------------------------------------------------------------------------
+#------------------------------------------------------------------------------------------------
 # Create list of column names for AffectPT prep and NDA structure
 AffectPT_NDA_Prep <- select(AffectPT_Prep, subjectkey = "child_guid", src_subject_id = "child_famID", interview_date, interview_age = "interview_age_child", sex = "child_sex", visit = "Timepoint", contains("oc_apt"))
 
 # Match Prep Sheet column names to required NDA names
 NDA_names <- c(paste("apt", 1:16, sep = ""))
-prep_names <- c("oc_apt_01", "oc_apt_02", "oc_apt_03", "oc_apt_04", 
-                "oc_apt_05", "oc_apt_06", "oc_apt_07", "oc_apt_08", "oc_apt_09", "oc_apt_10", "oc_apt_11", 
-                "oc_apt_12", "oc_apt_13", "oc_apt_14", "oc_apt_15", "oc_apt_16")
+prep_names <- c("oc_apt_01", "oc_apt_02", "oc_apt_03", "oc_apt_04", "oc_apt_05", "oc_apt_06", "oc_apt_07", "oc_apt_08", "oc_apt_09", "oc_apt_10", "oc_apt_11", "oc_apt_12", "oc_apt_13", "oc_apt_14", "oc_apt_15", "oc_apt_16")
 setnames(AffectPT_NDA_Prep, prep_names, NDA_names, skip_absent = FALSE)
 
 # Drop total column
@@ -94,9 +87,6 @@ first_line[,2] <- "1"
 # Remove empty row
 AffectPT_NDA <- AffectPT_NDA[-c(1),]
 
-#Turn any -9999 response to NA
-na_if(AffectPT_NDA, -9999)
-
 # Create a new file in folder called apt01.csv, and put first line into this file
 # apt01.csv file will be saved into same folder as current r script
 write.table(first_line, file = "NDA Upload/apt01.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
@@ -107,6 +97,6 @@ write.table(AffectPT_NDA, file = 'NDA Upload/apt01.csv', sep = ",", append = TRU
 #Remove any unnecessary dataframes for the NDA upload
 rm(AffectPT_NDA_Prep, first_line)
 #rm(Pedigree, Qualtrics, Redcap_Data)
-#----------------------------------------------------------------------------------------------------------------------------------------
+#------------------------------------------------------------------------------------------------
 
 
