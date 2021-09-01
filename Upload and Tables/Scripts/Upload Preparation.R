@@ -450,17 +450,17 @@ NDA_DCS_names <- sprintf("dcs%02d", 1:36)
 # Emotion Labeling Rename ####
 # *************************************************************************
 # rename elt_exp names
-new_eltpart1_names <- paste("oc_elt_exp", seq(1:8), sep = "_")
+old_eltpart1_names <- paste("oc_elt_exp", seq(1:8), sep = "_")
 
 # rename elt_rec names
-new_eltpart2_names <- paste("oc_elt_rec", seq(1:4), sep = "_")
+old_eltpart2_names <- paste("oc_elt_rec", seq(1:4), sep = "_")
 
 # replace old eltpart1 names with new names
-old_eltpart1_names <- paste("eltpart1_exp", seq(1:8), sep = "")
+new_eltpart1_names <- paste("eltpart1_exp", seq(1:8), sep = "")
 setnames(Redcap_Data, old_eltpart1_names, new_eltpart1_names)
 
 # replace old eltpart2 names with new names
-old_eltpart2_names <- paste("eltpart2_rec", seq(1:4), sep = "")
+new_eltpart2_names <- paste("eltpart2_rec", seq(1:4), sep = "")
 setnames(Redcap_Data, old_eltpart2_names, new_eltpart2_names)
 
 # Clean environment 

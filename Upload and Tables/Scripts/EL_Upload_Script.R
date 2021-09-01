@@ -24,10 +24,10 @@ EL_NDA_Prep$oc_elt_rec_total <- NULL
 EL_NDA_Prep$oc_elt_exp_total <- NULL
 
 #create NDA column Names
-EL1_Names <- c("eltpart1_exp1", "eltpart1_exp2", "eltpart1_exp3", "eltpart1_exp4", "eltpart1_exp5", "eltpart1_exp6", "eltpart1_exp7", "eltpart1_exp8")
-EL2_Names <- c("eltpart2_rec1", "eltpart2_rec2", "eltpart2_rec3", "eltpart2_rec4")
-setnames(EL_NDA_Prep, new_eltpart1_names, EL1_Names)
-setnames(EL_NDA_Prep, new_eltpart2_names, EL2_Names)
+#EL1_Names <- c("eltpart1_exp1", "eltpart1_exp2", "eltpart1_exp3", "eltpart1_exp4", "eltpart1_exp5", "eltpart1_exp6", "eltpart1_exp7", "eltpart1_exp8")
+#EL2_Names <- c("eltpart2_rec1", "eltpart2_rec2", "eltpart2_rec3", "eltpart2_rec4")
+#setnames(EL_NDA_Prep, new_eltpart1_names, EL1_Names)
+#setnames(EL_NDA_Prep, new_eltpart2_names, EL2_Names)
 
 # Recreate first line in orignial NDA file
 Emotion_Labeling_NDA <- bind_rows(mutate_all(Emotion_Labeling_NDA, as.character), mutate_all(EL_NDA_Prep, as.character))
