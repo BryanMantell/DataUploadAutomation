@@ -10,7 +10,7 @@ SIDP_UO <-  read.csv("UO_SIDP.csv")
 # Select relevant pedigree information, rename as needed. (Include GroupAssignment for treatment progress calculation.)
 SIDP <- rbind(SIDP_UO, SIDP_UPMC) 
 SIDP <- subset(SIDP, select = -c(interview_age, subjectkey))
-Pedigree <- select(Pedigree, c(src_subject_id = FamID, interview_age = ChildAge_Intake, GroupAssignment, subjectkey = child_guid))
+Pedigree <- select(Pedigree, c(src_subject_id = Fam_ID, interview_age = interview_age_child, GroupAssignment, subjectkey = child_guid))
 
 SIDP_Prep <- merge (SIDP, Pedigree, by = "src_subject_id") %>% rename(sex = gender)
 SIDP_Prep$sex <- "F"
