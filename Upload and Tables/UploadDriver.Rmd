@@ -68,3 +68,8 @@ source("~/GitHub/DataUploadAutomation/Upload and Tables/Scripts/EL_Upload_Script
 source("~/GitHub/DataUploadAutomation/Upload and Tables/Scripts/DCS_Upload_Script.R")
 
 ```
+
+```{r SIDP_Upload_Script, warning=FALSE, message=FALSE}
+source("~/GitHub/DataUploadAutomation/Upload and Tables/Scripts/SIDP_Upload_Script.R")
+
+```
