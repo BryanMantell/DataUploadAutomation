@@ -45,7 +45,7 @@ DCS_Prep <- DCS_Prep %>%
 # TODO: apply 67% rule 
 # Check NA percentage   0:100%data     1 0% data 
 DCS_Prep$NACheck <- rowSums(is.na(select(DCS_Prep, starts_with("oc_cds_"))))/ncol(dplyr::select(DCS_Prep, starts_with("srm")))
-DCS_Prep <- add_column(DCS_Prep, total = varScore(DCS_Prep, Forward = c("oc_dcs_01", "oc_dcs_02", "oc_dcs_03",
+DCS_Prep <- add_column(DCS_Prep, dcs_total = varScore(DCS_Prep, Forward = c("oc_dcs_01", "oc_dcs_02", "oc_dcs_03",
                                                                         "oc_dcs_04", "oc_dcs_05", "oc_dcs_06",
                                                                         "oc_dcs_07", "oc_dcs_08", "oc_dcs_09", 
                                                                         "oc_dcs_10", "oc_dcs_11", "oc_dcs_12", 
@@ -61,7 +61,7 @@ DCS_Prep <- add_column(DCS_Prep, total = varScore(DCS_Prep, Forward = c("oc_dcs_
 
 # NDA Sheet
 # Create NDA Prep sheet, select all the needed columns from Prep sheet
-DCS_NDA_Prep <- select(DCS_Prep, c(subjectkey = child_guid, src_subject_id = child_famID, interview_date, interview_age = interview_age_child, sex = child_sex, visit = Timepoint, starts_with("oc_dcs_"), nih_dccs_raw = Total))
+DCS_NDA_Prep <- select(DCS_Prep, c(subjectkey = child_guid, src_subject_id = child_famID, interview_date, interview_age = interview_age_child, sex = child_sex, visit = Timepoint, starts_with("oc_dcs_"), nih_dccs_raw = dcs_total))
 
 # Replace columns name 
 setnames(DCS_NDA_Prep, old_DCS_names, DCS_NDA_names)
