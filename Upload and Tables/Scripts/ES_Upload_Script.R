@@ -47,7 +47,7 @@ setnames(NDA_ES_Prep, new_ES_names, NDA_ES_names)
 ES_NDA <- bind_rows(mutate_all(ES_NDA, as.character), mutate_all(NDA_ES_Prep, as.character))
 
 # Remove -9999 from data
-na_if(ES_NDA, -9999)
+ES_NDA[ES_NDA < 0] <- NA
 
 # Filter out entries that don't have actual data
 ES_NDA <- filter(ES_NDA, !interview_date == "")
@@ -58,14 +58,13 @@ first_line[,1] <- "ers"
 # assign the second cell in first_line as 1
 first_line[,2] <- "1"
 
-
 # NDA output ---------
 # Create a new file in folder called ers01.csv, and put first line into this file
 # ers01.csv file will be saved into same folder as current r script
-write.table(first_line, file = "ers01.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
+write.table(first_line, file = "NDA Upload/ers01.csv", sep = ",", append = FALSE, quote = FALSE, na = "", col.names = FALSE, row.names = FALSE)
 
 # Append data in NDA_DCCS into dccs.cav file 
-write.table(ES_NDA, file = 'ers01.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
+write.table(ES_NDA, file = 'NDA Upload/ers01.csv', sep = ",", append = TRUE, na = "", quote = FALSE, row.names = FALSE)
 
 #Clean Global Environment
-rm(first_line, NDA_ES_Prep, NDA_ES_names, new_ES_names)
+rm(first_line, NDA_ES_Prep, NDA_ES_names)

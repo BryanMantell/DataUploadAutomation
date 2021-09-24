@@ -23,7 +23,7 @@ CBCL_Prep <- CBCL_Prep %>%
                         "Very True or Often True" = 2,
                         '0' = 0,
                         '1' = 1,
-                        '2' = 2,.default = NaN)))
+                        '2' = 2,.default = 999)))
 
 # Recode UPMC Group Assignment names to match UO Group Assignment names
 CBCL_Prep <- CBCL_Prep %>% 
@@ -191,8 +191,8 @@ na_if(CBCL_NDA, -9999)
 # Filter out entries that don't have actual data
 CBCL_NDA <- filter(CBCL_NDA, !interview_date == "")
 
+# Blank rows are removed here
 # Turn NAs into 999 to satisfy NDA required columns
-#CBCL_NDA[is.nan(CBCL_NDA)] <- 999
 CBCL_NDA[is.na(CBCL_NDA)] <- 999
 
 # Turn 999's back into NAs for non-required columns which have no data
