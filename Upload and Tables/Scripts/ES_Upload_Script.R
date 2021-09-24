@@ -7,7 +7,7 @@
 # Load preparation script and NDA templates
 setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
 #source("~/GitHub/DataUploadAutomation/Upload and Tables/Data/Upload Preparation.R")
-ES_NDA <- read.csv("ers01_template.csv", skip = 1, stringsAsFactors = FALSE)
+ES_NDA <- read.csv("Templates/ers01_template.csv", skip = 1, stringsAsFactors = FALSE)
 
 # Redcap column names for locating old names to be replaced with Prep names and NDA names
 NDA_ES_names <- sprintf("es_%01d", 1:12)

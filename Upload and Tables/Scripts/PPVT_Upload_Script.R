@@ -6,7 +6,7 @@
 setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
 PPVT_NDA <- read.csv("ppvt_4a02_template.csv", skip = 1, stringsAsFactors = FALSE)
 UPMC_PPVT_Data <- read.csv("UPMC_PPVT_Data.csv", stringsAsFactors = FALSE)
-UO_PPVT_Data <- read.csv("UO_PPVT_Data.csv", stringsAsFactors = FALSE)
+UO_PPVT_Data <- read.csv("Templates/UO_PPVT_Data.csv", stringsAsFactors = FALSE)
 
 # Run Preparation Script if not running from Upload Driver as intended
 #source("~/GitHub/DataUploadAutomation/Upload and Tables/Scripts/Upload Preparation.R")

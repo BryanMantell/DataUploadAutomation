@@ -7,7 +7,7 @@
 # Loading library, scientific notation, and upload preparation
 setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
 #source("D:/Austin/GitHub/DataUploadAutomation/Upload and Tables/Scripts/Upload Preparation.R")
-CBCL_NDA <- read.csv("cbcl1_501_template.csv", na.strings = -9999, skip = 1)
+CBCL_NDA <- read.csv("Templates/cbcl1_501_template.csv", na.strings = -9999, skip = 1)
 
 # Select necessary items from qualtrics to import into CBCL
 CBCL_Prep <- select(Qualtrics, c(Fam_ID, child_guid, child_famID, interview_date, interview_age_child, child_sex, GroupAssignment, Timepoint, contains("srm_cbcl")))
