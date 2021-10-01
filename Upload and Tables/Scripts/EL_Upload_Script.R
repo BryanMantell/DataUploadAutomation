@@ -15,7 +15,16 @@ EL_PREP <- add_column(EL_PREP, oc_elt_exp_total = varScore(EL_PREP, Forward = c(
 EL_PREP <- add_column(EL_PREP, oc_elt_rec_total = varScore(EL_PREP, Forward = c("eltpart2_rec1", "eltpart2_rec2", "eltpart2_rec3", "eltpart2_rec4"), MaxMiss = .20),.after = "oc_elt_exp_total")
 
 # Remove -9999s
-EL_PREP[EL_PREP == -9999] <- NA
+EL_PREP[EL_PREP < 0] <- NA
+
+# Changing the REC values from 0s and 1s to 1s and 2s
+EL_PREP <- EL_PREP %>% 
+  mutate_at(17:20,
+            list(~recode(., "0" = 1, 
+                         "1" = 2)))
+
+# Removing comas from text feilds 
+EL_PREP$eltpart1_exp7 <- as.character(gsub(",","/",EL_PREP$eltpart1_exp7))
 
 # Move relevant info to NDA dataframe
 EL_NDA_Prep <- select(EL_PREP, c(subjectkey = child_guid, src_subject_id = child_famID, interview_date, interview_age = interview_age_child, sex = child_sex, visit = Timepoint, starts_with("eltpart")))
@@ -36,7 +45,7 @@ Emotion_Labeling_NDA <- bind_rows(mutate_all(Emotion_Labeling_NDA, as.character)
 first_line <- matrix("", nrow = 1, ncol = ncol(Emotion_Labeling_NDA))
 
 # assign the second cell in first_line as "el"
-first_line[,1] <- "el"
+first_line[,1] <- "elt"
 first_line[,2] <- "1"
 
 #NDA output tests
