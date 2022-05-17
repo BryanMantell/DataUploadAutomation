@@ -1,8 +1,0 @@
-"0","#Recode Text to Integers"
-"0","WCCL_PREP <- WCCL_PREP %>% mutate_at(new_WCCL_names,funs(recode(., '0 Never Used' = 0, '1 Rarely Used' = 1, '2 Sometimes Used' = 2, '3 Regularly Used' = 3,.default = NaN)))"
-"0",""
-"0","#Change Numbers to Numeric values"
-"0","WCCL_PREP[,1:59] <- sapply(WCCL_PREP[,1:59],as.numeric)"
-"0",""
-"0","#Change gender to F instead of false"
-"0","WCCL_PREP$mother_sex <- ""F"""

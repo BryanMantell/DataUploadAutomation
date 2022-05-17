@@ -16,21 +16,21 @@ The current process for doing the data upload is needlessly tedious, time consum
 
 | Measures               | Assigned To... | Status      | Checked by Data Manager |
 | ------------------------- | ----------- | ----------- | ----------- |
-| [Pedigree](#Research-Subject-Pedigree) | Bryan       | In Progress | In Progress |
-| [SCID](#Structured-Clinical-Interview-for-DSM-V---SCID) |Bryan|In Progress |In Progress |
-| [SID-P](#Structured-Interview-for-DSM-IV-Personality---SID-P) | Min | In Progress | In Progress |
-| [PPVT](#Peabody-Picture-Vocabulary-Test---PPVT) | Austin | In Progress | In Progress |
-| [DERS](#Difficulties-in-Emotion-Regulation-Scale---DERS) | Min | In Progress | In Progress |
-| [CBCL](#Child-Behavior-Checklist---CBCL) | Austin | In Progress | In Progress |
-| [CCNES](#Coping-with-Childrens-Negative-Emotions-Scale---CCNES) | Min | In Progress | In Progress |
-| [AAQ](#Acceptance-and-Action-Questionnaire---AAQ) | Jake | In Progress | In Progress |
-| [WCCL](#Ways-of-Coping-Checklist---WCCL) | Kyle | In Progress | In Progress |
-| [PKBS](#Preschool-and-Kindergarten-Behavior-Scales---PKBS) | Jake | In Progress | In Progress |
-| [Bear Dragon](#Bear-Dragon)             | Jake | In Progress | In Progress |
-| [Affect Perspective Taking](#Affect-Perspective-Taking) | Bryan | In Progress | In Progress |
-| [Dimensional Card Sort](#Dimensional-Card-Sort) | Min | In Progress | In Progress |
-| [Emotion Labeling](#Emotion-Labeling) | Kyle | In Progress | In Progress |
-| [Emotion Strategies](#Emotion-Strategies) | Austin | In Progress | In Progress |
+| [Pedigree](#Research-Subject-Pedigree) | Bryan       | Completed | Checked; Bryan |
+| [SCID](#Structured-Clinical-Interview-for-DSM-V---SCID) |Bryan|Completed |Checked; Bryan |
+| [SID-P](#Structured-Interview-for-DSM-IV-Personality---SID-P) | Min | Completed | Checked; Bryan |
+| [PPVT](#Peabody-Picture-Vocabulary-Test---PPVT) | Austin | Completed | Checked; Bryan |
+| [DERS](#Difficulties-in-Emotion-Regulation-Scale---DERS) | Min | Completed | Checked; Bryan |
+| [CBCL](#Child-Behavior-Checklist---CBCL) | Austin | Completed | Checked; Bryan |
+| [CCNES](#Coping-with-Childrens-Negative-Emotions-Scale---CCNES) | Min | Completed | Checked; Bryan |
+| [AAQ](#Acceptance-and-Action-Questionnaire---AAQ) | Jake | Completed | Checked; Bryan |
+| [WCCL](#Ways-of-Coping-Checklist---WCCL) | Kyle | Completed | Checked; Bryan |
+| [PKBS](#Preschool-and-Kindergarten-Behavior-Scales---PKBS) | Jake | Completed | Checked; Bryan |
+| [Bear Dragon](#Bear-Dragon)             | Jake | Completed | Checked; Bryan |
+| [Affect Perspective Taking](#Affect-Perspective-Taking) | Bryan | Completed | Checked; Bryan |
+| [Dimensional Card Sort](#Dimensional-Card-Sort) | Min | Completed | Checked; Bryan |
+| [Emotion Labeling](#Emotion-Labeling) | Kyle | Completed | Checked; Bryan |
+| [Emotion Strategies](#Emotion-Strategies) | Austin | Completed | Checked; Bryan |
 
 ---
 
@@ -84,6 +84,8 @@ The Pedigree is a collection of identifiable information that needs to be append
 
 ## Pedigree instructions:
 
+All Pedigree information can be extracted via the Access Database.
+
 [Back to Table of Contents](#Table-of-Contents)
 
 ---
@@ -118,26 +120,26 @@ The Peabody Picture Vocabulary Test is an untimed test of receptive vocabulary f
 
 ## PPVT instructions:
 
+### 1) Importing
 
+- Install all the [packages](https://github.com/BryanMantell/DataUploadAutomation#Help-Section) required for the project. You can find what's needed in the [Help Section](https://github.com/BryanMantell/DataUploadAutomation#Help-Section).
+- Read in all the CSVs needed. The files you'll need are located in your measure's folder. Check the [Help Section](https://github.com/BryanMantell/DataUploadAutomation#Help-Section) for example code.
 
-2) Editing and Renaming
+### 2) Editing and Renaming
 
-Select and rename data from UPMC and UO Redcap that is necessary 
+- Select and rename data from UPMC and UO Redcap that is necessary 
 
-for the NDA structure. Reference the Item matching chat below to see 
+  for the NDA structure. 
 
-what items you will need to select. 
+- Reference the Item matching chat below to see what items you will need to select. 
 
-Bind the data from both sites into a single dataframe.
+- Bind the data from both sites into a single dataframe.
 
-Select data from the pedigree that that is necessary for the NDA 
+- Select data from the pedigree that that is necessary for the NDA structure. 
 
-structure. Create an extra column for only timepoint 1. 
+- Create an extra column for only timepoint 1. 
 
-Merge the pedigree data with the “Both Site” data to create the PPVT 
-
-prep sheet.
-
+- Merge the pedigree data with the “Both Site” data to create the PPVT prep sheet.
 
 
 [Back to Table of Contents](#Table-of-Contents)

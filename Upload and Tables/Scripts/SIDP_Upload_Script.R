@@ -3,7 +3,7 @@
 # date: "26/5/2021"
 
 setwd("~/GitHub/DataUploadAutomation/Upload and Tables/Data")
-NDA_SIDP <- read.csv("sidp01_template.csv", skip = 1)
+NDA_SIDP <- read.csv("Templates/sidp01_template.csv", skip = 1)
 SIDP_UPMC <- read.csv("UPMC_SIDP.csv", skip = 1)
 SIDP_UO <-  read.csv("UO_SIDP.csv")
 
@@ -26,7 +26,7 @@ SIDP_Prep <- SIDP_Prep %>%
 # Add empty line in original NDA file for merge
 # NDA_SIDP[1,] <- NA
 # Recreate first line in original NDA file
-NDA_SIDP <- bind_rows(NDA_SIDP, SIDP_Prep)
+NDA_SIDP <- rbind(NDA_SIDP, SIDP_Prep)
 first_line <- matrix("", nrow = 1, ncol = ncol(NDA_SIDP))
 first_line[,1] <- "sidp"
 # assign the second cell in first_line as dccs

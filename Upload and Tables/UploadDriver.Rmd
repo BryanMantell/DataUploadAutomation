@@ -7,6 +7,7 @@ output: html_document
 ```{r Prep Script, warning=FALSE, message=FALSE}
 source("~/GitHub/DataUploadAutomation/Upload and Tables/Scripts/Upload Preparation.R")
 
+write.csv(Pedigree, "NDA Upload/sidp01.csv")
 ```
 
 ```{r CBCL, warning=FALSE, message=FALSE}

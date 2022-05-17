@@ -1,1 +1,0 @@
-{"frames":[{"character_number":0,"end_character_number":0,"end_line_number":0,"file":"","func":"setwd(\"~/Documents/Min/Coding/DataUploadAutomation/Measures/CCNES\")","line_number":0}],"message":"Error in setwd(\"~/Documents/Min/Coding/DataUploadAutomation/Measures/CCNES\") : \n  cannot change working directory\n"}
